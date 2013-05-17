@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Window;
 
+import de.dakror.liturfaliar.CFG;
+
 public abstract class GameFrame
 {
   protected boolean       running;
@@ -61,6 +63,7 @@ public abstract class GameFrame
     {
       long timePassed = System.currentTimeMillis() - tickTime;
       tickTime += timePassed;
+      CFG.p(timePassed);
       update(timePassed);
       Graphics2D g = this.s.getGraphics();
       try
