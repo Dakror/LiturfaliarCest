@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Window;
 
+import de.dakror.liturfaliar.CFG;
+
 public abstract class GameFrame
 {
   protected boolean       running;
@@ -60,11 +62,9 @@ public abstract class GameFrame
     while (this.running)
     {
       long timePassed = System.currentTimeMillis() - tickTime;
-      if (timePassed > 10)
-      {
-        tickTime += timePassed;
-        update(timePassed);
-      }
+      tickTime += timePassed;
+      CFG.p(timePassed);
+      update(timePassed);
       Graphics2D g = this.s.getGraphics();
       try
       {
@@ -72,12 +72,19 @@ public abstract class GameFrame
       }
       catch (Exception e)
       {
-        
         continue;
       }
       draw(g);
       g.dispose();
       this.s.update();
+      try
+      {
+        Thread.sleep(5);
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+      }
     }
   }
   
