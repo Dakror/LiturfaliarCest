@@ -80,7 +80,7 @@ public abstract class GameFrame
       this.s.update();
     }
   }
-  // tetchange
+  
   public abstract void update(long paramLong);
   
   public abstract void draw(Graphics2D paramGraphics2D);
