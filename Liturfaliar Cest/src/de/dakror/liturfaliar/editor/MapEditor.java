@@ -50,16 +50,12 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.SpringLayout;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import layout.SpringUtilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,6 +66,7 @@ import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.data.Door;
 import de.dakror.liturfaliar.map.data.FieldData;
+import de.dakror.liturfaliar.ui.JHintTextField;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Compressor;
 import de.dakror.liturfaliar.util.FileManager;
@@ -88,8 +85,9 @@ public class MapEditor
   JButton           selectedtile;
   
   // -- npc creation -- //
-  JTextField        NPCname;
+  JHintTextField    NPCx, NPCy, NPCname;
   JCheckBox         NPCrandom;
+  JLabel            NPCpreview;
   JSpinner          NPCspeed, NPCrandspeed;
   JComboBox<String> NPCcharacter;
   
@@ -314,8 +312,6 @@ public class MapEditor
     menu.add(omenu);
     w.setJMenuBar(menu);
     
-    JTabbedPane tabbedPane = new JTabbedPane();
-    
     JPanel tilepanel = new JPanel();
     tilepanel.setLayout(null);
     tilepanel.setBounds(10, 10, w.getWidth() / 8, w.getHeight());
@@ -411,22 +407,6 @@ public class MapEditor
     tilesScrollPane.setBounds(0, w.getHeight() / 5, w.getWidth() / 8, w.getHeight() / 5 * 3 + 132 - 25);
     tilepanel.add(tilesScrollPane);
     
-    int width = w.getWidth() / 17;
-    
-    tabbedPane.addTab("<html><body style='text-align:center;width:" + width + ";'>Tiles</body></html>", tilepanel);
-    
-    // -- npc tab -- //
-    JPanel npcTab = new JPanel();
-    
-    JLabel label = new JLabel("Name: ");
-    npcTab.add(label);
-    NPCname = new JTextField(5);
-    label.setLabelFor(NPCname);
-    npcTab.add(NPCname);
-    
-    tabbedPane.addTab("<html><body style='text-align:center;width:" + width + ";'>NPCs</body></html>", npcTab);
-    
-    
     map = new MapPanel(this);
     map.setLayout(null);
     map.setBackground(Color.black);
@@ -469,7 +449,7 @@ public class MapEditor
     msp.setBounds(w.getWidth() / 8, 0, w.getWidth() / 8 * 7, w.getHeight() / 5 * 4 + 132);
     w.add(msp);
     
-    w.add(tabbedPane);
+    w.add(tilepanel);
     
   }
   
