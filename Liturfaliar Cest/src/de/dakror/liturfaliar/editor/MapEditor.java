@@ -35,6 +35,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -48,6 +49,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -56,6 +58,8 @@ import javax.swing.SpringLayout;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import layout.SpringUtilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,19 +77,27 @@ import de.dakror.universion.UniVersion;
 
 public class MapEditor
 {
-  public JFrame w;
-  JMenuBar      menu;
-  JMenu         mpmenu, mmenu, fmenu;
-  Viewport      v;
-  JSONObject    mappackdata, mapdata;
-  JPanel        tiles, map;
-  JScrollPane   msp;
-  String        tileset;
-  JButton       selectedtile;
-  boolean       gridmode;
-  boolean       rasterview;
-  boolean       deletemode;
-  double        cachelayer;
+  public JFrame     w;
+  JMenuBar          menu;
+  JMenu             mpmenu, mmenu, fmenu;
+  Viewport          v;
+  JSONObject        mappackdata, mapdata;
+  JPanel            tiles, map;
+  JScrollPane       msp;
+  String            tileset;
+  JButton           selectedtile;
+  
+  // -- npc creation -- //
+  JTextField        NPCname;
+  JCheckBox         NPCrandom;
+  JSpinner          NPCspeed, NPCrandspeed;
+  JComboBox<String> NPCcharacter;
+  
+  // -- modes -- //
+  boolean           gridmode;
+  boolean           rasterview;
+  boolean           deletemode;
+  double            cachelayer;
   
   public MapEditor(Viewport v)
   {
@@ -403,8 +415,14 @@ public class MapEditor
     
     tabbedPane.addTab("<html><body style='text-align:center;width:" + width + ";'>Tiles</body></html>", tilepanel);
     
-    JPanel npcTab = new JPanel(new SpringLayout());
+    // -- npc tab -- //
+    JPanel npcTab = new JPanel();
     
+    JLabel label = new JLabel("Name: ");
+    npcTab.add(label);
+    NPCname = new JTextField(5);
+    label.setLabelFor(NPCname);
+    npcTab.add(NPCname);
     
     tabbedPane.addTab("<html><body style='text-align:center;width:" + width + ";'>NPCs</body></html>", npcTab);
     
@@ -450,8 +468,6 @@ public class MapEditor
     msp = new JScrollPane(map, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
     msp.setBounds(w.getWidth() / 8, 0, w.getWidth() / 8 * 7, w.getHeight() / 5 * 4 + 132);
     w.add(msp);
-    
-    
     
     w.add(tabbedPane);
     
