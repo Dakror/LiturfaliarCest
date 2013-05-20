@@ -64,6 +64,11 @@ public class Button extends Component
     handle = new HandleArea(x, y, w, h);
   }
   
+  public Button(int x, int y, int w, int h, Image i)
+  {
+    this(x, y, w, h, 0, 0, i.getWidth(null), i.getHeight(null), i);
+  }
+  
   public Button(int x, int y, int w, int h, int sx, int sy, int dx, int dy, Image i)
   {
     super(x, y, w, h);

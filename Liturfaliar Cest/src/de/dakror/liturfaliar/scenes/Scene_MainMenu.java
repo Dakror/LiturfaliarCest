@@ -24,6 +24,7 @@ public class Scene_MainMenu implements Scene
   Button[]      buttons        = new Button[3];
   HandleArea    credits;
   HandleArea    optionsToggleArea;
+  Button        mapeditor;
   ProgressBar[] optionsSliders = new ProgressBar[2];
   Viewport      v;
   
@@ -41,6 +42,14 @@ public class Scene_MainMenu implements Scene
       buttons[0].disabled = true;
     buttons[1] = new Button(v.w.getWidth() / 2 - 150, 400, 300, "Neues Spiel", Color.white, 40.0f);
     buttons[2] = new Button(v.w.getWidth() / 2 - 150, 500, 300, "Spiel beenden", Color.white, 40.0f);
+    if (CFG.MAPEDITOR)
+    {
+      mapeditor = new Button(-8, 50, 60, 60, Viewport.loadImage("system/mapeditor.png"));
+      mapeditor.tileset = "Wood";
+      mapeditor.iw = -20;
+      mapeditor.ih = -20;
+      
+    }
     v.playMusic("013-Theme02", false);
   }
   
@@ -52,39 +61,59 @@ public class Scene_MainMenu implements Scene
       if (b != null)
         b.update();
     }
+    
     if (buttons[0] != null && buttons[0].getState() == 1)
     {
       v.setScene(new Scene_LoadGame());
       buttons[0].setState(0);
     }
+    
     if (buttons[1] != null && buttons[1].getState() == 1)
     {
       v.setScene(new Scene_NewGame());
       buttons[1].setState(0);
     }
+    
     if (buttons[2] != null && buttons[2].getState() == 1)
     {
       buttons[2].setState(0);
       v.stop();
     }
+    
+    if (mapeditor != null)
+    {
+      mapeditor.update();
+      if (mapeditor.getState() == 1)
+      {
+        v.stop();
+        v.mapeditor = new MapEditor(v);
+      }
+    }
+    
     if (credits == null)
+    {
       return;
+    }
+    
     if (credits.state == 1)
     {
       v.setScene(new Scene_Credits());
       credits.state = 0;
     }
+    
     if (optionsSliders[0] != null)
     {
       v.fSoundID = new BigDecimal(optionsSliders[0].value).setScale(2, RoundingMode.HALF_EVEN).doubleValue();
       FileManager.saveOptions(v);
     }
+    
     if (optionsSliders[1] != null)
     {
       v.fMusicID = new BigDecimal(optionsSliders[1].value).setScale(2, RoundingMode.HALF_EVEN).doubleValue();
       v.ss.setVolume(v.MusicID, (float) v.fMusicID);
       FileManager.saveOptions(v);
     }
+    
     optionsToggleArea.update(v);
     if (optionsToggleArea != null && optionsToggleArea.state == 1)
     {
@@ -101,6 +130,12 @@ public class Scene_MainMenu implements Scene
     Assistant.drawMenuBackground(g, v.w);
     // title
     g.drawImage(Viewport.loadImage("system/lc.png"), 400, 75, v.w.getWidth() - 800, (int) (((v.w.getWidth() - 800) / (float) Viewport.loadImage("system/lc.png").getWidth(v.w)) * Viewport.loadImage("system/lc.png").getHeight(v.w)), v.w);
+    
+    if (mapeditor != null)
+    {
+      mapeditor.draw(g, v);
+    }
+    
     // buttons
     int highlighted = -1;
     for (int i = 0; i < buttons.length; i++)
@@ -152,7 +187,7 @@ public class Scene_MainMenu implements Scene
     switch (e.getExtendedKeyCode())
     {
       case KeyEvent.VK_F6:
-        if (CFG.MAPEDIT)
+        if (CFG.MAPEDITOR)
         {
           v.stop();
           v.mapeditor = new MapEditor(v);
@@ -185,6 +220,11 @@ public class Scene_MainMenu implements Scene
     {
       return;
     }
+    
+    if (mapeditor != null)
+    {
+      mapeditor.mouseMoved(e);
+    }
   }
   
   @Override
@@ -199,8 +239,18 @@ public class Scene_MainMenu implements Scene
     optionsToggleArea.mouseReleased(e);
     credits.mouseReleased(e);
     if (optionsToggle && optionsToggleArea.state == 0)
+    {
       for (int i = 0; i < optionsSliders.length; i++)
+      {
         optionsSliders[i].mouseReleased(e);
+      }
+    }
+    
+    
+    if (mapeditor != null)
+    {
+      mapeditor.mouseReleased(e);
+    }
   }
   
   @Override

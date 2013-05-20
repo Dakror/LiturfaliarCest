@@ -53,9 +53,12 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.SpringLayout;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import layout.SpringUtilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,7 +69,6 @@ import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.data.Door;
 import de.dakror.liturfaliar.map.data.FieldData;
-import de.dakror.liturfaliar.ui.JHintTextField;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Compressor;
 import de.dakror.liturfaliar.util.FileManager;
@@ -84,8 +86,9 @@ public class MapEditor
   String            tileset;
   JButton           selectedtile;
   
-  // -- npc creation -- //
-  JHintTextField    NPCx, NPCy, NPCname;
+  // -- NPC creation -- //
+  JDialog           NPCframe;
+  JTextField        NPCx, NPCy, NPCname;
   JCheckBox         NPCrandom;
   JLabel            NPCpreview;
   JSpinner          NPCspeed, NPCrandspeed;
@@ -309,6 +312,21 @@ public class MapEditor
     });
     odel.setState(false);
     omenu.add(odel);
+    
+    omenu.addSeparator();
+    
+    JCheckBoxMenuItem onpc = new JCheckBoxMenuItem(new AbstractAction("NPC-Erstellung")
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        showNPCCreationFrame(((JCheckBoxMenuItem) e.getSource()).getState());
+      }
+    });
+    onpc.setState(false);
+    omenu.add(onpc);
     menu.add(omenu);
     w.setJMenuBar(menu);
     
@@ -773,6 +791,38 @@ public class MapEditor
       e.printStackTrace();
     }
   }
+  
+  public void showNPCCreationFrame(boolean show)
+  {
+    if (!show && NPCframe != null && !NPCframe.isVisible())
+    {
+      NPCframe.dispose();
+      return;
+    }
+    NPCframe = new JDialog(w);
+    NPCframe.setLocationRelativeTo(null);
+    NPCframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    NPCframe.setAlwaysOnTop(true);
+    NPCframe.setResizable(false);
+    
+    JPanel p = new JPanel(new SpringLayout());
+    
+    JLabel label = new JLabel("X-Position: ", JLabel.TRAILING);
+    p.add(label);
+    NPCx = new JTextField(15);
+    label.setLabelFor(NPCx);
+    p.add(NPCx);
+    
+    SpringUtilities.makeCompactGrid(p, 1, 2, 6, 6, 6, 6);
+    
+    NPCframe.setContentPane(p);
+    
+    NPCframe.pack();
+    NPCframe.setVisible(true);
+    
+    
+  }
+  
   
   public void addTile(Image icon, final int x, final int y, String t, int tx, int ty, double l, JSONObject data)
   {
