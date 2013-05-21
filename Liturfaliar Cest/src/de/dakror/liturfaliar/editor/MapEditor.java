@@ -14,7 +14,6 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -22,6 +21,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -78,13 +79,14 @@ public class MapEditor
 {
   public JFrame     w;
   JMenuBar          menu;
-  JMenu             mpmenu, mmenu, fmenu;
+  JMenu             mpmenu, mmenu, fmenu, omenu;
   Viewport          v;
   JSONObject        mappackdata, mapdata;
   JPanel            tiles, map;
   JScrollPane       msp;
   String            tileset;
   JButton           selectedtile;
+  JDialog           bumpPreview;
   
   // -- NPC creation -- //
   JDialog           NPCframe;
@@ -92,7 +94,7 @@ public class MapEditor
   JCheckBox         NPCrandom;
   JLabel            NPCpreview;
   JSpinner          NPCspeed, NPCrandspeed;
-  JComboBox<String> NPCcharacter;
+  JComboBox<String> NPCsprite;
   
   // -- modes -- //
   boolean           gridmode;
@@ -100,20 +102,28 @@ public class MapEditor
   boolean           deletemode;
   double            cachelayer;
   
-  public MapEditor(Viewport v)
+  public MapEditor(Viewport viewport)
   {
     ToolTipManager.sharedInstance().setInitialDelay(0);
     this.gridmode = true;
     this.deletemode = false;
     this.rasterview = false;
-    this.v = v;
+    this.v = viewport;
     new File(FileManager.dir, "myMaps").mkdir();
     w = new JFrame("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ")");
     w.setSize(Toolkit.getDefaultToolkit().getScreenSize());
     w.setExtendedState(JFrame.MAXIMIZED_BOTH);
     w.setIconImage(Viewport.loadImage("system/logo.png"));
     w.setLocationRelativeTo(null);
-    w.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    w.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    w.addWindowListener(new WindowAdapter()
+    {
+      @Override
+      public void windowClosing(WindowEvent e)
+      {
+        v.unfreeze();
+      }
+    });
     init();
     w.setVisible(true);
   }
@@ -122,6 +132,7 @@ public class MapEditor
   {
     // -- menu -- //
     menu = new JMenuBar();
+    
     mpmenu = new JMenu("Kartenpaket");
     JMenuItem mpnew = new JMenuItem(new AbstractAction("Neu...")
     {
@@ -133,7 +144,7 @@ public class MapEditor
         showNewMapPackDialog();
       }
     });
-    mpnew.setAccelerator(KeyStroke.getKeyStroke('N', InputEvent.CTRL_DOWN_MASK));
+    mpnew.setAccelerator(KeyStroke.getKeyStroke("ctrl N"));
     mpmenu.add(mpnew);
     JMenuItem mpopen = new JMenuItem(new AbstractAction("Öffnen...")
     {
@@ -145,9 +156,10 @@ public class MapEditor
         showOpenMapPackDialog();
       }
     });
-    mpopen.setAccelerator(KeyStroke.getKeyStroke('O', InputEvent.CTRL_DOWN_MASK));
+    mpopen.setAccelerator(KeyStroke.getKeyStroke("ctrl O"));
     mpmenu.add(mpopen);
     menu.add(mpmenu);
+    
     mmenu = new JMenu("Karte");
     JMenuItem mnew = new JMenuItem(new AbstractAction("Neu...")
     {
@@ -175,6 +187,7 @@ public class MapEditor
     mmenu.add(mopen);
     mmenu.setEnabled(false);
     menu.add(mmenu);
+    
     fmenu = new JMenu("Datei");
     JMenuItem msave = new JMenuItem(new AbstractAction("Speichern")
     {
@@ -186,7 +199,7 @@ public class MapEditor
         saveMap();
       }
     });
-    mopen.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
+    msave.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
     fmenu.add(msave);
     JMenuItem madj = new JMenuItem(new AbstractAction("Größe ändern...")
     {
@@ -242,9 +255,23 @@ public class MapEditor
       }
     });
     fmenu.add(madj);
+    fmenu.addSeparator();
+    JCheckBoxMenuItem fnpc = new JCheckBoxMenuItem(new AbstractAction("NPC-Erstellung")
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        showNPCCreationDialog(((JCheckBoxMenuItem) e.getSource()).getState());
+      }
+    });
+    fnpc.setState(false);
+    fmenu.add(fnpc);
     fmenu.setEnabled(false);
     menu.add(fmenu);
-    JMenu omenu = new JMenu("Optionen");
+    
+    omenu = new JMenu("Optionen");
     JCheckBoxMenuItem ogrid = new JCheckBoxMenuItem(new AbstractAction("Rastermodus")
     {
       private static final long serialVersionUID = 1L;
@@ -270,14 +297,28 @@ public class MapEditor
     });
     ogview.setState(false);
     omenu.add(ogview);
-    JMenuItem obump = new JMenuItem(new AbstractAction("Bumpmodus")
+    JCheckBoxMenuItem obump = new JCheckBoxMenuItem(new AbstractAction("Bumpmodus")
     {
       private static final long serialVersionUID = 1L;
       
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        JDialog preview = new JDialog(w, "Bumpmap preview");
+        if (mapdata == null)
+        {
+          return;
+        }
+        
+        if (!((JCheckBoxMenuItem) e.getSource()).getState() && bumpPreview != null)
+        {
+          bumpPreview.dispose();
+          return;
+        }
+        
+        bumpPreview = new JDialog(w, "Bumpmap Vorschau");
+        bumpPreview.setUndecorated(true);
+        bumpPreview.setOpacity(0.4f);
+        
         final Area bump = new Map(mapdata).getBumpMap();
         JLabel label = new JLabel()
         {
@@ -291,14 +332,16 @@ public class MapEditor
           }
         };
         label.setPreferredSize(new Dimension(bump.getBounds().width, bump.getBounds().height));
-        preview.getContentPane().add(label);
-        preview.pack();
-        preview.setLocationRelativeTo(null);
-        preview.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        preview.setResizable(false);
-        preview.setVisible(true);
+        bumpPreview.getContentPane().add(label);
+        bumpPreview.pack();
+        bumpPreview.setLocationRelativeTo(w);
+        bumpPreview.setLocation(w.getWidth() / 8 - 1, w.getJMenuBar().getHeight() + w.getInsets().top - 7);
+        bumpPreview.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        bumpPreview.setResizable(false);
+        bumpPreview.setVisible(true);
       }
     });
+    obump.setState(false);
     omenu.add(obump);
     JCheckBoxMenuItem odel = new JCheckBoxMenuItem(new AbstractAction("Entfernmodus")
     {
@@ -312,22 +355,9 @@ public class MapEditor
     });
     odel.setState(false);
     omenu.add(odel);
-    
-    omenu.addSeparator();
-    
-    JCheckBoxMenuItem onpc = new JCheckBoxMenuItem(new AbstractAction("NPC-Erstellung")
-    {
-      private static final long serialVersionUID = 1L;
-      
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        showNPCCreationFrame(((JCheckBoxMenuItem) e.getSource()).getState());
-      }
-    });
-    onpc.setState(false);
-    omenu.add(onpc);
+    omenu.setEnabled(false);
     menu.add(omenu);
+    
     w.setJMenuBar(menu);
     
     JPanel tilepanel = new JPanel();
@@ -422,7 +452,7 @@ public class MapEditor
     tiles.setLayout(null);
     tiles.setBounds(0, w.getHeight() / 5, 0, 0);
     JScrollPane tilesScrollPane = new JScrollPane(tiles, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-    tilesScrollPane.setBounds(0, w.getHeight() / 5, w.getWidth() / 8, w.getHeight() / 5 * 3 + 132 - 25);
+    tilesScrollPane.setBounds(0, w.getHeight() / 5, w.getWidth() / 8, w.getHeight() / 5 * 3 + 132);
     tilepanel.add(tilesScrollPane);
     
     map = new MapPanel(this);
@@ -477,7 +507,6 @@ public class MapEditor
       return;
     JDialog dialog = new JDialog(w, true);
     dialog.setTitle("Kartenpaket erstellen");
-    dialog.setIconImage(w.getIconImage());
     dialog.setSize(400, 170);
     dialog.setResizable(false);
     dialog.setLocationRelativeTo(null);
@@ -521,10 +550,11 @@ public class MapEditor
   public void showOpenMapPackDialog()
   {
     if (mappackdata != null)
+    {
       return;
+    }
     JDialog dialog = new JDialog(w, true);
     dialog.setTitle("Kartenpaket öffnen");
-    dialog.setIconImage(w.getIconImage());
     dialog.setSize(400, 170);
     dialog.setResizable(false);
     dialog.setLocationRelativeTo(null);
@@ -546,7 +576,9 @@ public class MapEditor
       public void valueChanged(ListSelectionEvent e)
       {
         if (e.getValueIsAdjusting())
+        {
           return;
+        }
         openMapPack((String) ((JList<?>) e.getSource()).getSelectedValue());
         d2.dispose();
       }
@@ -561,7 +593,6 @@ public class MapEditor
       return;
     JDialog dialog = new JDialog(w, true);
     dialog.setTitle("Karte erstellen");
-    dialog.setIconImage(w.getIconImage());
     dialog.setSize(400, 170);
     dialog.setResizable(false);
     dialog.setLocationRelativeTo(null);
@@ -645,7 +676,6 @@ public class MapEditor
       return;
     JDialog dialog = new JDialog(w, true);
     dialog.setTitle("Karte öffnen");
-    dialog.setIconImage(w.getIconImage());
     dialog.setSize(400, 170);
     dialog.setResizable(false);
     dialog.setLocationRelativeTo(null);
@@ -752,6 +782,7 @@ public class MapEditor
       }
       msp.setViewportView(map);
       fmenu.setEnabled(true);
+      omenu.setEnabled(true);
       return true;
     }
     catch (Exception e1)
@@ -792,7 +823,7 @@ public class MapEditor
     }
   }
   
-  public void showNPCCreationFrame(boolean show)
+  public void showNPCCreationDialog(boolean show)
   {
     if (!show && NPCframe != null && !NPCframe.isVisible())
     {
@@ -813,7 +844,25 @@ public class MapEditor
     label.setLabelFor(NPCx);
     p.add(NPCx);
     
-    SpringUtilities.makeCompactGrid(p, 1, 2, 6, 6, 6, 6);
+    label = new JLabel("Y-Position: ", JLabel.TRAILING);
+    p.add(label);
+    NPCy = new JTextField(15);
+    label.setLabelFor(NPCy);
+    p.add(NPCy);
+    
+    label = new JLabel("Name: ", JLabel.TRAILING);
+    p.add(label);
+    NPCname = new JTextField(15);
+    label.setLabelFor(NPCname);
+    p.add(NPCname);
+    
+    label = new JLabel("Sprite: ", JLabel.TRAILING);
+    p.add(label);
+    NPCname = new JTextField(15);
+    label.setLabelFor(NPCname);
+    p.add(NPCname);
+     
+    SpringUtilities.makeCompactGrid(p, 3, 2, 6, 6, 6, 6);
     
     NPCframe.setContentPane(p);
     
@@ -822,7 +871,6 @@ public class MapEditor
     
     
   }
-  
   
   public void addTile(Image icon, final int x, final int y, String t, int tx, int ty, double l, JSONObject data)
   {

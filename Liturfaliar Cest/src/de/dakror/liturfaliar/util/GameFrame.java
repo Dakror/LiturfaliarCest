@@ -8,6 +8,7 @@ import java.awt.Window;
 public abstract class GameFrame
 {
   protected boolean       running;
+  protected boolean       frozen;
   protected ScreenManager s;
   
   public GameFrame()
@@ -19,11 +20,26 @@ public abstract class GameFrame
   public void start()
   {
     this.running = true;
+    this.frozen = false;
   }
   
   public synchronized void stop()
   {
+    this.frozen = false;
     this.running = false;
+  }
+  
+  public synchronized void freeze()
+  {
+    this.frozen = true;
+    this.s.getFullScreenWindow().setVisible(false);
+  }
+  
+  
+  public synchronized void unfreeze()
+  {
+    this.frozen = false;
+    this.s.getFullScreenWindow().setVisible(true);
   }
   
   public void run()
@@ -59,6 +75,11 @@ public abstract class GameFrame
     long tickTime = startTime;
     while (this.running)
     {
+      if (this.frozen)
+      {
+        continue;
+      }
+      
       long timePassed = System.currentTimeMillis() - tickTime;
       if (timePassed > 10)
       {
@@ -80,6 +101,8 @@ public abstract class GameFrame
       this.s.update();
     }
   }
+  
+  
   
   public abstract void update(long paramLong);
   

@@ -14,6 +14,7 @@ import de.dakror.liturfaliar.editor.MapEditor;
 import de.dakror.liturfaliar.ui.Button;
 import de.dakror.liturfaliar.ui.HandleArea;
 import de.dakror.liturfaliar.ui.ProgressBar;
+import de.dakror.liturfaliar.ui.Tooltip;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.FileManager;
 import de.dakror.universion.UniVersion;
@@ -45,6 +46,9 @@ public class Scene_MainMenu implements Scene
     if (CFG.MAPEDITOR)
     {
       mapeditor = new Button(-8, 50, 60, 60, Viewport.loadImage("system/mapeditor.png"));
+      mapeditor.tooltip = new Tooltip("<#ffffff;20;1>Karteneditor", mapeditor);
+      mapeditor.tooltip.tileset = null;
+      mapeditor.tooltip.follow = true;
       mapeditor.tileset = "Wood";
       mapeditor.iw = -20;
       mapeditor.ih = -20;
@@ -85,8 +89,9 @@ public class Scene_MainMenu implements Scene
       mapeditor.update();
       if (mapeditor.getState() == 1)
       {
-        v.stop();
+        v.freeze();
         v.mapeditor = new MapEditor(v);
+        mapeditor.setState(0);
       }
     }
     
@@ -183,17 +188,8 @@ public class Scene_MainMenu implements Scene
   
   @Override
   public void keyPressed(KeyEvent e)
-  {
-    switch (e.getExtendedKeyCode())
-    {
-      case KeyEvent.VK_F6:
-        if (CFG.MAPEDITOR)
-        {
-          v.stop();
-          v.mapeditor = new MapEditor(v);
-        }
-        break;
-    }
+  { 
+    
   }
   
   @Override
@@ -224,6 +220,7 @@ public class Scene_MainMenu implements Scene
     if (mapeditor != null)
     {
       mapeditor.mouseMoved(e);
+      
     }
   }
   

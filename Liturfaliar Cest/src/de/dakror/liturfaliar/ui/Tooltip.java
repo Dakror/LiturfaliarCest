@@ -1,9 +1,12 @@
 package de.dakror.liturfaliar.ui;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.RoundRectangle2D;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.util.Assistant;
@@ -57,18 +60,34 @@ public class Tooltip extends Component
       }
       setWidth(mostwidth + 32);
     }
-    setHeight(getHeightOfPreviousRows(this.text.length, g) + 32);
+    
     if (this.visible)
     {
       if (this.tileset != null)
+      {
+        setHeight(getHeightOfPreviousRows(this.text.length, g) + 32);
         Assistant.stretchTileset(Viewport.loadImage("tileset/" + this.tileset + ".png"), getX(), getY(), getWidth() + 16 - (getWidth() % 16), getHeight(), g, v.w);
+      }
+      else
+      {
+        setHeight(getHeightOfPreviousRows(this.text.length, g) + 10);
+        Color oldColor = g.getColor();
+        g.setColor(Color.decode("#222222"));
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+        g.fill(new RoundRectangle2D.Double(getX(), getY(), getWidth() + 16 - (getWidth() % 16), getHeight(), 8, 8));
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+        g.setColor(oldColor);
+      }
       for (int i = 0; i < this.text.length; i++)
       {
         if (i > 0)
         {
           Assistant.drawString(this.text[i].string, getX() + 16 + ((!this.text[i - 1].br) ? this.text[i - 1].getWidth(g) : 0), getY() + getHeightOfPreviousRows(i + 1, g), g, this.text[i].c, g.getFont().deriveFont(this.text[i].style, (int) this.text[i].size));
         }
-        else Assistant.drawString(this.text[i].string, getX() + 16, getY() + getHeightOfPreviousRows(i + 1, g), g, this.text[i].c, g.getFont().deriveFont(this.text[i].style, (int) this.text[i].size));
+        else
+        {
+          Assistant.drawString(this.text[i].string, getX() + 16, getY() + getHeightOfPreviousRows(i + 1, g), g, this.text[i].c, g.getFont().deriveFont(this.text[i].style, (int) this.text[i].size));
+        }
       }
     }
     this.text = HTMLString.decodeString(Database.filterString(this.rawText));
@@ -91,9 +110,10 @@ public class Tooltip extends Component
     int height = 0;
     for (int i = 0; i < index; i++)
     {
-      if (this.text[(i > 0) ? i - 1 : 0].br)
-        height += this.text[i].getHeight(g);
+      // if (this.text[(i > 0) ? i - 1 : 0].br)
+      height += this.text[i].getHeight(g);
     }
+    
     return height;
   }
   

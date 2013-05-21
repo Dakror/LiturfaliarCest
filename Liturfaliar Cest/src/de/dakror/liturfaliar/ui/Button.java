@@ -283,9 +283,13 @@ public class Button extends Component
   public void mouseMoved(MouseEvent e)
   {
     if (disabled)
+    {
       return;
+    }
     if (tooltip != null)
+    {
       tooltip.mouseMoved(e);
+    }
     handle.mouseMoved(e);
   }
   
