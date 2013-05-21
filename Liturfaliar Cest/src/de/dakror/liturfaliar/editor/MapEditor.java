@@ -68,6 +68,7 @@ import org.json.JSONObject;
 import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.data.Door;
 import de.dakror.liturfaliar.map.data.FieldData;
 import de.dakror.liturfaliar.util.Assistant;
@@ -858,11 +859,35 @@ public class MapEditor
     
     label = new JLabel("Sprite: ", JLabel.TRAILING);
     p.add(label);
-    NPCname = new JTextField(15);
-    label.setLabelFor(NPCname);
-    p.add(NPCname);
-     
-    SpringUtilities.makeCompactGrid(p, 3, 2, 6, 6, 6, 6);
+    NPCsprite = new JComboBox<String>(NPC.CHARS);
+    NPCsprite.addItemListener(new ItemListener()
+    {
+      
+      @Override
+      public void itemStateChanged(ItemEvent e)
+      {
+        if (e.getStateChange() == ItemEvent.SELECTED)
+        {
+          String sprite = e.getItem().toString();
+          NPCpreview.setIcon(new ImageIcon(((BufferedImage) Viewport.loadImage("char/chars/" + sprite + ".png")).getSubimage(0, 0, 32, 48)));
+        }
+        
+      }
+    });
+    NPCsprite.setSelectedIndex(0);
+    label.setLabelFor(NPCsprite);
+    p.add(NPCsprite);
+    
+    
+    label = new JLabel("Vorschau: ", JLabel.TRAILING);
+    p.add(label);
+    NPCpreview = new JLabel();
+    NPCpreview.setPreferredSize(new Dimension(32, 48));
+    NPCpreview.setIcon(new ImageIcon(((BufferedImage) Viewport.loadImage("char/chars/" + NPCsprite.getItemAt(0) + ".png")).getSubimage(0, 0, 32, 48)));
+    label.setLabelFor(NPCpreview);
+    p.add(NPCpreview);
+    
+    SpringUtilities.makeCompactGrid(p, 5, 2, 6, 6, 6, 6);
     
     NPCframe.setContentPane(p);
     
