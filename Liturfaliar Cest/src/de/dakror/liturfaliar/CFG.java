@@ -8,7 +8,7 @@ import java.awt.Point;
  * @author Dakror
  */
 public final class CFG
-{
+{ 
   // -- UniVersion -- //
   public static final int      VERSION           = 2013051212;
   public static final int      PHASE             = 0;
