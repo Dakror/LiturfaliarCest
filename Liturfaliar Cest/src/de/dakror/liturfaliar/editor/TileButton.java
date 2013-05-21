@@ -18,16 +18,21 @@ import de.dakror.liturfaliar.util.Assistant;
 public class TileButton extends JButton
 {
   private static final long serialVersionUID = 1L;
-  private double            l;
+  
+  public boolean            update           = true;
+  
   private int               x;
   private int               y;
-  private String            tileset;
   private int               tx;
   private int               ty;
+  
+  private double            l;
+  
+  private String            tileset;
   private Image             i;
-  public boolean            update           = true;
   private BufferedImage     image;
   public JSONObject         data;
+  
   
   public TileButton(int x, int y, int tx, int ty, double l, String tileset, Image i)
   {
@@ -91,7 +96,7 @@ public class TileButton extends JButton
       data.put(type, d);
     }
     catch (JSONException e)
-    {      
+    {
       e.printStackTrace();
     }
     update = true;

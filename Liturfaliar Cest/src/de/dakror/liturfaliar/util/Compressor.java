@@ -69,8 +69,21 @@ public class Compressor
   
   public static String decompressFile(File f)
   {
-    byte[] decompressed = decompress(getFileContentAsByteArray(f));    
-    return new String(decompressed);
+    File dbg = new File(f.getPath() + ".debug");
+    if (!f.exists() && dbg.exists() && CFG.DEBUG)
+    {
+      compressFile(f, Assistant.getFileContent(dbg).replaceAll("(\n)|(\n\r)|(\r\n)|(  )", "").replace(" : ", ":"));
+    }
+    
+    byte[] decompressed = decompress(getFileContentAsByteArray(f));
+    String text = new String(decompressed);
+    
+    if (f.exists() && !dbg.exists() && CFG.DEBUG)
+    {
+      Assistant.setFileContent(dbg, text);
+    }
+    
+    return text;
   }
   
   public static void setFileContent(File f, byte[] b)

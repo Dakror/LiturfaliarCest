@@ -50,6 +50,7 @@ public class Talk extends Component
       this.m = m;
       int highest = -1;
       JSONObject sel = null;
+      int index = -1;
       for (int i = 0; i < by.getTalkData().length(); i++)
       {
         JSONObject t = by.getTalkData().getJSONObject(i);
@@ -63,6 +64,7 @@ public class Talk extends Component
         if (count > highest)
         {
           sel = t;
+          index = i;
           highest = count;
         }
       }
@@ -79,7 +81,7 @@ public class Talk extends Component
       }
       this.namelabel = new HTMLString(by.getName(), 32.0F, Color.decode("#999999"), 1);
       this.cay = 0;
-      this.ID = sel.getInt("id");
+      this.ID = index;
       this.perspective = 0;
       findSpeaker();
     }

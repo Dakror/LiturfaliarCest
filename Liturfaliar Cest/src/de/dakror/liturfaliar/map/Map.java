@@ -201,7 +201,7 @@ public class Map implements DatabaseEventListener
     for (int i = 0; i < npcs.length(); i++)
     {
       JSONObject o = npcs.getJSONObject(i);
-      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w") * CFG.HUMANBOUNDS[0], o.getInt("h") * CFG.HUMANBOUNDS[1], o.getString("name"), o.getString("char"), o.getDouble("speed"), o.getBoolean("rand"), o.getInt("randmd"), o.getInt("id"), o.getJSONArray("talk"));
+      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getString("name"), o.getString("char"), o.getDouble("speed"), o.getBoolean("rand"), o.getInt("randmd"), i, o.getJSONArray("talk"));
       creatures.add(npc);
     }
   }

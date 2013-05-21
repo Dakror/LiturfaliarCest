@@ -54,8 +54,11 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
 import javax.swing.ToolTipManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -79,6 +82,7 @@ import de.dakror.universion.UniVersion;
 public class MapEditor
 {
   public JFrame     w;
+  
   JMenuBar          menu;
   JMenu             mpmenu, mmenu, fmenu, omenu;
   Viewport          v;
@@ -216,7 +220,6 @@ public class MapEditor
         }
         JDialog dialog = new JDialog(w, true);
         dialog.setTitle("Kartengröße ändern");
-        dialog.setIconImage(w.getIconImage());
         dialog.setSize(400, 170);
         dialog.setResizable(false);
         dialog.setLocationRelativeTo(null);
@@ -257,14 +260,14 @@ public class MapEditor
     });
     fmenu.add(madj);
     fmenu.addSeparator();
-    JCheckBoxMenuItem fnpc = new JCheckBoxMenuItem(new AbstractAction("NPC-Erstellung")
+    JCheckBoxMenuItem fnpc = new JCheckBoxMenuItem(new AbstractAction("NPC-Bearbeitung")
     {
       private static final long serialVersionUID = 1L;
       
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        showNPCCreationDialog(((JCheckBoxMenuItem) e.getSource()).getState());
+        showNPCDialog(((JCheckBoxMenuItem) e.getSource()).getState());
       }
     });
     fnpc.setState(false);
@@ -363,7 +366,7 @@ public class MapEditor
     
     JPanel tilepanel = new JPanel();
     tilepanel.setLayout(null);
-    tilepanel.setBounds(10, 10, w.getWidth() / 8, w.getHeight());
+    tilepanel.setBounds(0, 0, w.getWidth() / 8, w.getHeight());
     final DefaultListModel<String> dlm = new DefaultListModel<String>();
     for (File f : new File(FileManager.dir, "Tiles").listFiles())
     {
@@ -465,24 +468,29 @@ public class MapEditor
       @Override
       public void mouseEntered(MouseEvent e)
       {
-        if (selectedtile != null)
-          w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(getTileImage(), new Point(CFG.FIELDSIZE / 2, CFG.FIELDSIZE / 2), "tile"));
+        showCustomCursor(true);
       }
       
       @Override
       public void mouseExited(MouseEvent e)
       {
-        if (selectedtile != null)
-          w.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        showCustomCursor(false);
       }
       
       @Override
       public void mousePressed(MouseEvent e)
       {
-        if (selectedtile != null && e.getButton() == 1)
+        if (e.getButton() == 1)
         {
-          int round = (gridmode) ? CFG.FIELDSIZE : 1;
-          addTile(((ImageIcon) selectedtile.getIcon()).getImage(), Assistant.round(e.getX() - CFG.FIELDSIZE / 2, round), Assistant.round(e.getY() - CFG.FIELDSIZE / 2, round), tileset, selectedtile.getX() / CFG.FIELDSIZE, selectedtile.getY() / CFG.FIELDSIZE, -1, new JSONObject());
+          if (selectedtile != null)
+          {
+            int round = (gridmode) ? CFG.FIELDSIZE : 1;
+            addTile(((ImageIcon) selectedtile.getIcon()).getImage(), Assistant.round(e.getX() - CFG.FIELDSIZE / 2, round), Assistant.round(e.getY() - CFG.FIELDSIZE / 2, round), tileset, selectedtile.getX() / CFG.FIELDSIZE, selectedtile.getY() / CFG.FIELDSIZE, -1, new JSONObject());
+          }
+          else if (NPCframe != null)
+          {
+            addNPC(e.getX(), e.getY());
+          }
         }
       }
       
@@ -593,6 +601,14 @@ public class MapEditor
     if (mappackdata == null)
       return;
     JDialog dialog = new JDialog(w, true);
+    dialog.addWindowListener(new WindowAdapter()
+    {
+      @Override
+      public void windowClosed(WindowEvent e)
+      {
+        v.stopMusic();
+      }
+    });
     dialog.setTitle("Karte erstellen");
     dialog.setSize(400, 170);
     dialog.setResizable(false);
@@ -824,15 +840,16 @@ public class MapEditor
     }
   }
   
-  public void showNPCCreationDialog(boolean show)
+  public void showNPCDialog(boolean show)
   {
     if (!show && NPCframe != null && !NPCframe.isVisible())
     {
       NPCframe.dispose();
+      NPCframe = null;
       return;
     }
     NPCframe = new JDialog(w);
-    NPCframe.setLocationRelativeTo(null);
+    
     NPCframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     NPCframe.setAlwaysOnTop(true);
     NPCframe.setResizable(false);
@@ -869,15 +886,17 @@ public class MapEditor
         if (e.getStateChange() == ItemEvent.SELECTED)
         {
           String sprite = e.getItem().toString();
-          NPCpreview.setIcon(new ImageIcon(((BufferedImage) Viewport.loadImage("char/chars/" + sprite + ".png")).getSubimage(0, 0, 32, 48)));
+          BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + sprite + ".png");
+          NPCpreview.setPreferredSize(new Dimension(image.getWidth() / 4, image.getHeight() / 4));
+          NPCpreview.setIcon(new ImageIcon(image.getSubimage(0, 0, image.getWidth() / 4, image.getHeight() / 4)));
+          NPCframe.revalidate();
+          NPCframe.pack();
         }
-        
       }
     });
     NPCsprite.setSelectedIndex(0);
     label.setLabelFor(NPCsprite);
     p.add(NPCsprite);
-    
     
     label = new JLabel("Vorschau: ", JLabel.TRAILING);
     p.add(label);
@@ -887,14 +906,40 @@ public class MapEditor
     label.setLabelFor(NPCpreview);
     p.add(NPCpreview);
     
-    SpringUtilities.makeCompactGrid(p, 5, 2, 6, 6, 6, 6);
+    label = new JLabel("Bewegungsgeschw.: ", JLabel.TRAILING);
+    p.add(label);
+    NPCspeed = new JSpinner(new SpinnerNumberModel(0.5, 0, 10, 0.1));
+    label.setLabelFor(NPCspeed);
+    p.add(NPCspeed);
+    
+    label = new JLabel("zufällige Bewegung:", JLabel.TRAILING);
+    p.add(label);
+    NPCrandom = new JCheckBox();
+    NPCrandom.addChangeListener(new ChangeListener()
+    {
+      
+      @Override
+      public void stateChanged(ChangeEvent e)
+      {
+        NPCrandspeed.setEnabled(((JCheckBox) e.getSource()).isSelected());
+      }
+    });
+    label.setLabelFor(NPCrandom);
+    p.add(NPCrandom);
+    
+    label = new JLabel("Zufallsbew.-Interval. (ms):", JLabel.TRAILING);
+    p.add(label);
+    NPCrandspeed = new JSpinner(new SpinnerNumberModel(3000.0, 0, 1000000000, 100));
+    NPCrandspeed.setEnabled(false);
+    label.setLabelFor(NPCrandspeed);
+    p.add(NPCrandspeed);
+    
+    SpringUtilities.makeCompactGrid(p, 8, 2, 6, 6, 6, 6);
     
     NPCframe.setContentPane(p);
-    
     NPCframe.pack();
     NPCframe.setVisible(true);
-    
-    
+    NPCframe.setLocationRelativeTo(null);
   }
   
   public void addTile(Image icon, final int x, final int y, String t, int tx, int ty, double l, JSONObject data)
@@ -1026,20 +1071,23 @@ public class MapEditor
         mdata.add(tmp);
       }
       jpm.add(mdata);
-      tile.addMouseListener(new MouseListener()
+      tile.addMouseListener(new MouseAdapter()
       {
-        @Override
-        public void mouseClicked(MouseEvent e)
-        {}
-        
         @Override
         public void mousePressed(MouseEvent e)
         {
-          if (e.getButton() == 1 && selectedtile != null)
+          if (e.getButton() == 1)
           {
             JButton src = (JButton) e.getSource();
-            int round = (gridmode) ? CFG.FIELDSIZE : 1;
-            addTile(((ImageIcon) selectedtile.getIcon()).getImage(), Assistant.round(e.getX() - CFG.FIELDSIZE / 2 + src.getX(), round), Assistant.round(e.getY() - CFG.FIELDSIZE / 2 + src.getY(), round), tileset, selectedtile.getX() / CFG.FIELDSIZE, selectedtile.getY() / CFG.FIELDSIZE, -1, new JSONObject());
+            if (selectedtile != null)
+            {
+              int round = (gridmode) ? CFG.FIELDSIZE : 1;
+              addTile(((ImageIcon) selectedtile.getIcon()).getImage(), Assistant.round(e.getX() - CFG.FIELDSIZE / 2 + src.getX(), round), Assistant.round(e.getY() - CFG.FIELDSIZE / 2 + src.getY(), round), tileset, selectedtile.getX() / CFG.FIELDSIZE, selectedtile.getY() / CFG.FIELDSIZE, -1, new JSONObject());
+            }
+            else if (NPCframe != null)
+            {
+              addNPC(e.getX() + src.getX(), e.getY() + src.getY());
+            }
           }
           if (e.getButton() == 3 && deletemode)
           {
@@ -1058,17 +1106,13 @@ public class MapEditor
         @Override
         public void mouseEntered(MouseEvent e)
         {
-          if (selectedtile != null)
-          {
-            w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(getTileImage(), new Point(CFG.FIELDSIZE / 2, CFG.FIELDSIZE / 2), "tile"));
-          }
+          showCustomCursor(true);
         }
         
         @Override
         public void mouseExited(MouseEvent e)
         {
-          if (selectedtile != null)
-            w.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+          showCustomCursor(false);
         }
       });
       if (mapdata == null)
@@ -1083,6 +1127,12 @@ public class MapEditor
       return;
     }
     cachelayer = 0;
+  }
+  
+  public void addNPC(int x, int y)
+  {
+    NPCx.setText(x + "");
+    NPCy.setText(y + "");
   }
   
   public void editFieldData(final TileButton field, final String dataType)
@@ -1342,5 +1392,21 @@ public class MapEditor
     {
       e.printStackTrace();
     }
+  }
+  
+  public void showCustomCursor(boolean show)
+  {
+    if (!show && (selectedtile != null || NPCframe != null))
+    {
+      w.setCursor(Cursor.getDefaultCursor());
+      return;
+    }
+    
+    if (selectedtile != null)
+      w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(getTileImage(), new Point(CFG.FIELDSIZE / 2, CFG.FIELDSIZE / 2), "tile"));
+    
+    if (NPCframe != null)
+      w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(((BufferedImage) ((ImageIcon) NPCpreview.getIcon()).getImage()).getSubimage(0, 16, 32, 32), new Point(16, 31), "npc"));
+    
   }
 }
