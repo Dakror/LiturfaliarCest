@@ -136,8 +136,15 @@ public class HTMLString
     
   }
   
+  public void showAll()
+  {
+    w = lineW;
+  }
+  
   public boolean updateAnimatedString(int speed)
   {
+    if (lineW == 0) return false;
+    
     if (w < lineW)
     {
       w += speed;
@@ -150,4 +157,10 @@ public class HTMLString
   {
     return string == o.string && style == o.style && size == o.size && c == o.c;
   }
+  
+  public String toString()
+  {
+    return getClass().getName() + "[color=" + c + ", size=" + size + ", style=" + style + ", string=" + string + "]";
+  }
+  
 }

@@ -212,9 +212,15 @@ public class Map implements DatabaseEventListener
     {
       f.update(this);
     }
+    
     for (Creature c : creatures)
     {
       c.update(this);
+    }
+    
+    if (talk != null)
+    {
+      talk.update();
     }
     /*
      * final Map self = this; Comparator<Creature> comp = new Comparator<Creature>() {
@@ -270,9 +276,13 @@ public class Map implements DatabaseEventListener
         c.draw(g, v, this);
       }
     }
+    
     Assistant.Shadow(v.w.getBounds(), Color.black, 1 - alpha, g);
+    
     if (talk != null)
+    {
       talk.draw(g, v);
+    }
   }
   
   public void setPos(int x, int y)
