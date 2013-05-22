@@ -11,11 +11,11 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.CFG;
 
-public class NPC extends JButton
+public class NPCButton extends JButton
 {
   private static final long serialVersionUID = 1L;
   
-  private int               x, y, w, h, moveT, lookT;
+  private int               x, y, w, h, dir, moveT, lookT;
   private String            name, sprite;
   private double            speed;
   private boolean           move;
@@ -23,12 +23,13 @@ public class NPC extends JButton
   
   public JSONArray          talk;
   
-  public NPC(int x, int y, int w, int h, String name, String sprite, double speed, boolean move, boolean look, int moveT, int lookT, Image i)
+  public NPCButton(int x, int y, int w, int h, int dir, String name, String sprite, double speed, boolean move, boolean look, int moveT, int lookT, Image i)
   {
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
+    this.dir = dir;
     this.moveT = moveT;
     this.lookT = lookT;
     this.move = move;
@@ -39,6 +40,7 @@ public class NPC extends JButton
     
     this.talk = new JSONArray();
     
+    setToolTipText("NPC: " + name);
     setIcon(new ImageIcon(i));
     setContentAreaFilled(false);
     setBounds(x, y, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1]);
@@ -53,6 +55,7 @@ public class NPC extends JButton
       data.put("y", y);
       data.put("w", w);
       data.put("h", h);
+      data.put("dir", dir);
       data.put("name", name);
       data.put("char", sprite);
       data.put("speed", speed);

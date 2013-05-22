@@ -37,11 +37,11 @@ public class NPC extends Creature
   String                       character;
   Vector[]                     playerTalkTo;
   
-  public NPC(int x, int y, int w, int h, String name, String c, double speed, boolean move, boolean look, int moveT, int lookT, int id, JSONArray talkdata)
+  public NPC(int x, int y, int w, int h, int d, String name, String c, double speed, boolean move, boolean look, int moveT, int lookT, int id, JSONArray talkdata)
   {
     super(x, y, w, h);
-    setName(name);
     character = c;
+    
     layer = CFG.PLAYERLAYER;
     frozen = false;
     randomMove = move;
@@ -51,10 +51,11 @@ public class NPC extends Creature
     massive = true;
     by = CFG.FIELDSIZE;
     bh = CFG.FIELDSIZE / 2;
-    dir = 0;
+    dir = d;
     ID = id;
     emoticon = null;
     
+    setName(name);
     setSpeed(speed);
     setTalkData(talkdata);
     setHostile(false);

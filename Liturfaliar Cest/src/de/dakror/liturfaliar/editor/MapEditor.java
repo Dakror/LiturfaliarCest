@@ -81,6 +81,17 @@ import de.dakror.universion.UniVersion;
 
 public class MapEditor
 {
+  
+  // -- NPC creation -- //
+  JComboBox<String> NPCsprite, NPCdir;
+  JDialog           NPCframe;
+  JTextField        NPCx, NPCy, NPCname;
+  JCheckBox         NPCmove, NPClook;
+  JLabel            NPCpreview;
+  JSpinner          NPCspeed, NPCmoveT, NPClookT;
+  JButton           NPCok;
+  
+  // -- global stuff -- //
   public JFrame     w;
   
   JMenuBar          menu;
@@ -92,14 +103,6 @@ public class MapEditor
   String            tileset;
   JButton           selectedtile;
   JDialog           bumpPreview;
-  
-  // -- NPC creation -- //
-  JDialog           NPCframe;
-  JTextField        NPCx, NPCy, NPCname;
-  JCheckBox         NPCrandom;
-  JLabel            NPCpreview;
-  JSpinner          NPCspeed, NPCrandspeed;
-  JComboBox<String> NPCsprite;
   
   // -- modes -- //
   boolean           gridmode;
@@ -828,7 +831,8 @@ public class MapEditor
       JSONArray tiles = new JSONArray();
       for (Component c : map.getComponents())
       {
-        tiles.put(((TileButton) c).getSave());
+        if (c instanceof TileButton)
+          tiles.put(((TileButton) c).getSave());
       }
       mapdata.put("npc", new JSONArray());
       mapdata.put("tile", tiles);
@@ -868,6 +872,24 @@ public class MapEditor
     label.setLabelFor(NPCy);
     p.add(NPCy);
     
+    label = new JLabel("Blickrichtung: ", JLabel.TRAILING);
+    p.add(label);
+    NPCdir = new JComboBox<String>(new String[] { "Unten", "Links", "Rechts", "Oben" });
+    NPCdir.addItemListener(new ItemListener()
+    {
+      
+      @Override
+      public void itemStateChanged(ItemEvent e)
+      {
+        if (e.getStateChange() == ItemEvent.SELECTED)
+        {
+          updateNPCDialogPreview();
+        }
+      }
+    });
+    label.setLabelFor(NPCdir);
+    p.add(NPCdir);
+    
     label = new JLabel("Name: ", JLabel.TRAILING);
     p.add(label);
     NPCname = new JTextField(15);
@@ -885,12 +907,7 @@ public class MapEditor
       {
         if (e.getStateChange() == ItemEvent.SELECTED)
         {
-          String sprite = e.getItem().toString();
-          BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + sprite + ".png");
-          NPCpreview.setPreferredSize(new Dimension(image.getWidth() / 4, image.getHeight() / 4));
-          NPCpreview.setIcon(new ImageIcon(image.getSubimage(0, 0, image.getWidth() / 4, image.getHeight() / 4)));
-          NPCframe.revalidate();
-          NPCframe.pack();
+          updateNPCDialogPreview();
         }
       }
     });
@@ -906,7 +923,7 @@ public class MapEditor
     label.setLabelFor(NPCpreview);
     p.add(NPCpreview);
     
-    label = new JLabel("Bewegungsgeschw.: ", JLabel.TRAILING);
+    label = new JLabel("Bewegungsgeschwindigkeit: ", JLabel.TRAILING);
     p.add(label);
     NPCspeed = new JSpinner(new SpinnerNumberModel(0.5, 0, 10, 0.1));
     label.setLabelFor(NPCspeed);
@@ -914,32 +931,64 @@ public class MapEditor
     
     label = new JLabel("zufällige Bewegung:", JLabel.TRAILING);
     p.add(label);
-    NPCrandom = new JCheckBox();
-    NPCrandom.addChangeListener(new ChangeListener()
+    NPCmove = new JCheckBox();
+    NPCmove.addChangeListener(new ChangeListener()
     {
       
       @Override
       public void stateChanged(ChangeEvent e)
       {
-        NPCrandspeed.setEnabled(((JCheckBox) e.getSource()).isSelected());
+        NPCmoveT.setEnabled(((JCheckBox) e.getSource()).isSelected());
       }
     });
-    label.setLabelFor(NPCrandom);
-    p.add(NPCrandom);
+    label.setLabelFor(NPCmove);
+    p.add(NPCmove);
     
-    label = new JLabel("Zufallsbew.-Interval. (ms):", JLabel.TRAILING);
+    label = new JLabel("Zufallsbewegung-Interval. (ms):", JLabel.TRAILING);
     p.add(label);
-    NPCrandspeed = new JSpinner(new SpinnerNumberModel(3000.0, 0, 1000000000, 100));
-    NPCrandspeed.setEnabled(false);
-    label.setLabelFor(NPCrandspeed);
-    p.add(NPCrandspeed);
+    NPCmoveT = new JSpinner(new SpinnerNumberModel(3000.0, 0, 1000000000, 100));
+    NPCmoveT.setEnabled(false);
+    label.setLabelFor(NPCmoveT);
+    p.add(NPCmoveT);
     
-    SpringUtilities.makeCompactGrid(p, 8, 2, 6, 6, 6, 6);
+    label = new JLabel("zufälliges Blicken:", JLabel.TRAILING);
+    p.add(label);
+    NPClook = new JCheckBox();
+    NPClook.addChangeListener(new ChangeListener()
+    {
+      
+      @Override
+      public void stateChanged(ChangeEvent e)
+      {
+        NPClookT.setEnabled(((JCheckBox) e.getSource()).isSelected());
+      }
+    });
+    label.setLabelFor(NPClook);
+    p.add(NPClook);
+    
+    label = new JLabel("Zufallsblicken-Interval. (ms):", JLabel.TRAILING);
+    p.add(label);
+    NPClookT = new JSpinner(new SpinnerNumberModel(3000.0, 0, 1000000000, 100));
+    NPClookT.setEnabled(false);
+    label.setLabelFor(NPClookT);
+    p.add(NPClookT);
+    
+    SpringUtilities.makeCompactGrid(p, 11, 2, 6, 6, 6, 6);
     
     NPCframe.setContentPane(p);
     NPCframe.pack();
     NPCframe.setVisible(true);
     NPCframe.setLocationRelativeTo(null);
+  }
+  
+  private void updateNPCDialogPreview()
+  {
+    String sprite = NPCsprite.getSelectedItem().toString();
+    BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + sprite + ".png");
+    NPCpreview.setPreferredSize(new Dimension(image.getWidth() / 4, image.getHeight() / 4));
+    NPCpreview.setIcon(new ImageIcon(image.getSubimage(0, image.getHeight() / 4 * NPCdir.getSelectedIndex(), image.getWidth() / 4, image.getHeight() / 4)));
+    NPCframe.revalidate();
+    NPCframe.pack();
   }
   
   public void addTile(Image icon, final int x, final int y, String t, int tx, int ty, double l, JSONObject data)
@@ -950,6 +999,8 @@ public class MapEditor
       {
         for (int i = 0; i < map.getComponentCount(); i++)
         {
+          if (!(map.getComponent(i) instanceof TileButton))
+            continue;
           TileButton b = (TileButton) map.getComponent(i);
           if (b.getBounds().intersects(x, y, CFG.FIELDSIZE, CFG.FIELDSIZE))
           {
@@ -1394,6 +1445,7 @@ public class MapEditor
       e.printStackTrace();
     }
   }
+  
   
   public void showCustomCursor(boolean show)
   {

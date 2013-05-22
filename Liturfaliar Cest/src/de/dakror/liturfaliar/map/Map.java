@@ -202,7 +202,7 @@ public class Map implements DatabaseEventListener
     {
       JSONObject o = npcs.getJSONObject(i);
       JSONObject random = o.getJSONObject("random");
-      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), i, o.getJSONArray("talk"));
+      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getInt("dir"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), i, o.getJSONArray("talk"));
       creatures.add(npc);
     }
   }
