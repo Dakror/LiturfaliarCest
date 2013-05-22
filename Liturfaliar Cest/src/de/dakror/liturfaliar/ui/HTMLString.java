@@ -8,15 +8,16 @@ import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import de.dakror.liturfaliar.Viewport;
-
 public class HTMLString
 {
   public int     style;
   public float   size;
   public Color   c;
   public String  string;
-  public int     w = 0;
+  
+  public int     w     = 0;
+  int            lineW = 0;
+  
   public boolean br;
   
   public HTMLString(String string, float size, Color c, int style)
@@ -123,18 +124,26 @@ public class HTMLString
     g.setColor(oldColor);
   }
   
-  public boolean drawStringAnimated(int x, int y, int speed, Graphics2D g, Viewport v)
+  public void drawStringAnimated(int x, int y, Graphics2D g)
   {
     Shape oldClip = g.getClip();
     FontMetrics fm = g.getFontMetrics(g.getFont().deriveFont(style, size));
     int h = fm.getHeight();
-    int w = fm.stringWidth(string);
-    if (this.w < w)
-      this.w += speed;
-    g.setClip(x, y - fm.getLeading() - fm.getMaxAscent(), this.w, h);
+    lineW = fm.stringWidth(string);
+    g.setClip(x, y - fm.getLeading() - fm.getMaxAscent(), w, h);
     drawString(x, y, g);
     g.setClip(oldClip);
-    return this.w > w - speed;
+    
+  }
+  
+  public boolean updateAnimatedString(int speed)
+  {
+    if (w < lineW)
+    {
+      w += speed;
+    }
+    
+    return w > lineW - speed;
   }
   
   public boolean equals(HTMLString o)

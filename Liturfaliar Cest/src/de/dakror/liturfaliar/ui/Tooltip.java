@@ -21,21 +21,21 @@ public class Tooltip extends Component
   public boolean visible;
   public String  tileset = "Tooltip";
   
-  public Tooltip(String raw, Component parent)
+  public Tooltip(String raw, Component p)
   {
-    super(parent.getX(), parent.getY(), 1, 1);
-    this.parent = parent;
-    this.visible = false;
-    this.rawText = raw;
-    this.text = HTMLString.decodeString(Database.filterString(raw));
+    super(p.getX(), p.getY(), 1, 1);
+    parent = p;
+    visible = false;
+    rawText = raw;
+    text = HTMLString.decodeString(Database.filterString(raw));
   }
   
   public void mouseMoved(MouseEvent e)
   {
-    if (this.parent.getArea().contains(e.getLocationOnScreen()))
+    if (parent.getArea().contains(e.getLocationOnScreen()))
     {
-      this.visible = true;
-      if (this.follow)
+      visible = true;
+      if (follow)
       {
         setX(e.getXOnScreen());
         setY(e.getYOnScreen());
@@ -43,7 +43,7 @@ public class Tooltip extends Component
     }
     else
     {
-      this.visible = false;
+      visible = false;
     }
   }
   
@@ -52,7 +52,7 @@ public class Tooltip extends Component
     if (getWidth() < 2)
     {
       int mostwidth = 1;
-      for (int i = 0; i < this.text.length; i++)
+      for (int i = 0; i < text.length; i++)
       {
         int width = getTotalLineWidth(i, g);
         if (width > mostwidth)
@@ -61,16 +61,16 @@ public class Tooltip extends Component
       setWidth(mostwidth + 32);
     }
     
-    if (this.visible)
+    if (visible)
     {
-      if (this.tileset != null)
+      if (tileset != null)
       {
-        setHeight(getHeightOfPreviousRows(this.text.length, g) + 32);
-        Assistant.stretchTileset(Viewport.loadImage("tileset/" + this.tileset + ".png"), getX(), getY(), getWidth() + 16 - (getWidth() % 16), getHeight(), g, v.w);
+        setHeight(getHeightOfPreviousRows(text.length, g) + 32);
+        Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), getX(), getY(), getWidth() + 16 - (getWidth() % 16), getHeight(), g, v.w);
       }
       else
       {
-        setHeight(getHeightOfPreviousRows(this.text.length, g) + 10);
+        setHeight(getHeightOfPreviousRows(text.length, g) + 10);
         Color oldColor = g.getColor();
         g.setColor(Color.decode("#222222"));
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
@@ -78,28 +78,28 @@ public class Tooltip extends Component
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
         g.setColor(oldColor);
       }
-      for (int i = 0; i < this.text.length; i++)
+      for (int i = 0; i < text.length; i++)
       {
         if (i > 0)
         {
-          Assistant.drawString(this.text[i].string, getX() + 16 + ((!this.text[i - 1].br) ? this.text[i - 1].getWidth(g) : 0), getY() + getHeightOfPreviousRows(i + 1, g), g, this.text[i].c, g.getFont().deriveFont(this.text[i].style, (int) this.text[i].size));
+          Assistant.drawString(text[i].string, getX() + 16 + ((!text[i - 1].br) ? text[i - 1].getWidth(g) : 0), getY() + getHeightOfPreviousRows(i + 1, g), g, text[i].c, g.getFont().deriveFont(text[i].style, (int) text[i].size));
         }
         else
         {
-          Assistant.drawString(this.text[i].string, getX() + 16, getY() + getHeightOfPreviousRows(i + 1, g), g, this.text[i].c, g.getFont().deriveFont(this.text[i].style, (int) this.text[i].size));
+          Assistant.drawString(text[i].string, getX() + 16, getY() + getHeightOfPreviousRows(i + 1, g), g, text[i].c, g.getFont().deriveFont(text[i].style, (int) text[i].size));
         }
       }
     }
-    this.text = HTMLString.decodeString(Database.filterString(this.rawText));
+    text = HTMLString.decodeString(Database.filterString(rawText));
   }
   
   private int getTotalLineWidth(int firstIndex, Graphics2D g)
   {
     int width = 0;
-    for (int i = firstIndex; i < this.text.length; i++)
+    for (int i = firstIndex; i < text.length; i++)
     {
-      width += this.text[i].getWidth(g);
-      if (this.text[i].br)
+      width += text[i].getWidth(g);
+      if (text[i].br)
         return width;
     }
     return width;
@@ -111,7 +111,7 @@ public class Tooltip extends Component
     for (int i = 0; i < index; i++)
     {
       // if (this.text[(i > 0) ? i - 1 : 0].br)
-      height += this.text[i].getHeight(g);
+      height += text[i].getHeight(g);
     }
     
     return height;
