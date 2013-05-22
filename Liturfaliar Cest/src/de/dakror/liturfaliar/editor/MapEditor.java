@@ -960,6 +960,7 @@ public class MapEditor
       }
       final TileButton tile = new TileButton(x, y, tx, ty, l, t, icon);
       tile.data = data;
+      tile.setEnabled(false);
       final JPopupMenu jpm = new JPopupMenu();
       JMenuItem init = new JMenuItem("Als Startfeld des Kartenpakets festlegen");
       init.addActionListener(new ActionListener()

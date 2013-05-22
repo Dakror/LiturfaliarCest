@@ -201,7 +201,8 @@ public class Map implements DatabaseEventListener
     for (int i = 0; i < npcs.length(); i++)
     {
       JSONObject o = npcs.getJSONObject(i);
-      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getString("name"), o.getString("char"), o.getDouble("speed"), o.getBoolean("rand"), o.getInt("randmd"), i, o.getJSONArray("talk"));
+      JSONObject random = o.getJSONObject("random");
+      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), i, o.getJSONArray("talk"));
       creatures.add(npc);
     }
   }
@@ -437,8 +438,10 @@ public class Map implements DatabaseEventListener
       c.mouseReleased(e, this);
     }
     
-    if (talk != null){
-      talk.mouseReleased(e, this);}
+    if (talk != null)
+    {
+      talk.mouseReleased(e, this);
+    }
   }
   
   public void mouseEntered(MouseEvent e)

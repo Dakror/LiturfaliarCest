@@ -47,6 +47,7 @@ public class TileButton extends JButton
     data = new JSONObject();
     // -- setup -- //
     setIcon(new ImageIcon(i));
+    setDisabledIcon(getIcon());
     setContentAreaFilled(false);
     setBounds(x, y, CFG.FIELDSIZE, CFG.FIELDSIZE);
     setToolTipText("Ebene: " + l);
@@ -146,9 +147,10 @@ public class TileButton extends JButton
   }
   
   @Override
-  public void paintComponent(Graphics g)
+  public void paint(Graphics g)
   {
-    super.paintComponent(g);
+    
+    super.paint(g);
     if (update)
     {
       image = new BufferedImage(CFG.FIELDSIZE, CFG.FIELDSIZE, BufferedImage.TYPE_INT_ARGB);
@@ -159,6 +161,7 @@ public class TileButton extends JButton
       update = false;
     }
     setIcon(new ImageIcon(image));
+    setDisabledIcon(getIcon());
     
   }
 }
