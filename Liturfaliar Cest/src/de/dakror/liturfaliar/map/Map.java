@@ -427,8 +427,7 @@ public class Map implements DatabaseEventListener
     {
       c.mousePressed(e, this);
     }
-    if (talk != null)
-      talk.mousePressed(e, this);
+    
   }
   
   public void mouseReleased(MouseEvent e)
@@ -437,6 +436,9 @@ public class Map implements DatabaseEventListener
     {
       c.mouseReleased(e, this);
     }
+    
+    if (talk != null){
+      talk.mouseReleased(e, this);}
   }
   
   public void mouseEntered(MouseEvent e)

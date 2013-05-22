@@ -1,7 +1,5 @@
 package de.dakror.liturfaliar;
 
-import java.io.File;
-
 import javax.swing.UIManager;
 
 import paulscode.sound.SoundSystem;
@@ -9,7 +7,6 @@ import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.codecs.CodecWav;
 import paulscode.sound.libraries.LibraryJavaSound;
 import de.dakror.liturfaliar.util.FileManager;
-import de.dakror.reporter.Reporter;
 import de.dakror.universion.UniVersion;
 
 public class LiturfaliarCest
@@ -18,7 +15,7 @@ public class LiturfaliarCest
   {
     UniVersion.init(LiturfaliarCest.class, CFG.VERSION, CFG.PHASE);
     FileManager.mk(null);
-    Reporter.init(new File(FileManager.dir, "Logs"));
+    // Reporter.init(new File(FileManager.dir, "Logs"));
     try
     {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

@@ -23,6 +23,7 @@ import de.dakror.liturfaliar.util.Database;
 public class Talk extends Component
 {
   public static final int SPEED        = 10;
+  public static final int LINEHEIGHT   = 30;
   
   boolean                 firstClickSkipped;
   boolean                 showAll;
@@ -158,9 +159,7 @@ public class Talk extends Component
       if (time == 0)
         time = System.currentTimeMillis();
       cay++;
-      
     }
-    
   }
   
   public void draw(Graphics2D g, Viewport v)
@@ -171,6 +170,9 @@ public class Talk extends Component
       setY(v.w.getHeight() / 16 * 13);
       setWidth(v.w.getWidth() / 3 * 2);
       setHeight(v.w.getHeight() / 16 * 3);
+      
+      lineMax = (int) Math.floor((getHeight() - 20 - nameLabel.getHeight(g)) / (double) LINEHEIGHT + 0.5D);
+      
       ArrayList<HTMLString[]> l = new ArrayList<HTMLString[]>();
       for (int i = 0; i < raw.length; i++)
       {
@@ -179,19 +181,6 @@ public class Talk extends Component
       lines = ((HTMLString[][]) l.toArray(new HTMLString[0][]));
     }
     
-    for (int i = 0; i < lines[perspective].length; i++)
-    {
-      if (getHeightOfPreviousRows(i + 1, g) > getHeight() - 20 - nameLabel.getHeight(g))
-      {
-        lineMax = i;
-        break;
-      }
-    }
-    
-    if (lineMax == 0)
-    {
-      lineMax += 1;
-    }
     
     Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
     
@@ -200,9 +189,19 @@ public class Talk extends Component
     
     for (int i = displayIndex; i < displayIndex + ((dif > lineMax) ? lineMax : dif); i++)
     {
-      if (i > 0)
-        lines[perspective][i].drawStringAnimated(getX() + 24 + (!lines[perspective][(i - 1)].br ? lines[perspective][(i - 1)].getWidth(g) : 0), getY() + nameLabel.getHeight(g) + getHeightOfPreviousRows(i + 1, g) - getHeightOfPreviousRows(displayIndex, g), g);
-      else lines[perspective][i].drawStringAnimated(getX() + 24, getY() + nameLabel.getHeight(g) + lines[perspective][i].getHeight(g), g);
+      try
+      {
+        if (i > 0)
+        {
+          lines[perspective][i].drawStringAnimated(getX() + 24 + (!lines[perspective][(i - 1)].br ? lines[perspective][(i - 1)].getWidth(g) : 0), getY() + nameLabel.getHeight(g) - 5 + LINEHEIGHT * (i + 1 - displayIndex), g);
+        }
+        else
+        {
+          lines[perspective][i].drawStringAnimated(getX() + 24, getY() + nameLabel.getHeight(g) + lines[perspective][i].getHeight(g) - 5, g);
+        }
+      }
+      catch (Exception e)
+      {}
     }
     
     if (speaker != null)
@@ -222,17 +221,6 @@ public class Talk extends Component
     }
   }
   
-  private int getHeightOfPreviousRows(int index, Graphics2D g)
-  {
-    int height = 0;
-    for (int i = 0; i < index; i++)
-    {
-      if (this.lines[this.perspective][0].br)
-        height += this.lines[this.perspective][i].getHeight(g) - 5;
-    }
-    return height;
-  }
-  
   public void mouseWheelMoved(MouseWheelEvent e)
   {}
   
@@ -245,38 +233,45 @@ public class Talk extends Component
   public void mouseClicked(MouseEvent e)
   {}
   
-  public void mousePressed(MouseEvent e, Map m)
+  public void mousePressed(MouseEvent e)
+  { 
+    
+  }
+  
+  public void mouseReleased(MouseEvent e, Map m)
   {
     if (!this.firstClickSkipped)
     {
       this.firstClickSkipped = true;
       return;
     }
-    if (!this.showAll && this.lines[this.perspective].length > this.lineMax)
-      this.showAll = true;
-    else if (this.displayIndex + this.lineMax < this.lines[this.perspective].length)
+    if (!partDone)
     {
-      this.showAll = false;
-      this.displayIndex += this.lineMax;
-    }
-    else if (this.perspective < this.perspectives.length - 1)
-    {
-      this.displayIndex = 0;
-      this.showAll = false;
-      this.perspective += 1;
-      findSpeaker();
+      showAll = true;
     }
     else
     {
-      this.by.setTalking(false);
-      this.by.frozen = false;
-      m.talk = null;
-      Database.setBooleanVar("talked_" + this.ID, Boolean.valueOf(true));
+      if (lines[perspective].length > displayIndex + 1)
+      {
+        showAll = false;
+        displayIndex += lineMax;
+      }
+      else if (perspective + 1 < perspectives.length)
+      {
+        displayIndex = 0;
+        showAll = false;
+        perspective += 1;
+        findSpeaker();
+      }
+      else
+      {
+        by.setTalking(false);
+        by.frozen = false;
+        m.talk = null;
+        Database.setBooleanVar("talked_" + ID, Boolean.valueOf(true));
+      }
     }
   }
-  
-  public void mouseReleased(MouseEvent e)
-  {}
   
   public void mouseEntered(MouseEvent e)
   {}
@@ -293,7 +288,8 @@ public class Talk extends Component
   public void keyPressed(KeyEvent e)
   {}
   
+  
   @Override
-  public void mousePressed(MouseEvent e)
+  public void mouseReleased(MouseEvent e)
   {}
 }
