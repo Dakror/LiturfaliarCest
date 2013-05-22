@@ -82,7 +82,7 @@ public class Tooltip extends Component
       {
         if (i > 0)
         {
-          Assistant.drawString(text[i].string, getX() + 16 + ((!text[i - 1].br) ? text[i - 1].getWidth(g) : 0), getY() + getHeightOfPreviousRows(i + 1, g), g, text[i].c, g.getFont().deriveFont(text[i].style, (int) text[i].size));
+          Assistant.drawString(text[i].string, getX() + 16 + ((!text[i - 1].br) ? text[i - 1].getWidth(g) : 0), getY() + getHeightOfPreviousRows(i + ((!text[i - 1].br) ? 0 : 1), g), g, text[i].c, g.getFont().deriveFont(text[i].style, (int) text[i].size));
         }
         else
         {
