@@ -20,15 +20,20 @@ import de.dakror.liturfaliar.util.Vector;
 public class Creature implements MapEventListener
 {
   public static final int[] DIRS = { 3, 2, 0, 1 };
-  public int                bw, bh, bx, by;
-  protected int             w, h;
-  protected boolean         massive;
-  public boolean            frozen;
-  protected int             dir;
-  protected double          layer;
+  
   private double            speed;
+  
+  public int                bw, bh, bx, by;
+  public boolean            frozen;
+  
+  protected int             w, h;
+  protected int             dir;
+  protected boolean         massive;
+  protected double          layer;
+  
   protected Vector          lastPos, pos, goTo;
   protected Emoticon        emoticon;
+  
   
   public Creature(int x, int y, int w, int h)
   {

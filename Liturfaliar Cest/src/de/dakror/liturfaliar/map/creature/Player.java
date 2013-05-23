@@ -20,14 +20,17 @@ import de.dakror.liturfaliar.util.Vector;
 
 public class Player extends Creature
 {
-  // ========================================up=====left===right==down
-  boolean[]          dirs                = { false, false, false, false };
+  private boolean    init                = true;
+  
   private JSONObject data;
+  
+  // ========================================up=====left===right==down== //
+  boolean[]          dirs                = { false, false, false, false };
   Vector             lastPos;
   Vector             relPos;
+  
   public boolean     preventTargetChoose = false;
   public int         dirAfterReachedGoal = -1;
-  private boolean    init                = true;
   
   public Player(JSONObject save, Window w)
   {

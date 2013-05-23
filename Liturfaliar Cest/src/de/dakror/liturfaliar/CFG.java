@@ -8,7 +8,7 @@ import java.awt.Point;
  * @author Dakror
  */
 public final class CFG
-{ 
+{
   // -- UniVersion -- //
   public static final int      VERSION           = 2013051212;
   public static final int      PHASE             = 0;
@@ -38,7 +38,7 @@ public final class CFG
   public final static int      TILES             = 123;
   
   
-  public static final int MALUS = 3;
+  public static final int      MALUS             = 3;
   public final static int[]    HUMANBOUNDS       = { FIELDSIZE - MALUS, FIELDSIZE * 3 / 2 - MALUS };
   public static Point          MAPCENTER         = new Point(0, 0);
   

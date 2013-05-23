@@ -83,7 +83,7 @@ import de.dakror.universion.UniVersion;
 public class MapEditor
 {
   
-  // -- NPC creation -- //
+  // -- NPC dialog -- //
   JComboBox<String> NPCsprite, NPCdir;
   JDialog           NPCframe;
   JTextField        NPCx, NPCy, NPCname;
@@ -91,6 +91,16 @@ public class MapEditor
   JLabel            NPCpreview;
   JSpinner          NPCspeed, NPCmoveT, NPClookT;
   JButton           NPCok;
+  
+  // -- talk dialog -- //
+  JDialog           talkFrame;
+  JColorSlider      talkColorSlider;
+  JScrollPane       talkScrollPane;
+  JPanel            talkPanel;
+  JTextField        talkCond, talkText;
+  
+  final int         talkComponentWidth  = 585;
+  final int         talkComponentHeight = 60;
   
   // -- global stuff -- //
   public JFrame     w;
@@ -802,6 +812,11 @@ public class MapEditor
         bi.getGraphics().drawImage(Viewport.loadImage("Tiles/" + o.getString("tileset") + ".png"), 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, o.getInt("tx") * CFG.FIELDSIZE, o.getInt("ty") * CFG.FIELDSIZE, o.getInt("tx") * CFG.FIELDSIZE + CFG.FIELDSIZE, o.getInt("ty") * CFG.FIELDSIZE + CFG.FIELDSIZE, null);
         addTile(bi, o.getInt("x"), o.getInt("y"), o.getString("tileset"), o.getInt("tx"), o.getInt("ty"), o.getDouble("l"), o.getJSONObject("data"));
       }
+      JSONArray npcs = mapdata.getJSONArray("npc");
+      for (int i = 0; i < npcs.length(); i++)
+      {
+        addNPC(npcs.getJSONObject(i));
+      }
       msp.setViewportView(map);
       fmenu.setEnabled(true);
       omenu.setEnabled(true);
@@ -864,6 +879,7 @@ public class MapEditor
     if (NPCframe == null)
     {
       NPCframe = new JDialog(w);
+      NPCframe.setTitle("NPC-Bearbeitung");
       NPCframe.addWindowListener(new WindowAdapter()
       {
         @Override
@@ -1042,7 +1058,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        addNPC();
+        addNPC(null);
       }
     });
     p.add(NPCok);
@@ -1053,6 +1069,63 @@ public class MapEditor
     NPCframe.pack();
     NPCframe.setVisible(true);
     NPCframe.setLocationRelativeTo(null);
+  }
+  
+  public void showTalkDialog(NPCButton npc)
+  {
+    talkFrame = new JDialog(w);
+    talkFrame.setTitle("Talk-Bearbeitung");
+    talkFrame.setResizable(false);
+    talkFrame.setAlwaysOnTop(true);
+    talkFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    
+    JPanel p = new JPanel(new FlowLayout());
+    p.setPreferredSize(new Dimension(600, 400));
+    talkPanel = new JPanel();
+    talkPanel.setPreferredSize(new Dimension(600, 0));
+    talkPanel.setLayout(null);
+    talkScrollPane = new JScrollPane(talkPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    talkScrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.gray));
+    talkScrollPane.setPreferredSize(new Dimension(600, 240));
+    p.add(talkScrollPane);
+    
+    talkColorSlider = new JColorSlider();
+    talkColorSlider.setPreferredSize(new Dimension(600, 150));
+    p.add(talkColorSlider);
+    
+    talkFrame.setContentPane(p);
+    talkFrame.pack();
+    talkFrame.setLocationRelativeTo(null);
+    
+    addTalkComponent(null);
+    
+    talkFrame.setVisible(true);
+  }
+  
+  private void addTalkComponent(JSONObject data)
+  {
+    JPanel p = new JPanel(new SpringLayout());
+    if (talkPanel.getComponentCount() > 0)
+      p.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.gray));
+    JLabel label = new JLabel("Bedingungen: ", JLabel.TRAILING);
+    p.add(label);
+    talkCond = new JTextField();
+    label.setLabelFor(talkCond);
+    p.add(talkCond);
+    
+    label = new JLabel("Text: ", JLabel.TRAILING);
+    p.add(label);
+    talkText = new JTextField();
+    label.setLabelFor(talkText);
+    p.add(talkText);
+    
+    p.setBounds(0, talkPanel.getComponentCount() * talkComponentHeight, talkComponentWidth, talkComponentHeight);
+    SpringUtilities.makeCompactGrid(p, 2, 2, 6, 6, 6, 6);
+    
+    
+    talkPanel.setPreferredSize(new Dimension(600, talkPanel.getPreferredSize().height + talkComponentHeight));
+    talkPanel.add(p);
+    
   }
   
   private void updateNPCDialogPreview()
@@ -1071,12 +1144,21 @@ public class MapEditor
     NPCy.setText((y - 16) + "");
   }
   
-  public void addNPC()
+  public void addNPC(JSONObject data)
   {
     try
     {
       final JPopupMenu jpm = new JPopupMenu();
-      final NPCButton npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getWidth() - CFG.MALUS, NPCpreview.getHeight() - CFG.MALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage());
+      NPCButton npc;
+      if (data == null)
+        npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getWidth() - CFG.MALUS, NPCpreview.getHeight() - CFG.MALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage());
+      else
+      {
+        BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + data.getString("char") + ".png");
+        npc = new NPCButton(data.getInt("x"), data.getInt("y"), data.getInt("w"), data.getInt("h"), data.getInt("dir"), data.getString("name"), data.getString("char"), data.getDouble("speed"), data.getJSONObject("random").getBoolean("move"), data.getJSONObject("random").getBoolean("look"), data.getJSONObject("random").getInt("moveT"), data.getJSONObject("random").getInt("lookT"), image.getSubimage(0, data.getInt("dir") * image.getHeight() / 4, image.getWidth() / 4, image.getHeight() / 4));
+      }
+      final NPCButton fNPC = npc;
+      
       JMenuItem edit = new JMenuItem(new AbstractAction("Bearbeiten")
       {
         private static final long serialVersionUID = 1L;
@@ -1084,10 +1166,34 @@ public class MapEditor
         @Override
         public void actionPerformed(ActionEvent e)
         {
-          showNPCDialog(npc);
+          showNPCDialog(fNPC);
         }
       });
       jpm.add(edit);
+      
+      JMenuItem tedit = new JMenuItem(new AbstractAction("Talk bearbeiten")
+      {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          showTalkDialog(fNPC);
+        }
+      });
+      jpm.add(tedit);
+      
+      JMenuItem del = new JMenuItem(new AbstractAction("Löschen")
+      {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          map.remove(fNPC);
+        }
+      });
+      jpm.add(del);
       npc.addMouseListener(new MouseAdapter()
       {
         @Override
@@ -1102,6 +1208,7 @@ public class MapEditor
     }
     catch (Exception e)
     {
+      e.printStackTrace();
       JOptionPane.showMessageDialog(NPCframe, "Bitte alle Felder korrekt ausfüllen!", "NPC-Ertellung", JOptionPane.ERROR_MESSAGE);
     }
   }

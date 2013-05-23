@@ -36,17 +36,20 @@ import de.dakror.liturfaliar.util.FileManager;
 public class Map implements DatabaseEventListener
 {
   private int                         x, y, height, width;
+  
   private BufferedImage               lrender;
   private BufferedImage               hrender;
-  public ArrayList<Field>             fields;
-  public ArrayList<Creature>          creatures;
   private Area                        bump;
   private JSONObject                  data;
-  public float                        alpha;
-  public Talk                         talk;
   private MapPack                     mappack;
   private ArrayList<MapEventListener> listeners  = new ArrayList<MapEventListener>();
   private ArrayList<Animation>        animations = new ArrayList<Animation>();
+  
+  public float                        alpha;
+  
+  public ArrayList<Field>             fields;
+  public ArrayList<Creature>          creatures;
+  public Talk                         talk;
   
   public Map(JSONObject data)
   {

@@ -62,7 +62,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public boolean                        INTERNET;
   public HashMap<String, OVScene>       ovscenes       = new HashMap<String, OVScene>();
   public JSONObject                     savegame;
-  public static Notification                   notification;
+  public static Notification            notification;
   public Scene                          scene;
   public SoundSystem                    ss;
   public String                         MusicEffectID;

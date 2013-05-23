@@ -19,6 +19,7 @@ public class Field implements MapEventListener
   int           x;
   int           y;
   double        l;
+  
   String        tileset;
   BufferedImage i;
   FieldData[]   datas;

@@ -110,8 +110,8 @@ public class Tooltip extends Component
     int height = 0;
     for (int i = 0; i < index; i++)
     {
-      // if (this.text[(i > 0) ? i - 1 : 0].br)
-      height += text[i].getHeight(g);
+      if (this.text[(i > 0) ? i - 1 : 0].br || index == 1)
+        height += text[i].getHeight(g);
     }
     
     return height;
