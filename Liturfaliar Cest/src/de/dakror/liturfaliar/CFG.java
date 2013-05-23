@@ -37,7 +37,9 @@ public final class CFG
   public final static int      ANIMATIONS        = 59;
   public final static int      TILES             = 123;
   
-  public final static int[]    HUMANBOUNDS       = { FIELDSIZE - 3, FIELDSIZE * 3 / 2 - 3 };
+  
+  public static final int MALUS = 3;
+  public final static int[]    HUMANBOUNDS       = { FIELDSIZE - MALUS, FIELDSIZE * 3 / 2 - MALUS };
   public static Point          MAPCENTER         = new Point(0, 0);
   
   /* Unused music files: "001-Battle01", "002-Battle02", "003-Battle03", "004-Battle04", "005-Boss01", "006-Boss02", "007-Boss03", "008-Boss04", "009-LastBoss01", "010-LastBoss02", "011-LastBoss03", "012-Theme01", "014-Theme03", "015-Theme04", "016-Theme05", "017-Theme06", "018-Field01", "019-Field02", "020-Field03", "021-Field04", "022-Field05", "023-Town01", "024-Town02","026-Town04", "027-Town05", "028-Town06", "029-Town07", "030-Town08", "031-Castle01", "032-Church01", "033-Ship01", "034-Heaven01", "035-Dungeon01", "036-Dungeon02", "037-Dungeon03", "038-Dungeon04", "039-Dungeon05", "040-Dungeon06", "041-Dungeon07", "042-Dungeon08", "043-Positive01", "044-Positive02", "045-Positive03", "046-Positive04", "047-Positive05", "048-Positive06", "049-Positive07", "050-Positive08", "051-Positive09", "052-Negative01", "053-Negative02", "054-Negative03", "055-Negative04", "056-Negative05", "057-Negative06", "058-Slow01", "059-Slow02", "060-Slow03", "061-Slow04", "062-Slow05", "063-Slow06", "064-Slow07" */

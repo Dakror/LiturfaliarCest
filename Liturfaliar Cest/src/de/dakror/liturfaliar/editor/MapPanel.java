@@ -5,12 +5,12 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-import javax.swing.JPanel;
+import javax.swing.JLayeredPane;
 
 import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.util.Assistant;
 
-public class MapPanel extends JPanel
+public class MapPanel extends JLayeredPane
 {
   private static final long serialVersionUID = 1L;
   MapEditor                 me;

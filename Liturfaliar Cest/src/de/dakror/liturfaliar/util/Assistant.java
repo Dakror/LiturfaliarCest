@@ -283,7 +283,17 @@ public final class Assistant
     g.drawImage(img, x + w - 32, y + h - 32, x + w, y + h, 64, 64, 96, 96, win);
   }
   
-  public static void drawChar(int x, int y, int w, int h, int dir, int frame, JSONObject cfg, Graphics2D g, Window window, boolean ch)
+  public static void drawChar(
+      int x,
+      int y,
+      int w,
+      int h,
+      int dir,
+      int frame,
+      JSONObject cfg,
+      Graphics2D g,
+      Window window,
+      boolean ch)
   {
     try
     {
@@ -300,7 +310,18 @@ public final class Assistant
     }
   }
   
-  public static void drawChar(int x, int y, int w, int h, int dir, int frame, String type, String image, Graphics2D g, Window window, boolean ch)
+  public static void drawChar(
+      int x,
+      int y,
+      int w,
+      int h,
+      int dir,
+      int frame,
+      String type,
+      String image,
+      Graphics2D g,
+      Window window,
+      boolean ch)
   {
     Image i = Viewport.loadImage("char/" + type + "/" + image + ".png");
     int sw = i.getWidth(null) / 4;

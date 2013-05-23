@@ -42,6 +42,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -98,7 +99,8 @@ public class MapEditor
   JMenu             mpmenu, mmenu, fmenu, omenu;
   Viewport          v;
   JSONObject        mappackdata, mapdata;
-  JPanel            tiles, map;
+  JPanel            tiles;
+  JLayeredPane      map;
   JScrollPane       msp;
   String            tileset;
   JButton           selectedtile;
@@ -263,17 +265,16 @@ public class MapEditor
     });
     fmenu.add(madj);
     fmenu.addSeparator();
-    JCheckBoxMenuItem fnpc = new JCheckBoxMenuItem(new AbstractAction("NPC-Bearbeitung")
+    JMenuItem fnpc = new JMenuItem(new AbstractAction("NPC-Bearbeitung")
     {
       private static final long serialVersionUID = 1L;
       
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        showNPCDialog(((JCheckBoxMenuItem) e.getSource()).getState());
+        showNPCDialog(null);
       }
     });
-    fnpc.setState(false);
     fmenu.add(fnpc);
     fmenu.setEnabled(false);
     menu.add(fmenu);
@@ -464,6 +465,7 @@ public class MapEditor
     
     map = new MapPanel(this);
     map.setLayout(null);
+    map.setOpaque(true);
     map.setBackground(Color.black);
     map.setPreferredSize(new Dimension(w.getWidth() / 8 * 7, w.getHeight() / 5 * 4 + 132));
     map.addMouseListener(new MouseListener()
@@ -492,7 +494,7 @@ public class MapEditor
           }
           else if (NPCframe != null)
           {
-            addNPC(e.getX(), e.getY());
+            updateNPCCoords(e.getX(), e.getY());
           }
         }
       }
@@ -827,14 +829,26 @@ public class MapEditor
     {
       File f = new File(FileManager.dir, "myMaps/" + mappackdata.getString("name") + "/maps/" + mapdata.getString("name") + ".map");
       if (!f.exists())
+      {
         f.createNewFile();
+      }
+      
       JSONArray tiles = new JSONArray();
+      JSONArray npcs = new JSONArray();
+      
       for (Component c : map.getComponents())
       {
         if (c instanceof TileButton)
+        {
           tiles.put(((TileButton) c).getSave());
+        }
+        else if (c instanceof NPCButton)
+        {
+          npcs.put(((NPCButton) c).getSave());
+        }
       }
-      mapdata.put("npc", new JSONArray());
+      
+      mapdata.put("npc", npcs);
       mapdata.put("tile", tiles);
       Compressor.compressFile(f, mapdata.toString());
     }
@@ -844,37 +858,54 @@ public class MapEditor
     }
   }
   
-  public void showNPCDialog(boolean show)
+  public void showNPCDialog(NPCButton exist)
   {
-    if (!show && NPCframe != null && !NPCframe.isVisible())
+    
+    if (NPCframe == null)
     {
-      NPCframe.dispose();
-      NPCframe = null;
-      return;
+      NPCframe = new JDialog(w);
+      NPCframe.addWindowListener(new WindowAdapter()
+      {
+        @Override
+        public void windowClosed(WindowEvent e)
+        {
+          NPCframe = null;
+          w.setCursor(Cursor.getDefaultCursor());
+        }
+      });
+      NPCframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+      NPCframe.setAlwaysOnTop(true);
+      NPCframe.setResizable(false);
     }
-    NPCframe = new JDialog(w);
-    
-    NPCframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    NPCframe.setAlwaysOnTop(true);
-    NPCframe.setResizable(false);
-    
     JPanel p = new JPanel(new SpringLayout());
     
     JLabel label = new JLabel("X-Position: ", JLabel.TRAILING);
     p.add(label);
     NPCx = new JTextField(15);
+    if (exist != null)
+    {
+      NPCx.setText(exist.x + "");
+    }
     label.setLabelFor(NPCx);
     p.add(NPCx);
     
     label = new JLabel("Y-Position: ", JLabel.TRAILING);
     p.add(label);
     NPCy = new JTextField(15);
+    if (exist != null)
+    {
+      NPCy.setText(exist.y + "");
+    }
     label.setLabelFor(NPCy);
     p.add(NPCy);
     
     label = new JLabel("Blickrichtung: ", JLabel.TRAILING);
     p.add(label);
     NPCdir = new JComboBox<String>(new String[] { "Unten", "Links", "Rechts", "Oben" });
+    if (exist != null)
+    {
+      NPCdir.setSelectedIndex(exist.dir);
+    }
     NPCdir.addItemListener(new ItemListener()
     {
       
@@ -893,15 +924,26 @@ public class MapEditor
     label = new JLabel("Name: ", JLabel.TRAILING);
     p.add(label);
     NPCname = new JTextField(15);
+    if (exist != null)
+    {
+      NPCname.setText(exist.name);
+    }
     label.setLabelFor(NPCname);
     p.add(NPCname);
     
     label = new JLabel("Sprite: ", JLabel.TRAILING);
     p.add(label);
     NPCsprite = new JComboBox<String>(NPC.CHARS);
+    if (exist != null)
+    {
+      NPCsprite.setSelectedItem(exist.sprite);
+    }
+    else
+    {
+      NPCsprite.setSelectedIndex(0);
+    }
     NPCsprite.addItemListener(new ItemListener()
     {
-      
       @Override
       public void itemStateChanged(ItemEvent e)
       {
@@ -911,7 +953,6 @@ public class MapEditor
         }
       }
     });
-    NPCsprite.setSelectedIndex(0);
     label.setLabelFor(NPCsprite);
     p.add(NPCsprite);
     
@@ -919,19 +960,27 @@ public class MapEditor
     p.add(label);
     NPCpreview = new JLabel();
     NPCpreview.setPreferredSize(new Dimension(32, 48));
-    NPCpreview.setIcon(new ImageIcon(((BufferedImage) Viewport.loadImage("char/chars/" + NPCsprite.getItemAt(0) + ".png")).getSubimage(0, 0, 32, 48)));
+    updateNPCDialogPreview();
     label.setLabelFor(NPCpreview);
     p.add(NPCpreview);
     
     label = new JLabel("Bewegungsgeschwindigkeit: ", JLabel.TRAILING);
     p.add(label);
     NPCspeed = new JSpinner(new SpinnerNumberModel(0.5, 0, 10, 0.1));
+    if (exist != null)
+    {
+      NPCspeed.setValue(exist.speed);
+    }
     label.setLabelFor(NPCspeed);
     p.add(NPCspeed);
     
     label = new JLabel("zufällige Bewegung:", JLabel.TRAILING);
     p.add(label);
     NPCmove = new JCheckBox();
+    if (exist != null)
+    {
+      NPCmove.setSelected(exist.move);
+    }
     NPCmove.addChangeListener(new ChangeListener()
     {
       
@@ -946,14 +995,22 @@ public class MapEditor
     
     label = new JLabel("Zufallsbewegung-Interval. (ms):", JLabel.TRAILING);
     p.add(label);
-    NPCmoveT = new JSpinner(new SpinnerNumberModel(3000.0, 0, 1000000000, 100));
-    NPCmoveT.setEnabled(false);
+    NPCmoveT = new JSpinner(new SpinnerNumberModel(3000, 0, 1000000000, 100));
+    if (exist != null)
+    {
+      NPCmoveT.setValue(exist.moveT);
+    }
+    NPCmoveT.setEnabled(NPCmove.isSelected());
     label.setLabelFor(NPCmoveT);
     p.add(NPCmoveT);
     
     label = new JLabel("zufälliges Blicken:", JLabel.TRAILING);
     p.add(label);
     NPClook = new JCheckBox();
+    if (exist != null)
+    {
+      NPClook.setSelected(exist.look);
+    }
     NPClook.addChangeListener(new ChangeListener()
     {
       
@@ -968,12 +1025,29 @@ public class MapEditor
     
     label = new JLabel("Zufallsblicken-Interval. (ms):", JLabel.TRAILING);
     p.add(label);
-    NPClookT = new JSpinner(new SpinnerNumberModel(3000.0, 0, 1000000000, 100));
-    NPClookT.setEnabled(false);
+    NPClookT = new JSpinner(new SpinnerNumberModel(3000, 0, 1000000000, 100));
+    if (exist != null)
+    {
+      NPClookT.setValue(exist.lookT);
+    }
+    NPClookT.setEnabled(NPClook.isSelected());
     label.setLabelFor(NPClookT);
     p.add(NPClookT);
     
-    SpringUtilities.makeCompactGrid(p, 11, 2, 6, 6, 6, 6);
+    
+    p.add(new JLabel());
+    NPCok = new JButton("Platzieren");
+    NPCok.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        addNPC();
+      }
+    });
+    p.add(NPCok);
+    
+    SpringUtilities.makeCompactGrid(p, 12, 2, 6, 6, 6, 6);
     
     NPCframe.setContentPane(p);
     NPCframe.pack();
@@ -989,6 +1063,47 @@ public class MapEditor
     NPCpreview.setIcon(new ImageIcon(image.getSubimage(0, image.getHeight() / 4 * NPCdir.getSelectedIndex(), image.getWidth() / 4, image.getHeight() / 4)));
     NPCframe.revalidate();
     NPCframe.pack();
+  }
+  
+  private void updateNPCCoords(int x, int y)
+  {
+    NPCx.setText(x + "");
+    NPCy.setText((y - 16) + "");
+  }
+  
+  public void addNPC()
+  {
+    try
+    {
+      final JPopupMenu jpm = new JPopupMenu();
+      final NPCButton npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getWidth() - CFG.MALUS, NPCpreview.getHeight() - CFG.MALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage());
+      JMenuItem edit = new JMenuItem(new AbstractAction("Bearbeiten")
+      {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          showNPCDialog(npc);
+        }
+      });
+      jpm.add(edit);
+      npc.addMouseListener(new MouseAdapter()
+      {
+        @Override
+        public void mousePressed(MouseEvent e)
+        {
+          if (e.getButton() == 3)
+            jpm.show(e.getComponent(), e.getX(), e.getY());
+        }
+      });
+      map.add(npc, JLayeredPane.PALETTE_LAYER);
+      msp.setViewportView(map);
+    }
+    catch (Exception e)
+    {
+      JOptionPane.showMessageDialog(NPCframe, "Bitte alle Felder korrekt ausfüllen!", "NPC-Ertellung", JOptionPane.ERROR_MESSAGE);
+    }
   }
   
   public void addTile(Image icon, final int x, final int y, String t, int tx, int ty, double l, JSONObject data)
@@ -1138,7 +1253,7 @@ public class MapEditor
             }
             else if (NPCframe != null)
             {
-              addNPC(e.getX() + src.getX(), e.getY() + src.getY());
+              updateNPCCoords(e.getX() + src.getX(), e.getY() + src.getY());
             }
           }
           if (e.getButton() == 3 && deletemode)
@@ -1169,7 +1284,7 @@ public class MapEditor
       });
       if (mapdata == null)
         return;
-      map.add(tile);
+      map.add(tile, JLayeredPane.DEFAULT_LAYER);
       msp.setViewportView(map);
       map.setComponentZOrder(tile, 0);
     }
@@ -1179,12 +1294,6 @@ public class MapEditor
       return;
     }
     cachelayer = 0;
-  }
-  
-  public void addNPC(int x, int y)
-  {
-    NPCx.setText(x + "");
-    NPCy.setText(y + "");
   }
   
   public void editFieldData(final TileButton field, final String dataType)
@@ -1446,7 +1555,6 @@ public class MapEditor
     }
   }
   
-  
   public void showCustomCursor(boolean show)
   {
     if (!show && (selectedtile != null || NPCframe != null))
@@ -1459,7 +1567,6 @@ public class MapEditor
       w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(getTileImage(), new Point(CFG.FIELDSIZE / 2, CFG.FIELDSIZE / 2), "tile"));
     
     if (NPCframe != null)
-      w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(((BufferedImage) ((ImageIcon) NPCpreview.getIcon()).getImage()).getSubimage(0, 16, 32, 32), new Point(16, 31), "npc"));
-    
+      w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(((BufferedImage) ((ImageIcon) NPCpreview.getIcon()).getImage()).getSubimage(0, 16, 32, 32), new Point(0, 0), "npc"));
   }
 }

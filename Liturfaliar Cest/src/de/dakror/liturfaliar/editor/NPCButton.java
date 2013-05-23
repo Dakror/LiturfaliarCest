@@ -9,17 +9,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.liturfaliar.CFG;
-
 public class NPCButton extends JButton
 {
   private static final long serialVersionUID = 1L;
   
-  private int               x, y, w, h, dir, moveT, lookT;
-  private String            name, sprite;
-  private double            speed;
-  private boolean           move;
-  private boolean           look;
+  public int                x, y, w, h, dir, moveT, lookT;
+  public String             name, sprite;
+  public double             speed;
+  public boolean            move;
+  public boolean            look;
   
   public JSONArray          talk;
   
@@ -43,10 +41,10 @@ public class NPCButton extends JButton
     setToolTipText("NPC: " + name);
     setIcon(new ImageIcon(i));
     setContentAreaFilled(false);
-    setBounds(x, y, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1]);
+    setBounds(x, y, w, h);
   }
   
-  public JSONObject getData()
+  public JSONObject getSave()
   {
     JSONObject data = new JSONObject();
     try
