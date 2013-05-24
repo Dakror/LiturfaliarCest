@@ -17,6 +17,7 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.HashMap;
@@ -141,10 +142,15 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
         e.printStackTrace();
       }
     }
-    for (String ovscene : ovscenes.keySet())
+    try
     {
-      ovscenes.get(ovscene).draw(g);
+      for (String ovscene : ovscenes.keySet())
+      {
+        ovscenes.get(ovscene).draw(g);
+      }
     }
+    catch (Exception e)
+    {}
     if (notification != null)
     {
       notification.draw(g, w);
@@ -168,13 +174,27 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     initialized = false;
     pause();
     pausedfromscene = true;
-    ovscenes.clear();
+    
+    clearOVScenes();
+    
     HelpOverlay.clear();
     scene = s;
     scene.init(this);
     Handler.addListener(s);
     initialized = true;
     Assistant.setCursor(Viewport.loadImage("system/cursor.png"), w);
+  }
+  
+  public void clearOVScenes()
+  {
+    ArrayList<String> keys = new ArrayList<String>(ovscenes.keySet());
+    HashMap<String, OVScene> newov = new HashMap<String, OVScene>();
+    for (int i = 0; i < ovscenes.size(); i++)
+    {
+      if (ovscenes.get(keys.get(i)).consistent)
+        newov.put(keys.get(i), ovscenes.get(keys.get(i)));
+    }
+    ovscenes = newov;
   }
   
   public void addOVScene(OVScene scene, String name)

@@ -52,6 +52,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -97,10 +98,10 @@ public class MapEditor
   JColorSlider      talkColorSlider;
   JScrollPane       talkScrollPane;
   JPanel            talkPanel;
-  JTextField        talkCond, talkText;
+  JButton           talkAdd, talkOk;
   
   final int         talkComponentWidth  = 585;
-  final int         talkComponentHeight = 60;
+  final int         talkComponentHeight = 100;
   
   // -- global stuff -- //
   public JFrame     w;
@@ -782,7 +783,7 @@ public class MapEditor
       map.removeAll();
       msp.setViewportView(map);
       selectedtile = null;
-      mapdata = new JSONObject(Compressor.decompressFile(new File(FileManager.dir, "myMaps/" + mappackdata.getString("name") + "/maps/" + m + ".map")));
+      mapdata = Compressor.openMap(new File(FileManager.dir, "myMaps/" + mappackdata.getString("name") + "/maps/" + m + ".map"));
       ArrayList<JSONObject> tiles = Assistant.JSONArrayToArray(mapdata.getJSONArray("tile"));
       Collections.sort(tiles, new Comparator<JSONObject>()
       {
@@ -843,10 +844,6 @@ public class MapEditor
     try
     {
       File f = new File(FileManager.dir, "myMaps/" + mappackdata.getString("name") + "/maps/" + mapdata.getString("name") + ".map");
-      if (!f.exists())
-      {
-        f.createNewFile();
-      }
       
       JSONArray tiles = new JSONArray();
       JSONArray npcs = new JSONArray();
@@ -865,7 +862,7 @@ public class MapEditor
       
       mapdata.put("npc", npcs);
       mapdata.put("tile", tiles);
-      Compressor.compressFile(f, mapdata.toString());
+      Compressor.saveMap(f, mapdata);
     }
     catch (Exception e)
     {
@@ -873,7 +870,7 @@ public class MapEditor
     }
   }
   
-  public void showNPCDialog(NPCButton exist)
+  public void showNPCDialog(final NPCButton exist)
   {
     
     if (NPCframe == null)
@@ -1058,7 +1055,9 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        addNPC(null);
+        if (exist != null)
+          map.remove(exist);
+        showNPCDialog(addNPC(null));
       }
     });
     p.add(NPCok);
@@ -1071,7 +1070,7 @@ public class MapEditor
     NPCframe.setLocationRelativeTo(null);
   }
   
-  public void showTalkDialog(NPCButton npc)
+  public void showTalkDialog(final NPCButton npc)
   {
     talkFrame = new JDialog(w);
     talkFrame.setTitle("Talk-Bearbeitung");
@@ -1080,22 +1079,95 @@ public class MapEditor
     talkFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     
     JPanel p = new JPanel(new FlowLayout());
-    p.setPreferredSize(new Dimension(600, 400));
+    p.setPreferredSize(new Dimension(600, 500));
     talkPanel = new JPanel();
     talkPanel.setPreferredSize(new Dimension(600, 0));
     talkPanel.setLayout(null);
     talkScrollPane = new JScrollPane(talkPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     talkScrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.gray));
-    talkScrollPane.setPreferredSize(new Dimension(600, 240));
+    talkScrollPane.setPreferredSize(new Dimension(600, 310));
     p.add(talkScrollPane);
     
     talkColorSlider = new JColorSlider();
     talkColorSlider.setPreferredSize(new Dimension(600, 150));
     p.add(talkColorSlider);
     
+    talkAdd = new JButton("Talk hinzufügen");
+    talkAdd.setPreferredSize(new Dimension(295, 24));
+    talkAdd.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        addTalkComponent(null);
+      }
+    });
+    p.add(talkAdd);
+    talkOk = new JButton("Speichern");
+    talkOk.setPreferredSize(new Dimension(295, 24));
+    talkOk.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        JSONArray talk = new JSONArray();
+        for (int i = 0; i < talkPanel.getComponentCount(); i++)
+        {
+          JTextField talkCond = (JTextField) ((JPanel) talkPanel.getComponent(i)).getComponent(1);
+          JTextArea talkText = (JTextArea) ((JScrollPane) ((JPanel) talkPanel.getComponent(i)).getComponent(3)).getViewport().getView();
+          
+          if (talkCond.getText().length() == 0 && talkText.getText().length() == 0)
+            continue;
+          
+          CFG.p(talkCond.getText());
+          
+          JSONArray cond = null;
+          try
+          {
+            cond = new JSONArray("[" + talkCond.getText() + "]");
+          }
+          catch (JSONException e1)
+          {
+            e1.printStackTrace();
+            JOptionPane.showMessageDialog(talkFrame, "Talk #" + (i + 1) + " konnte nicht gespeichert werden!\nDer Text im Konditionsfeld ist ungültig!\nDer Speichervorgang wird abgebrochen.", "Fehler!", JOptionPane.ERROR_MESSAGE);
+            return;
+          }
+          try
+          {
+            JSONObject t = new JSONObject();
+            t.put("cond", cond);
+            t.put("text", talkText.getText());
+            
+            talk.put(t);
+          }
+          catch (JSONException e1)
+          {
+            e1.printStackTrace();
+          }
+        }
+        npc.talk = talk;
+      }
+    });
+    p.add(talkOk);
+    
     talkFrame.setContentPane(p);
     talkFrame.pack();
     talkFrame.setLocationRelativeTo(null);
+    
+    if (npc != null)
+    {
+      for (int i = 0; i < npc.talk.length(); i++)
+      {
+        try
+        {
+          addTalkComponent(npc.talk.getJSONObject(i));
+        }
+        catch (JSONException e1)
+        {
+          e1.printStackTrace();
+        }
+      }
+    }
     
     addTalkComponent(null);
     
@@ -1104,28 +1176,60 @@ public class MapEditor
   
   private void addTalkComponent(JSONObject data)
   {
+    
     JPanel p = new JPanel(new SpringLayout());
+    
     if (talkPanel.getComponentCount() > 0)
       p.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.gray));
+    
     JLabel label = new JLabel("Bedingungen: ", JLabel.TRAILING);
     p.add(label);
-    talkCond = new JTextField();
+    JTextField talkCond = new JTextField();
+    if (data != null)
+    {
+      try
+      {
+        talkCond.setText(data.getJSONArray("cond").toString().replaceAll("(\\[)|(\\])|(\\\")", "").replace(",", ", "));
+      }
+      catch (JSONException e)
+      {
+        e.printStackTrace();
+      }
+    }
     label.setLabelFor(talkCond);
     p.add(talkCond);
     
     label = new JLabel("Text: ", JLabel.TRAILING);
     p.add(label);
-    talkText = new JTextField();
-    label.setLabelFor(talkText);
-    p.add(talkText);
+    
+    JTextArea talkText = new JTextArea(4, 0);
+    talkText.setWrapStyleWord(true);
+    talkText.setLineWrap(true);
+    talkText.setFont(talkCond.getFont());
+    if (data != null)
+    {
+      try
+      {
+        talkText.setText(data.getString("text"));
+      }
+      catch (JSONException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    
+    JScrollPane pane = new JScrollPane(talkText, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    
+    label.setLabelFor(pane);
+    p.add(pane);
     
     p.setBounds(0, talkPanel.getComponentCount() * talkComponentHeight, talkComponentWidth, talkComponentHeight);
     SpringUtilities.makeCompactGrid(p, 2, 2, 6, 6, 6, 6);
     
-    
     talkPanel.setPreferredSize(new Dimension(600, talkPanel.getPreferredSize().height + talkComponentHeight));
     talkPanel.add(p);
     
+    talkScrollPane.setViewportView(talkPanel);
   }
   
   private void updateNPCDialogPreview()
@@ -1134,7 +1238,7 @@ public class MapEditor
     BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + sprite + ".png");
     NPCpreview.setPreferredSize(new Dimension(image.getWidth() / 4, image.getHeight() / 4));
     NPCpreview.setIcon(new ImageIcon(image.getSubimage(0, image.getHeight() / 4 * NPCdir.getSelectedIndex(), image.getWidth() / 4, image.getHeight() / 4)));
-    NPCframe.revalidate();
+    NPCframe.invalidate();
     NPCframe.pack();
   }
   
@@ -1144,19 +1248,23 @@ public class MapEditor
     NPCy.setText((y - 16) + "");
   }
   
-  public void addNPC(JSONObject data)
+  public NPCButton addNPC(JSONObject data)
   {
     try
     {
       final JPopupMenu jpm = new JPopupMenu();
       NPCButton npc;
       if (data == null)
-        npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getWidth() - CFG.MALUS, NPCpreview.getHeight() - CFG.MALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage());
+      {
+        npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getPreferredSize().width - CFG.MALUS, NPCpreview.getPreferredSize().height - CFG.MALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage());
+      }
       else
       {
         BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + data.getString("char") + ".png");
         npc = new NPCButton(data.getInt("x"), data.getInt("y"), data.getInt("w"), data.getInt("h"), data.getInt("dir"), data.getString("name"), data.getString("char"), data.getDouble("speed"), data.getJSONObject("random").getBoolean("move"), data.getJSONObject("random").getBoolean("look"), data.getJSONObject("random").getInt("moveT"), data.getJSONObject("random").getInt("lookT"), image.getSubimage(0, data.getInt("dir") * image.getHeight() / 4, image.getWidth() / 4, image.getHeight() / 4));
+        npc.talk = data.getJSONArray("talk");
       }
+      
       final NPCButton fNPC = npc;
       
       JMenuItem edit = new JMenuItem(new AbstractAction("Bearbeiten")
@@ -1204,12 +1312,16 @@ public class MapEditor
         }
       });
       map.add(npc, JLayeredPane.PALETTE_LAYER);
+      
       msp.setViewportView(map);
+      
+      return npc;
     }
     catch (Exception e)
     {
       e.printStackTrace();
       JOptionPane.showMessageDialog(NPCframe, "Bitte alle Felder korrekt ausfüllen!", "NPC-Ertellung", JOptionPane.ERROR_MESSAGE);
+      return null;
     }
   }
   

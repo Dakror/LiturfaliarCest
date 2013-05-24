@@ -9,7 +9,7 @@ import java.awt.event.MouseWheelEvent;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.util.Assistant;
 
-public class OVScene_Info implements OVScene
+public class OVScene_Info extends OVScene
 {
   long     frames;
   long     time;
@@ -21,6 +21,7 @@ public class OVScene_Info implements OVScene
     this.v = v;
     time = System.currentTimeMillis();
     frames = 0;
+    consistent = true;
   }
   
   @Override

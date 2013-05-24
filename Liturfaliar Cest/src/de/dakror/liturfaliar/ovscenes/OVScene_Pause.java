@@ -20,7 +20,7 @@ import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.FileManager;
 import de.dakror.liturfaliar.util.Handler;
 
-public class OVScene_Pause implements OVScene
+public class OVScene_Pause extends OVScene
 {
   Viewport       v;
   Scene_Game     sg;

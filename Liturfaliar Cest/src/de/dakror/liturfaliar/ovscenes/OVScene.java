@@ -8,13 +8,15 @@ import java.awt.event.MouseWheelListener;
 
 import de.dakror.liturfaliar.Viewport;
 
-public interface OVScene extends KeyListener, MouseListener, MouseMotionListener, MouseWheelListener
+public abstract class OVScene implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener
 {
-  public void init(Viewport v);
+  public boolean consistent = false; 
   
-  public void update(long timePassed);
+  public abstract void init(Viewport v);
   
-  public void draw(Graphics2D g);
+  public abstract void update(long timePassed);
   
-  public void setListenersEnabled(boolean b);
+  public abstract void draw(Graphics2D g);
+  
+  public abstract void setListenersEnabled(boolean b);
 }

@@ -4,12 +4,13 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
+
+import org.json.JSONObject;
 
 import de.dakror.liturfaliar.CFG;
 
@@ -18,19 +19,6 @@ public class Compressor
   public static void compressFile(File f, String s)
   {
     compressFile(f, s.getBytes());
-    if (CFG.DEBUG)
-    {
-      File dbg = new File(f.getParentFile(), f.getName() + ".debug");
-      try
-      {
-        dbg.createNewFile();
-      }
-      catch (IOException e)
-      {
-        e.printStackTrace();
-      }
-      Assistant.setFileContent(dbg, s);
-    }
   }
   
   public static void compressFile(File f, byte[] input)
@@ -69,19 +57,8 @@ public class Compressor
   
   public static String decompressFile(File f)
   {
-    File dbg = new File(f.getPath() + ".debug");
-    if (!f.exists() && dbg.exists() && CFG.DEBUG)
-    {
-      compressFile(f, Assistant.getFileContent(dbg).replaceAll("(\n)|(\n\r)|(\r\n)|(  )", "").replace(" : ", ":"));
-    }
-    
     byte[] decompressed = decompress(getFileContentAsByteArray(f));
     String text = new String(decompressed);
-    
-    if (f.exists() && !dbg.exists() && CFG.DEBUG)
-    {
-      Assistant.setFileContent(dbg, text);
-    }
     
     return text;
   }
@@ -91,7 +68,10 @@ public class Compressor
     try
     {
       if (!f.exists())
+      {
         f.createNewFile();
+      }
+      
       FileOutputStream fos = new FileOutputStream(f);
       fos.write(b);
       fos.close();
@@ -114,6 +94,46 @@ public class Compressor
     {
       e.printStackTrace();
       return null;
+    }
+  }
+  
+  public static JSONObject openMap(File f)
+  {
+    try
+    {
+      File debug = new File(f.getPath() + ".debug");
+      if (!f.exists() && CFG.DEBUG)
+      {
+        f.createNewFile();
+        JSONObject o = new JSONObject(Assistant.getFileContent(debug));
+        compressFile(f, o.toString());
+        return o;
+      }
+      return new JSONObject(decompressFile(f));
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+    return null;
+  }
+  
+  public static void saveMap(File f, JSONObject data)
+  {
+    try
+    {
+      File debug = new File(f.getPath() + ".debug");
+      if (CFG.DEBUG)
+      {
+        debug.createNewFile();
+        Assistant.setFileContent(debug, data.toString());
+      }
+      f.createNewFile();
+      compressFile(f, data.toString());
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
     }
   }
 }

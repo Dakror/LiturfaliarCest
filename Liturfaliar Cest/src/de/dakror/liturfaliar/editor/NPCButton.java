@@ -1,7 +1,9 @@
 package de.dakror.liturfaliar.editor;
 
+import java.awt.Color;
 import java.awt.Image;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -40,6 +42,7 @@ public class NPCButton extends JButton
     
     setToolTipText("NPC: " + name);
     setIcon(new ImageIcon(i));
+    setBorder(BorderFactory.createLineBorder(Color.green));
     setContentAreaFilled(false);
     setBounds(x, y, w, h);
   }

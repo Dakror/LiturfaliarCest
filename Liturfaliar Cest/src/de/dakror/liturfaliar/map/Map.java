@@ -71,21 +71,9 @@ public class Map implements DatabaseEventListener
   
   public Map(String mappack, String mapname, String dir)
   {
-    this(createData(Compressor.decompressFile(new File(FileManager.dir, dir + "/" + mappack + "/maps/" + mapname + ".map"))));
+    this(Compressor.openMap(new File(FileManager.dir, dir + "/" + mappack + "/maps/" + mapname + ".map")));
   }
   
-  private static JSONObject createData(String s)
-  {
-    try
-    {
-      return new JSONObject(s);
-    }
-    catch (JSONException e)
-    {
-      e.printStackTrace();
-      return null;
-    }
-  }
   
   public JSONObject getData()
   {
