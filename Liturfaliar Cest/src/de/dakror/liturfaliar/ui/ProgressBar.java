@@ -51,7 +51,7 @@ public class ProgressBar extends Component
     }
     Font oldf = g.getFont();
     g.setFont(new Font("Arial", Font.BOLD, 14));
-    if (!this.showPercentage)
+    if (!this.showPercentage && this.title != null)
       Assistant.drawCenteredString(Database.filterString(this.title), this.getX(), this.getWidth(), this.getY() + 16, g, 14, Color.black);
     else Assistant.drawCenteredString(((this.title != null) ? (Database.filterString(this.title) + ": ") : "") + (int) (this.value * 100) + "%", this.getX(), this.getWidth(), this.getY() + 16, g, 14, Color.black);
     g.setFont(oldf);

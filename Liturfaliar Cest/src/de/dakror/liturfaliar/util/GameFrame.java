@@ -93,7 +93,7 @@ public abstract class GameFrame
         g.clearRect(0, 0, this.s.getFullScreenWindow().getWidth(), this.s.getFullScreenWindow().getHeight());
       }
       catch (Exception e)
-      { 
+      {
         continue;
       }
       draw(g);

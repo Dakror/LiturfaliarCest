@@ -109,7 +109,8 @@ public class Scene_Logo implements Scene
     if (update)
     {
       new Container(0, v.w.getHeight() - 90, v.w.getWidth(), 90).draw(g, v);
-      progress.draw(g, v);
+      if (progress != null)
+        progress.draw(g, v);
       Assistant.drawCenteredString("Aktualisierung", v.w.getWidth(), v.w.getHeight() - 50, g, 30, Color.white);
     }
   }
