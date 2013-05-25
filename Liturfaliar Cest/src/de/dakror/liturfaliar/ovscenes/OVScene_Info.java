@@ -12,6 +12,7 @@ import de.dakror.liturfaliar.util.Assistant;
 public class OVScene_Info extends OVScene
 {
   long     frames;
+  long     updates;
   long     time;
   Viewport v;
   
@@ -21,12 +22,15 @@ public class OVScene_Info extends OVScene
     this.v = v;
     time = System.currentTimeMillis();
     frames = 0;
+    updates = 0;
     consistent = true;
   }
   
   @Override
   public void update(long timePassed)
-  {}
+  {
+    updates++;
+  }
   
   @Override
   public void draw(Graphics2D g)
@@ -34,6 +38,8 @@ public class OVScene_Info extends OVScene
     frames++;
     // show fps
     Assistant.drawString(Math.round(frames / (float) ((System.currentTimeMillis() - time) / 1000.0f)) + " FPS", 0, 30, g, Color.white, g.getFont().deriveFont(30.0f));
+    // show updates
+    Assistant.drawString(Math.round(updates / (float) ((System.currentTimeMillis() - time) / 1000.0f)) + " UPS", 0, 60, g, Color.white, g.getFont().deriveFont(30.0f));
   }
   
   @Override

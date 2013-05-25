@@ -81,7 +81,7 @@ public abstract class GameFrame
       }
       
       long timePassed = System.currentTimeMillis() - tickTime;
-      if (timePassed > 10)
+      if (timePassed >= 20)
       {
         tickTime += timePassed;
         update(timePassed);
