@@ -1213,7 +1213,6 @@ public class MapEditor
     p.add(label);
     
     JTextArea talkText = new JTextArea(4, 0);
-    talkText.setWrapStyleWord(true);
     talkText.setLineWrap(true);
     talkText.setFont(talkCond.getFont());
     if (data != null)

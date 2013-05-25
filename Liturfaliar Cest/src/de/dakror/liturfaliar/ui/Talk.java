@@ -78,7 +78,7 @@ public class Talk extends Component
       String r = sel.getString("text");
       ArrayList<String> l = new ArrayList<String>(Arrays.asList(r.split("\\[")));
       l.remove(0);
-      String[] perspec_raw = (String[]) l.toArray(new String[0]);
+      String[] perspec_raw = (String[]) l.toArray(new String[] {});
       perspectives = new String[perspec_raw.length];
       raw = new String[perspec_raw.length];
       for (int i = 0; i < perspectives.length; i++)

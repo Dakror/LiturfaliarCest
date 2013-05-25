@@ -39,22 +39,23 @@ public class EmoticonSequencer
       
       Emoticon emoticon = null;
       
-      if (type > -1)
+      Creature creature = map.getCreatureByAccessKey(parent);
+      if (!creatures.contains(creature))
       {
-        Creature creature = map.getCreatureByAccessKey(parent);
         creatures.add(creature);
-        emoticon = new Emoticon(creature, type, true, -1);
       }
+      
+      emoticon = new Emoticon(creature, type, true, -1);
       
       emoticons.put(startIndex, emoticon);
       
-      startIndex += parts[i].length();
+      startIndex += parts[i].substring(parts[i].indexOf("}") + 1).length();
     }
   }
   
   public String getClearedString()
   {
-    return raw.replaceAll("\\{.{1,}\\}", "");
+    return raw.replaceAll("\\{\\S{1,}\\}", "");
   }
   
   public void update(String s)
@@ -62,7 +63,9 @@ public class EmoticonSequencer
     int key = s.length() - 1;
     if (emoticons.containsKey(key))
     {
-      emoticons.get(key).getParent().setEmoticon(emoticons.get(key));
+      Emoticon emoticon = emoticons.get(key);
+      
+      emoticon.getParent().setEmoticon((emoticon.getType() == -1) ? null : emoticon);
     }
   }
   
