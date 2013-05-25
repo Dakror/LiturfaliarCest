@@ -2,6 +2,7 @@ package de.dakror.liturfaliar.util;
 
 import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
@@ -10,6 +11,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.CFG;
@@ -102,13 +104,19 @@ public class Compressor
     try
     {
       File debug = new File(f.getPath() + ".debug");
+      if (f.exists() && !debug.exists())
+      {
+        debug.createNewFile();
+        Assistant.setFileContent(debug, decompressFile(f));
+      }
       if (!f.exists() && CFG.DEBUG)
       {
         f.createNewFile();
         JSONObject o = new JSONObject(Assistant.getFileContent(debug));
         compressFile(f, o.toString());
-        return o;
+        return new JSONObject(decompressFile(f));
       }
+      
       return new JSONObject(decompressFile(f));
     }
     catch (Exception e)
@@ -134,6 +142,37 @@ public class Compressor
     catch (Exception e)
     {
       e.printStackTrace();
+    }
+  }
+  
+  public static void compileMaps(File dir)
+  {
+    if (!CFG.DEBUG)
+      return;
+    
+    File[] files = dir.listFiles(new FileFilter()
+    {
+      @Override
+      public boolean accept(File pathname)
+      {
+        return pathname.getName().endsWith(".debug");
+      }
+    });
+    for (File f : files)
+    {
+      try
+      {
+        File map = new File(f.getPath().substring(0, f.getPath().lastIndexOf(".debug")));
+        if (!map.exists())
+        {
+          saveMap(map, new JSONObject(Assistant.getFileContent(f)));
+        }
+      }
+      catch (JSONException e)
+      {
+        e.printStackTrace();
+        continue;
+      }
     }
   }
 }

@@ -84,6 +84,7 @@ import de.dakror.universion.UniVersion;
 public class MapEditor
 {
   
+  
   // -- NPC dialog -- //
   JComboBox<String> NPCsprite, NPCdir;
   JDialog           NPCframe;
@@ -92,6 +93,8 @@ public class MapEditor
   JLabel            NPCpreview;
   JSpinner          NPCspeed, NPCmoveT, NPClookT;
   JButton           NPCok;
+  
+  int               NPClastID           = 0;
   
   // -- talk dialog -- //
   JDialog           talkFrame;
@@ -130,7 +133,7 @@ public class MapEditor
     this.deletemode = false;
     this.rasterview = false;
     this.v = viewport;
-    new File(FileManager.dir, "myMaps").mkdir();
+    new File(FileManager.dir, CFG.MAPEDITORDIR).mkdir();
     w = new JFrame("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ")");
     w.setSize(Toolkit.getDefaultToolkit().getScreenSize());
     w.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -585,7 +588,7 @@ public class MapEditor
     dialog.setLocationRelativeTo(null);
     dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     final DefaultListModel<String> mappacks = new DefaultListModel<String>();
-    for (File f : new File(FileManager.dir, "myMaps").listFiles())
+    for (File f : new File(FileManager.dir, CFG.MAPEDITORDIR).listFiles())
     {
       if (f.isDirectory() && Arrays.asList(f.list()).contains("pack.json") && Arrays.asList(f.list()).contains("maps"))
       {
@@ -716,7 +719,7 @@ public class MapEditor
     final DefaultListModel<String> maps = new DefaultListModel<String>();
     try
     {
-      for (String s : Map.getMaps(mappackdata.getString("name"), "myMaps"))
+      for (String s : Map.getMaps(mappackdata.getString("name"), CFG.MAPEDITORDIR))
       {
         maps.addElement(s);
       }
@@ -747,7 +750,7 @@ public class MapEditor
   {
     try
     {
-      mappackdata = new JSONObject(Assistant.getFileContent(new File(FileManager.dir, "myMaps/" + pack + "/pack.json")));
+      mappackdata = new JSONObject(Assistant.getFileContent(new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + pack + "/pack.json")));
       w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + mappackdata.getString("name"));
       mmenu.setEnabled(true);
     }
@@ -761,7 +764,7 @@ public class MapEditor
   {
     try
     {
-      File dir = new File(FileManager.dir, "myMaps/" + mappackdata.getString("name"));
+      File dir = new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + mappackdata.getString("name"));
       dir.mkdir();
       new File(dir, "maps").mkdir();
       File pack = new File(dir, "pack.json");
@@ -783,7 +786,7 @@ public class MapEditor
       map.removeAll();
       msp.setViewportView(map);
       selectedtile = null;
-      mapdata = Compressor.openMap(new File(FileManager.dir, "myMaps/" + mappackdata.getString("name") + "/maps/" + m + ".map"));
+      mapdata = Compressor.openMap(new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + mappackdata.getString("name") + "/maps/" + m + ".map"));
       ArrayList<JSONObject> tiles = Assistant.JSONArrayToArray(mapdata.getJSONArray("tile"));
       Collections.sort(tiles, new Comparator<JSONObject>()
       {
@@ -843,7 +846,7 @@ public class MapEditor
   {
     try
     {
-      File f = new File(FileManager.dir, "myMaps/" + mappackdata.getString("name") + "/maps/" + mapdata.getString("name") + ".map");
+      File f = new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + mappackdata.getString("name") + "/maps/" + mapdata.getString("name") + ".map");
       
       JSONArray tiles = new JSONArray();
       JSONArray npcs = new JSONArray();
@@ -1055,9 +1058,16 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
+        JSONArray talk = null;
         if (exist != null)
+        {
+          talk = exist.talk;
           map.remove(exist);
-        showNPCDialog(addNPC(null));
+        }
+        NPCButton b = addNPC(null);
+        if (talk != null)
+          b.talk = talk;
+        showNPCDialog(b);
       }
     });
     p.add(NPCok);
@@ -1073,7 +1083,7 @@ public class MapEditor
   public void showTalkDialog(final NPCButton npc)
   {
     talkFrame = new JDialog(w);
-    talkFrame.setTitle("Talk-Bearbeitung");
+    talkFrame.setTitle("Talk-Bearbeitung - NPC #" + npc.ID);
     talkFrame.setResizable(false);
     talkFrame.setAlwaysOnTop(true);
     talkFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -1256,14 +1266,16 @@ public class MapEditor
       NPCButton npc;
       if (data == null)
       {
-        npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getPreferredSize().width - CFG.MALUS, NPCpreview.getPreferredSize().height - CFG.MALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage());
+        npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getPreferredSize().width - CFG.MALUS, NPCpreview.getPreferredSize().height - CFG.MALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage(), NPClastID);
       }
       else
       {
         BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + data.getString("char") + ".png");
-        npc = new NPCButton(data.getInt("x"), data.getInt("y"), data.getInt("w"), data.getInt("h"), data.getInt("dir"), data.getString("name"), data.getString("char"), data.getDouble("speed"), data.getJSONObject("random").getBoolean("move"), data.getJSONObject("random").getBoolean("look"), data.getJSONObject("random").getInt("moveT"), data.getJSONObject("random").getInt("lookT"), image.getSubimage(0, data.getInt("dir") * image.getHeight() / 4, image.getWidth() / 4, image.getHeight() / 4));
+        npc = new NPCButton(data.getInt("x"), data.getInt("y"), data.getInt("w"), data.getInt("h"), data.getInt("dir"), data.getString("name"), data.getString("char"), data.getDouble("speed"), data.getJSONObject("random").getBoolean("move"), data.getJSONObject("random").getBoolean("look"), data.getJSONObject("random").getInt("moveT"), data.getJSONObject("random").getInt("lookT"), image.getSubimage(0, data.getInt("dir") * image.getHeight() / 4, image.getWidth() / 4, image.getHeight() / 4), NPClastID);
         npc.talk = data.getJSONArray("talk");
       }
+      
+      NPClastID++;
       
       final NPCButton fNPC = npc;
       
@@ -1598,7 +1610,7 @@ public class MapEditor
           final JComboBox<String> map = new JComboBox<String>();
           map.setName("string_map");
           map.setPreferredSize(new Dimension(190, 23));
-          for (String s : Map.getMaps(mappackdata.getString("name"), "myMaps"))
+          for (String s : Map.getMaps(mappackdata.getString("name"), CFG.MAPEDITORDIR))
           {
             map.addItem(s);
           }
@@ -1611,7 +1623,7 @@ public class MapEditor
               {
                 final String s = (String) map.getSelectedItem();
                 mapCoordSelect.setTitle(s);
-                BufferedImage bi = new Map(mappackdata.getString("name"), s, "myMaps").getRendered(1, v);
+                BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1, v);
                 final JLabel l = new JLabel();
                 l.addMouseListener(new MouseAdapter()
                 {
@@ -1622,7 +1634,7 @@ public class MapEditor
                     dy.setText("" + (e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3));
                     try
                     {
-                      BufferedImage bi = new Map(mappackdata.getString("name"), s, "myMaps").getRendered(1, v);
+                      BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1, v);
                       int d = Arrays.asList(dirs).indexOf(((String) dir.getSelectedItem())) - 1;
                       d = (d < 0) ? 0 : d;
                       Assistant.drawChar(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], d, 0, new JSONObject(Assistant.getURLContent(getClass().getResource("/json/char.json"))).getJSONObject("default").getJSONObject("Mann"), (Graphics2D) bi.getGraphics(), null, true);// Assistant.Rect(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], Color.cyan, null, (Graphics2D) bi.getGraphics());

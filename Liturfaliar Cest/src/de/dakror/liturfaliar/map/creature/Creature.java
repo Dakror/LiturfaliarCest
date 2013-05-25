@@ -204,6 +204,21 @@ public class Creature implements MapEventListener
     return new Point2D.Double(Assistant.round(getRelativePos(m)[0] + bx + bw / 2, CFG.FIELDSIZE) / (double) CFG.FIELDSIZE, Assistant.round(getRelativePos(m)[1] + by + bh / 2, CFG.FIELDSIZE) / (double) CFG.FIELDSIZE);
   }
   
+  public void setEmoticon(Emoticon e)
+  {
+    emoticon = e;
+  }
+  
+  public void setEmoticon(int type, boolean animate, long length)
+  {
+    emoticon = new Emoticon(this, type, animate, length);
+  }
+  
+  public Emoticon getEmoticon()
+  {
+    return emoticon;
+  }
+  
   public boolean isLookingAt(Creature c, Map m)
   {
     double x = getRelativePos(m)[0] + getWidth() / 2.0;

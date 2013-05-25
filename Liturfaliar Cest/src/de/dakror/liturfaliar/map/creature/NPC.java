@@ -8,7 +8,6 @@ import org.json.JSONArray;
 
 import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.fx.Emoticon;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
@@ -27,7 +26,6 @@ public class NPC extends Creature
   private int                  randomMoveT;
   private int                  randomLookT;
   
-  private Emoticon             emoticon;
   private JSONArray            talkdata;
   private String               name;
   
@@ -106,13 +104,13 @@ public class NPC extends Creature
     
     if (isRandomLookEnabled() && System.currentTimeMillis() - time > randomLookT)
     {
-      dir = (int) Math.round(Math.random() * 4);
+      dir = (int) Math.round(Math.random() * 3);
       time = System.currentTimeMillis();
     }
     
     if (m.getPlayer().getField(m).distance(getField(m)) < 1.1 && m.getPlayer().isLookingAt(this, m))
     {
-      if (emoticon == null)
+      if (emoticon == null && !isTalking())
       {
         frozen = true;
         setEmoticon(50, true, 400);
@@ -132,6 +130,7 @@ public class NPC extends Creature
     {
       setTalking(true);
       m.talk = new Talk(this, m);
+      emoticon = null;
       lookAt(m.getPlayer(), m);
     }
   }
@@ -191,16 +190,6 @@ public class NPC extends Creature
   public String getCharacter()
   {
     return character;
-  }
-  
-  public void setEmoticon(int type, boolean animate, long length)
-  {
-    emoticon = new Emoticon(this, type, animate, length);
-  }
-  
-  public Emoticon getEmoticon()
-  {
-    return emoticon;
   }
   
   public boolean isTalking()

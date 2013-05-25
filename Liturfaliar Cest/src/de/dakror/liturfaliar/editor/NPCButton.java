@@ -1,9 +1,7 @@
 package de.dakror.liturfaliar.editor;
 
-import java.awt.Color;
 import java.awt.Image;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -15,7 +13,7 @@ public class NPCButton extends JButton
 {
   private static final long serialVersionUID = 1L;
   
-  public int                x, y, w, h, dir, moveT, lookT;
+  public int                x, y, w, h, dir, ID, moveT, lookT;
   public String             name, sprite;
   public double             speed;
   public boolean            move;
@@ -23,7 +21,7 @@ public class NPCButton extends JButton
   
   public JSONArray          talk;
   
-  public NPCButton(int x, int y, int w, int h, int dir, String name, String sprite, double speed, boolean move, boolean look, int moveT, int lookT, Image i)
+  public NPCButton(int x, int y, int w, int h, int dir, String name, String sprite, double speed, boolean move, boolean look, int moveT, int lookT, Image i, int ID)
   {
     this.x = x;
     this.y = y;
@@ -37,12 +35,12 @@ public class NPCButton extends JButton
     this.name = name;
     this.sprite = sprite;
     this.speed = speed;
+    this.ID = ID;
     
     this.talk = new JSONArray();
     
-    setToolTipText("NPC: " + name);
+    setToolTipText("NPC #"+ID+": " + name);
     setIcon(new ImageIcon(i));
-    setBorder(BorderFactory.createLineBorder(Color.green));
     setContentAreaFilled(false);
     setBounds(x, y, w, h);
   }

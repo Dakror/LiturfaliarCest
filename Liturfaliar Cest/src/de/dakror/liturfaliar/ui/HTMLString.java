@@ -2,9 +2,7 @@ package de.dakror.liturfaliar.ui;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -12,28 +10,21 @@ public class HTMLString
 {
   public int     style;
   public float   size;
-  public Color   c;
-  public String  string;
-  
-  public int     w     = 0;
-  int            lineW = 0;
-  
   public boolean br;
   
-  public HTMLString(String string, float size, Color c, int style)
+  public Color   c;
+  public String  string;
+ public HTMLString(String st, float sz, Color color, int styl)
   {
-    this.string = string;
-    this.size = size;
-    this.c = c;
-    this.style = style;
+    string = st;
+    size = sz;
+    c = color;
+    style = styl;
   }
   
-  public HTMLString(HTMLString htmls, String string)
+  public HTMLString(HTMLString htmls, String st)
   {
-    this.string = string;
-    size = htmls.size;
-    c = htmls.c;
-    style = htmls.style;
+    this(st, htmls.size, htmls.c, htmls.style);
   }
   
   public int getWidth(Graphics2D g)
@@ -46,8 +37,10 @@ public class HTMLString
     return g.getFontMetrics(new Font(g.getFont().getFontName(), style, (int) size)).getHeight();
   }
   
-  // tepmplate for string: "<#Color;Size;Style>Message"
-  // line break: "[br]"
+  /**
+   * tepmplate for string: "<#Color;Size;Style>Message"<br>
+   * line break: "[br]"
+   */
   public static HTMLString[] decodeString(String decodeString)
   {
     String[] tags = decodeString.split("<#");
@@ -94,7 +87,7 @@ public class HTMLString
     return arr.toArray(new HTMLString[] {});
   }
   
-  private static HTMLString[] rec_limitline(HTMLString l, int w, Graphics2D g)
+  protected static HTMLString[] rec_limitline(HTMLString l, int w, Graphics2D g)
   {
     if (l.getWidth(g) <= w)
     {
@@ -124,35 +117,6 @@ public class HTMLString
     g.setColor(oldColor);
   }
   
-  public void drawStringAnimated(int x, int y, Graphics2D g)
-  {
-    Shape oldClip = g.getClip();
-    FontMetrics fm = g.getFontMetrics(g.getFont().deriveFont(style, size));
-    int h = fm.getHeight();
-    lineW = fm.stringWidth(string);
-    g.setClip(x, y - fm.getLeading() - fm.getMaxAscent(), w, h);
-    drawString(x, y, g);
-    g.setClip(oldClip);
-    
-  }
-  
-  public void showAll()
-  {
-    w = lineW;
-  }
-  
-  public boolean updateAnimatedString(int speed)
-  {
-    if (lineW == 0) return false;
-    
-    if (w < lineW)
-    {
-      w += speed;
-    }
-    
-    return w > lineW - speed;
-  }
-  
   public boolean equals(HTMLString o)
   {
     return string == o.string && style == o.style && size == o.size && c == o.c;
@@ -162,5 +126,4 @@ public class HTMLString
   {
     return getClass().getName() + "[color=" + c + ", size=" + size + ", style=" + style + ", string=" + string + "]";
   }
-  
 }

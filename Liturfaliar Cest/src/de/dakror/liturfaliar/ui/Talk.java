@@ -40,7 +40,7 @@ public class Talk extends Component
   
   NPC                     by;
   String[]                raw;
-  HTMLString[][]          lines;
+  TalkString[][]          lines;
   HTMLString              nameLabel;
   String[]                perspectives;
   BufferedImage           speaker;
@@ -51,7 +51,6 @@ public class Talk extends Component
     super(0, 0, 1, 1);
     try
     {
-      
       firstClickSkipped = false;
       showAll = false;
       by = b;
@@ -91,7 +90,7 @@ public class Talk extends Component
       cay = 0;
       ID = index;
       perspective = 0;
-      findSpeaker();
+      getSpeakerFace();
     }
     catch (JSONException e)
     {
@@ -99,7 +98,65 @@ public class Talk extends Component
     }
   }
   
-  public void findSpeaker()
+  public void draw(Graphics2D g, Viewport v)
+  {
+    if (lines == null)
+    {
+      setX(v.w.getWidth() / 6);
+      setY(v.w.getHeight() / 16 * 13);
+      setWidth(v.w.getWidth() / 3 * 2);
+      setHeight(v.w.getHeight() / 16 * 3);
+      
+      lineMax = (int) Math.floor((getHeight() - 20 - nameLabel.getHeight(g)) / (double) LINEHEIGHT + 0.5D);
+      
+      ArrayList<TalkString[]> l = new ArrayList<TalkString[]>();
+      for (int i = 0; i < raw.length; i++)
+      {
+        l.add(TalkString.decodeString(m, "<#d9d9d9;27;0>" + Database.filterString(raw[i]), this.width - 24, g));
+      }
+      lines = ((TalkString[][]) l.toArray(new TalkString[0][]));
+    }
+    
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
+    
+    nameLabel.string = Database.filterString(perspectives[perspective]);
+    nameLabel.drawString(getX() + 10, getY() + 40, g);
+    
+    for (int i = displayIndex; i < displayIndex + ((dif > lineMax) ? lineMax : dif); i++)
+    {
+      try
+      {
+        if (i > 0)
+        {
+          lines[perspective][i].drawStringAnimated(getX() + 24 + (!lines[perspective][(i - 1)].br ? lines[perspective][(i - 1)].getWidth(g) : 0), getY() + nameLabel.getHeight(g) - 5 + LINEHEIGHT * (i + 1 - displayIndex), g);
+        }
+        else
+        {
+          lines[perspective][i].drawStringAnimated(getX() + 24, getY() + nameLabel.getHeight(g) + lines[perspective][i].getHeight(g) - 5, g);
+        }
+      }
+      catch (Exception e)
+      {}
+    }
+    
+    if (speaker != null)
+    {
+      int size = 96;
+      int height = getHeight() > size ? size : getHeight();
+      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX() - height, getY(), height, height - 10, g, v.w);
+      g.drawImage(speaker, getX() - height + 10, getY() + 10, height - 20, height - 10, v.w);
+    }
+    
+    if (partDone)
+    {
+      int size = 2;
+      int c = (int) (Math.sin(0.25D * cay) * 5.0D);
+      g.drawImage(Viewport.loadImage("system/Arrow.png"), getX() + getWidth() - 18 * size - 10, getY() + getHeight() - 5 - 9 * size + c, 18 * size, 9 * size, v.w);
+      
+    }
+  }
+  
+  public void getSpeakerFace()
   {
     BufferedImage bi = new BufferedImage(32, 32, 2);
     Graphics g = bi.getGraphics();
@@ -117,6 +174,82 @@ public class Talk extends Component
     }
     speaker = bi;
   }
+  
+  public void keyPressed(KeyEvent e)
+  {}
+  
+  public void keyReleased(KeyEvent e)
+  {}
+  
+  public void keyTyped(KeyEvent e)
+  {}
+  
+  public void mouseClicked(MouseEvent e)
+  {}
+  
+  public void mouseDragged(MouseEvent e)
+  {}
+  
+  public void mouseEntered(MouseEvent e)
+  {}
+  
+  public void mouseExited(MouseEvent e)
+  {}
+  
+  public void mouseMoved(MouseEvent e)
+  {}
+  
+  public void mousePressed(MouseEvent e)
+  {}
+  
+  @Override
+  public void mouseReleased(MouseEvent e)
+  {}
+  
+  public void mouseReleased(MouseEvent e, Map m)
+  {
+    if (!this.firstClickSkipped)
+    {
+      this.firstClickSkipped = true;
+      return;
+    }
+    if (!partDone)
+    {
+      showAll = true;
+    }
+    else
+    {
+      if (lines[perspective].length > displayIndex + 1)
+      {
+        showAll = false;
+        displayIndex += lineMax;
+      }
+      else if (perspective + 1 < perspectives.length)
+      {
+        displayIndex = 0;
+        showAll = false;
+        perspective += 1;
+        getSpeakerFace();
+      }
+      else
+      {
+        for (TalkString[] p : lines)
+        {
+          for (TalkString ts : p)
+          {
+            ts.emoticonSequencer.clearCreatureEmoticons();
+          }
+        }
+        by.setTalking(false);
+        by.frozen = false;
+        m.talk = null;
+        Database.setBooleanVar("talked_" + ID, Boolean.valueOf(true));
+      }
+    }
+  }
+  
+  public void mouseWheelMoved(MouseWheelEvent e)
+  {}
   
   public void update()
   {
@@ -161,135 +294,4 @@ public class Talk extends Component
       cay++;
     }
   }
-  
-  public void draw(Graphics2D g, Viewport v)
-  {
-    if (lines == null)
-    {
-      setX(v.w.getWidth() / 6);
-      setY(v.w.getHeight() / 16 * 13);
-      setWidth(v.w.getWidth() / 3 * 2);
-      setHeight(v.w.getHeight() / 16 * 3);
-      
-      lineMax = (int) Math.floor((getHeight() - 20 - nameLabel.getHeight(g)) / (double) LINEHEIGHT + 0.5D);
-      
-      ArrayList<HTMLString[]> l = new ArrayList<HTMLString[]>();
-      for (int i = 0; i < raw.length; i++)
-      {
-        l.add(HTMLString.decodeString("<#d9d9d9;27;0>" + Database.filterString(raw[i]), this.width - 64, g));
-      }
-      lines = ((HTMLString[][]) l.toArray(new HTMLString[0][]));
-    }
-    
-    
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
-    
-    nameLabel.string = Database.filterString(perspectives[perspective]);
-    nameLabel.drawString(getX() + 10, getY() + 40, g);
-    
-    for (int i = displayIndex; i < displayIndex + ((dif > lineMax) ? lineMax : dif); i++)
-    {
-      try
-      {
-        if (i > 0)
-        {
-          lines[perspective][i].drawStringAnimated(getX() + 24 + (!lines[perspective][(i - 1)].br ? lines[perspective][(i - 1)].getWidth(g) : 0), getY() + nameLabel.getHeight(g) - 5 + LINEHEIGHT * (i + 1 - displayIndex), g);
-        }
-        else
-        {
-          lines[perspective][i].drawStringAnimated(getX() + 24, getY() + nameLabel.getHeight(g) + lines[perspective][i].getHeight(g) - 5, g);
-        }
-      }
-      catch (Exception e)
-      {}
-    }
-    
-    if (speaker != null)
-    {
-      int size = 96;
-      int height = getHeight() > size ? size : getHeight();
-      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX() - height, getY(), height, height - 10, g, v.w);
-      g.drawImage(speaker, getX() - height + 10, getY() + 10, height - 20, height - 10, v.w);
-    }
-    
-    if (partDone)
-    {
-      int size = 2;
-      int c = (int) (Math.sin(0.25D * cay) * 5.0D);
-      g.drawImage(Viewport.loadImage("system/Arrow.png"), getX() + getWidth() - 18 * size - 10, getY() + getHeight() - 5 - 9 * size + c, 18 * size, 9 * size, v.w);
-      
-    }
-  }
-  
-  public void mouseWheelMoved(MouseWheelEvent e)
-  {}
-  
-  public void mouseDragged(MouseEvent e)
-  {}
-  
-  public void mouseMoved(MouseEvent e)
-  {}
-  
-  public void mouseClicked(MouseEvent e)
-  {}
-  
-  public void mousePressed(MouseEvent e)
-  { 
-    
-  }
-  
-  public void mouseReleased(MouseEvent e, Map m)
-  {
-    if (!this.firstClickSkipped)
-    {
-      this.firstClickSkipped = true;
-      return;
-    }
-    if (!partDone)
-    {
-      showAll = true;
-    }
-    else
-    {
-      if (lines[perspective].length > displayIndex + 1)
-      {
-        showAll = false;
-        displayIndex += lineMax;
-      }
-      else if (perspective + 1 < perspectives.length)
-      {
-        displayIndex = 0;
-        showAll = false;
-        perspective += 1;
-        findSpeaker();
-      }
-      else
-      {
-        by.setTalking(false);
-        by.frozen = false;
-        m.talk = null;
-        Database.setBooleanVar("talked_" + ID, Boolean.valueOf(true));
-      }
-    }
-  }
-  
-  public void mouseEntered(MouseEvent e)
-  {}
-  
-  public void mouseExited(MouseEvent e)
-  {}
-  
-  public void keyTyped(KeyEvent e)
-  {}
-  
-  public void keyReleased(KeyEvent e)
-  {}
-  
-  public void keyPressed(KeyEvent e)
-  {}
-  
-  
-  @Override
-  public void mouseReleased(MouseEvent e)
-  {}
 }

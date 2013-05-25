@@ -17,13 +17,13 @@ public class Emoticon
   long           time;
   public boolean done;
   
-  public Emoticon(Creature parent, int type, boolean animate, long length)
+  public Emoticon(Creature p, int type, boolean a, long l)
   {
-    this.parent = parent;
+    parent = p;
     setType(type);
-    this.animate = animate;
+    animate = a;
     allemoticons = Viewport.loadImage("system/emoticon.png");
-    this.length = length;
+    length = l;
     time = System.currentTimeMillis();
     done = false;
   }
@@ -31,8 +31,11 @@ public class Emoticon
   public void draw(Graphics2D g, Map m, Viewport v)
   {
     int frame = (animate) ? (v.getFrame(0.35f) % 7) * 32 : 0;
-    g.drawImage(allemoticons, m.getX() + parent.getRelativePos(m)[0] + (int) (parent.getWidth() * 0.3), m.getY() + parent.getRelativePos(m)[1] - parent.getWidth(), m.getX() + parent.getRelativePos(m)[0] + (int) (parent.getWidth() * 1.3f), m.getY() + parent.getRelativePos(m)[1], frame, getType() * 32, frame + 32, getType() * 32 + 32, v.w);
-    if (System.currentTimeMillis() - time > length)
+    
+    int size = 32;
+    
+    g.drawImage(allemoticons, m.getX() + parent.getRelativePos(m)[0] + (int) (parent.getWidth() * 0.3), m.getY() + parent.getRelativePos(m)[1] - size, m.getX() + parent.getRelativePos(m)[0] + size + (int) (parent.getWidth() * 0.3), m.getY() + parent.getRelativePos(m)[1], frame, getType() * 32, frame + 32, getType() * 32 + 32, v.w);
+    if (System.currentTimeMillis() - time > length && length > -1)
       done = true;
   }
   
@@ -44,5 +47,15 @@ public class Emoticon
   public void setType(int type)
   {
     this.type = type;
+  }
+  
+  public Creature getParent()
+  {
+    return parent;
+  }
+  
+  public void setParent(Creature p)
+  {
+    parent = p;
   }
 }

@@ -13,12 +13,12 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -216,7 +216,7 @@ public final class Assistant
     String res = "", line = "";
     try
     {
-      BufferedReader br = new BufferedReader(new FileReader(f));
+      BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
       while ((line = br.readLine()) != null)
       {
         res += line;
@@ -234,9 +234,14 @@ public final class Assistant
   {
     try
     {
-      BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-      bw.write(s);
-      bw.close();
+      OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(f), "UTF8");
+      osw.write(s);
+      osw.close();
+      /*
+       * BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+       * bw.write(s);
+       * bw.close();
+       */
     }
     catch (Exception e)
     {}
@@ -283,17 +288,7 @@ public final class Assistant
     g.drawImage(img, x + w - 32, y + h - 32, x + w, y + h, 64, 64, 96, 96, win);
   }
   
-  public static void drawChar(
-      int x,
-      int y,
-      int w,
-      int h,
-      int dir,
-      int frame,
-      JSONObject cfg,
-      Graphics2D g,
-      Window window,
-      boolean ch)
+  public static void drawChar(int x, int y, int w, int h, int dir, int frame, JSONObject cfg, Graphics2D g, Window window, boolean ch)
   {
     try
     {
@@ -310,20 +305,9 @@ public final class Assistant
     }
   }
   
-  public static void drawChar(
-      int x,
-      int y,
-      int w,
-      int h,
-      int dir,
-      int frame,
-      String type,
-      String image,
-      Graphics2D g,
-      Window window,
-      boolean ch)
+  public static void drawChar(int x, int y, int w, int h, int dir, int frame, String type, String image, Graphics2D g, Window window, boolean ch)
   {
-    Image i = Viewport.loadImage("char/" + type + "/" + image + ".png");
+    Image i = Viewport.loadImage("char/" + type + "/" + image + ".png").getScaledInstance(w * 4, h * 4, Image.SCALE_REPLICATE);
     int sw = i.getWidth(null) / 4;
     int sh = i.getHeight(null) / 4;
     if (!ch)

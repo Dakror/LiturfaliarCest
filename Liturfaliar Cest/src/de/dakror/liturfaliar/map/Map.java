@@ -74,7 +74,6 @@ public class Map implements DatabaseEventListener
     this(Compressor.openMap(new File(FileManager.dir, dir + "/" + mappack + "/maps/" + mapname + ".map")));
   }
   
-  
   public JSONObject getData()
   {
     return data;
@@ -305,21 +304,6 @@ public class Map implements DatabaseEventListener
     return bi;
   }
   
-  public static String[] getMaps(String pack, String dir)
-  {
-    if (!new File(FileManager.dir, dir + "/" + pack + "/maps").exists())
-      return null;
-    File[] files = new File(FileManager.dir, dir + "/" + pack + "/maps").listFiles(new FileFilter()
-    {
-      @Override
-      public boolean accept(File pathname)
-      {
-        return pathname.isFile() && pathname.getName().endsWith(".map");
-      }
-    });
-    return Assistant.getFileNames(files, false);
-  }
-  
   public Player getPlayer()
   {
     for (Creature c : creatures)
@@ -372,6 +356,35 @@ public class Map implements DatabaseEventListener
   {
     this.height = height;
     return height;
+  }
+  
+  /**
+   * @param key:<br>
+   *          <ul>
+   *          <li>for NPCs : npc_ID</li>
+   *          <li>for player: player</li>
+   *          </ul>
+   */
+  public Creature getCreatureByAccessKey(String key)
+  {
+    if (key.startsWith("npc_"))
+    {
+      ArrayList<NPC> list = new ArrayList<NPC>();
+      for (Creature c : creatures)
+      {
+        if (c instanceof NPC)
+          list.add((NPC) c);
+      }
+      return list.get(Integer.parseInt(key.replace("npc_", "")));
+    }
+    else if (key.equals("player"))
+    {
+      return getPlayer();
+    }
+    else
+    {
+      return null;
+    }
   }
   
   public MapPack getMapPack()
@@ -486,5 +499,25 @@ public class Map implements DatabaseEventListener
   public void removeMapEventListener(MapEventListener t)
   {
     listeners.set(listeners.indexOf(t), null);
+  }
+  
+  public static String[] getMaps(String pack, String dir)
+  {
+    File directory = new File(FileManager.dir, dir + "/" + pack + "/maps");
+    
+    if (!directory.exists())
+      return null;
+    
+    Compressor.compileMaps(directory);
+    
+    File[] files = directory.listFiles(new FileFilter()
+    {
+      @Override
+      public boolean accept(File pathname)
+      {
+        return pathname.isFile() && pathname.getName().endsWith(".map");
+      }
+    });
+    return Assistant.getFileNames(files, false);
   }
 }

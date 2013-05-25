@@ -86,14 +86,14 @@ public abstract class GameFrame
         tickTime += timePassed;
         update(timePassed);
       }
+      
       Graphics2D g = this.s.getGraphics();
       try
       {
         g.clearRect(0, 0, this.s.getFullScreenWindow().getWidth(), this.s.getFullScreenWindow().getHeight());
       }
       catch (Exception e)
-      {
-        
+      { 
         continue;
       }
       draw(g);
@@ -101,8 +101,6 @@ public abstract class GameFrame
       this.s.update();
     }
   }
-  
-  
   
   public abstract void update(long paramLong);
   
