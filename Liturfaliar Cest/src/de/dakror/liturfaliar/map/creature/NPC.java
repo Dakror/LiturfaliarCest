@@ -6,9 +6,9 @@ import java.awt.geom.Rectangle2D;
 
 import org.json.JSONArray;
 
-import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;

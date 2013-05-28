@@ -70,12 +70,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.data.Door;
 import de.dakror.liturfaliar.map.data.FieldData;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Compressor;
 import de.dakror.liturfaliar.util.FileManager;
@@ -87,7 +87,6 @@ public class MapEditor
   JDialog           FRframe;
   JComboBox<String> FRoldTileset, FRnewTileset;
   JTextField        FRoldLayer, FRnewLayer, FRoldTX, FRoldTY, FRnewTX, FRnewTY;
-  
   
   // -- NPC dialog -- //
   JComboBox<String> NPCsprite, NPCdir;
@@ -116,6 +115,7 @@ public class MapEditor
   JMenuBar          menu;
   JMenu             mpmenu, mmenu, fmenu, omenu;
   JMenuItem         mUndo;
+  JCheckBoxMenuItem mDrag;
   Viewport          v;
   JSONObject        mappackdata, mapdata;
   // JList<String> tilefiles;
@@ -434,7 +434,7 @@ public class MapEditor
     oauto.setState(false);
     omenu.add(oauto);
     
-    JCheckBoxMenuItem odrag = new JCheckBoxMenuItem(new AbstractAction("Drag-Modus")
+    mDrag = new JCheckBoxMenuItem(new AbstractAction("Drag-Modus")
     {
       private static final long serialVersionUID = 1L;
       
@@ -444,9 +444,9 @@ public class MapEditor
         dragmode = ((JCheckBoxMenuItem) e.getSource()).getState();
       }
     });
-    odrag.setAccelerator(KeyStroke.getKeyStroke("F8"));
-    odrag.setState(false);
-    omenu.add(odrag);
+    mDrag.setAccelerator(KeyStroke.getKeyStroke("F8"));
+    mDrag.setState(false);
+    omenu.add(mDrag);
     
     JCheckBoxMenuItem odel = new JCheckBoxMenuItem(new AbstractAction("Entfernmodus")
     {
@@ -1527,7 +1527,7 @@ public class MapEditor
         @Override
         public void mouseReleased(MouseEvent e)
         {
-          if (e.getButton() == 3 && !deletemode)
+          if (e.getButton() == 3 && !deletemode && !dragmode)
             jpm.show(tile, e.getX(), e.getY());
           
           if (e.getButton() == 1)
@@ -1974,10 +1974,12 @@ public class MapEditor
   
   public void showFilterReplaceDialog()
   {
-    FRframe = new JDialog(w, true);
-    FRframe.setTitle("Felder per Filter ersetzen");
+    FRframe = new JDialog(w, "Felder per Filter ersetzen");
     FRframe.setResizable(false);
     FRframe.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    
+    dragmode = true;
+    selectedtile = null;
     
     FRframe.addWindowListener(new WindowAdapter()
     {
@@ -1993,6 +1995,13 @@ public class MapEditor
             ((TileButton) c).repaint();
           }
         }
+        FRframe = null;
+        dragmode = mDrag.isSelected();
+        
+        map.mouseDown = null;
+        map.mousePos = null;
+        
+        map.repaint();
       }
     });
     
@@ -2069,14 +2078,43 @@ public class MapEditor
       public void actionPerformed(ActionEvent e)
       {
         Double layer = Assistant.parseDouble(FRoldLayer.getText());
-        Integer tx = Assistant.parseInt(FRoldLayer.getText());
-        Integer ty = Assistant.parseInt(FRoldLayer.getText());
+        Integer tx = Assistant.parseInt(FRoldTX.getText());
+        Integer ty = Assistant.parseInt(FRoldTY.getText());
         
         for (Component c : map.getComponents())
         {
           if (c instanceof TileButton)
           {
-            ((TileButton) c).checkReplaceFilterFits(FRoldTileset.getSelectedItem().toString(), layer, tx, ty);
+            ((TileButton) c).fitsFilter = false;
+            ((TileButton) c).update = true;
+            ((TileButton) c).repaint();
+          }
+        }
+        
+        if (map.mouseDown == null)
+        {
+          for (Component c : map.getComponents())
+          {
+            if (c instanceof TileButton)
+            {
+              ((TileButton) c).checkReplaceFilterFits(FRoldTileset.getSelectedItem().toString(), layer, tx, ty);
+            }
+          }
+        }
+        else
+        {
+          for (int i = 0; i < map.selW / CFG.FIELDSIZE; i++)
+          {
+            for (int j = 0; j < map.selH / CFG.FIELDSIZE; j++)
+            {
+              for (Component c : map.getComponents())
+              {
+                if (c instanceof TileButton && c.getX() >= i * CFG.FIELDSIZE + map.selX && c.getX() < (i + 1) * CFG.FIELDSIZE + map.selX && c.getY() >= j * CFG.FIELDSIZE + map.selY && c.getY() < (j + 1) * CFG.FIELDSIZE + map.selY)
+                {
+                  ((TileButton) c).checkReplaceFilterFits(FRoldTileset.getSelectedItem().toString(), layer, tx, ty);
+                }
+              }
+            }
           }
         }
       }
@@ -2087,13 +2125,12 @@ public class MapEditor
     JButton replace = new JButton("Ersetzen");
     replace.addActionListener(new ActionListener()
     {
-      
       @Override
       public void actionPerformed(ActionEvent e)
       {
         Double layer = Assistant.parseDouble(FRnewLayer.getText());
-        Integer tx = Assistant.parseInt(FRnewLayer.getText());
-        Integer ty = Assistant.parseInt(FRnewLayer.getText());
+        Integer tx = Assistant.parseInt(FRnewTX.getText());
+        Integer ty = Assistant.parseInt(FRnewTY.getText());
         
         for (Component c : map.getComponents())
         {
@@ -2109,7 +2146,6 @@ public class MapEditor
     SpringUtilities.makeCompactGrid(p, 2, 2, 6, 6, 6, 6);
     
     FRframe.setContentPane(p);
-    
     FRframe.pack();
     FRframe.setLocationRelativeTo(null);
     FRframe.setVisible(true);

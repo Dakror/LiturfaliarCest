@@ -8,11 +8,11 @@ import java.awt.event.MouseWheelEvent;
 
 import org.json.JSONObject;
 
-import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.scenes.Scene_LoadGame;
 import de.dakror.liturfaliar.scenes.Scene_MainMenu;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Notification;
 import de.dakror.liturfaliar.ui.TextSelect;
 import de.dakror.liturfaliar.ui.Tooltip;

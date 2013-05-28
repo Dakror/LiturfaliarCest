@@ -18,7 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.fx.Animation;
 import de.dakror.liturfaliar.map.creature.Creature;
@@ -27,6 +26,7 @@ import de.dakror.liturfaliar.map.creature.Player;
 import de.dakror.liturfaliar.map.event.DatabaseEventListener;
 import de.dakror.liturfaliar.map.event.MapEventListener;
 import de.dakror.liturfaliar.scenes.Scene_Game;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Compressor;
@@ -280,9 +280,8 @@ public class Map implements DatabaseEventListener
     // -- field data -- // for (Field[] f1 : ground) { for (Field f : f1) { f.drawUp(g, v, this); } } */
     if (CFG.UIDEBUG)
     {
-      
-      Assistant.Shadow(v.w.getBounds(), Color.black, 1, g);
-      Assistant.Shadow(getBumpMap(), Color.white, 1, g);
+      Assistant.Shadow(v.w.getBounds(), Color.black, 0.4f, g);
+      Assistant.Shadow(getBumpMap(), Color.white, 0.4f, g);
       for (Creature c : creatures)
       {
         c.draw(g, v, this);

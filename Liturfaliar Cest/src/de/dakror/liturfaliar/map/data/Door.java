@@ -5,12 +5,12 @@ import java.awt.Image;
 
 import org.json.JSONObject;
 
-import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.map.creature.Player;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;
 
 public class Door implements FieldData

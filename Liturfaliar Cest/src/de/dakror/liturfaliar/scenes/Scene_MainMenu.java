@@ -8,9 +8,9 @@ import java.awt.event.MouseWheelEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.editor.MapEditor;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Button;
 import de.dakror.liturfaliar.ui.HandleArea;
 import de.dakror.liturfaliar.ui.ProgressBar;

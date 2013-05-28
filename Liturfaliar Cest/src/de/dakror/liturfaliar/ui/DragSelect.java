@@ -9,8 +9,8 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 
-import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class DragSelect extends Component

@@ -6,8 +6,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.settings.CFG;
 
 public class HandleArea extends Component
 {

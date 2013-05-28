@@ -15,9 +15,9 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.MapPack;
+import de.dakror.liturfaliar.settings.CFG;
 
 /**
  * Manages SaveFiles, Creating needed directories, Saving and loading Options, etc.

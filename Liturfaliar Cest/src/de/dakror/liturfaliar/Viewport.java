@@ -37,6 +37,7 @@ import de.dakror.liturfaliar.ovscenes.OVScene;
 import de.dakror.liturfaliar.ovscenes.OVScene_Info;
 import de.dakror.liturfaliar.scenes.Scene;
 import de.dakror.liturfaliar.scenes.Scene_Logo;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.CursorText;
 import de.dakror.liturfaliar.ui.HelpOverlay;
 import de.dakror.liturfaliar.ui.Notification;
@@ -192,6 +193,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       if (ovscenes.get(keys.get(i)).consistent)
         newov.put(keys.get(i), ovscenes.get(keys.get(i)));
+      else ovscenes.get(keys.get(i)).setListenersEnabled(false);
     }
     ovscenes = newov;
   }

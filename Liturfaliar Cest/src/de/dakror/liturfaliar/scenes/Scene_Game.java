@@ -8,7 +8,6 @@ import java.awt.event.MouseWheelEvent;
 
 import org.json.JSONException;
 
-import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.MapPack;
@@ -16,6 +15,7 @@ import de.dakror.liturfaliar.map.creature.Player;
 import de.dakror.liturfaliar.map.event.MapPackEventListener;
 import de.dakror.liturfaliar.ovscenes.OVScene_Info;
 import de.dakror.liturfaliar.ovscenes.OVScene_Pause;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.CursorText;
 import de.dakror.liturfaliar.ui.hud.TargetLabel;
 import de.dakror.liturfaliar.util.Assistant;

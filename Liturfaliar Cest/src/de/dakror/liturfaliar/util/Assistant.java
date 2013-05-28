@@ -37,6 +37,7 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 
+
 /**
  * Static class for small tool functions.
  * 
@@ -600,7 +601,7 @@ public final class Assistant
     }
     catch (Exception e)
     {
-      return null;
+      return Double.NaN;
     }
   }
   

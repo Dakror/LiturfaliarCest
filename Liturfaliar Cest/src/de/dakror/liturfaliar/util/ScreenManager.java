@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
-import de.dakror.liturfaliar.CFG;
+import de.dakror.liturfaliar.settings.CFG;
 
 public class ScreenManager
 {

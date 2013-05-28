@@ -9,7 +9,7 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JLayeredPane;
 
-import de.dakror.liturfaliar.CFG;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class MapPanel extends JLayeredPane

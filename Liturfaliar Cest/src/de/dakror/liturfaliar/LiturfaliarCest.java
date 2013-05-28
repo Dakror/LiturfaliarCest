@@ -8,6 +8,7 @@ import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.codecs.CodecWav;
 import paulscode.sound.libraries.LibraryJavaSound;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.FileManager;
 import de.dakror.reporter.Reporter;

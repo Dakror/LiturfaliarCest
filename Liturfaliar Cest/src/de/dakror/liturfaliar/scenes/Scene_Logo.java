@@ -8,8 +8,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 
-import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.HandleArea;
 import de.dakror.liturfaliar.ui.ProgressBar;

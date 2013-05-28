@@ -10,9 +10,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.MapPack;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Button;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.Dialog;

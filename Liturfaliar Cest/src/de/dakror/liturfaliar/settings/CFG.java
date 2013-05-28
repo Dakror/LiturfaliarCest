@@ -1,4 +1,4 @@
-package de.dakror.liturfaliar;
+package de.dakror.liturfaliar.settings;
 
 import java.awt.Point;
 

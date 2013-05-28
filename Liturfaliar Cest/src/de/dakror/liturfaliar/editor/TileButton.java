@@ -12,7 +12,7 @@ import javax.swing.JButton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.liturfaliar.CFG;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class TileButton extends JButton
@@ -100,7 +100,7 @@ public class TileButton extends JButton
   
   public void checkReplaceFilterFits(String tileset, Double layer, Integer tx, Integer ty)
   {
-    fitsFilter = ((tileset.equals("Ignorieren")) ? true : tileset.equals(this.tileset)) && ((layer == null) ? true : layer == this.layer) && ((tx == null) ? true : this.tx == tx) && ((ty == null) ? true : this.ty == ty);
+    fitsFilter = ((tileset.equals("Ignorieren")) ? true : tileset.equals(this.tileset)) && ((layer.equals(Double.NaN)) ? true : layer == this.layer) && ((tx == null) ? true : this.tx == tx) && ((ty == null) ? true : this.ty == ty);
     update = true;
     repaint();
   }
@@ -112,7 +112,7 @@ public class TileButton extends JButton
     
     if (!tileset.equals("Ignorieren"))
       this.tileset = tileset;
-    if (layer != null)
+    if (layer != Double.NaN)
       this.layer = layer;
     if (tx != null)
       this.tx = tx;

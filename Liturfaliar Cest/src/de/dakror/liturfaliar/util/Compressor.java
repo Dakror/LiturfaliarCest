@@ -14,7 +14,7 @@ import java.util.zip.Inflater;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.liturfaliar.CFG;
+import de.dakror.liturfaliar.settings.CFG;
 
 public class Compressor
 {

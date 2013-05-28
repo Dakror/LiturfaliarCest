@@ -10,10 +10,11 @@ import java.awt.geom.Rectangle2D;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.settings.Balance;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Vector;
@@ -32,11 +33,12 @@ public class Player extends Creature
   public boolean     preventTargetChoose = false;
   public int         dirAfterReachedGoal = -1;
   
+  boolean            sprint;
+  
   public Player(JSONObject save, Window w)
   {
     super(CFG.MAPCENTER.x, CFG.MAPCENTER.y, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1]);
     massive = true;
-    setSpeed(1);
     layer = CFG.PLAYERLAYER;
     setData(save);
     frozen = false;
@@ -104,6 +106,9 @@ public class Player extends Creature
       m.setPos(CFG.MAPCENTER.x - getRelativePos(m)[0], CFG.MAPCENTER.y - getRelativePos(m)[1]);
       init = false;
     }
+    
+    setSpeed((sprint) ? Balance.Player.SPRINT : Balance.Player.WALK);
+    
     double x = 0, y = 0;
     if (dirs[0] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx, m.getY() + relPos.coords[1] + by - getSpeed() * 2, bw, bh)))
       y -= getSpeed();
@@ -140,7 +145,7 @@ public class Player extends Creature
     {
       int frame = 0;
       if ((dirs[0] || dirs[1] || dirs[2] || dirs[3]) && !frozen)
-        frame = v.getFrame();
+        frame = v.getFrame((sprint) ? 0.5f : 1);
       if (dirs[0])
         dir = 3;
       if (dirs[1])
@@ -184,6 +189,11 @@ public class Player extends Creature
         dirs[3] = true;
         break;
       }
+      case KeyEvent.VK_SHIFT:
+      {
+        sprint = true;
+        break;
+      }
     }
   }
   
@@ -210,6 +220,11 @@ public class Player extends Creature
       case KeyEvent.VK_S:
       {
         dirs[3] = false;
+        break;
+      }
+      case KeyEvent.VK_SHIFT:
+      {
+        sprint = false;
         break;
       }
     }
