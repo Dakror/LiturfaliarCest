@@ -179,7 +179,7 @@ public class Scene_LoadGame implements Scene
     }
     Assistant.drawMenuBackground(g, v.w);
     c1.draw(g, v);
-    Assistant.drawCenteredString("Spiel fortsetzen", v.w.getWidth(), 43, g, 45, Color.white);
+    Assistant.drawHorizontallyCenteredString("Spiel fortsetzen", v.w.getWidth(), 43, g, 45, Color.white);
     int selected = -1;
     if (chooser != null)
     {

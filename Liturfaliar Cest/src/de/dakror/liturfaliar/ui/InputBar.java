@@ -106,7 +106,7 @@ public class InputBar extends Component
     }
     else
     {
-      int x = Assistant.drawCenteredString(this.value, this.getX(), this.getWidth(), this.getY() + (int) this.size, g, (int) this.size, this.c);
+      int x = Assistant.drawHorizontallyCenteredString(this.value, this.getX(), this.getWidth(), this.getY() + (int) this.size, g, (int) this.size, this.c);
       if (this.focus && !this.maxCharsReached)
       {
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) (0.5f * Math.cos(this.blink + 0.5f * Math.PI) + 0.5f)));

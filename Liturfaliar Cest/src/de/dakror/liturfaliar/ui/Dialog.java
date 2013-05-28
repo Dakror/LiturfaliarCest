@@ -109,7 +109,7 @@ public class Dialog extends Component
       setHeight((int) (lines.length * 20 * 1.4f + 32 + (30 * 1.4f)));
     Assistant.Shadow(new Rectangle2D.Double(0, 0, v.w.getWidth(), v.w.getHeight()), Color.decode("#222222"), 0.8f, g);
     Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
-    Assistant.drawCenteredString(this.title, getX() + 16, getWidth(), getY() + (int) (30 * 1.4f), g, 30, Color.decode("#999999"));
+    Assistant.drawHorizontallyCenteredString(this.title, getX() + 16, getWidth(), getY() + (int) (30 * 1.4f), g, 30, Color.decode("#999999"));
     if (this.close != null)
     {
       Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY() - 48, 48, 48, g, v.w);
@@ -119,7 +119,7 @@ public class Dialog extends Component
     {
       if (lines[i].length() == 0)
         continue;
-      Assistant.drawCenteredString(lines[i], getX() + 16, getWidth(), (int) (getY() + (30 * 1.4f) + (i + 1) * 20 * 1.4f), g, 20, Color.white);
+      Assistant.drawHorizontallyCenteredString(lines[i], getX() + 16, getWidth(), (int) (getY() + (30 * 1.4f) + (i + 1) * 20 * 1.4f), g, 20, Color.white);
     }
     int selected = -1;
     for (int i = 0; i < this.children.size(); i++)

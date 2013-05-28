@@ -157,7 +157,9 @@ public class Scene_MainMenu implements Scene
       buttons[highlighted].draw(g, v);
     // version stuff
     g.drawImage(Viewport.loadImage("system/logo.png"), 0, 0, 35, 35, v.w);
+    
     Assistant.drawString(UniVersion.prettyVersion(), 35, 25, g, Color.white);
+    
     Assistant.drawString("Mitwirkende", 12, v.w.getHeight() - 10, g, Color.white);
     credits.draw(g, v);
     // options
@@ -165,7 +167,7 @@ public class Scene_MainMenu implements Scene
     {
       Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 96, v.w.getHeight() - 150, 192, 64, g, v.w);
       Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 128, v.w.getHeight() - 102, 256, 96, g, v.w);
-      Assistant.drawCenteredString("Optionen", v.w.getWidth() / 2 - 96, 192, v.w.getHeight() - 110, g, 26, Color.white);
+      Assistant.drawHorizontallyCenteredString("Optionen", v.w.getWidth() / 2 - 96, 192, v.w.getHeight() - 110, g, 26, Color.white);
       for (int i = 0; i < optionsSliders.length; i++)
       {
         optionsSliders[i].draw(g, v);
@@ -178,7 +180,7 @@ public class Scene_MainMenu implements Scene
     else
     {
       Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 96, v.w.getHeight() - 48, 192, 64, g, v.w);
-      Assistant.drawCenteredString("Optionen", v.w.getWidth() / 2 - 96, 192, v.w.getHeight() - 8, g, 26, Color.white);
+      Assistant.drawHorizontallyCenteredString("Optionen", v.w.getWidth() / 2 - 96, 192, v.w.getHeight() - 8, g, 26, Color.white);
       if (optionsToggleArea == null)
       {
         optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 48, 192, 64);

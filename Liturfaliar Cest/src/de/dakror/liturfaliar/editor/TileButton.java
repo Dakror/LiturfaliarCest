@@ -19,14 +19,14 @@ public class TileButton extends JButton
 {
   private static final long serialVersionUID = 1L;
   
-  public boolean            update           = true;
+  public boolean            update;
   
   private int               x;
   private int               y;
   private int               tx;
   private int               ty;
   
-  private double            l;
+  private double            layer;
   
   private String            tileset;
   private Image             i;
@@ -34,11 +34,12 @@ public class TileButton extends JButton
   public JSONObject         data;
   
   
-  public TileButton(int x, int y, int tx, int ty, double l, String tileset, Image i)
+  public TileButton(int x, int y, int tx, int ty, double layer, String tileset, Image i, MapEditor m)
   {
-    this.l = l;
+    this.layer = layer;
     this.x = x;
     this.y = y;
+    this.update = true;
     this.tx = tx;
     this.ty = ty;
     this.i = i;
@@ -50,7 +51,11 @@ public class TileButton extends JButton
     setDisabledIcon(getIcon());
     setContentAreaFilled(false);
     setBounds(x, y, CFG.FIELDSIZE, CFG.FIELDSIZE);
-    setToolTipText("Ebene: " + l);
+    setToolTipText("Ebene: " + layer);
+    
+    addMouseListener(m.new SelectionListener(this));
+    addMouseMotionListener(m.new SelectionListener(this));
+    
   }
   
   public int getX()
@@ -65,12 +70,12 @@ public class TileButton extends JButton
   
   public double getLayer()
   {
-    return l;
+    return layer;
   }
   
   public void setLayer(double l)
   {
-    this.l = l;
+    this.layer = l;
     update = true;
     setToolTipText("Ebene: " + l);
   }
@@ -147,21 +152,23 @@ public class TileButton extends JButton
   }
   
   @Override
-  public void paint(Graphics g)
+  public void paintComponent(Graphics g)
   {
+    super.paintComponent(g);
     
-    super.paint(g);
     if (update)
     {
       image = new BufferedImage(CFG.FIELDSIZE, CFG.FIELDSIZE, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = (Graphics2D) image.getGraphics();
       g2.drawImage(i, 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, null);
+      
       if (data.length() > 0)
         Assistant.Rect(0, 0, CFG.FIELDSIZE - 1, CFG.FIELDSIZE - 1, Color.blue, null, g2);
+      
+      setIcon(new ImageIcon(image));
+      setDisabledIcon(getIcon());
       update = false;
     }
-    setIcon(new ImageIcon(image));
-    setDisabledIcon(getIcon());
     
   }
 }

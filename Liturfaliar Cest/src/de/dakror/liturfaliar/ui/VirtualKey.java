@@ -29,7 +29,7 @@ public class VirtualKey extends Component
   public void draw(Graphics2D g, Viewport v)
   {
     g.drawImage(Viewport.loadImage("system/key" + ((this.active) ? "Active" : "") + ".png"), getX(), getY(), getWidth(), getHeight(), v.w);
-    Assistant.drawCenteredString(KeyEvent.getKeyText(this.c), getX(), getWidth(), getY() + getHeight() / 16 * 11, g, 35, (this.active) ? Color.decode("#6d3600") : Color.decode("#252323"));
+    Assistant.drawHorizontallyCenteredString(KeyEvent.getKeyText(this.c), getX(), getWidth(), getY() + getHeight() / 16 * 11, g, 35, (this.active) ? Color.decode("#6d3600") : Color.decode("#252323"));
   }
   
   @Override

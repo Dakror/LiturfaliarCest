@@ -52,7 +52,7 @@ public class Scene_Tutorial implements Scene
   {
     Assistant.drawMenuBackground(g, v.w);
     c1.draw(g, v);
-    Assistant.drawCenteredString("Tutorial", v.w.getWidth(), 43, g, 45, Color.white);
+    Assistant.drawHorizontallyCenteredString("Tutorial", v.w.getWidth(), 43, g, 45, Color.white);
     move.draw(g, v);
     mouse.draw(g, v);
     next.draw(g, v);

@@ -60,7 +60,6 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public double                         fMusicEffectID = 0.5d;
   public double                         fMusicID       = 0.3d;
   public double                         fSoundID       = 1.0d;
-  public boolean                        INTERNET;
   public HashMap<String, OVScene>       ovscenes       = new HashMap<String, OVScene>();
   public JSONObject                     savegame;
   public static Notification            notification;
@@ -295,8 +294,6 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     w.addMouseMotionListener(this);
     w.addMouseWheelListener(this);
     w.setIconImage(Assistant.loadImage("system/logo.png"));
-    Assistant.setCursor(Viewport.loadImage("system/loading.png"), w);
-    INTERNET = Assistant.isInternetReachable();
     Assistant.setCursor(Viewport.loadImage("system/cursor.png"), w);
     FileManager.mk(this);
     FileManager.loadOptions(this);
@@ -584,8 +581,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
         takeScreenshot = true;
         break;
       case KeyEvent.VK_F3:
-        if (e.isShiftDown())
-          CFG.UIDEBUG = !CFG.UIDEBUG;
+        CFG.UIDEBUG = !CFG.UIDEBUG;
         break;
       case KeyEvent.VK_F4:
         toggleOVScene(new OVScene_Info(), "Info");

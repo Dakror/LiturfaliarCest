@@ -39,7 +39,7 @@ public class HelpOverlayContainer extends Component
       Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY() - 20 * lines.length - 2, g.getFontMetrics(g.getFont().deriveFont(22.0f)).stringWidth(lines[0]) + 8, lines.length * 24, 8, 8), Color.black, 0.6f, g);
       for (int i = 0; i < lines.length; i++)
       {
-        Assistant.drawCenteredString(lines[i], getX(), getWidth(), getY() + 22 - 22 * (lines.length - i), g, 22, Color.white);
+        Assistant.drawHorizontallyCenteredString(lines[i], getX(), getWidth(), getY() + 22 - 22 * (lines.length - i), g, 22, Color.white);
       }
     }
     else

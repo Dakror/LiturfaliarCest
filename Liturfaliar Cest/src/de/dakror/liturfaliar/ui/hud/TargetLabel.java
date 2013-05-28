@@ -59,7 +59,7 @@ public class TargetLabel extends HUDComponent
         setX(v.w.getWidth() / 2 - getWidth() / 2);
         setHeight(g.getFontMetrics(g.getFont().deriveFont(Font.BOLD, fontsize)).getHeight() + 64);
         Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY() - getHeight() / 2, getWidth(), getHeight(), g, v.w);
-        Assistant.drawCenteredString(name, getX(), getWidth(), getY() + getHeight() / 3, g, (int) fontsize, Color.white);
+        Assistant.drawHorizontallyCenteredString(name, getX(), getWidth(), getY() + getHeight() / 3, g, (int) fontsize, Color.white);
       }
       catch (Exception e)
       {}

@@ -14,12 +14,15 @@ import javax.swing.JOptionPane;
 
 import de.dakror.universion.UniVersion;
 
-public class Reporter {
+public class Reporter
+{
   private static File   LOG = null;
   private static String SESSION_START;
   
-  public static void init(File log) {
-    if (!UniVersion.initialized) {
+  public static void init(File log)
+  {
+    if (!UniVersion.initialized)
+    {
       System.out.println("[Reporter]: Initialize UniVersion first!");
       System.exit(0);
     }
@@ -27,15 +30,19 @@ public class Reporter {
     LOG.mkdir();
     SESSION_START = new Date().toString().replace(":", "-");
     cleanupLogs();
-    try {
+    try
+    {
       System.setErr(new ErrorOutputStream(System.out, new File(LOG, SESSION_START + ".log")));
     }
-    catch (FileNotFoundException e1) {
+    catch (FileNotFoundException e1)
+    {
       e1.printStackTrace();
     }
-    Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+    Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler()
+    {
       @Override
-      public void uncaughtException(Thread t, Throwable e) {
+      public void uncaughtException(Thread t, Throwable e)
+      {
         JOptionPane.showMessageDialog(null, "Ein kritischer Fehler ist aufgetreten, der " + UniVersion.getSimpleName() + " zum Absturz gebracht hat.\nEin Fehlerbericht wird an dakror.de gesendet, um diesen Fehler zu beheben.", "Kritischer Fehler!", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
         cleanupLogs();
@@ -44,32 +51,41 @@ public class Reporter {
     });
   }
   
-  public static void cleanupLogs() {
-    for (File f : LOG.listFiles()) {
-      if (f.length() == 0) {
+  public static void cleanupLogs()
+  {
+    for (File f : LOG.listFiles())
+    {
+      if (f.length() == 0)
+      {
         f.delete();
         continue;
       }
-      try {
+      try
+      {
         new URL("http://dakror.de/ajax/errorreport.php?r=" + URLEncoder.encode("App: " + UniVersion.getFullName() + "\nDate: " + (System.currentTimeMillis() / 1000) + "\nVersion: " + UniVersion.prettyVersion() + " \nError: " + getFileContents(f), "UTF-8")).openStream().close();
       }
-      catch (Exception e) {
+      catch (Exception e)
+      {
         e.printStackTrace();
       }
-      if (f.getName().indexOf(SESSION_START) == -1) while (!f.delete())
-        System.gc();
+      if (f.getName().indexOf(SESSION_START) == -1)
+        while (!f.delete())
+          System.gc();
     }
   }
   
-  public static String getFileContents(File f) {
+  public static String getFileContents(File f)
+  {
     String res = "", line = "";
-    try {
+    try
+    {
       BufferedReader br = new BufferedReader(new FileReader(f));
       while ((line = br.readLine()) != null)
         res += line + "\r\n";
       br.close();
     }
-    catch (IOException e) {
+    catch (IOException e)
+    {
       return null;
     }
     return res;

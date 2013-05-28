@@ -21,7 +21,7 @@ public class NPCButton extends JButton
   
   public JSONArray          talk;
   
-  public NPCButton(int x, int y, int w, int h, int dir, String name, String sprite, double speed, boolean move, boolean look, int moveT, int lookT, Image i, int ID)
+  public NPCButton(int x, int y, int w, int h, int dir, String name, String sprite, double speed, boolean move, boolean look, int moveT, int lookT, Image i, int ID, MapEditor m)
   {
     this.x = x;
     this.y = y;
@@ -39,10 +39,14 @@ public class NPCButton extends JButton
     
     this.talk = new JSONArray();
     
-    setToolTipText("NPC #"+ID+": " + name);
+    setToolTipText("NPC #" + ID + ": " + name);
     setIcon(new ImageIcon(i));
+    setFocusPainted(false);
     setContentAreaFilled(false);
     setBounds(x, y, w, h);
+    
+    addMouseListener(m.new SelectionListener(this));
+    addMouseMotionListener(m.new SelectionListener(this));
   }
   
   public JSONObject getSave()

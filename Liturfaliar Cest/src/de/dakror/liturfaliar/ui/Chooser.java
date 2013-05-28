@@ -121,7 +121,7 @@ public class Chooser extends Component
     else Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
     if (showIndex && elem.length > 0)
     {
-      int x = Assistant.drawCenteredString(title + ((selected != -1) ? ((elem[selected] != null) ? elem[selected] : "") : ""), getX(), getWidth(), (int) (getY() + getHeight() / 1.39f), g, (int) (getHeight() / 1.4f), Color.white);
+      int x = Assistant.drawHorizontallyCenteredString(title + ((selected != -1) ? ((elem[selected] != null) ? elem[selected] : "") : ""), getX(), getWidth(), (int) (getY() + getHeight() / 1.39f), g, (int) (getHeight() / 1.4f), Color.white);
       if (getIcons() != null && getIcons()[selected] != null)
       {
         Image icon = getIcons()[selected];
@@ -132,7 +132,7 @@ public class Chooser extends Component
     }
     else
     {
-      Assistant.drawCenteredString(title, getX(), getWidth(), (int) (getY() + getHeight() / 1.39f), g, (int) (getHeight() / 1.4f), Color.white);
+      Assistant.drawHorizontallyCenteredString(title, getX(), getWidth(), (int) (getY() + getHeight() / 1.39f), g, (int) (getHeight() / 1.4f), Color.white);
     }
     prev.draw(g, v);
     next.draw(g, v);

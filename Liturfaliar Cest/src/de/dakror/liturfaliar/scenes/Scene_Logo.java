@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 
+import de.dakror.liturfaliar.CFG;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.HandleArea;
@@ -35,7 +36,7 @@ public class Scene_Logo implements Scene
     time = 0;
     alphas = new float[2];
     homepageButton = new HandleArea(0, v.w.getHeight() / 2 + 160 - (int) (26 * 1.4f), v.w.getWidth() - 1, (int) (26 * 1.4f));
-    update = v.INTERNET && (FileManager.checkMapPackUpdate(v.w) || FileManager.checkMediaUpdate("Sound") || FileManager.checkMediaUpdate("Music") || FileManager.checkMediaUpdate("Animations") || FileManager.checkMediaUpdate("Tiles"));
+    update = CFG.INTERNET && (FileManager.checkMapPackUpdate(v.w) || FileManager.checkMediaUpdate("Sound") || FileManager.checkMediaUpdate("Music") || FileManager.checkMediaUpdate("Animations") || FileManager.checkMediaUpdate("Tiles"));
     downloader = new ArrayList<ZipAssistant>();
     if (update)
     {
@@ -103,7 +104,7 @@ public class Scene_Logo implements Scene
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphas[0]));
     g.drawImage(Viewport.loadImage("system/dakror.png"), (v.w.getWidth() - 1000) / 2, (v.w.getHeight() - 305) / 2, 1000, 305, v.w);
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphas[1]));
-    Assistant.drawCenteredString("Homepage: www.dakror.de", v.w.getWidth(), v.w.getHeight() / 2 + 155, g, 26);
+    Assistant.drawHorizontallyCenteredString("Homepage: www.dakror.de", v.w.getWidth(), v.w.getHeight() / 2 + 155, g, 26);
     homepageButton.draw(g, v);
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     if (update)
@@ -111,7 +112,7 @@ public class Scene_Logo implements Scene
       new Container(0, v.w.getHeight() - 90, v.w.getWidth(), 90).draw(g, v);
       if (progress != null)
         progress.draw(g, v);
-      Assistant.drawCenteredString("Aktualisierung", v.w.getWidth(), v.w.getHeight() - 50, g, 30, Color.white);
+      Assistant.drawHorizontallyCenteredString("Aktualisierung", v.w.getWidth(), v.w.getHeight() - 50, g, 30, Color.white);
     }
   }
   

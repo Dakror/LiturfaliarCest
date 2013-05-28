@@ -96,7 +96,7 @@ public class Spinner extends Component
     DecimalFormat df = new DecimalFormat();
     df.setMinimumFractionDigits(this.decDigits);
     df.setMaximumFractionDigits(this.decDigits);
-    Assistant.drawCenteredString(((this.title != null) ? title : "") + df.format(this.value), getX(), getWidth(), getY() + 22, g, 22, Color.white);
+    Assistant.drawHorizontallyCenteredString(((this.title != null) ? title : "") + df.format(this.value), getX(), getWidth(), getY() + 22, g, 22, Color.white);
     this.down.draw(g, v);
     this.up.draw(g, v);
     if (this.disabled)

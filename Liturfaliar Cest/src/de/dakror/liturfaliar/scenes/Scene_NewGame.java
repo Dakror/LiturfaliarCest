@@ -25,17 +25,17 @@ import de.dakror.liturfaliar.util.FileManager;
 
 public class Scene_NewGame implements Scene
 {
-  Chooser[]    bodyparts;
-  Button       start;
-  Button       random;
-  Chooser      gender;
-  InputBar     name;
-  JSONObject   charData;
-  JSONObject   cfg;
-  Container    c1, c2;
-  Dialog       tutorial;
-  boolean      openDialog;
-  Viewport     v;
+  Chooser[]  bodyparts;
+  Button     start;
+  Button     random;
+  Chooser    gender;
+  InputBar   name;
+  JSONObject charData;
+  JSONObject cfg;
+  Container  c1, c2;
+  Dialog     tutorial;
+  boolean    openDialog;
+  Viewport   v;
   
   @Override
   public void init(Viewport v)
@@ -238,8 +238,8 @@ public class Scene_NewGame implements Scene
       Assistant.drawChar(v.w.getWidth() / 3, v.w.getHeight() / 4, v.w.getWidth() / 6, (int) (v.w.getWidth() / 6 * 4 / 3), 0, 0, cfg, g, v.w, false);
     c1.draw(g, v);
     c2.draw(g, v);
-    Assistant.drawCenteredString("Neues Spiel starten", v.w.getWidth(), 43, g, 45, Color.white);
-    Assistant.drawCenteredString("Dein Name:", v.w.getWidth() / 2 - 125, 250, v.w.getHeight() / 3 + 370, g, 35, Color.white);
+    Assistant.drawHorizontallyCenteredString("Neues Spiel starten", v.w.getWidth(), 43, g, 45, Color.white);
+    Assistant.drawHorizontallyCenteredString("Dein Name:", v.w.getWidth() / 2 - 125, 250, v.w.getHeight() / 3 + 370, g, 35, Color.white);
     name.draw(g, v);
     random.draw(g, v);
     start.draw(g, v);

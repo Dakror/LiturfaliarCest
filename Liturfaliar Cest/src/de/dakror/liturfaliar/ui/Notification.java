@@ -52,7 +52,7 @@ public class Notification
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
       for (int i = 0; i < lines.size(); i++)
       {
-        Assistant.drawCenteredString(lines.get(i), 0, width, (int) (g.getFontMetrics().getHeight() * (i + 1)), g2, 27, Color.white);
+        Assistant.drawHorizontallyCenteredString(lines.get(i), 0, width, (int) (g.getFontMetrics().getHeight() * (i + 1)), g2, 27, Color.white);
       }
       g.setFont(old);
     }

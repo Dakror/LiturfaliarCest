@@ -173,20 +173,40 @@ public class Map implements DatabaseEventListener
     }
     Collections.reverse(cpy);
     for (Field f : cpy)
+    {
       if (f.getLayer() <= CFG.PLAYERLAYER && f.getLayer() > CFG.SUPERDELLAYER)
+      {
         bump.add(new Area(new Rectangle2D.Double(f.getX(), f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE)));
+      }
       else if (f.getLayer() > CFG.PLAYERLAYER && f.getLayer() < CFG.SUPERADDLAYER)
+      {
         bump.add(new Area(new Rectangle2D.Double(f.getX(), f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE)));
+      }
+    }
     for (Field f : cpy)
+    {
       if (f.getLayer() == CFG.PLAYERLAYER)
+      {
         bump.subtract(new Area(new Rectangle2D.Double(f.getX(), f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE)));
+      }
+    }
     for (Field f : cpy)
+    {
       if (f.getLayer() >= CFG.SUPERADDLAYER)
+      {
         bump.add(new Area(new Rectangle2D.Double(f.getX(), f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE)));
+      }
+    }
+    
     Collections.reverse(cpy);
+    
     for (Field f : cpy)
+    {
       if (f.getLayer() <= CFG.SUPERDELLAYER)
+      {
         bump.subtract(new Area(new Rectangle2D.Double(f.getX(), f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE)));
+      }
+    }
     JSONArray npcs = data.getJSONArray("npc");
     for (int i = 0; i < npcs.length(); i++)
     {
@@ -260,6 +280,7 @@ public class Map implements DatabaseEventListener
     // -- field data -- // for (Field[] f1 : ground) { for (Field f : f1) { f.drawUp(g, v, this); } } */
     if (CFG.UIDEBUG)
     {
+      
       Assistant.Shadow(v.w.getBounds(), Color.black, 1, g);
       Assistant.Shadow(getBumpMap(), Color.white, 1, g);
       for (Creature c : creatures)

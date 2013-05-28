@@ -16,11 +16,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Area;
@@ -39,6 +38,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -83,8 +83,6 @@ import de.dakror.universion.UniVersion;
 
 public class MapEditor
 {
-  
-  
   // -- NPC dialog -- //
   JComboBox<String> NPCsprite, NPCdir;
   JDialog           NPCframe;
@@ -111,20 +109,28 @@ public class MapEditor
   
   JMenuBar          menu;
   JMenu             mpmenu, mmenu, fmenu, omenu;
+  JMenuItem         mUndo;
   Viewport          v;
   JSONObject        mappackdata, mapdata;
   JPanel            tiles;
-  JLayeredPane      map;
+  MapPanel          map;
   JScrollPane       msp;
   String            tileset;
   JButton           selectedtile;
+  BufferedImage[][] autotiles;
   JDialog           bumpPreview;
   
   // -- modes -- //
   boolean           gridmode;
   boolean           rasterview;
   boolean           deletemode;
+  boolean           autotilemode;
+  
   double            cachelayer;
+  
+  // -- UNDO -- //
+  TileButton[]      lastChangedTiles;
+  boolean           tilesWereDeleted;
   
   public MapEditor(Viewport viewport)
   {
@@ -158,6 +164,7 @@ public class MapEditor
     menu = new JMenuBar();
     
     mpmenu = new JMenu("Kartenpaket");
+    
     JMenuItem mpnew = new JMenuItem(new AbstractAction("Neu...")
     {
       private static final long serialVersionUID = 1L;
@@ -170,6 +177,7 @@ public class MapEditor
     });
     mpnew.setAccelerator(KeyStroke.getKeyStroke("ctrl N"));
     mpmenu.add(mpnew);
+    
     JMenuItem mpopen = new JMenuItem(new AbstractAction("Öffnen...")
     {
       private static final long serialVersionUID = 1L;
@@ -185,6 +193,7 @@ public class MapEditor
     menu.add(mpmenu);
     
     mmenu = new JMenu("Karte");
+    
     JMenuItem mnew = new JMenuItem(new AbstractAction("Neu...")
     {
       private static final long serialVersionUID = 1L;
@@ -197,6 +206,7 @@ public class MapEditor
     });
     mnew.setAccelerator(KeyStroke.getKeyStroke("ctrl shift N"));
     mmenu.add(mnew);
+    
     JMenuItem mopen = new JMenuItem(new AbstractAction("Öffnen...")
     {
       private static final long serialVersionUID = 1L;
@@ -213,6 +223,23 @@ public class MapEditor
     menu.add(mmenu);
     
     fmenu = new JMenu("Datei");
+    
+    mUndo = new JMenuItem(new AbstractAction("Rückgängig machen")
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        undo();
+      }
+    });
+    mUndo.setAccelerator(KeyStroke.getKeyStroke("ctrl Z"));
+    mUndo.setEnabled(false);
+    fmenu.add(mUndo);
+    
+    fmenu.addSeparator();
+    
     JMenuItem msave = new JMenuItem(new AbstractAction("Speichern")
     {
       private static final long serialVersionUID = 1L;
@@ -225,6 +252,7 @@ public class MapEditor
     });
     msave.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
     fmenu.add(msave);
+    
     JMenuItem madj = new JMenuItem(new AbstractAction("Größe ändern...")
     {
       private static final long serialVersionUID = 1L;
@@ -239,7 +267,7 @@ public class MapEditor
         }
         JDialog dialog = new JDialog(w, true);
         dialog.setTitle("Kartengröße ändern");
-        dialog.setSize(400, 170);
+        dialog.setSize(200, 100);
         dialog.setResizable(false);
         dialog.setLocationRelativeTo(null);
         dialog.setLayout(new BorderLayout());
@@ -279,6 +307,7 @@ public class MapEditor
     });
     fmenu.add(madj);
     fmenu.addSeparator();
+    
     JMenuItem fnpc = new JMenuItem(new AbstractAction("NPC-Bearbeitung")
     {
       private static final long serialVersionUID = 1L;
@@ -290,10 +319,12 @@ public class MapEditor
       }
     });
     fmenu.add(fnpc);
+    
     fmenu.setEnabled(false);
     menu.add(fmenu);
     
     omenu = new JMenu("Optionen");
+    
     JCheckBoxMenuItem ogrid = new JCheckBoxMenuItem(new AbstractAction("Rastermodus")
     {
       private static final long serialVersionUID = 1L;
@@ -304,8 +335,10 @@ public class MapEditor
         gridmode = ((JCheckBoxMenuItem) e.getSource()).getState();
       }
     });
+    ogrid.setAccelerator(KeyStroke.getKeyStroke("F5"));
     ogrid.setState(true);
     omenu.add(ogrid);
+    
     JCheckBoxMenuItem ogview = new JCheckBoxMenuItem(new AbstractAction("Rasteranzeige")
     {
       private static final long serialVersionUID = 1L;
@@ -317,8 +350,10 @@ public class MapEditor
         map.repaint();
       }
     });
+    ogview.setAccelerator(KeyStroke.getKeyStroke("F6"));
     ogview.setState(false);
     omenu.add(ogview);
+    
     JCheckBoxMenuItem obump = new JCheckBoxMenuItem(new AbstractAction("Bumpmodus")
     {
       private static final long serialVersionUID = 1L;
@@ -337,7 +372,7 @@ public class MapEditor
           return;
         }
         
-        bumpPreview = new JDialog(w, "Bumpmap Vorschau");
+        bumpPreview = new JDialog(w);
         bumpPreview.setUndecorated(true);
         bumpPreview.setOpacity(0.4f);
         
@@ -358,13 +393,28 @@ public class MapEditor
         bumpPreview.pack();
         bumpPreview.setLocationRelativeTo(w);
         bumpPreview.setLocation(w.getWidth() / 8 - 1, w.getJMenuBar().getHeight() + w.getInsets().top - 7);
-        bumpPreview.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         bumpPreview.setResizable(false);
         bumpPreview.setVisible(true);
       }
     });
+    obump.setAccelerator(KeyStroke.getKeyStroke("F7"));
     obump.setState(false);
     omenu.add(obump);
+    
+    JCheckBoxMenuItem oauto = new JCheckBoxMenuItem(new AbstractAction("Autotile-Modus")
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        autotilemode = ((JCheckBoxMenuItem) e.getSource()).getState();
+      }
+    });
+    oauto.setAccelerator(KeyStroke.getKeyStroke("F8"));
+    oauto.setState(false);
+    omenu.add(oauto);
+    
     JCheckBoxMenuItem odel = new JCheckBoxMenuItem(new AbstractAction("Entfernmodus")
     {
       private static final long serialVersionUID = 1L;
@@ -375,8 +425,10 @@ public class MapEditor
         deletemode = ((JCheckBoxMenuItem) e.getSource()).getState();
       }
     });
+    odel.setAccelerator(KeyStroke.getKeyStroke("F9"));
     odel.setState(false);
     omenu.add(odel);
+    
     omenu.setEnabled(false);
     menu.add(omenu);
     
@@ -407,12 +459,21 @@ public class MapEditor
         int w = image.getWidth(null) / CFG.FIELDSIZE;
         int h = image.getHeight(null) / CFG.FIELDSIZE;
         tiles.setPreferredSize(new Dimension(w * CFG.FIELDSIZE, h * CFG.FIELDSIZE));
+        
+        if (Arrays.asList(CFG.AUTOTILES).contains(tileset))
+          autotiles = new BufferedImage[w][h];
+        
+        
         for (int i = 0; i < w; i++)
         {
           for (int j = 0; j < h; j++)
           {
             BufferedImage bi = new BufferedImage(CFG.FIELDSIZE, CFG.FIELDSIZE, BufferedImage.TYPE_INT_ARGB);
             bi.getGraphics().drawImage(image, 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, i * CFG.FIELDSIZE, j * CFG.FIELDSIZE, i * CFG.FIELDSIZE + CFG.FIELDSIZE, j * CFG.FIELDSIZE + CFG.FIELDSIZE, null);
+            
+            if (Arrays.asList(CFG.AUTOTILES).contains(tileset))
+              autotiles[i][j] = bi;
+            
             JButton button = new JButton();
             button.setBounds(i * CFG.FIELDSIZE, j * CFG.FIELDSIZE, CFG.FIELDSIZE, CFG.FIELDSIZE);
             button.setBorder(BorderFactory.createEmptyBorder());
@@ -482,7 +543,7 @@ public class MapEditor
     map.setOpaque(true);
     map.setBackground(Color.black);
     map.setPreferredSize(new Dimension(w.getWidth() / 8 * 7, w.getHeight() / 5 * 4 + 132));
-    map.addMouseListener(new MouseListener()
+    map.addMouseListener(new MouseAdapter()
     {
       @Override
       public void mouseEntered(MouseEvent e)
@@ -497,14 +558,14 @@ public class MapEditor
       }
       
       @Override
-      public void mousePressed(MouseEvent e)
+      public void mouseReleased(MouseEvent e)
       {
         if (e.getButton() == 1)
         {
-          if (selectedtile != null)
+          if (selectedtile != null && map.mouseDown == null && map.mousePos == null)
           {
             int round = (gridmode) ? CFG.FIELDSIZE : 1;
-            addTile(((ImageIcon) selectedtile.getIcon()).getImage(), Assistant.round(e.getX() - CFG.FIELDSIZE / 2, round), Assistant.round(e.getY() - CFG.FIELDSIZE / 2, round), tileset, selectedtile.getX() / CFG.FIELDSIZE, selectedtile.getY() / CFG.FIELDSIZE, -1, new JSONObject());
+            addTile(((ImageIcon) selectedtile.getIcon()).getImage(), Assistant.round(e.getX() - CFG.FIELDSIZE / 2, round), Assistant.round(e.getY() - CFG.FIELDSIZE / 2, round), tileset, selectedtile.getX() / CFG.FIELDSIZE, selectedtile.getY() / CFG.FIELDSIZE, -1, new JSONObject(), true);
           }
           else if (NPCframe != null)
           {
@@ -512,14 +573,6 @@ public class MapEditor
           }
         }
       }
-      
-      @Override
-      public void mouseClicked(MouseEvent e)
-      {}
-      
-      @Override
-      public void mouseReleased(MouseEvent e)
-      {}
     });
     msp = new JScrollPane(map, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
     msp.setBounds(w.getWidth() / 8, 0, w.getWidth() / 8 * 7, w.getHeight() / 5 * 4 + 132);
@@ -693,6 +746,7 @@ public class MapEditor
           mapdata.put("name", name.getText());
           mapdata.put("tile", new JSONArray());
           fmenu.setEnabled(true);
+          omenu.setEnabled(true);
           saveMap();
         }
         catch (JSONException e1)
@@ -782,6 +836,11 @@ public class MapEditor
   {
     try
     {
+      map.mouseDown = null;
+      map.mousePos = null;
+      map.repaint();
+      
+      
       w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + mappackdata.getString("name") + "/" + m);
       map.removeAll();
       msp.setViewportView(map);
@@ -814,7 +873,7 @@ public class MapEditor
         JSONObject o = tiles.get(i);
         BufferedImage bi = new BufferedImage(CFG.FIELDSIZE, CFG.FIELDSIZE, BufferedImage.TYPE_INT_ARGB);
         bi.getGraphics().drawImage(Viewport.loadImage("Tiles/" + o.getString("tileset") + ".png"), 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, o.getInt("tx") * CFG.FIELDSIZE, o.getInt("ty") * CFG.FIELDSIZE, o.getInt("tx") * CFG.FIELDSIZE + CFG.FIELDSIZE, o.getInt("ty") * CFG.FIELDSIZE + CFG.FIELDSIZE, null);
-        addTile(bi, o.getInt("x"), o.getInt("y"), o.getString("tileset"), o.getInt("tx"), o.getInt("ty"), o.getDouble("l"), o.getJSONObject("data"));
+        addTile(bi, o.getInt("x"), o.getInt("y"), o.getString("tileset"), o.getInt("tx"), o.getInt("ty"), o.getDouble("l"), o.getJSONObject("data"), false);
       }
       JSONArray npcs = mapdata.getJSONArray("npc");
       for (int i = 0; i < npcs.length(); i++)
@@ -1129,8 +1188,6 @@ public class MapEditor
           if (talkCond.getText().length() == 0 && talkText.getText().length() == 0)
             continue;
           
-          CFG.p(talkCond.getText());
-          
           JSONArray cond = null;
           try
           {
@@ -1265,12 +1322,12 @@ public class MapEditor
       NPCButton npc;
       if (data == null)
       {
-        npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getPreferredSize().width - CFG.MALUS, NPCpreview.getPreferredSize().height - CFG.MALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage(), NPClastID);
+        npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getPreferredSize().width - CFG.MALUS, NPCpreview.getPreferredSize().height - CFG.MALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage(), NPClastID, this);
       }
       else
       {
         BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + data.getString("char") + ".png");
-        npc = new NPCButton(data.getInt("x"), data.getInt("y"), data.getInt("w"), data.getInt("h"), data.getInt("dir"), data.getString("name"), data.getString("char"), data.getDouble("speed"), data.getJSONObject("random").getBoolean("move"), data.getJSONObject("random").getBoolean("look"), data.getJSONObject("random").getInt("moveT"), data.getJSONObject("random").getInt("lookT"), image.getSubimage(0, data.getInt("dir") * image.getHeight() / 4, image.getWidth() / 4, image.getHeight() / 4), NPClastID);
+        npc = new NPCButton(data.getInt("x"), data.getInt("y"), data.getInt("w"), data.getInt("h"), data.getInt("dir"), data.getString("name"), data.getString("char"), data.getDouble("speed"), data.getJSONObject("random").getBoolean("move"), data.getJSONObject("random").getBoolean("look"), data.getJSONObject("random").getInt("moveT"), data.getJSONObject("random").getInt("lookT"), image.getSubimage(0, data.getInt("dir") * image.getHeight() / 4, image.getWidth() / 4, image.getHeight() / 4), NPClastID, this);
         npc.talk = data.getJSONArray("talk");
       }
       
@@ -1336,7 +1393,7 @@ public class MapEditor
     }
   }
   
-  public void addTile(Image icon, final int x, final int y, String t, int tx, int ty, double l, JSONObject data)
+  public TileButton addTile(Image icon, final int x, final int y, String t, int tx, int ty, double l, JSONObject data, boolean undo)
   {
     try
     {
@@ -1354,7 +1411,7 @@ public class MapEditor
         }
         l++;
       }
-      final TileButton tile = new TileButton(x, y, tx, ty, l, t, icon);
+      final TileButton tile = new TileButton(x, y, tx, ty, l, t, icon, this);
       tile.data = data;
       tile.setEnabled(false);
       final JPopupMenu jpm = new JPopupMenu();
@@ -1388,67 +1445,31 @@ public class MapEditor
         @Override
         public void actionPerformed(ActionEvent e)
         {
-          final JDialog dialog = new JDialog(w, true);
-          dialog.setTitle("Layer anpassen");
-          dialog.setIconImage(w.getIconImage());
-          dialog.setSize(200, 80);
-          dialog.setResizable(false);
-          dialog.setLocationRelativeTo(null);
-          dialog.setLayout(new GridLayout(2, 1, 0, 0));
-          dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-          final JTextField layer = new JTextField("" + tile.getLayer());
-          layer.setSelectionStart(0);
-          layer.setSelectionEnd(layer.getText().length());
-          final JButton btn = new JButton("Speichern");
-          btn.addActionListener(new ActionListener()
+          String result = JOptionPane.showInputDialog(w, "Layer anpassen", tile.getLayer());
+          
+          if (result == null)
+            return;
+          
+          try
           {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            double ly = Double.parseDouble(result);
+            cachelayer = ly;
+            tile.setLayer(ly);
+            saveMap();
+            try
             {
-              double ly = 0;
-              try
-              {
-                ly = Double.parseDouble(layer.getText());
-              }
-              catch (Exception e1)
-              {
-                JOptionPane.showMessageDialog(w, "Layerangabe darf nur Zahlen enthalten.", "Fehler!", JOptionPane.ERROR_MESSAGE);
-                return;
-              }
-              cachelayer = ly;
-              tile.setLayer(ly);
-              saveMap();
-              dialog.dispose();
-              try
-              {
-                openMap(mapdata.getString("name"));
-              }
-              catch (JSONException e1)
-              {
-                e1.printStackTrace();
-              }
+              openMap(mapdata.getString("name"));
             }
-          });
-          layer.addKeyListener(new KeyListener()
+            catch (JSONException e1)
+            {
+              e1.printStackTrace();
+            }
+          }
+          catch (Exception e1)
           {
-            @Override
-            public void keyPressed(KeyEvent e)
-            {
-              if (e.getExtendedKeyCode() == KeyEvent.VK_ENTER)
-                btn.doClick();
-            }
-            
-            @Override
-            public void keyReleased(KeyEvent arg0)
-            {}
-            
-            @Override
-            public void keyTyped(KeyEvent arg0)
-            {}
-          });
-          dialog.add(layer);
-          dialog.add(btn);
-          dialog.setVisible(true);
+            JOptionPane.showMessageDialog(w, "Layerangabe darf nur Zahlen enthalten.", "Fehler!", JOptionPane.ERROR_MESSAGE);
+            return;
+          }
         }
       });
       jpm.add(lchange);
@@ -1472,14 +1493,21 @@ public class MapEditor
       {
         @Override
         public void mousePressed(MouseEvent e)
+        {}
+        
+        @Override
+        public void mouseReleased(MouseEvent e)
         {
+          if (e.getButton() == 3 && !deletemode)
+            jpm.show(tile, e.getX(), e.getY());
+          
           if (e.getButton() == 1)
           {
             JButton src = (JButton) e.getSource();
-            if (selectedtile != null)
+            if (selectedtile != null && map.mouseDown == null && map.mousePos == null)
             {
               int round = (gridmode) ? CFG.FIELDSIZE : 1;
-              addTile(((ImageIcon) selectedtile.getIcon()).getImage(), Assistant.round(e.getX() - CFG.FIELDSIZE / 2 + src.getX(), round), Assistant.round(e.getY() - CFG.FIELDSIZE / 2 + src.getY(), round), tileset, selectedtile.getX() / CFG.FIELDSIZE, selectedtile.getY() / CFG.FIELDSIZE, -1, new JSONObject());
+              addTile(((ImageIcon) selectedtile.getIcon()).getImage(), Assistant.round(e.getX() - CFG.FIELDSIZE / 2 + src.getX(), round), Assistant.round(e.getY() - CFG.FIELDSIZE / 2 + src.getY(), round), tileset, selectedtile.getX() / CFG.FIELDSIZE, selectedtile.getY() / CFG.FIELDSIZE, -1, new JSONObject(), true);
             }
             else if (NPCframe != null)
             {
@@ -1491,13 +1519,6 @@ public class MapEditor
             map.remove(tile);
             msp.setViewportView(map);
           }
-        }
-        
-        @Override
-        public void mouseReleased(MouseEvent e)
-        {
-          if (e.getButton() == 3 && !deletemode)
-            jpm.show(tile, e.getX(), e.getY());
         }
         
         @Override
@@ -1513,17 +1534,26 @@ public class MapEditor
         }
       });
       if (mapdata == null)
-        return;
+        return null;
       map.add(tile, JLayeredPane.DEFAULT_LAYER);
-      msp.setViewportView(map);
+      
       map.setComponentZOrder(tile, 0);
+      
+      if (undo)
+      {
+        lastChangedTiles = new TileButton[] { tile };
+        mUndo.setEnabled(true);
+      }
+      
+      cachelayer = 0;
+      return tile;
     }
     catch (Exception e1)
     {
       e1.printStackTrace();
-      return;
+      return null;
     }
-    cachelayer = 0;
+    
   }
   
   public void editFieldData(final TileButton field, final String dataType)
@@ -1785,6 +1815,96 @@ public class MapEditor
     }
   }
   
+  public void handleSelectionBox()
+  {
+    new Thread()
+    {
+      public void run()
+      {
+        
+        int w = map.selW / CFG.FIELDSIZE;
+        int h = map.selH / CFG.FIELDSIZE;
+        
+        if (w + h < 2)
+          return;
+        
+        ArrayList<TileButton> tiles = new ArrayList<TileButton>();
+        
+        if (!map.delSelection && selectedtile == null)
+          return;
+        
+        double layer = 0;
+        
+        if (!map.delSelection)
+        {
+          String inputString = JOptionPane.showInputDialog(MapEditor.this.w, "Layer der einzufügenden Felder angeben");
+          if (inputString == null)
+            return;
+          
+          layer = Double.parseDouble(inputString);
+        }
+        
+        for (int i = 0; i < w; i++)
+        {
+          for (int j = 0; j < h; j++)
+          {
+            if (!map.delSelection)
+            {
+              Image image = ((ImageIcon) selectedtile.getIcon()).getImage();
+              int tx = selectedtile.getX() / CFG.FIELDSIZE;
+              int ty = selectedtile.getY() / CFG.FIELDSIZE;
+              
+              if (Arrays.asList(CFG.AUTOTILES).contains(tileset))
+              {
+                if (i == 0)
+                  tx = 0;
+                if (j == 0)
+                  ty = 0;
+                
+                if (i > 0 && i < w - 1)
+                  tx = 1;
+                if (j > 0 && j < w - 1)
+                  ty = 1;
+                
+                if (i == w - 1)
+                  tx = 2;
+                if (j == h - 1)
+                  ty = 2;
+                
+                image = autotiles[tx][ty + 1];
+              }
+              tiles.add(addTile(image, i * CFG.FIELDSIZE + map.selX, j * CFG.FIELDSIZE + map.selY, tileset, tx, ty, layer, new JSONObject(), false));
+              map.repaint();
+            }
+            else
+            {
+              Component temp;
+              while ((temp = map.getComponentAt(i * CFG.FIELDSIZE + map.selX, j * CFG.FIELDSIZE + map.selY)) != null && temp instanceof TileButton)
+              {
+                map.remove(temp);
+                
+                tiles.add((TileButton) temp);
+                break;
+              }
+              map.repaint();
+            }
+          }
+        }
+        if (tiles.size() > 0)
+        {
+          lastChangedTiles = tiles.toArray(new TileButton[] {});
+          mUndo.setEnabled(true);
+          tilesWereDeleted = map.delSelection;
+        }
+        map.mouseDown = null;
+        map.mousePos = null;
+        
+        map.repaint();
+      }
+      
+    }.start();
+  }
+  
   public void showCustomCursor(boolean show)
   {
     if (!show && (selectedtile != null || NPCframe != null))
@@ -1798,5 +1918,94 @@ public class MapEditor
     
     if (NPCframe != null)
       w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(((BufferedImage) ((ImageIcon) NPCpreview.getIcon()).getImage()).getSubimage(0, 16, 32, 32), new Point(0, 0), "npc"));
+  }
+  
+  public void undo()
+  {
+    new Thread()
+    {
+      public void run()
+      {
+        for (TileButton tile : lastChangedTiles)
+        {
+          if (!tilesWereDeleted)
+          {
+            map.remove(tile);
+          }
+          else
+          {
+            map.add(tile);
+          }
+        }
+        map.repaint();
+        lastChangedTiles = null;
+        mUndo.setEnabled(false);
+      }
+    }.start();
+  }
+  
+  public class SelectionListener implements MouseListener, MouseMotionListener
+  {
+    JComponent component;
+    
+    public SelectionListener(JComponent c)
+    {
+      component = c;
+    }
+    
+    @Override
+    public void mouseDragged(MouseEvent e)
+    {
+      if (e.getModifiers() != 16 && e.getModifiers() != 4)
+        return;
+      
+      map.delSelection = e.getModifiers() == 4;
+      
+      if (map.mouseDown == null)
+      {
+        if (gridmode)
+          map.mouseDown = new Point(Assistant.round(e.getPoint().x + ((component != null) ? component.getX() : 0), CFG.FIELDSIZE), Assistant.round(e.getPoint().y + ((component != null) ? component.getY() : 0), CFG.FIELDSIZE));
+        else map.mouseDown = new Point(e.getPoint().x + ((component != null) ? component.getX() : 0), e.getPoint().y + ((component != null) ? component.getY() : 0));
+      }
+      
+      if (gridmode)
+        map.mousePos = new Point(Assistant.round(e.getPoint().x + ((component != null) ? component.getX() : 0), CFG.FIELDSIZE), Assistant.round(e.getPoint().y + ((component != null) ? component.getY() : 0), CFG.FIELDSIZE));
+      else map.mousePos = new Point(Assistant.round(e.getPoint().x + ((component != null) ? component.getX() : 0) - map.mouseDown.x, CFG.FIELDSIZE) + map.mouseDown.x, Assistant.round(e.getPoint().y + ((component != null) ? component.getY() : 0) - map.mouseDown.y, CFG.FIELDSIZE) + map.mouseDown.y);
+      
+      map.repaint();
+    }
+    
+    @Override
+    public void mouseMoved(MouseEvent e)
+    {}
+    
+    @Override
+    public void mouseClicked(MouseEvent e)
+    {}
+    
+    @Override
+    public void mousePressed(MouseEvent e)
+    {
+      map.mouseDown = null;
+      map.mousePos = null;
+      map.repaint();
+    }
+    
+    @Override
+    public void mouseReleased(MouseEvent e)
+    {
+      if (map.mouseDown != null)
+        handleSelectionBox();
+      map.repaint();
+    }
+    
+    @Override
+    public void mouseEntered(MouseEvent e)
+    {}
+    
+    @Override
+    public void mouseExited(MouseEvent e)
+    {}
+    
   }
 }

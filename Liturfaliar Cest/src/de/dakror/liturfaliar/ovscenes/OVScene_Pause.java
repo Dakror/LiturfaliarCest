@@ -94,7 +94,7 @@ public class OVScene_Pause extends OVScene
   public void draw(Graphics2D g)
   {
     Assistant.Shadow(v.w.getBounds(), Color.black, 0.6f, g);
-    Assistant.drawCenteredString("Spiel pausiert", v.w.getWidth(), v.w.getHeight() / 2 - ((28 * points.length + 18) / 2) - 40, g, 45);
+    Assistant.drawHorizontallyCenteredString("Spiel pausiert", v.w.getWidth(), v.w.getHeight() / 2 - ((28 * points.length + 18) / 2) - 40, g, 45);
     ts.draw(g, v);
     if (notification != null)
       notification.draw(g, v.w);

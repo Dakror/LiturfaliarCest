@@ -11,6 +11,7 @@ import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -135,7 +136,7 @@ public final class Assistant
    * @param size - Textsize.
    * @param c - Textcolor.
    */
-  public static int drawCenteredString(String s, int w, int h, Graphics2D g, int size, Color c)
+  public static int drawHorizontallyCenteredString(String s, int w, int h, Graphics2D g, int size, Color c)
   {
     Color old = g.getColor();
     Font oldf = g.getFont();
@@ -163,7 +164,7 @@ public final class Assistant
    * @param size - Textsize.
    * @param c - Textcolor.
    */
-  public static int drawCenteredString(String s, int x1, int w, int h, Graphics2D g, int size, Color c)
+  public static int drawHorizontallyCenteredString(String s, int x1, int w, int h, Graphics2D g, int size, Color c)
   {
     Color old = g.getColor();
     Font oldf = g.getFont();
@@ -178,7 +179,24 @@ public final class Assistant
     return nx;
   }
   
-  public static int drawCenteredString(String s, int w, int h, Graphics2D g, int size)
+  public static int drawVerticallyCenteredString(String s, int x, int y1, int h, Graphics2D g, int theta, int size, Color c)
+  {
+    AffineTransform at = new AffineTransform();
+    at.rotate(Math.toRadians(theta));
+    Color old = g.getColor();
+    Font oldf = g.getFont();
+    g.setFont(g.getFont().deriveFont((float) size).deriveFont(at));
+    g.setColor(c);
+    FontMetrics fm = g.getFontMetrics();
+    int y = y1 + (h - fm.stringWidth(s)) / 2;
+    g.drawString(s, x, y);
+    g.setColor(old);
+    int nx = x + fm.stringWidth(s);
+    g.setFont(oldf);
+    return nx;
+  }
+  
+  public static int drawHorizontallyCenteredString(String s, int w, int h, Graphics2D g, int size)
   {
     Font old = g.getFont();
     g.setFont(g.getFont().deriveFont((float) size));
