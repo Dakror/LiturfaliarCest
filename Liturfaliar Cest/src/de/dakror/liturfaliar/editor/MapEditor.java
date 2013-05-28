@@ -83,6 +83,12 @@ import de.dakror.universion.UniVersion;
 
 public class MapEditor
 {
+  // -- filterReplace dialog -- //
+  JDialog           FRframe;
+  JComboBox<String> FRoldTileset, FRnewTileset;
+  JTextField        FRoldLayer, FRnewLayer, FRoldTX, FRoldTY, FRnewTX, FRnewTY;
+  
+  
   // -- NPC dialog -- //
   JComboBox<String> NPCsprite, NPCdir;
   JDialog           NPCframe;
@@ -100,7 +106,7 @@ public class MapEditor
   JScrollPane       talkScrollPane;
   JPanel            talkPanel;
   JButton           talkAdd, talkOk;
-  
+  String[]          tilesets;
   final int         talkComponentWidth  = 585;
   final int         talkComponentHeight = 100;
   
@@ -112,6 +118,7 @@ public class MapEditor
   JMenuItem         mUndo;
   Viewport          v;
   JSONObject        mappackdata, mapdata;
+  // JList<String> tilefiles;
   JPanel            tiles;
   MapPanel          map;
   JScrollPane       msp;
@@ -125,6 +132,7 @@ public class MapEditor
   boolean           rasterview;
   boolean           deletemode;
   boolean           autotilemode;
+  boolean           dragmode;
   
   double            cachelayer;
   
@@ -320,6 +328,18 @@ public class MapEditor
     });
     fmenu.add(fnpc);
     
+    JMenuItem ffr = new JMenuItem(new AbstractAction("Felder per Filter ersetzen")
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        showFilterReplaceDialog();
+      }
+    });
+    fmenu.add(ffr);
+    
     fmenu.setEnabled(false);
     menu.add(fmenu);
     
@@ -350,11 +370,10 @@ public class MapEditor
         map.repaint();
       }
     });
-    ogview.setAccelerator(KeyStroke.getKeyStroke("F6"));
     ogview.setState(false);
     omenu.add(ogview);
     
-    JCheckBoxMenuItem obump = new JCheckBoxMenuItem(new AbstractAction("Bumpmodus")
+    JCheckBoxMenuItem obump = new JCheckBoxMenuItem(new AbstractAction("Bump-Modus")
     {
       private static final long serialVersionUID = 1L;
       
@@ -397,7 +416,7 @@ public class MapEditor
         bumpPreview.setVisible(true);
       }
     });
-    obump.setAccelerator(KeyStroke.getKeyStroke("F7"));
+    obump.setAccelerator(KeyStroke.getKeyStroke("F6"));
     obump.setState(false);
     omenu.add(obump);
     
@@ -411,9 +430,23 @@ public class MapEditor
         autotilemode = ((JCheckBoxMenuItem) e.getSource()).getState();
       }
     });
-    oauto.setAccelerator(KeyStroke.getKeyStroke("F8"));
+    oauto.setAccelerator(KeyStroke.getKeyStroke("F7"));
     oauto.setState(false);
     omenu.add(oauto);
+    
+    JCheckBoxMenuItem odrag = new JCheckBoxMenuItem(new AbstractAction("Drag-Modus")
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        dragmode = ((JCheckBoxMenuItem) e.getSource()).getState();
+      }
+    });
+    odrag.setAccelerator(KeyStroke.getKeyStroke("F8"));
+    odrag.setState(false);
+    omenu.add(odrag);
     
     JCheckBoxMenuItem odel = new JCheckBoxMenuItem(new AbstractAction("Entfernmodus")
     {
@@ -438,13 +471,21 @@ public class MapEditor
     tilepanel.setLayout(null);
     tilepanel.setBounds(0, 0, w.getWidth() / 8, w.getHeight());
     final DefaultListModel<String> dlm = new DefaultListModel<String>();
+    
+    
+    ArrayList<String> t = new ArrayList<String>();
+    
     for (File f : new File(FileManager.dir, "Tiles").listFiles())
     {
       if (f.isFile() && f.getName().endsWith(".png"))
       {
         dlm.addElement(f.getName().replace(".png", ""));
+        t.add(f.getName().replace(".png", ""));
       }
     }
+    
+    tilesets = t.toArray(new String[] {});
+    
     JList<String> tilefiles = new JList<String>(dlm);
     tilefiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     tilefiles.setIgnoreRepaint(true);
@@ -496,7 +537,7 @@ public class MapEditor
                 selectedtile = src;
               }
             });
-            button.addMouseListener(new MouseListener()
+            button.addMouseListener(new MouseAdapter()
             {
               @Override
               public void mouseEntered(MouseEvent e)
@@ -509,18 +550,6 @@ public class MapEditor
               {
                 copy.setBorder(BorderFactory.createEmptyBorder());
               }
-              
-              @Override
-              public void mouseClicked(MouseEvent e)
-              {}
-              
-              @Override
-              public void mousePressed(MouseEvent e)
-              {}
-              
-              @Override
-              public void mouseReleased(MouseEvent e)
-              {}
             });
             tiles.add(button);
           }
@@ -558,9 +587,9 @@ public class MapEditor
       }
       
       @Override
-      public void mouseReleased(MouseEvent e)
+      public void mousePressed(MouseEvent e)
       {
-        if (e.getButton() == 1)
+        if (e.getButton() == 1 && !dragmode)
         {
           if (selectedtile != null && map.mouseDown == null && map.mousePos == null)
           {
@@ -1821,7 +1850,6 @@ public class MapEditor
     {
       public void run()
       {
-        
         int w = map.selW / CFG.FIELDSIZE;
         int h = map.selH / CFG.FIELDSIZE;
         
@@ -1859,19 +1887,19 @@ public class MapEditor
                 if (i == 0)
                   tx = 0;
                 if (j == 0)
-                  ty = 0;
+                  ty = 1;
                 
                 if (i > 0 && i < w - 1)
                   tx = 1;
                 if (j > 0 && j < w - 1)
-                  ty = 1;
+                  ty = 2;
                 
                 if (i == w - 1)
                   tx = 2;
                 if (j == h - 1)
-                  ty = 2;
+                  ty = 3;
                 
-                image = autotiles[tx][ty + 1];
+                image = autotiles[tx][ty];
               }
               tiles.add(addTile(image, i * CFG.FIELDSIZE + map.selX, j * CFG.FIELDSIZE + map.selY, tileset, tx, ty, layer, new JSONObject(), false));
               map.repaint();
@@ -1944,6 +1972,149 @@ public class MapEditor
     }.start();
   }
   
+  public void showFilterReplaceDialog()
+  {
+    FRframe = new JDialog(w, true);
+    FRframe.setTitle("Felder per Filter ersetzen");
+    FRframe.setResizable(false);
+    FRframe.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    
+    FRframe.addWindowListener(new WindowAdapter()
+    {
+      @Override
+      public void windowClosed(WindowEvent e)
+      {
+        for (Component c : map.getComponents())
+        {
+          if (c instanceof TileButton)
+          {
+            ((TileButton) c).fitsFilter = false;
+            ((TileButton) c).update = true;
+            ((TileButton) c).repaint();
+          }
+        }
+      }
+    });
+    
+    JPanel p = new JPanel(new SpringLayout());
+    
+    JPanel oldPanel = new JPanel(new SpringLayout());
+    oldPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), "Finden"));
+    
+    JLabel label = new JLabel("Tileset:");
+    oldPanel.add(label);
+    FRoldTileset = new JComboBox<String>(Assistant.concat(new String[] { "Ignorieren" }, tilesets));
+    FRoldTileset.setSelectedIndex(0);
+    label.setLabelFor(FRoldTileset);
+    oldPanel.add(FRoldTileset);
+    
+    label = new JLabel("Layer:");
+    oldPanel.add(label);
+    FRoldLayer = new JTextField();
+    label.setLabelFor(FRoldLayer);
+    oldPanel.add(FRoldLayer);
+    
+    label = new JLabel("Tileset-X:");
+    oldPanel.add(label);
+    FRoldTX = new JTextField();
+    label.setLabelFor(FRoldTX);
+    oldPanel.add(FRoldTX);
+    
+    label = new JLabel("Tileset-Y:");
+    oldPanel.add(label);
+    FRoldTY = new JTextField();
+    label.setLabelFor(FRoldTY);
+    oldPanel.add(FRoldTY);
+    
+    SpringUtilities.makeCompactGrid(oldPanel, 4, 2, 6, 6, 6, 6);
+    
+    p.add(oldPanel);
+    
+    JPanel newPanel = new JPanel(new SpringLayout());
+    newPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), "Ersetzen"));
+    
+    label = new JLabel("Tileset:");
+    newPanel.add(label);
+    FRnewTileset = new JComboBox<String>(Assistant.concat(new String[] { "Ignorieren" }, tilesets));
+    FRnewTileset.setSelectedIndex(0);
+    label.setLabelFor(FRnewTileset);
+    newPanel.add(FRnewTileset);
+    
+    label = new JLabel("Layer:");
+    newPanel.add(label);
+    FRnewLayer = new JTextField();
+    label.setLabelFor(FRnewLayer);
+    newPanel.add(FRnewLayer);
+    
+    label = new JLabel("Tileset-X:");
+    newPanel.add(label);
+    FRnewTX = new JTextField();
+    label.setLabelFor(FRnewTX);
+    newPanel.add(FRnewTX);
+    
+    label = new JLabel("Tileset-Y:");
+    newPanel.add(label);
+    FRnewTY = new JTextField();
+    label.setLabelFor(FRnewTY);
+    newPanel.add(FRnewTY);
+    
+    SpringUtilities.makeCompactGrid(newPanel, 4, 2, 6, 6, 6, 6);
+    
+    p.add(newPanel);
+    
+    JButton find = new JButton("Finden");
+    find.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        Double layer = Assistant.parseDouble(FRoldLayer.getText());
+        Integer tx = Assistant.parseInt(FRoldLayer.getText());
+        Integer ty = Assistant.parseInt(FRoldLayer.getText());
+        
+        for (Component c : map.getComponents())
+        {
+          if (c instanceof TileButton)
+          {
+            ((TileButton) c).checkReplaceFilterFits(FRoldTileset.getSelectedItem().toString(), layer, tx, ty);
+          }
+        }
+      }
+    });
+    
+    p.add(find);
+    
+    JButton replace = new JButton("Ersetzen");
+    replace.addActionListener(new ActionListener()
+    {
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        Double layer = Assistant.parseDouble(FRnewLayer.getText());
+        Integer tx = Assistant.parseInt(FRnewLayer.getText());
+        Integer ty = Assistant.parseInt(FRnewLayer.getText());
+        
+        for (Component c : map.getComponents())
+        {
+          if (c instanceof TileButton)
+          {
+            ((TileButton) c).execFilterReplace(FRnewTileset.getSelectedItem().toString(), layer, tx, ty);
+          }
+        }
+      }
+    });
+    p.add(replace);
+    
+    SpringUtilities.makeCompactGrid(p, 2, 2, 6, 6, 6, 6);
+    
+    FRframe.setContentPane(p);
+    
+    FRframe.pack();
+    FRframe.setLocationRelativeTo(null);
+    FRframe.setVisible(true);
+  }
+  
   public class SelectionListener implements MouseListener, MouseMotionListener
   {
     JComponent component;
@@ -1956,6 +2127,9 @@ public class MapEditor
     @Override
     public void mouseDragged(MouseEvent e)
     {
+      if (!dragmode)
+        return;
+      
       if (e.getModifiers() != 16 && e.getModifiers() != 4)
         return;
       
@@ -1986,6 +2160,10 @@ public class MapEditor
     @Override
     public void mousePressed(MouseEvent e)
     {
+      if (!dragmode)
+        return;
+      
+      
       map.mouseDown = null;
       map.mousePos = null;
       map.repaint();
@@ -1994,6 +2172,9 @@ public class MapEditor
     @Override
     public void mouseReleased(MouseEvent e)
     {
+      if (!dragmode)
+        return;
+      
       if (map.mouseDown != null)
         handleSelectionBox();
       map.repaint();

@@ -591,4 +591,28 @@ public final class Assistant
     b.setColor(a.getColor());
     return b;
   }
+  
+  public static Double parseDouble(String s)
+  {
+    try
+    {
+      return Double.parseDouble(s);
+    }
+    catch (Exception e)
+    {
+      return null;
+    }
+  }
+  
+  public static Integer parseInt(String s)
+  {
+    try
+    {
+      return Integer.parseInt(s);
+    }
+    catch (Exception e)
+    {
+      return null;
+    }
+  }
 }

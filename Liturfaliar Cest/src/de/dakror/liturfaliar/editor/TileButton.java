@@ -21,6 +21,8 @@ public class TileButton extends JButton
   
   public boolean            update;
   
+  boolean                   fitsFilter;
+  
   private int               x;
   private int               y;
   private int               tx;
@@ -40,6 +42,7 @@ public class TileButton extends JButton
     this.x = x;
     this.y = y;
     this.update = true;
+    this.fitsFilter = false;
     this.tx = tx;
     this.ty = ty;
     this.i = i;
@@ -93,6 +96,33 @@ public class TileButton extends JButton
   public String getTileset()
   {
     return tileset;
+  }
+  
+  public void checkReplaceFilterFits(String tileset, Double layer, Integer tx, Integer ty)
+  {
+    fitsFilter = ((tileset.equals("Ignorieren")) ? true : tileset.equals(this.tileset)) && ((layer == null) ? true : layer == this.layer) && ((tx == null) ? true : this.tx == tx) && ((ty == null) ? true : this.ty == ty);
+    update = true;
+    repaint();
+  }
+  
+  public void execFilterReplace(String tileset, Double layer, Integer tx, Integer ty)
+  {
+    if (!fitsFilter)
+      return;
+    
+    if (!tileset.equals("Ignorieren"))
+      this.tileset = tileset;
+    if (layer != null)
+      this.layer = layer;
+    if (tx != null)
+      this.tx = tx;
+    if (ty != null)
+      this.ty = ty;
+    
+    setToolTipText("Ebene: " + layer);
+    
+    update = true;
+    repaint();
   }
   
   public void addData(String type, JSONObject d)
@@ -164,6 +194,9 @@ public class TileButton extends JButton
       
       if (data.length() > 0)
         Assistant.Rect(0, 0, CFG.FIELDSIZE - 1, CFG.FIELDSIZE - 1, Color.blue, null, g2);
+      
+      if (fitsFilter)
+        Assistant.Rect(0, 0, CFG.FIELDSIZE - 1, CFG.FIELDSIZE - 1, Color.green, null, g2);
       
       setIcon(new ImageIcon(image));
       setDisabledIcon(getIcon());
