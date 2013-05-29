@@ -10,6 +10,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Handler;
 
@@ -107,7 +108,7 @@ public class Dialog extends Component
     String[] lines = this.message.split("\\[br\\]");
     if (getHeight() == -1 && this.message.length() > 0)
       setHeight((int) (lines.length * 20 * 1.4f + 32 + (30 * 1.4f)));
-    Assistant.Shadow(new Rectangle2D.Double(0, 0, v.w.getWidth(), v.w.getHeight()), Color.decode("#222222"), 0.8f, g);
+    Assistant.Shadow(new Rectangle2D.Double(0, 0, v.w.getWidth(), v.w.getHeight()), Colors.DGRAY, 0.8f, g);
     Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
     Assistant.drawHorizontallyCenteredString(this.title, getX() + 16, getWidth(), getY() + (int) (30 * 1.4f), g, 30, Color.decode("#999999"));
     if (this.close != null)

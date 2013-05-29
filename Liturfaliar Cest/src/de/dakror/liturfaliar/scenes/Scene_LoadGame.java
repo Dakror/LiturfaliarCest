@@ -88,7 +88,6 @@ public class Scene_LoadGame implements Scene
     delete.disabled = true;
     start = new Button(v.w.getWidth() / 2 - 200, v.w.getHeight() / 2 + (width / 3 * 2) + 90, 400, "Spiel starten", Color.white, 35);
     start.clickmod = 0;
-    start.soundMOVER = false;
     start.disabled = true;
   }
   

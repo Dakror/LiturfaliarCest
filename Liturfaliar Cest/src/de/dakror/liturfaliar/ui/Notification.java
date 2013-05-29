@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class Notification
@@ -47,7 +48,7 @@ public class Notification
       render = new BufferedImage(width, (int) (g.getFontMetrics().getHeight() * lines.size()) + 16, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = Assistant.copyGraphics2DAttributes(g, (Graphics2D) render.getGraphics());
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
-      g2.setColor(Color.decode("#222222"));
+      g2.setColor(Colors.DGRAY);
       g2.fill(new RoundRectangle2D.Double(0, 0, width, render.getHeight(), 8, 8));
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
       for (int i = 0; i < lines.size(); i++)

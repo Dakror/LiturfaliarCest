@@ -84,7 +84,6 @@ public class Scene_NewGame implements Scene
     random.tooltip = new Tooltip("<#999999;30;1>Zufall[br]<#ffffff;15;1>Generiere einen[br]zufälligen Namen.", random);
     random.tooltip.setX(v.w.getWidth() / 2 + 185);
     start = new Button(v.w.getWidth() / 2 - 140, v.w.getHeight() / 3 + 450, 280, "Start", Color.white, 30.0f);
-    start.soundMOVER = false;
     start.clickmod = 0;
     start.hovermod = 4;
   }
