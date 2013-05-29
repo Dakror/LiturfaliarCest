@@ -2,6 +2,7 @@ package de.dakror.liturfaliar.ui;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -60,6 +61,8 @@ public class Tooltip extends Component
       }
       setWidth(mostwidth + 32);
     }
+    Font oldFont = g.getFont();
+    g.setFont(new Font("Arial", g.getFont().getStyle(), g.getFont().getSize()));
     
     if (visible)
     {
@@ -91,6 +94,8 @@ public class Tooltip extends Component
       }
     }
     text = HTMLString.decodeString(Database.filterString(rawText));
+    
+    g.setFont(oldFont);
   }
   
   private int getTotalLineWidth(int firstIndex, Graphics2D g)
@@ -113,7 +118,6 @@ public class Tooltip extends Component
       if (this.text[(i > 0) ? i - 1 : 0].br || index == 1)
         height += text[i].getHeight(g);
     }
-    
     return height;
   }
   

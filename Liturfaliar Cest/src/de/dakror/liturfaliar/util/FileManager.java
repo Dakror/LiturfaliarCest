@@ -1,10 +1,8 @@
 package de.dakror.liturfaliar.util;
 
 import java.awt.Window;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -59,7 +57,7 @@ public class FileManager
     JSONObject result = null;
     try
     {
-      result = new JSONObject(Assistant.getFileContent(new File(saves, savename)));
+      result = new JSONObject(Compressor.decompressFile(new File(saves, savename + ".save")));
     }
     catch (Exception e)
     {
@@ -68,11 +66,16 @@ public class FileManager
     return result;
   }
   
+  public static boolean doesSaveExists(String savename)
+  {
+    return new File(saves, savename + ".save").exists();
+  }
+  
   public static void deleteSave(JSONObject save)
   {
     try
     {
-      File f = new File(saves, save.getJSONObject("char").getString("name") + ".json");
+      File f = new File(saves, save.getJSONObject("char").getString("name") + ".save");
       f.delete();
     }
     catch (JSONException e)
@@ -85,14 +88,13 @@ public class FileManager
   {
     try
     {
-      File f = new File(saves, save.getJSONObject("char").getString("name") + ".json");
-      f.createNewFile();
-      BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-      bw.write(save.toString(4));
-      bw.close();
+      Compressor.compressFile(new File(saves, save.getJSONObject("char").getString("name") + ".save"), save.toString());
     }
-    catch (Exception e)
-    {}
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+    }
+    
   }
   
   /**
@@ -106,7 +108,7 @@ public class FileManager
       @Override
       public boolean accept(File pathname)
       {
-        return pathname.isFile() && pathname.getName().endsWith(".json");
+        return pathname.isFile() && pathname.getName().endsWith(".save");
       }
     });
     List<File> list = Arrays.asList(files);
@@ -121,7 +123,7 @@ public class FileManager
     files = list.toArray(new File[] {});
     for (int i = 0; i < files.length; i++)
     {
-      result[i] = getSave(files[i].getName());
+      result[i] = getSave(files[i].getName().replace(".save", ""));
       try
       {
         result[i].put("lastplayed", files[i].lastModified());

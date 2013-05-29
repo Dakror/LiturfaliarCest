@@ -160,6 +160,7 @@ public class Scene_NewGame implements Scene
           break;
         }
       }
+      start.setState(0);
     }
     if (tutorial != null && tutorial.buttons.length > 0)
     {
@@ -183,7 +184,7 @@ public class Scene_NewGame implements Scene
   
   public int createSave()
   {
-    if (FileManager.getSave(name.value + ".json") != null)
+    if (FileManager.doesSaveExists(name.value))
       return 0;
     else
     {
