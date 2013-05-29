@@ -113,7 +113,7 @@ public class Talk extends Component
       ArrayList<TalkString[]> l = new ArrayList<TalkString[]>();
       for (int i = 0; i < raw.length; i++)
       {
-        l.add(TalkString.decodeString(m, "<" + Colors.GRAY + ";27;0>" + Database.filterString(raw[i]), this.width - 24, g));
+        l.add(TalkString.decodeString(m, "<" + Assistant.ColorToHex(Colors.GRAY) + ";27;0>" + Database.filterString(raw[i]), this.width - 24, g));
       }
       lines = ((TalkString[][]) l.toArray(new TalkString[0][]));
     }
