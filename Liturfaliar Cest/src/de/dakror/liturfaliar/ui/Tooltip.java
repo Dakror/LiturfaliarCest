@@ -9,6 +9,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.RoundRectangle2D;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
 
@@ -72,7 +73,7 @@ public class Tooltip extends Component
       {
         setHeight(getHeightOfPreviousRows(text.length, g) + 10);
         Color oldColor = g.getColor();
-        g.setColor(Color.decode("#222222"));
+        g.setColor(Colors.DGRAY);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
         g.fill(new RoundRectangle2D.Double(getX(), getY(), getWidth() + 16 - (getWidth() % 16), getHeight(), 8, 8));
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));

@@ -1,13 +1,13 @@
 package de.dakror.liturfaliar.ui;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class CheckBox extends Button
@@ -79,15 +79,15 @@ public class CheckBox extends Button
       iw = 0;
       ih = 0;
       if (handle.state > 0)
-        g.setColor(Color.decode("#ff9933"));
-      else g.setColor(Color.decode("#222222"));
+        g.setColor(Colors.ORANGE);
+      else g.setColor(Colors.DGRAY);
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
       if (round)
         g.fill(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8));
       else g.fill(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight()));
       if (disabled)
       {
-        g.setColor(Color.decode("#222222"));
+        g.setColor(Colors.DGRAY);
         if (round)
           g.fill(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8));
         else g.fill(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight()));

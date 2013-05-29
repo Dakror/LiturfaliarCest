@@ -9,6 +9,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.text.DecimalFormat;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class Spinner extends Component
@@ -90,8 +91,8 @@ public class Spinner extends Component
     this.h.update(v);
     Color c = g.getColor();
     if (this.h.state > 0 && !this.disabled)
-      c = Color.decode("#ff9933");
-    else c = Color.decode("#222222");
+      c = Colors.ORANGE;
+    else c = Colors.DGRAY;
     Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8), c, 0.6f, g);
     DecimalFormat df = new DecimalFormat();
     df.setMinimumFractionDigits(this.decDigits);

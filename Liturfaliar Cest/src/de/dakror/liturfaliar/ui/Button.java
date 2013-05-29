@@ -14,6 +14,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
 /**
@@ -174,15 +175,15 @@ public class Button extends Component
       if (tileset == null)
       {
         if (handle.state != 0)
-          g.setColor(Color.decode("#ff9933"));
-        else g.setColor(Color.decode("#222222"));
+          g.setColor(Colors.ORANGE);
+        else g.setColor(Colors.DGRAY);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         if (round)
           g.fill(new RoundRectangle2D.Double(x, y, w, h, 8, 8));
         else g.fill(new Rectangle2D.Double(x, y, w, h));
         if (disabled)
         {
-          g.setColor(Color.decode("#222222"));
+          g.setColor(Colors.DGRAY);
           if (round)
             g.fill(new RoundRectangle2D.Double(x, y, w, h, 8, 8));
           else g.fill(new Rectangle2D.Double(x, y, w, h));

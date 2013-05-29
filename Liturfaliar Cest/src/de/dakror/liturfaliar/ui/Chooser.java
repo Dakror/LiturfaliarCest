@@ -9,6 +9,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.RoundRectangle2D;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class Chooser extends Component
@@ -114,8 +115,8 @@ public class Chooser extends Component
     {
       Color c;
       if (focus)
-        c = Color.decode("#ff9933");
-      else c = Color.decode("#222222");
+        c = Colors.ORANGE;
+      else c = Colors.DGRAY;
       Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8), c, 0.6f, g);
     }
     else Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);

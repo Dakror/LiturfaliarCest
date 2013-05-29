@@ -1,6 +1,5 @@
 package de.dakror.liturfaliar.ui;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
@@ -8,6 +7,7 @@ import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class HelpOverlay
@@ -61,7 +61,7 @@ public class HelpOverlay
       if (h != null)
         h.draw(g, w);
     }
-    Assistant.Shadow(shadowed, Color.decode("#222222"), 0.8f, g);
+    Assistant.Shadow(shadowed, Colors.DGRAY, 0.8f, g);
   }
   
   public static void keyPressed(KeyEvent e)

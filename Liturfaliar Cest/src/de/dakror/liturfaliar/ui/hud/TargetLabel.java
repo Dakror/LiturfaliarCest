@@ -3,12 +3,14 @@ package de.dakror.liturfaliar.ui.hud;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.geom.RoundRectangle2D;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.creature.Player;
+import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class TargetLabel extends HUDComponent
@@ -58,7 +60,9 @@ public class TargetLabel extends HUDComponent
         setY(0);
         setX(v.w.getWidth() / 2 - getWidth() / 2);
         setHeight(g.getFontMetrics(g.getFont().deriveFont(Font.BOLD, fontsize)).getHeight() + 64);
-        Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY() - getHeight() / 2, getWidth(), getHeight(), g, v.w);
+        //Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY() - getHeight() / 2, getWidth(), getHeight(), g, v.w);
+        Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY() - getHeight() / 2, getWidth(), getHeight(), 15, 15), Colors.DGRAY, 0.6f, g);
+        
         Assistant.drawHorizontallyCenteredString(name, getX(), getWidth(), getY() + getHeight() / 3, g, (int) fontsize, Color.white);
       }
       catch (Exception e)

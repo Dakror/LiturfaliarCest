@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.NPC;
+import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
 
@@ -112,7 +113,7 @@ public class Talk extends Component
       ArrayList<TalkString[]> l = new ArrayList<TalkString[]>();
       for (int i = 0; i < raw.length; i++)
       {
-        l.add(TalkString.decodeString(m, "<#d9d9d9;27;0>" + Database.filterString(raw[i]), this.width - 24, g));
+        l.add(TalkString.decodeString(m, "<" + Colors.GRAY + ";27;0>" + Database.filterString(raw[i]), this.width - 24, g));
       }
       lines = ((TalkString[][]) l.toArray(new TalkString[0][]));
     }
