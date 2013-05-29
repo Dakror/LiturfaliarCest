@@ -417,6 +417,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       play();
       return;
+    } else if (force) {
+      stopMusic();
     }
     if (FileManager.pullMediaFile("Music", name + ".wav") == null)
       return;
