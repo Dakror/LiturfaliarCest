@@ -1,12 +1,10 @@
 package de.dakror.liturfaliar.ui.hud;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 import java.awt.image.BufferedImage;
 
 import de.dakror.liturfaliar.Viewport;
@@ -44,15 +42,19 @@ public class PlayerHotbar extends HUDComponent
       for (int i = 0; i < SLOTCOUNT; i++)
       {
         g2.drawImage(Viewport.loadImage("tileset/Wood.png"), i * SLOTSIZE, 0, SLOTSIZE, SLOTSIZE, null);
-        if (i < KEYSLOTS.length)
+        Font font = new Font("Arial", Font.BOLD, 18);
+        g2.setFont(font);
+        String string = (i < KEYSLOTS.length) ? KeyEvent.getKeyText(KEYSLOTS[i]) : ((i == SLOTCOUNT - 2) ? "LM" : "RM");
+        int width = g2.getFontMetrics().getAscent();
+        int height = width;
+        if (g2.getFontMetrics().stringWidth(string) > width)
         {
-          Font font = new Font("Arial", Font.BOLD, 20);
-          g2.setFont(font);
-          String string = KeyEvent.getKeyText(KEYSLOTS[i]);
-          int height = g2.getFontMetrics().getAscent();
-          Assistant.Shadow(new RoundRectangle2D.Double((i + 1) * SLOTSIZE - height, SLOTSIZE - height, height, height, 5, 5), Colors.DGRAY, 0.6f, g2);
-          Assistant.drawHorizontallyCenteredString(string, (i + 1) * SLOTSIZE - height, height, SLOTSIZE - 2, g2, font.getSize() - 2, Colors.GRAY);// .drawString(string, (i + 1) * SLOTSIZE - width, SLOTSIZE, g2, Color.GRAY.brighter(), font);
+          height = g2.getFontMetrics().getAscent();
+          width = g2.getFontMetrics().stringWidth(string);
         }
+        
+        Assistant.Shadow(new RoundRectangle2D.Double(i * SLOTSIZE, SLOTSIZE - height, width, height, 5, 5), Colors.DGRAY, 0.6f, g2);
+        Assistant.drawHorizontallyCenteredString(string, i * SLOTSIZE, width, SLOTSIZE - 2, g2, font.getSize() - 2, Colors.GRAY);// .drawString(string, (i + 1) * SLOTSIZE - width, SLOTSIZE, g2, Color.GRAY.brighter(), font);
       }
       
       setX(v.w.getWidth() / 2 - width / 2);

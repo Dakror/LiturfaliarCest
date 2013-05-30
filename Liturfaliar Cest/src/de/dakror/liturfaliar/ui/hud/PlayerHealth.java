@@ -31,9 +31,9 @@ public class PlayerHealth extends HUDComponent
     if (!visible)
     {
       setX(v.w.getWidth() / 2 - PlayerHotbar.SLOTSIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);
-      setHeight(35);
+      setHeight(32);
       setY(v.w.getHeight() - height - PlayerHotbar.SLOTSIZE);
-      setWidth(PlayerHotbar.SLOTSIZE * PlayerHotbar.SLOTCOUNT / 2 - 20);
+      setWidth(PlayerHotbar.SLOTSIZE * PlayerHotbar.SLOTCOUNT / 2 + 5);
       bar = new ProgressBar(x, y, width, 1, false, "ff3232", null, false);
       bar.setHeight(height);
       visible = true;
