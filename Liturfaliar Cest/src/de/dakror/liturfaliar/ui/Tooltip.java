@@ -4,9 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.awt.geom.RoundRectangle2D;
 
 import de.dakror.liturfaliar.Viewport;
@@ -63,7 +61,7 @@ public class Tooltip extends Component
       setWidth(mostwidth + 32);
     }
     Font oldFont = g.getFont();
-    g.setFont(new Font("Arial", g.getFont().getStyle(), g.getFont().getSize()));
+    g.setFont(new Font("Times New Roman", g.getFont().getStyle(), g.getFont().getSize()));
     
     if (visible)
     {
@@ -121,46 +119,6 @@ public class Tooltip extends Component
     }
     return height;
   }
-  
-  @Override
-  public void mouseWheelMoved(MouseWheelEvent e)
-  {}
-  
-  @Override
-  public void mouseDragged(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseClicked(MouseEvent e)
-  {}
-  
-  @Override
-  public void mousePressed(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseReleased(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseEntered(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseExited(MouseEvent e)
-  {}
-  
-  @Override
-  public void keyTyped(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyPressed(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyReleased(KeyEvent e)
-  {}
   
   @Override
   public void update()

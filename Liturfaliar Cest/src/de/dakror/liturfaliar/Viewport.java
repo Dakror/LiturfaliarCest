@@ -159,7 +159,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     }
     // static drawers
     CursorText.draw(g, w);
-    HelpOverlay.draw(g, w);
+    HelpOverlay.draw(g, this);
   }
   
   /**

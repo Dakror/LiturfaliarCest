@@ -8,7 +8,7 @@ import java.awt.event.MouseWheelEvent;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 
-public class HUDComponent
+public abstract class HUDComponent
 {
   protected int     x, y, width, height, layer;
   protected boolean visible;
@@ -23,11 +23,9 @@ public class HUDComponent
     this.layer = layer;
   }
   
-  public void update(Map m)
-  {}
+  public abstract void update(Map m);
   
-  public void draw(Graphics2D g, Viewport v, Map m)
-  {}
+  public abstract void draw(Graphics2D g, Viewport v, Map m);
   
   public void mouseWheelMoved(MouseWheelEvent e, Map m)
   {}

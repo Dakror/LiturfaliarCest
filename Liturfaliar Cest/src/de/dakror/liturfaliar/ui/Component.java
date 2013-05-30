@@ -84,35 +84,46 @@ public abstract class Component implements Listener
   public abstract void draw(Graphics2D g, Viewport v);
   
   @Override
-  public abstract void mouseWheelMoved(MouseWheelEvent e);
+  public void mouseWheelMoved(MouseWheelEvent e)
+  {}
   
   @Override
-  public abstract void mouseDragged(MouseEvent e);
+  public void mouseDragged(MouseEvent e)
+  {}
   
   @Override
-  public abstract void mouseMoved(MouseEvent e);
+  public void mouseMoved(MouseEvent e)
+  {}
   
   @Override
-  public abstract void mouseClicked(MouseEvent e);
+  public void mouseClicked(MouseEvent e)
+  {}
   
   @Override
-  public abstract void mousePressed(MouseEvent e);
+  public void mousePressed(MouseEvent e)
+  {}
   
   @Override
-  public abstract void mouseReleased(MouseEvent e);
+  public void mouseReleased(MouseEvent e)
+  {}
   
   @Override
-  public abstract void mouseEntered(MouseEvent e);
+  public void mouseEntered(MouseEvent e)
+  {}
   
   @Override
-  public abstract void mouseExited(MouseEvent e);
+  public void mouseExited(MouseEvent e)
+  {}
   
   @Override
-  public abstract void keyTyped(KeyEvent e);
+  public void keyTyped(KeyEvent e)
+  {}
   
   @Override
-  public abstract void keyPressed(KeyEvent e);
+  public void keyPressed(KeyEvent e)
+  {}
   
   @Override
-  public abstract void keyReleased(KeyEvent e);
+  public void keyReleased(KeyEvent e)
+  {}
 }

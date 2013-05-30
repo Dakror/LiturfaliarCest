@@ -25,7 +25,7 @@ public class Player extends Creature
   
   private JSONObject data;
   
-  // ========================================up=====left===right==down== //
+  // -- up -- left -- right -- down -- //
   boolean[]          dirs                = { false, false, false, false };
   Vector             lastPos;
   Vector             relPos;
@@ -38,6 +38,7 @@ public class Player extends Creature
   public Player(JSONObject save, Window w)
   {
     super(CFG.MAPCENTER.x, CFG.MAPCENTER.y, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1]);
+    
     massive = true;
     layer = CFG.PLAYERLAYER;
     setData(save);
@@ -47,6 +48,8 @@ public class Player extends Creature
     try
     {
       relPos = goTo = new Vector(save.getJSONObject("mappack").getJSONObject("pos").getInt("x"), save.getJSONObject("mappack").getJSONObject("pos").getInt("y"));
+      
+      loadAttributes(save.getJSONObject("attr"));
     }
     catch (JSONException e)
     {

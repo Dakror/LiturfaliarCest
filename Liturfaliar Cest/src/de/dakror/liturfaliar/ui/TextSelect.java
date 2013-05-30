@@ -2,7 +2,6 @@ package de.dakror.liturfaliar.ui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Area;
@@ -188,11 +187,7 @@ public class TextSelect extends Component
     if (this.v != null)
       this.v.mouseMoved(e, this);
   }
-  
-  @Override
-  public void mouseClicked(MouseEvent e)
-  {}
-  
+
   @Override
   public void mousePressed(MouseEvent e)
   {
@@ -211,26 +206,6 @@ public class TextSelect extends Component
       }
     }
   }
-  
-  @Override
-  public void mouseEntered(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseExited(MouseEvent e)
-  {}
-  
-  @Override
-  public void keyTyped(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyPressed(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyReleased(KeyEvent e)
-  {}
   
   public int getOldSelected()
   {

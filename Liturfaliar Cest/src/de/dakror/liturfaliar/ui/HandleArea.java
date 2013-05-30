@@ -2,9 +2,7 @@ package de.dakror.liturfaliar.ui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.settings.CFG;
@@ -67,18 +65,6 @@ public class HandleArea extends Component
   }
   
   @Override
-  public void mouseWheelMoved(MouseWheelEvent e)
-  {}
-  
-  @Override
-  public void mouseDragged(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseClicked(MouseEvent e)
-  {}
-  
-  @Override
   public void mousePressed(MouseEvent e)
   {
     if ((e.getButton() != 1 && !this.allowRightClick) || this.v == null || this.mouseReleased)
@@ -91,26 +77,6 @@ public class HandleArea extends Component
     }
     else this.state = 0;
   }
-  
-  @Override
-  public void mouseEntered(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseExited(MouseEvent e)
-  {}
-  
-  @Override
-  public void keyTyped(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyPressed(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyReleased(KeyEvent e)
-  {}
   
   @Override
   public void update()

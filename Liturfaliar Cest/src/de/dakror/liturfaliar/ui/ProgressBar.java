@@ -4,9 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 
@@ -21,97 +19,62 @@ public class ProgressBar extends Component
   public String title;
   public Image  filling;
   
-  public ProgressBar(int x, int y, int width, float initProgress, boolean editable, String c, String title, boolean showPercentage)
+  public ProgressBar(int x, int y, int width, float initProgress, boolean e, String c, String t, boolean s)
   {
     super(x, y, width, 23);
-    this.value = initProgress;
-    this.title = title;
-    this.showPercentage = showPercentage;
-    this.editable = editable;
-    this.filling = Assistant.loadImage("system/Bar-" + c + ".png");
+    value = initProgress;
+    title = t;
+    showPercentage = s;
+    editable = e;
+    filling = Assistant.loadImage("system/Bar-" + c + ".png");
   }
   
   public void setEnabled(boolean b)
   {
-    this.disabled = b;
+    disabled = b;
   }
   
   public void draw(Graphics2D g, Viewport v)
   {
     // draw base
-    g.drawImage(Viewport.loadImage("system/BarBase.png"), this.getX(), this.getY(), this.getX() + 6, this.getY() + 23, 0, 0, 6, 23, v.w);
-    g.drawImage(Viewport.loadImage("system/BarBase.png"), this.getX() + 6, this.getY(), this.getX() + this.getWidth() - 6, this.getY() + 23, 6, 0, 7, 23, v.w);
-    g.drawImage(Viewport.loadImage("system/BarBase.png"), this.getX() + this.getWidth() - 6, this.getY(), this.getX() + this.getWidth(), this.getY() + 23, 7, 0, 13, 23, v.w);
+    g.drawImage(Viewport.loadImage("system/BarBase.png"), getX(), getY(), getX() + 6, getY() + getHeight(), 0, 0, 6, 23, v.w);
+    g.drawImage(Viewport.loadImage("system/BarBase.png"), getX() + 6, getY(), getX() + getWidth() - 6, getY() + getHeight(), 6, 0, 7, 23, v.w);
+    g.drawImage(Viewport.loadImage("system/BarBase.png"), getX() + getWidth() - 6, getY(), getX() + getWidth(), getY() + getHeight(), 7, 0, 13, 23, v.w);
     // draw filling
-    if (this.value > 0.0f && !this.disabled)
+    if (value > 0.0f && !disabled)
     {
-      g.drawImage(this.filling, this.getX(), this.getY(), this.getX() + 6, this.getY() + 23, 0, 0, 6, 23, v.w);
-      g.drawImage(this.filling, this.getX() + 6, this.getY(), this.getX() + 6 + (int) ((this.getWidth() - 12) * this.value), this.getY() + 23, 6, 0, 7, 23, v.w);
-      g.drawImage(this.filling, this.getX() + 6 + (int) ((this.getWidth() - 12) * this.value), this.getY(), this.getX() + 12 + (int) ((this.getWidth() - 12) * this.value), this.getY() + 23, 7, 0, 13, 23, v.w);
+      g.drawImage(filling, getX(), getY(), getX() + 6, getY() + getHeight(), 0, 0, 6, 23, v.w);
+      g.drawImage(filling, getX() + 6, getY(), getX() + 6 + (int) ((getWidth() - 12) * value), getY() + getHeight(), 6, 0, 7, 23, v.w);
+      g.drawImage(filling, getX() + 6 + (int) ((getWidth() - 12) * value), getY(), getX() + 12 + (int) ((getWidth() - 12) * value), getY() + getHeight(), 7, 0, 13, 23, v.w);
     }
     Font oldf = g.getFont();
     g.setFont(new Font("Arial", Font.BOLD, 14));
-    if (!this.showPercentage && this.title != null)
-      Assistant.drawHorizontallyCenteredString(Database.filterString(this.title), this.getX(), this.getWidth(), this.getY() + 16, g, 14, Color.black);
-    else Assistant.drawHorizontallyCenteredString(((this.title != null) ? (Database.filterString(this.title) + ": ") : "") + (int) (this.value * 100) + "%", this.getX(), this.getWidth(), this.getY() + 16, g, 14, Color.black);
+    if (!showPercentage && title != null)
+      Assistant.drawHorizontallyCenteredString(Database.filterString(title), getX(), getWidth(), getY() + 16, g, 14, Color.black);
+    else if (showPercentage)
+      Assistant.drawHorizontallyCenteredString(((title != null) ? (Database.filterString(title) + ": ") : "") + (int) (value * 100) + "%", getX(), getWidth(), getY() + 16, g, 14, Color.black);
     g.setFont(oldf);
   }
   
   public void mouseDragged(MouseEvent e)
   {
-    if (!this.editable)
+    if (!editable)
       return;
-    if (new Area(new Rectangle2D.Double(this.getX(), this.getY(), this.getWidth(), 23)).contains(e.getLocationOnScreen()))
+    if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), 23)).contains(e.getLocationOnScreen()))
     {
-      this.value = (e.getXOnScreen() - this.getX()) / (float) this.getWidth();
+      value = (e.getXOnScreen() - getX()) / (float) getWidth();
     }
   }
   
   public void mouseReleased(MouseEvent e)
   {
-    if (!this.editable)
+    if (!editable)
       return;
-    if (new Area(new Rectangle2D.Double(this.getX(), this.getY(), this.getWidth(), 23)).contains(e.getLocationOnScreen()))
+    if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), 23)).contains(e.getLocationOnScreen()))
     {
-      this.value = (e.getXOnScreen() - this.getX()) / (float) this.getWidth();
+      value = (e.getXOnScreen() - getX()) / (float) getWidth();
     }
   }
-  
-  @Override
-  public void mouseWheelMoved(MouseWheelEvent e)
-  {}
-  
-  @Override
-  public void mouseMoved(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseClicked(MouseEvent e)
-  {}
-  
-  @Override
-  public void mousePressed(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseEntered(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseExited(MouseEvent e)
-  {}
-  
-  @Override
-  public void keyTyped(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyPressed(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyReleased(KeyEvent e)
-  {}
   
   @Override
   public void update()

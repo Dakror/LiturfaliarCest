@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.awt.geom.RoundRectangle2D;
 
 import de.dakror.liturfaliar.Viewport;
@@ -144,14 +143,6 @@ public class Chooser extends Component
   }
   
   @Override
-  public void mouseWheelMoved(MouseWheelEvent e)
-  {}
-  
-  @Override
-  public void mouseDragged(MouseEvent e)
-  {}
-  
-  @Override
   public void mouseMoved(MouseEvent e)
   {
     if (disabled)
@@ -162,14 +153,6 @@ public class Chooser extends Component
   }
   
   @Override
-  public void mouseClicked(MouseEvent e)
-  {}
-  
-  @Override
-  public void mousePressed(MouseEvent e)
-  {}
-  
-  @Override
   public void mouseReleased(MouseEvent e)
   {
     if (disabled)
@@ -177,18 +160,6 @@ public class Chooser extends Component
     prev.mouseReleased(e);
     next.mouseReleased(e);
   }
-  
-  @Override
-  public void mouseEntered(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseExited(MouseEvent e)
-  {}
-  
-  @Override
-  public void keyTyped(KeyEvent e)
-  {}
   
   @Override
   public void keyPressed(KeyEvent e)
@@ -206,10 +177,6 @@ public class Chooser extends Component
       v.playSound("182-Click");
     }
   }
-  
-  @Override
-  public void keyReleased(KeyEvent e)
-  {}
   
   public Image[] getIcons()
   {

@@ -3,9 +3,7 @@ package de.dakror.liturfaliar.ui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -176,37 +174,6 @@ public class Talk extends Component
     speaker = bi;
   }
   
-  public void keyPressed(KeyEvent e)
-  {}
-  
-  public void keyReleased(KeyEvent e)
-  {}
-  
-  public void keyTyped(KeyEvent e)
-  {}
-  
-  public void mouseClicked(MouseEvent e)
-  {}
-  
-  public void mouseDragged(MouseEvent e)
-  {}
-  
-  public void mouseEntered(MouseEvent e)
-  {}
-  
-  public void mouseExited(MouseEvent e)
-  {}
-  
-  public void mouseMoved(MouseEvent e)
-  {}
-  
-  public void mousePressed(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseReleased(MouseEvent e)
-  {}
-  
   public void mouseReleased(MouseEvent e, Map m)
   {
     if (!this.firstClickSkipped)
@@ -248,9 +215,6 @@ public class Talk extends Component
       }
     }
   }
-  
-  public void mouseWheelMoved(MouseWheelEvent e)
-  {}
   
   public void update()
   {

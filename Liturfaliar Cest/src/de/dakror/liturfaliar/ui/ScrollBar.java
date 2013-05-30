@@ -1,7 +1,6 @@
 package de.dakror.liturfaliar.ui;
 
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Area;
@@ -43,7 +42,7 @@ public class ScrollBar extends Component
     {
       Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX() + this.value, getY(), getHeight(), getHeight(), g, v.w);
     }
-    this.drag.draw(g);
+    this.drag.draw(g, v);
   }
   
   public void mouseDragged(MouseEvent e)
@@ -139,38 +138,6 @@ public class ScrollBar extends Component
   }
   
   @Override
-  public void mouseClicked(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseReleased(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseEntered(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseExited(MouseEvent e)
-  {}
-  
-  @Override
-  public void keyTyped(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyPressed(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyReleased(KeyEvent e)
-  {}
-  
-  @Override
   public void update()
-  {}
-  
-  @Override
-  public void mouseMoved(MouseEvent e)
   {}
 }

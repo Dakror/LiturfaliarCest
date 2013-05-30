@@ -7,6 +7,9 @@ import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.fx.Emoticon;
 import de.dakror.liturfaliar.map.Field;
@@ -34,6 +37,10 @@ public class Creature implements MapEventListener
   protected Vector          lastPos, pos, goTo;
   protected Emoticon        emoticon;
   
+  // -- attributes -- //
+  protected int             maxHealth;
+  protected int             health;
+  
   
   public Creature(int x, int y, int w, int h)
   {
@@ -43,6 +50,9 @@ public class Creature implements MapEventListener
     this.w = bw = w;
     this.h = bh = h;
     bx = by = 0;
+    
+    health = 0;
+    maxHealth = 0;
   }
   
   public int getDir()
@@ -217,6 +227,55 @@ public class Creature implements MapEventListener
   public Emoticon getEmoticon()
   {
     return emoticon;
+  }
+  
+  public int getHealth()
+  {
+    return health;
+  }
+  
+  public void setHealth(int h)
+  {
+    health = h;
+  }
+  
+  public int getMaxHealth()
+  {
+    return maxHealth;
+  }
+  
+  public void setMaxHealth(int m)
+  {
+    this.maxHealth = m;
+  }
+  
+  public JSONObject serializeAttributes()
+  {
+    JSONObject o = new JSONObject();
+    try
+    {
+      o.put("health", health);
+      o.put("maxhealth", maxHealth);
+      
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+    }
+    return o;
+  }
+  
+  public void loadAttributes(JSONObject o)
+  {
+    try
+    {
+      health = o.getInt("health");
+      maxHealth = o.getInt("maxhealth");
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+    }
   }
   
   public boolean isLookingAt(Creature c, Map m)

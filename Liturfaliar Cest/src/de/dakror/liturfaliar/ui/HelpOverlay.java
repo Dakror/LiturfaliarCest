@@ -1,12 +1,12 @@
 package de.dakror.liturfaliar.ui;
 
 import java.awt.Graphics2D;
-import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
@@ -48,18 +48,18 @@ public class HelpOverlay
     HelpOverlay.hoc = null;
   }
   
-  public static void draw(Graphics2D g, Window w)
+  public static void draw(Graphics2D g, Viewport v)
   {
     if (!HelpOverlay.visible)
       return;
-    Area shadowed = new Area(w.getBounds());
+    Area shadowed = new Area(v.w.getBounds());
     if (HelpOverlay.hoc == null || HelpOverlay.hoc.length == 0)
       return;
     for (HelpOverlayContainer h : HelpOverlay.hoc)
     {
       shadowed.subtract(h.getArea());
       if (h != null)
-        h.draw(g, w);
+        h.draw(g, v);
     }
     Assistant.Shadow(shadowed, Colors.DGRAY, 0.8f, g);
   }

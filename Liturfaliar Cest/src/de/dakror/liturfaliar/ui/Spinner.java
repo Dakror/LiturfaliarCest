@@ -2,9 +2,7 @@ package de.dakror.liturfaliar.ui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.text.DecimalFormat;
 
@@ -105,14 +103,6 @@ public class Spinner extends Component
   }
   
   @Override
-  public void mouseWheelMoved(MouseWheelEvent e)
-  {}
-  
-  @Override
-  public void mouseDragged(MouseEvent e)
-  {}
-  
-  @Override
   public void mouseMoved(MouseEvent e)
   {
     this.down.mouseMoved(e);
@@ -121,38 +111,10 @@ public class Spinner extends Component
   }
   
   @Override
-  public void mouseClicked(MouseEvent e)
-  {}
-  
-  @Override
-  public void mousePressed(MouseEvent e)
-  {}
-  
-  @Override
   public void mouseReleased(MouseEvent e)
   {
     this.down.mouseReleased(e);
     this.up.mouseReleased(e);
     this.h.mouseReleased(e);
   }
-  
-  @Override
-  public void mouseEntered(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseExited(MouseEvent e)
-  {}
-  
-  @Override
-  public void keyTyped(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyPressed(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyReleased(KeyEvent e)
-  {}
 }

@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.MapPack;
+import de.dakror.liturfaliar.settings.Balance;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Button;
 import de.dakror.liturfaliar.ui.Container;
@@ -201,12 +202,21 @@ public class Scene_NewGame implements Scene
     try
     {
       cfg.put("name", name.value);
+      
       save.put("char", cfg);
+      
+      // -- attributes -- //
+      JSONObject attr = new JSONObject();
+      attr.put("health", Balance.Player.INITHEALTH);
+      attr.put("maxhealth", Balance.Player.INITHEALTH);
+      save.put("attr", attr);
+      
       MapPack mp = new MapPack(CFG.MAPPACK, v.w);
       JSONObject mappack = new JSONObject();
       mappack.put("name", mp.getName());
       mappack.put("pos", mp.getData().getJSONObject("init"));
       save.put("mappack", mappack);
+      
       return save;
     }
     catch (JSONException e)

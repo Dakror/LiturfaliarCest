@@ -6,9 +6,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
@@ -273,14 +271,6 @@ public class Button extends Component
   }
   
   @Override
-  public void mouseWheelMoved(MouseWheelEvent e)
-  {}
-  
-  @Override
-  public void mouseDragged(MouseEvent e)
-  {}
-  
-  @Override
   public void mouseMoved(MouseEvent e)
   {
     if (disabled)
@@ -293,10 +283,6 @@ public class Button extends Component
     }
     handle.mouseMoved(e);
   }
-  
-  @Override
-  public void mouseClicked(MouseEvent e)
-  {}
   
   @Override
   public void mousePressed(MouseEvent e)
@@ -312,24 +298,4 @@ public class Button extends Component
     if (!disabled)
       handle.mouseReleased(e);
   }
-  
-  @Override
-  public void mouseEntered(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseExited(MouseEvent e)
-  {}
-  
-  @Override
-  public void keyTyped(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyPressed(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyReleased(KeyEvent e)
-  {}
 }
