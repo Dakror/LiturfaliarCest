@@ -104,7 +104,7 @@ public class Talk extends Component
       setX(v.w.getWidth() / 6);
       setY(v.w.getHeight() / 16 * 13);
       setWidth(v.w.getWidth() / 3 * 2);
-      setHeight(v.w.getHeight() / 16 * 3);
+      setHeight(v.w.getHeight() - getY());
       
       lineMax = (int) Math.floor((getHeight() - 20 - nameLabel.getHeight(g)) / (double) LINEHEIGHT + 0.5D);
       

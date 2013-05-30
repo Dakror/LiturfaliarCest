@@ -21,6 +21,8 @@ public class PlayerHealth extends HUDComponent
   @Override
   public void update(Map m)
   {
+    visible = m.talk == null;
+    
     if (visible)
       bar.value = player.getHealth() / (float) player.getMaxHealth();
   }
@@ -28,7 +30,7 @@ public class PlayerHealth extends HUDComponent
   @Override
   public void draw(Graphics2D g, Viewport v, Map m)
   {
-    if (!visible)
+    if (!visible && bar == null)
     {
       setX(v.w.getWidth() / 2 - PlayerHotbar.SLOTSIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);
       setHeight(32);
@@ -39,6 +41,7 @@ public class PlayerHealth extends HUDComponent
       visible = true;
     }
     
-    bar.draw(g, v);
+    if (visible)
+      bar.draw(g, v);
   }
 }

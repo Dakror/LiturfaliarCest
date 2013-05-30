@@ -30,12 +30,14 @@ public class PlayerHotbar extends HUDComponent
   
   @Override
   public void update(Map m)
-  {}
+  {
+    visible = m.talk == null;
+  }
   
   @Override
   public void draw(Graphics2D g, Viewport v, Map m)
   {
-    if (!visible)
+    if (!visible && bg == null)
     {
       bg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = (Graphics2D) bg.getGraphics();
@@ -62,7 +64,8 @@ public class PlayerHotbar extends HUDComponent
       visible = true;
     }
     
-    g.drawImage(bg, x, y, width, height, v.w);
+    if (visible)
+      g.drawImage(bg, x, y, width, height, v.w);
   }
   
 }
