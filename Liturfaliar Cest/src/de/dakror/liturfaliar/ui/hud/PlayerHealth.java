@@ -24,7 +24,7 @@ public class PlayerHealth extends HUDComponent
     visible = m.talk == null;
     
     if (visible)
-      bar.value = player.getHealth() / (float) player.getMaxHealth();
+      bar.value = player.getAttributes().getAttribute("health").getValue() / player.getAttributes().getAttribute("health").getMaximum();
   }
   
   @Override

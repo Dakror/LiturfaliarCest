@@ -34,6 +34,7 @@ public class Player extends Creature
   public int         dirAfterReachedGoal = -1;
   
   boolean            sprint;
+  long               time;
   
   public Player(JSONObject save, Window w)
   {
@@ -49,7 +50,7 @@ public class Player extends Creature
     {
       relPos = goTo = new Vector(save.getJSONObject("mappack").getJSONObject("pos").getInt("x"), save.getJSONObject("mappack").getJSONObject("pos").getInt("y"));
       
-      loadAttributes(save.getJSONObject("attr"));
+      attr.loadAttributes(save.getJSONObject("attr"));
     }
     catch (JSONException e)
     {
@@ -102,7 +103,7 @@ public class Player extends Creature
   }
   
   @Override
-  public void update(Map m)
+  public void update(long timePassed, Map m)
   {
     if (init)
     {
@@ -110,17 +111,38 @@ public class Player extends Creature
       init = false;
     }
     
+    /*
+     * if (!sprint)
+     * {
+     * if ((System.currentTimeMillis() - time) % Balance.Player.STAMINAREGEN < timePassed && attr.getAttribute("stamina").getValue() < attr.getAttribute("stamina").getMaximum())
+     * attr.getAttribute("stamina").increaseValue(1);
+     * }
+     */
+    
+    
+    if (sprint && (dirs[0] || dirs[1] || dirs[2] || dirs[3]) && (System.currentTimeMillis() - time) % Balance.Player.STAMINADECREASE < timePassed && attr.getAttribute("stamina").getValue() > 0)
+    {
+      attr.getAttribute("stamina").decreaseValue(1);
+    }
+    
+    if (attr.getAttribute("stamina").getValue() == 0)
+    {
+      sprint = false;
+    }
+    
+    
     setSpeed((sprint) ? Balance.Player.SPRINT : Balance.Player.WALK);
     
     double x = 0, y = 0;
-    if (dirs[0] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx, m.getY() + relPos.coords[1] + by - getSpeed() * 2, bw, bh)))
+    if (dirs[0] && !dirs[3] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx, m.getY() + relPos.coords[1] + by - getSpeed() * 2, bw, bh)))
       y -= getSpeed();
-    else if (dirs[3] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx, m.getY() + relPos.coords[1] + by + getSpeed() * 2, bw, bh)))
+    else if (dirs[3] && !dirs[0] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx, m.getY() + relPos.coords[1] + by + getSpeed() * 2, bw, bh)))
       y += getSpeed();
-    if (dirs[1] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx - getSpeed() * 2, m.getY() + relPos.coords[1] + by, bw, bh)))
+    if (dirs[1] && !dirs[2] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx - getSpeed() * 2, m.getY() + relPos.coords[1] + by, bw, bh)))
       x -= getSpeed();
-    else if (dirs[2] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx + getSpeed() * 2, m.getY() + relPos.coords[1] + by, bw, bh)))
+    else if (dirs[2] && !dirs[1] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx + getSpeed() * 2, m.getY() + relPos.coords[1] + by, bw, bh)))
       x += getSpeed();
+    
     if (x != 0 || y != 0)
     {
       goTo = new Vector(getRelativePos(m)[0] + x, getRelativePos(m)[1] + y);
@@ -147,15 +169,28 @@ public class Player extends Creature
     try
     {
       int frame = 0;
-      if ((dirs[0] || dirs[1] || dirs[2] || dirs[3]) && !frozen)
-        frame = v.getFrame((sprint) ? 0.5f : 1);
+      
+      int x = 0, y = 0;
+      
       if (dirs[0])
-        dir = 3;
-      if (dirs[1])
-        dir = 1;
-      if (dirs[2])
-        dir = 2;
+        y--;
       if (dirs[3])
+        y++;
+      if (dirs[1])
+        x--;
+      if (dirs[2])
+        x++;
+      
+      
+      if (x + y != 0 && !frozen)
+        frame = v.getFrame((sprint) ? 0.5f : 1);
+      if (dirs[0] && !dirs[3])
+        dir = 3;
+      if (dirs[1] && !dirs[2])
+        dir = 1;
+      if (dirs[2] && !dirs[1])
+        dir = 2;
+      if (dirs[3] && !dirs[0])
         dir = 0;
       Assistant.drawChar(v.w.getWidth() / 2 - getWidth() / 2, v.w.getHeight() / 2 - getHeight() / 2, getWidth(), getHeight(), dir, frame, getData().getJSONObject("char"), g, v.w, true);
     }
@@ -195,6 +230,7 @@ public class Player extends Creature
       case KeyEvent.VK_SHIFT:
       {
         sprint = true;
+        time = System.currentTimeMillis();
         break;
       }
     }
@@ -228,6 +264,10 @@ public class Player extends Creature
       case KeyEvent.VK_SHIFT:
       {
         sprint = false;
+        
+        time = 0;
+        
+        // TODO: time = System.currentTimeMillis();
         break;
       }
     }

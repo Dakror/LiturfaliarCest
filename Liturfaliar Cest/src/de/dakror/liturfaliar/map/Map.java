@@ -217,7 +217,7 @@ public class Map implements DatabaseEventListener
     }
   }
   
-  public void update(Scene_Game sg)
+  public void update(long timePassed, Scene_Game sg)
   {
     for (Field f : fields)
     {
@@ -226,7 +226,7 @@ public class Map implements DatabaseEventListener
     
     for (Creature c : creatures)
     {
-      c.update(this);
+      c.update(timePassed, this);
     }
     
     if (talk != null)

@@ -87,9 +87,9 @@ public class NPC extends Creature
   }
   
   @Override
-  public void update(Map m)
+  public void update(long timePassed, Map m)
   {
-    super.update(m);
+    super.update(timePassed, m);
     
     if (isRandomMoveEnabled() && getDistance() < getSpeed() && System.currentTimeMillis() - time > randomMoveT)
     {

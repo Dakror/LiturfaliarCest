@@ -7,14 +7,12 @@ import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.fx.Emoticon;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.event.MapEventListener;
+import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
@@ -37,10 +35,7 @@ public class Creature implements MapEventListener
   protected Vector          lastPos, pos, goTo;
   protected Emoticon        emoticon;
   
-  // -- attributes -- //
-  protected int             maxHealth;
-  protected int             health;
-  
+  protected Attributes      attr;
   
   public Creature(int x, int y, int w, int h)
   {
@@ -51,8 +46,7 @@ public class Creature implements MapEventListener
     this.h = bh = h;
     bx = by = 0;
     
-    health = 0;
-    maxHealth = 0;
+    attr = new Attributes();
   }
   
   public int getDir()
@@ -114,7 +108,7 @@ public class Creature implements MapEventListener
     massive = b;
   }
   
-  public void update(Map map)
+  public void update(long timePassed, Map map)
   {
     move(map);
     for (Field f : map.fields)
@@ -229,55 +223,6 @@ public class Creature implements MapEventListener
     return emoticon;
   }
   
-  public int getHealth()
-  {
-    return health;
-  }
-  
-  public void setHealth(int h)
-  {
-    health = h;
-  }
-  
-  public int getMaxHealth()
-  {
-    return maxHealth;
-  }
-  
-  public void setMaxHealth(int m)
-  {
-    this.maxHealth = m;
-  }
-  
-  public JSONObject serializeAttributes()
-  {
-    JSONObject o = new JSONObject();
-    try
-    {
-      o.put("health", health);
-      o.put("maxhealth", maxHealth);
-      
-    }
-    catch (JSONException e)
-    {
-      e.printStackTrace();
-    }
-    return o;
-  }
-  
-  public void loadAttributes(JSONObject o)
-  {
-    try
-    {
-      health = o.getInt("health");
-      maxHealth = o.getInt("maxhealth");
-    }
-    catch (JSONException e)
-    {
-      e.printStackTrace();
-    }
-  }
-  
   public boolean isLookingAt(Creature c, Map m)
   {
     double x = getRelativePos(m)[0] + getWidth() / 2.0;
@@ -375,4 +320,14 @@ public class Creature implements MapEventListener
   @Override
   public void talkChanged(Talk old, Talk n, Map m)
   {}
+
+  public Attributes getAttributes()
+  {
+    return attr;
+  }
+
+  public void setAttributes(Attributes a)
+  {
+    this.attr = a;
+  }
 }

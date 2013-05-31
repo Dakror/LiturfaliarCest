@@ -17,8 +17,7 @@ import de.dakror.liturfaliar.ovscenes.OVScene_Info;
 import de.dakror.liturfaliar.ovscenes.OVScene_Pause;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.CursorText;
-import de.dakror.liturfaliar.ui.hud.PlayerHealth;
-import de.dakror.liturfaliar.ui.hud.PlayerHotbar;
+import de.dakror.liturfaliar.ui.hud.BottomSegment;
 import de.dakror.liturfaliar.ui.hud.TargetLabel;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
@@ -33,8 +32,7 @@ public class Scene_Game implements Scene, MapPackEventListener
   // -- HUD -- //
   TargetLabel     targetLabel;
   
-  PlayerHealth    playerHealth;
-  PlayerHotbar    playerHotbar;
+  BottomSegment   bottomSegment;
   
   // --------- //
   @Override
@@ -59,8 +57,7 @@ public class Scene_Game implements Scene, MapPackEventListener
     // -- HUD -- //
     targetLabel = new TargetLabel();
     
-    playerHealth = new PlayerHealth(player);
-    playerHotbar = new PlayerHotbar();
+    bottomSegment = new BottomSegment(player);
     // -- //
   }
   
@@ -80,11 +77,11 @@ public class Scene_Game implements Scene, MapPackEventListener
     {
       Assistant.setCursor(null, v.w);
     }
-    mappack.getActiveMap().update(this);
+    mappack.getActiveMap().update(timePassed, this);
     // -- HUD -- //
     targetLabel.update(mappack.getActiveMap());
-    playerHealth.update(mappack.getActiveMap());
-    playerHotbar.update(mappack.getActiveMap());
+    
+    bottomSegment.update(mappack.getActiveMap());
     // --------- //
   }
   
@@ -94,8 +91,8 @@ public class Scene_Game implements Scene, MapPackEventListener
     mappack.getActiveMap().draw(g, v);
     // -- HUD -- //
     targetLabel.draw(g, v, mappack.getActiveMap());
-    playerHealth.draw(g, v, mappack.getActiveMap());
-    playerHotbar.draw(g, v, mappack.getActiveMap());
+    
+    bottomSegment.draw(g, v, mappack.getActiveMap());
     // --------- //
   }
   

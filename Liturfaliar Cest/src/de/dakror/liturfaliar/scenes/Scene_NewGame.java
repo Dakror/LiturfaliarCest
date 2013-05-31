@@ -207,8 +207,13 @@ public class Scene_NewGame implements Scene
       
       // -- attributes -- //
       JSONObject attr = new JSONObject();
+      
       attr.put("health", Balance.Player.INITHEALTH);
       attr.put("maxhealth", Balance.Player.INITHEALTH);
+      
+      attr.put("stamina", Balance.Player.INITSTAMINA);
+      attr.put("maxstamina", Balance.Player.INITSTAMINA);
+      
       save.put("attr", attr);
       
       MapPack mp = new MapPack(CFG.MAPPACK, v.w);
