@@ -40,7 +40,7 @@ public class Scene_Game implements Scene, MapPackEventListener
   {
     this.v = v;
     v.setFramesFrozen(false);
-    CFG.MAPCENTER = new Point((v.w.getWidth() / 2 - CFG.FIELDSIZE / 2), (v.w.getHeight() / 2 - CFG.FIELDSIZE * 3 / 4));
+    CFG.MAPCENTER = new Point((v.w.getWidth() / 2 - CFG.HUMANBOUNDS[0]), (v.w.getHeight() / 2 - CFG.HUMANBOUNDS[1]));
     player = new Player(v.savegame, v.w);
     Database.setStringVar("playername", player.getName());
     setMapPack(new MapPack(CFG.MAPPACK, v.w));

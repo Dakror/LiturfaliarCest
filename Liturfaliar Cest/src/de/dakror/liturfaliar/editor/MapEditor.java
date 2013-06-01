@@ -1355,7 +1355,7 @@ public class MapEditor
       NPCButton npc;
       if (data == null)
       {
-        npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getPreferredSize().width - CFG.MALUS, NPCpreview.getPreferredSize().height - CFG.MALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage(), NPClastID, this);
+        npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getPreferredSize().width - CFG.BOUNDMALUS, NPCpreview.getPreferredSize().height - CFG.BOUNDMALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage(), NPClastID, this);
       }
       else
       {

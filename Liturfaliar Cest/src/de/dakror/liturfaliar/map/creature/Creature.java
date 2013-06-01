@@ -1,5 +1,6 @@
 package de.dakror.liturfaliar.map.creature;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -47,6 +48,17 @@ public class Creature implements MapEventListener
     bx = by = 0;
     
     attr = new Attributes();
+  }
+  
+  public void setHuman()
+  {
+    bx = CFG.HUMANBUMPS[0];
+    by = CFG.HUMANBUMPS[1];
+    bw = CFG.HUMANBUMPS[2];
+    bh = CFG.HUMANBUMPS[3];
+    
+    w = CFG.HUMANBOUNDS[0];
+    h = CFG.HUMANBOUNDS[1];
   }
   
   public int getDir()
@@ -135,6 +147,15 @@ public class Creature implements MapEventListener
   {
     if (emoticon != null)
       emoticon.draw(g, m, v);
+    
+    if (CFG.UIDEBUG)
+    {
+      Color color = g.getColor();
+      g.setColor(Color.green);
+      g.draw(new Rectangle2D.Double(m.getX() + getRelativePos(m)[0], m.getY() + getRelativePos(m)[1], w, h));
+      Assistant.Shadow(new Rectangle2D.Double(m.getX() + getRelativePos(m)[0] + bx, m.getY() + getRelativePos(m)[1] + by, bw, bh), Color.orange, 1, g);
+      g.setColor(color);
+    }
   }
   
   public boolean isMassive()
@@ -320,12 +341,12 @@ public class Creature implements MapEventListener
   @Override
   public void talkChanged(Talk old, Talk n, Map m)
   {}
-
+  
   public Attributes getAttributes()
   {
     return attr;
   }
-
+  
   public void setAttributes(Attributes a)
   {
     this.attr = a;

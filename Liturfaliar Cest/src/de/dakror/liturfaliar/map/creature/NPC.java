@@ -38,6 +38,9 @@ public class NPC extends Creature
   public NPC(int x, int y, int w, int h, int d, String name, String c, double speed, boolean move, boolean look, int moveT, int lookT, int id, JSONArray talkdata)
   {
     super(x, y, w, h);
+    
+    setHuman();
+    
     character = c;
     
     layer = CFG.PLAYERLAYER;

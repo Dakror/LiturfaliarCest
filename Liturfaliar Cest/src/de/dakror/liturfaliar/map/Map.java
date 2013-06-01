@@ -278,6 +278,7 @@ public class Map implements DatabaseEventListener
       if (j.done)
         animations.remove(i);
     }
+    
     g.drawImage(hrender, getX(), getY(), v.w);
     // -- field data -- // for (Field[] f1 : ground) { for (Field f : f1) { f.drawUp(g, v, this); } } */
     if (CFG.UIDEBUG)

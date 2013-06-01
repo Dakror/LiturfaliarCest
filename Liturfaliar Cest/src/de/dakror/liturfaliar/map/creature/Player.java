@@ -40,12 +40,13 @@ public class Player extends Creature
   {
     super(CFG.MAPCENTER.x, CFG.MAPCENTER.y, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1]);
     
+    setHuman();
+    
     massive = true;
     layer = CFG.PLAYERLAYER;
     setData(save);
     frozen = false;
-    by = CFG.FIELDSIZE;
-    bh = CFG.FIELDSIZE / 2;
+    
     try
     {
       relPos = goTo = new Vector(save.getJSONObject("mappack").getJSONObject("pos").getInt("x"), save.getJSONObject("mappack").getJSONObject("pos").getInt("y"));
@@ -104,7 +105,7 @@ public class Player extends Creature
   
   @Override
   public void update(long timePassed, Map m)
-  {
+  {    
     if (init)
     {
       m.setPos(CFG.MAPCENTER.x - getRelativePos(m)[0], CFG.MAPCENTER.y - getRelativePos(m)[1]);
@@ -184,7 +185,7 @@ public class Player extends Creature
         x++;
       
       if ((x != 0 || y != 0) && !frozen)
-        frame = v.getFrame((sprint) ? 0.5f : 1);
+        frame = v.getFrame((sprint) ? 0.3f : 0.5f);
       
       if (dirs[0] && !dirs[3])
         dir = 3;
@@ -194,7 +195,7 @@ public class Player extends Creature
         dir = 2;
       if (dirs[3] && !dirs[0])
         dir = 0;
-      Assistant.drawChar(v.w.getWidth() / 2 - getWidth() / 2, v.w.getHeight() / 2 - getHeight() / 2, getWidth(), getHeight(), dir, frame, getData().getJSONObject("char"), g, v.w, true);
+      Assistant.drawChar(CFG.MAPCENTER.x, CFG.MAPCENTER.y, w, h, dir, frame, data.getJSONObject("char"), g, v.w, true);
     }
     catch (JSONException e)
     {
@@ -290,7 +291,7 @@ public class Player extends Creature
   @Override
   public int[] getRelativePos(Map m)
   {
-    return new int[] { (int) Math.round(relPos.coords[0]), (int) Math.round(relPos.coords[1]) };
+    return new int[] { (int) relPos.coords[0], (int) relPos.coords[1] };
   }
   
   public JSONObject getData()
