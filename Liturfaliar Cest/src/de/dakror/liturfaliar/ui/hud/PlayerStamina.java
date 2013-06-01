@@ -16,7 +16,7 @@ public class PlayerStamina extends HUDComponent
   float       alpha;
   long        time;
   
-  final float ALPHA = 0.02f;
+  final float ALPHA = 0.03f;
   final int   TIME  = 200;
   
   public PlayerStamina(Player p)
@@ -60,7 +60,7 @@ public class PlayerStamina extends HUDComponent
       
       setX(v.w.getWidth() / 2 - PlayerHotbar.SLOTSIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);
       setHeight(32);
-      setY(v.w.getHeight() - height - PlayerHotbar.SLOTSIZE - 32);
+      setY(v.w.getHeight() - height - PlayerHotbar.SLOTSIZE - 25);
       setWidth(PlayerHotbar.SLOTSIZE * PlayerHotbar.SLOTCOUNT / 2 + 5);
       bar = new ProgressBar(x, y, width, 1, false, "ffc744", null, false);
       bar.setHeight(height);

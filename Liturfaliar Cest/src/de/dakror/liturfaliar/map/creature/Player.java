@@ -111,24 +111,26 @@ public class Player extends Creature
       init = false;
     }
     
-    /*
-     * if (!sprint)
-     * {
-     * if ((System.currentTimeMillis() - time) % Balance.Player.STAMINAREGEN < timePassed && attr.getAttribute("stamina").getValue() < attr.getAttribute("stamina").getMaximum())
-     * attr.getAttribute("stamina").increaseValue(1);
-     * }
-     */
     
-    
-    if (sprint && (dirs[0] || dirs[1] || dirs[2] || dirs[3]) && (System.currentTimeMillis() - time) % Balance.Player.STAMINADECREASE < timePassed && attr.getAttribute("stamina").getValue() > 0)
+    if (!sprint)
     {
-      attr.getAttribute("stamina").decreaseValue(1);
+      if ((System.currentTimeMillis() - time) > Balance.Player.STAMINAREGEN && attr.getAttribute("stamina").getValue() < attr.getAttribute("stamina").getMaximum())
+      {
+        attr.getAttribute("stamina").increaseValue(1);
+        time = System.currentTimeMillis();
+      }
     }
     
+    if (sprint && (dirs[0] || dirs[1] || dirs[2] || dirs[3]) && (System.currentTimeMillis() - time) > Balance.Player.STAMINADECREASE && attr.getAttribute("stamina").getValue() > 0)
+    {
+      attr.getAttribute("stamina").decreaseValue(1);
+      time = System.currentTimeMillis();
+    }
     if (attr.getAttribute("stamina").getValue() == 0)
     {
       sprint = false;
     }
+    
     
     
     setSpeed((sprint) ? Balance.Player.SPRINT : Balance.Player.WALK);
@@ -181,9 +183,9 @@ public class Player extends Creature
       if (dirs[2])
         x++;
       
-      
-      if (x + y != 0 && !frozen)
+      if ((x != 0 || y != 0) && !frozen)
         frame = v.getFrame((sprint) ? 0.5f : 1);
+      
       if (dirs[0] && !dirs[3])
         dir = 3;
       if (dirs[1] && !dirs[2])
@@ -229,8 +231,10 @@ public class Player extends Creature
       }
       case KeyEvent.VK_SHIFT:
       {
+        if (!sprint)
+          time = System.currentTimeMillis();
+        
         sprint = true;
-        time = System.currentTimeMillis();
         break;
       }
     }
@@ -263,11 +267,10 @@ public class Player extends Creature
       }
       case KeyEvent.VK_SHIFT:
       {
+        if (sprint)
+          time = System.currentTimeMillis();
+        
         sprint = false;
-        
-        time = 0;
-        
-        // TODO: time = System.currentTimeMillis();
         break;
       }
     }
