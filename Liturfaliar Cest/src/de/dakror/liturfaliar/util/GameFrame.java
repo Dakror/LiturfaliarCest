@@ -29,19 +29,6 @@ public abstract class GameFrame
     this.running = false;
   }
   
-  public synchronized void freeze()
-  {
-    this.frozen = true;
-    this.s.getFullScreenWindow().setVisible(false);
-  }
-  
-  
-  public synchronized void unfreeze()
-  {
-    this.frozen = false;
-    this.s.getFullScreenWindow().setVisible(true);
-  }
-  
   public void run()
   {
     try

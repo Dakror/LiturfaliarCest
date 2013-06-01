@@ -1,11 +1,14 @@
 package de.dakror.liturfaliar.map;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -48,6 +51,7 @@ public class Map implements DatabaseEventListener
   
   public float                        alpha;
   
+  public ArrayList<Field>             aboveFields;
   public ArrayList<Field>             fields;
   public ArrayList<Creature>          creatures;
   public Talk                         talk;
@@ -140,6 +144,7 @@ public class Map implements DatabaseEventListener
     Database.addDatabaseEventListener(this);
     alpha = 1.0f;
     creatures = new ArrayList<Creature>();
+    aboveFields = new ArrayList<Field>();
     fields = new ArrayList<Field>();
     int w = 0, h = 0;
     for (int i = 0; i < data.getJSONArray("tile").length(); i++)
@@ -171,7 +176,10 @@ public class Map implements DatabaseEventListener
       if (f.getLayer() <= CFG.PLAYERLAYER && f.getLayer() > CFG.SUPERDELLAYER)
         lrender.getGraphics().drawImage(f.getImage(), f.getX(), f.getY(), null);
       else if (f.getLayer() > CFG.PLAYERLAYER && f.getLayer() < CFG.SUPERADDLAYER)
+      {
         hrender.getGraphics().drawImage(f.getImage(), f.getX(), f.getY(), null);
+        aboveFields.add(f);
+      }
     }
     Collections.reverse(cpy);
     for (Field f : cpy)
@@ -279,7 +287,16 @@ public class Map implements DatabaseEventListener
         animations.remove(i);
     }
     
-    g.drawImage(hrender, getX(), getY(), v.w);
+    for (Field field : aboveFields)
+    {
+      int[] relpos = getPlayer().getRelativePos(this);
+      if (new Point(field.getX(), field.getY()).distance(new Point2D.Double(relpos[0], relpos[1])) < CFG.FIELDSIZE)
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+      
+      g.drawImage(field.getImage(), x + field.getX(), y + field.getY(), v.w);
+      
+      g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+    }
     // -- field data -- // for (Field[] f1 : ground) { for (Field f : f1) { f.drawUp(g, v, this); } } */
     if (CFG.UIDEBUG)
     {

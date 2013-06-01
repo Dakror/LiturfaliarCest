@@ -89,7 +89,6 @@ public class Scene_MainMenu implements Scene
       mapeditor.update();
       if (mapeditor.getState() == 1)
       {
-        v.freeze();
         v.mapeditor = new MapEditor(v);
         mapeditor.setState(0);
       }

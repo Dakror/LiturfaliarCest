@@ -12,6 +12,8 @@ import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -614,5 +616,23 @@ public final class Assistant
     {
       return null;
     }
+  }
+  
+  public static Area ImageToArea(Image img)
+  {
+    BufferedImage image = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+    image.getGraphics().drawImage(img, 0, 0, null);
+    
+    Area area = new Area();
+    
+    for (int i = 0; i < image.getHeight(); i++)
+    {
+      for (int j = 0; j < image.getWidth(); j++)
+      {
+        if (((image.getRGB(j, i) >> 24) & 0xff) == 0)
+          area.add(new Area(new Rectangle2D.Double(j, i, 1, 1)));
+      }
+    }
+    return area;
   }
 }

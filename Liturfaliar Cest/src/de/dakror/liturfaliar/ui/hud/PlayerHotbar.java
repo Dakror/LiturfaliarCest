@@ -8,6 +8,8 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.item.Items;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
@@ -19,13 +21,15 @@ public class PlayerHotbar extends HUDComponent
   
   public static final int   SLOTCOUNT  = KEYSLOTS.length + MOUSESLOTS.length;
   
-  public static final int   SLOTSIZE   = 55;
-  
   BufferedImage             bg;
+  
+  Item[]                    slots      = new Item[SLOTCOUNT];
   
   public PlayerHotbar()
   {
-    super(0, 0, SLOTSIZE * SLOTCOUNT, SLOTSIZE, 10);
+    super(0, 0, Item.SLOTSIZE * SLOTCOUNT, Item.SLOTSIZE, 10);
+    
+    slots[0] = new Item(Items.POCKETKNIFE);
   }
   
   @Override
@@ -43,7 +47,7 @@ public class PlayerHotbar extends HUDComponent
       Graphics2D g2 = (Graphics2D) bg.getGraphics();
       for (int i = 0; i < SLOTCOUNT; i++)
       {
-        g2.drawImage(Viewport.loadImage("tileset/Wood.png"), i * SLOTSIZE, 0, SLOTSIZE, SLOTSIZE, null);
+        g2.drawImage(Viewport.loadImage("tileset/Wood.png"), i * Item.SLOTSIZE, 0, Item.SLOTSIZE, Item.SLOTSIZE, null);
         Font font = new Font("Arial", Font.BOLD, 18);
         g2.setFont(font);
         String string = (i < KEYSLOTS.length) ? KeyEvent.getKeyText(KEYSLOTS[i]) : ((i == SLOTCOUNT - 2) ? "LM" : "RM");
@@ -55,17 +59,22 @@ public class PlayerHotbar extends HUDComponent
           width = g2.getFontMetrics().stringWidth(string);
         }
         
-        Assistant.Shadow(new RoundRectangle2D.Double(i * SLOTSIZE, SLOTSIZE - height, width, height, 5, 5), Colors.DGRAY, 0.6f, g2);
-        Assistant.drawHorizontallyCenteredString(string, i * SLOTSIZE, width, SLOTSIZE - 2, g2, font.getSize() - 2, Colors.GRAY);// .drawString(string, (i + 1) * SLOTSIZE - width, SLOTSIZE, g2, Color.GRAY.brighter(), font);
+        Assistant.Shadow(new RoundRectangle2D.Double(i * Item.SLOTSIZE, Item.SLOTSIZE - height, width, height, 5, 5), Colors.DGRAY, 0.6f, g2);
+        Assistant.drawHorizontallyCenteredString(string, i * Item.SLOTSIZE, width, Item.SLOTSIZE - 2, g2, font.getSize() - 2, Colors.GRAY);// .drawString(string, (i + 1) * SLOTSIZE - width, SLOTSIZE, g2, Color.GRAY.brighter(), font);
       }
       
       setX(v.w.getWidth() / 2 - width / 2);
-      setY(v.w.getHeight() - SLOTSIZE - 4);
+      setY(v.w.getHeight() - Item.SLOTSIZE - 4);
       visible = true;
     }
     
     if (visible)
       g.drawImage(bg, x, y, width, height, v.w);
+    
+    for (int i = 0; i < slots.length; i++)
+    {
+      if (slots[i] != null)
+        slots[i].drawSlot(x + i * 64, y, g, v);
+    }
   }
-  
 }

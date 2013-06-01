@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Player;
 import de.dakror.liturfaliar.ui.ProgressBar;
@@ -58,10 +59,10 @@ public class PlayerStamina extends HUDComponent
       if (player.getAttributes().getAttribute("stamina").getMaximum() == -1)
         return;
       
-      setX(v.w.getWidth() / 2 - PlayerHotbar.SLOTSIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);
+      setX(v.w.getWidth() / 2 - Item.SLOTSIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);
       setHeight(32);
-      setY(v.w.getHeight() - height - PlayerHotbar.SLOTSIZE - 25);
-      setWidth(PlayerHotbar.SLOTSIZE * PlayerHotbar.SLOTCOUNT / 2 + 5);
+      setY(v.w.getHeight() - height - Item.SLOTSIZE - 25);
+      setWidth(Item.SLOTSIZE * PlayerHotbar.SLOTCOUNT / 2 + 5);
       bar = new ProgressBar(x, y, width, 1, false, "ffc744", null, false);
       bar.setHeight(height);
       visible = true;

@@ -51,26 +51,26 @@ import de.dakror.liturfaliar.util.Handler;
  */
 public class Viewport extends GameFrame implements WindowListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener
 {
-  private boolean                       initialized    = false;
-  private boolean                       takeScreenshot = false;
-  private boolean                       pausedfromscene;
-  private boolean                       frozenFrames;
-  private long                          time           = 0;
-  static private HashMap<Image, String> REVcache       = new HashMap<Image, String>();
-  static private HashMap<String, Image> cache          = new HashMap<String, Image>();
-  public double                         fMusicEffectID = 0.5d;
-  public double                         fMusicID       = 0.3d;
-  public double                         fSoundID       = 1.0d;
-  public HashMap<String, OVScene>       ovscenes       = new HashMap<String, OVScene>();
-  public JSONObject                     savegame;
-  public static Notification            notification;
-  public Scene                          scene;
-  public SoundSystem                    ss;
-  public String                         MusicEffectID;
-  public String                         MusicID;
-  public String                         SoundID;
-  public Window                         w;
-  public MapEditor                      mapeditor;
+  private boolean                               initialized    = false;
+  private boolean                               takeScreenshot = false;
+  private boolean                               pausedfromscene;
+  private boolean                               frozenFrames;
+  private long                                  time           = 0;
+  static private HashMap<Image, String>         REVcache       = new HashMap<Image, String>();
+  static private HashMap<String, BufferedImage> cache          = new HashMap<String, BufferedImage>();
+  public double                                 fMusicEffectID = 0.5d;
+  public double                                 fMusicID       = 0.3d;
+  public double                                 fSoundID       = 1.0d;
+  public HashMap<String, OVScene>               ovscenes       = new HashMap<String, OVScene>();
+  public JSONObject                             savegame;
+  public static Notification                    notification;
+  public Scene                                  scene;
+  public SoundSystem                            ss;
+  public String                                 MusicEffectID;
+  public String                                 MusicID;
+  public String                                 SoundID;
+  public Window                                 w;
+  public MapEditor                              mapeditor;
   
   /**
    * Constructor
@@ -114,7 +114,10 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   {
     if (!initialized)
       return;
+    
+    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
     g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     if (scene != null)
       scene.draw(g);
@@ -223,7 +226,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     }
   }
   
-  public static Image loadImage(String path)
+  public static BufferedImage loadImage(String path)
   {
     String capitals = "QWERTZUIOPASDFGHJKLYXCVBNM";
     if (cache.containsKey(path))
@@ -232,7 +235,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     }
     else
     {
-      Image i = null;
+      BufferedImage i = null;
       if (capitals.indexOf(path.charAt(0)) > -1)
       {
         try
@@ -242,7 +245,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
         catch (IOException e)
         {}
       }
-      else i = Assistant.loadImage(path);
+      else i = (BufferedImage) Assistant.loadImage(path);
       if (i == null)
         System.err.println("Image is missing: " + path);
       cache.put(path, i);
@@ -417,7 +420,9 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       play();
       return;
-    } else if (force) {
+    }
+    else if (force)
+    {
       stopMusic();
     }
     if (FileManager.pullMediaFile("Music", name + ".wav") == null)

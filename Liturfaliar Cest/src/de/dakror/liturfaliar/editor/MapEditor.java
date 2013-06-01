@@ -159,11 +159,13 @@ public class MapEditor
       @Override
       public void windowClosing(WindowEvent e)
       {
-        v.unfreeze();
+        v.mapeditor = null;
       }
     });
     init();
     w.setVisible(true);
+    
+    w.toFront();
   }
   
   public void init()

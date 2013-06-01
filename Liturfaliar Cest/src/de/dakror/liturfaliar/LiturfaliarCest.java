@@ -18,7 +18,7 @@ public class LiturfaliarCest
 {
   public static void main(String[] args)
   {
-    CFG.INTERNET = Assistant.isInternetReachable(); // TODO: Assistant.isInternetReachable();
+    CFG.INTERNET = Assistant.isInternetReachable();
     
     UniVersion.offline = !CFG.INTERNET;
     UniVersion.init(LiturfaliarCest.class, CFG.VERSION, CFG.PHASE);
