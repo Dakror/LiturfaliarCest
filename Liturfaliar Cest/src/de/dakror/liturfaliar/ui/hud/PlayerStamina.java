@@ -40,8 +40,8 @@ public class PlayerStamina extends HUDComponent
       if (time == 0)
         time = System.currentTimeMillis();
       
-      if (System.currentTimeMillis() - time >= TIME && alpha > ALPHA)
-        alpha -= ALPHA;
+      if (System.currentTimeMillis() - time >= TIME && alpha > 0)
+        alpha -= (alpha - ALPHA > 0) ? ALPHA : alpha;
     }
     else
     {
