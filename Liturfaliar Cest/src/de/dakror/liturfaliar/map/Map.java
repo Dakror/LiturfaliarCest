@@ -35,6 +35,7 @@ import de.dakror.liturfaliar.util.FileManager;
 
 public class Map implements DatabaseEventListener
 {
+  private boolean                     peaceful;
   private int                         x, y, height, width;
   
   private BufferedImage               lrender;
@@ -150,6 +151,7 @@ public class Map implements DatabaseEventListener
       if (o.getInt("y") + CFG.FIELDSIZE > h)
         h = o.getInt("y") + CFG.FIELDSIZE;
     }
+    setPeaceful(data.getBoolean("peaceful"));
     setWidth(w);
     setHeight(h);
     lrender = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -539,5 +541,15 @@ public class Map implements DatabaseEventListener
       }
     });
     return Assistant.getFileNames(files, false);
+  }
+  
+  public boolean isPeaceful()
+  {
+    return peaceful;
+  }
+  
+  public void setPeaceful(boolean peaceful)
+  {
+    this.peaceful = peaceful;
   }
 }

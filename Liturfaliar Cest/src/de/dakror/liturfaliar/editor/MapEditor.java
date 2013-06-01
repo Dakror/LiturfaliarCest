@@ -752,6 +752,10 @@ public class MapEditor
       }
     });
     inputs.add(music);
+    inputs.add(new JLabel("Friedlich: "));
+    final JCheckBox peaceful = new JCheckBox();
+    inputs.add(peaceful);
+    
     dialog.add(inputs, BorderLayout.PAGE_START);
     JButton create = new JButton("Erstellen");
     final JDialog d = dialog;
@@ -774,6 +778,7 @@ public class MapEditor
           mapdata.put("music", (!music.getSelectedItem().equals("Keine Musik")) ? music.getSelectedItem() : "");
           mapdata.put("name", name.getText());
           mapdata.put("tile", new JSONArray());
+          mapdata.put("peaceful", peaceful.isSelected());
           fmenu.setEnabled(true);
           omenu.setEnabled(true);
           saveMap();
@@ -868,8 +873,7 @@ public class MapEditor
       map.mouseDown = null;
       map.mousePos = null;
       map.repaint();
-      
-      
+        
       w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + mappackdata.getString("name") + "/" + m);
       map.removeAll();
       msp.setViewportView(map);

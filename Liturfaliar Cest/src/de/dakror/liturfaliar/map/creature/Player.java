@@ -121,7 +121,7 @@ public class Player extends Creature
       }
     }
     
-    if (sprint && (dirs[0] || dirs[1] || dirs[2] || dirs[3]) && (System.currentTimeMillis() - time) > Balance.Player.STAMINADECREASE && attr.getAttribute("stamina").getValue() > 0)
+    if (sprint && (dirs[0] || dirs[1] || dirs[2] || dirs[3]) && (System.currentTimeMillis() - time) > Balance.Player.STAMINADECREASE && attr.getAttribute("stamina").getValue() > 0 && !m.isPeaceful())
     {
       attr.getAttribute("stamina").decreaseValue(1);
       time = System.currentTimeMillis();
