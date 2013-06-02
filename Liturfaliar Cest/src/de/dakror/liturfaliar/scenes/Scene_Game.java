@@ -9,10 +9,10 @@ import java.awt.event.MouseWheelEvent;
 import org.json.JSONException;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.event.MapPackEventListener;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.MapPack;
 import de.dakror.liturfaliar.map.creature.Player;
-import de.dakror.liturfaliar.map.event.MapPackEventListener;
 import de.dakror.liturfaliar.ovscenes.OVScene_Info;
 import de.dakror.liturfaliar.ovscenes.OVScene_Pause;
 import de.dakror.liturfaliar.settings.CFG;

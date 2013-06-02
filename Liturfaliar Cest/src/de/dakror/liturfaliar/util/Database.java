@@ -3,7 +3,7 @@ package de.dakror.liturfaliar.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import de.dakror.liturfaliar.map.event.DatabaseEventListener;
+import de.dakror.liturfaliar.event.DatabaseEventListener;
 
 public class Database
 {

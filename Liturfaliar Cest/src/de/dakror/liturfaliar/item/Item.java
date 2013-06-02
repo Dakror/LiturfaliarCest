@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.ui.Component;
+import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.Tooltip;
 import de.dakror.liturfaliar.util.Assistant;
 
@@ -30,29 +31,30 @@ public class Item extends Component
     }
   }
   
-  public static final int SPACING  = 6;
-  public static final int SLOTSIZE = 55;
+  public static final int SPACING = 6;
   
   Image                   icon;
   String                  name;
   Types                   type;
   
-  int                     ix, iy;
-  
   Tooltip                 tooltip;
+  
+  Area                    area;
   
   public Item(Items i)
   {
-    super(0, 0, SLOTSIZE - SPACING * 2, SLOTSIZE - SPACING * 2);
+    super(0, 0, ItemSlot.SIZE - SPACING * 2, ItemSlot.SIZE - SPACING * 2);
     
     type = i.getType();
     name = i.getName();
     icon = ((BufferedImage) Viewport.loadImage("system/icons.png")).getSubimage(i.getIconX() * 24, i.getIconY() * 24, 24, 24).getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
     
-    Area area = Assistant.ImageToArea(icon);
-    ix = (int) area.getBounds().getX();
-    iy = (int) area.getBounds().getY();
+    area = Assistant.toArea(icon);
     
+    int x = (int) area.getBounds().x;
+    int y = (int) area.getBounds().y;
+    
+    icon = Assistant.toBufferedImage(icon).getSubimage(x, y, width - x, height - y);
     
     tooltip = new Tooltip("<#999999;30;1>" + name + "[br]<#ffffff;17;1>Typ: <#4444ff;17;1>" + type.getName(), this);
     tooltip.follow = true;
@@ -63,7 +65,7 @@ public class Item extends Component
     setX(x + SPACING);
     setY(y + SPACING);
     
-    g.drawImage(icon, x + SPACING - ix, y + SPACING - iy, SLOTSIZE - SPACING * 2, SLOTSIZE - SPACING * 2, v.w);
+    g.drawImage(icon, x + SPACING + getWidth() / 2 - icon.getWidth(null) / 2, y + SPACING + getHeight() / 2 - icon.getHeight(null) / 2, icon.getWidth(null), icon.getHeight(null), v.w);
     
     tooltip.draw(g, v);
   }

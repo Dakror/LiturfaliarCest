@@ -618,10 +618,16 @@ public final class Assistant
     }
   }
   
-  public static Area ImageToArea(Image img)
-  {
+  public static BufferedImage toBufferedImage(Image img) {
     BufferedImage image = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
     image.getGraphics().drawImage(img, 0, 0, null);
+    
+    return image;
+  }
+  
+  public static Area toArea(Image img)
+  {
+    BufferedImage image = toBufferedImage(img);
     
     Area area = new Area();
     
@@ -629,7 +635,7 @@ public final class Assistant
     {
       for (int j = 0; j < image.getWidth(); j++)
       {
-        if (((image.getRGB(j, i) >> 24) & 0xff) == 0)
+        if (((image.getRGB(j, i) >> 24) & 0xff) == 255)
           area.add(new Area(new Rectangle2D.Double(j, i, 1, 1)));
       }
     }

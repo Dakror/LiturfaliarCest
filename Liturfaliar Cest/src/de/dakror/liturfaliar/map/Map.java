@@ -22,12 +22,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.event.DatabaseEventListener;
+import de.dakror.liturfaliar.event.MapEventListener;
 import de.dakror.liturfaliar.fx.Animation;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.creature.Player;
-import de.dakror.liturfaliar.map.event.DatabaseEventListener;
-import de.dakror.liturfaliar.map.event.MapEventListener;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;

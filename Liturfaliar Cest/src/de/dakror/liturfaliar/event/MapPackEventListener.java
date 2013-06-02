@@ -1,4 +1,4 @@
-package de.dakror.liturfaliar.map.event;
+package de.dakror.liturfaliar.event;
 
 import de.dakror.liturfaliar.map.Map;
 

@@ -9,10 +9,10 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.event.MapEventListener;
 import de.dakror.liturfaliar.fx.Emoticon;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
-import de.dakror.liturfaliar.map.event.MapEventListener;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;

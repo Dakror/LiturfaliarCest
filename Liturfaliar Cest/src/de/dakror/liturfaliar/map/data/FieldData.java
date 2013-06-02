@@ -5,9 +5,9 @@ import java.awt.Graphics2D;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.event.MapEventListener;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
-import de.dakror.liturfaliar.map.event.MapEventListener;
 
 public interface FieldData extends MapEventListener
 {

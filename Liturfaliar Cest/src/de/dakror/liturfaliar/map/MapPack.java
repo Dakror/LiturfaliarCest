@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.liturfaliar.map.event.MapPackEventListener;
+import de.dakror.liturfaliar.event.MapPackEventListener;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.FileManager;
 
