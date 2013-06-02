@@ -5,24 +5,50 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.util.ArrayList;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.item.Item.Categories;
+import de.dakror.liturfaliar.item.Item.Types;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class ItemSlot extends Component
 {
-  public static final int SIZE = 55;
+  public static final int       SIZE    = 55;
   
-  private Item            item;
-  private int             hotKey;
-  private String          keyString;
-  private boolean         mouseKey;
+  private Item                  item;
+  private int                   hotKey;
+  private String                keyString;
+  private boolean               mouseKey;
+  public String                 tileset = "Wood.png";
   
-  protected ItemSlot(int x, int y)
+  private ArrayList<Categories> categoryFilter;
+  private ArrayList<Types>      typesFilter;
+  
+  public ItemSlot(int x, int y)
   {
     super(x, y, SIZE, SIZE);
+    
+    categoryFilter = new ArrayList<Categories>();
+    typesFilter = new ArrayList<Types>();
+  }
+  
+  public void addCategoriesToFilter(Categories... categories)
+  {
+    for (Categories c : categories)
+    {
+      categoryFilter.add(c);
+    }
+  }
+  
+  public void addTypesToFilter(Types... types)
+  {
+    for (Types c : types)
+    {
+      typesFilter.add(c);
+    }
   }
   
   @Override
@@ -39,7 +65,15 @@ public class ItemSlot extends Component
   @Override
   public void draw(Graphics2D g, Viewport v)
   {
-    g.drawImage(Viewport.loadImage("tileset/Wood.png"), x, y, SIZE, SIZE, null);
+    draw(0, 0, g, v);
+  }
+  
+  public void draw(int x1, int y1, Graphics2D g, Viewport v)
+  {
+    int x = this.x + x1;
+    int y = this.y + y1;
+    
+    g.drawImage(Viewport.loadImage("tileset/" + tileset), x, y, SIZE, SIZE, null);
     
     if (item != null)
       item.drawSlot(x, y, g, v);

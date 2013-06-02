@@ -22,8 +22,6 @@ public class PlayerHealth extends HUDComponent
   @Override
   public void update(Map m)
   {
-    visible = m.talk == null;
-    
     if (visible)
       bar.value = player.getAttributes().getAttribute("health").getValue() / player.getAttributes().getAttribute("health").getMaximum();
   }

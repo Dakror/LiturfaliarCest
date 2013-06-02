@@ -14,21 +14,34 @@ import de.dakror.liturfaliar.util.Assistant;
 
 public class Item extends Component
 {
+  public static enum Categories
+  {
+    WEAPON;
+  }
+  
   public static enum Types
   {
-    SWORD("Schwert");
+    SWORD(Categories.WEAPON, "Schwert");
     
-    private String name;
+    private String     name;
+    private Categories category;
     
-    private Types(String name)
+    private Types(Categories cat, String name)
     {
       this.name = name;
+      this.category = cat;
     }
     
     public String getName()
     {
       return name;
     }
+    
+    public Categories getCategory()
+    {
+      return category;
+    }
+    
   }
   
   public static final int SPACING = 6;

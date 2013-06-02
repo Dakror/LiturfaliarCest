@@ -2,19 +2,19 @@ package de.dakror.liturfaliar.ovscenes;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class OVScene_Info extends OVScene
 {
-  long     frames;
-  long     updates;
-  long     time;
-  Viewport v;
+  long  frames;
+  long  updates;
+  long  time;
+  
+  Point mouse;
   
   @Override
   public void init(Viewport v)
@@ -24,6 +24,9 @@ public class OVScene_Info extends OVScene
     frames = 0;
     updates = 0;
     consistent = true;
+    mouse = new Point(0, 0);
+    
+    v.w.addMouseMotionListener(this);
   }
   
   @Override
@@ -40,53 +43,15 @@ public class OVScene_Info extends OVScene
     Assistant.drawString(Math.round(frames / (float) ((System.currentTimeMillis() - time) / 1000.0f)) + " FPS", 0, 30, g, Color.white, g.getFont().deriveFont(30.0f));
     // show updates
     Assistant.drawString(Math.round(updates / (float) ((System.currentTimeMillis() - time) / 1000.0f)) + " UPS", 0, 60, g, Color.white, g.getFont().deriveFont(30.0f));
+    // show mouseX
+    Assistant.drawString(mouse.x + " x", 0, 90, g, Color.white, g.getFont().deriveFont(30.0f));
+    // show mouseY
+    Assistant.drawString(mouse.y + " y", 0, 120, g, Color.white, g.getFont().deriveFont(30.0f));
   }
   
   @Override
-  public void keyPressed(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyReleased(KeyEvent e)
-  {}
-  
-  @Override
-  public void keyTyped(KeyEvent e)
-  {}
-  
-  @Override
-  public void mouseClicked(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseEntered(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseExited(MouseEvent e)
-  {}
-  
-  @Override
-  public void mousePressed(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseReleased(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseDragged(MouseEvent e)
-  {}
-  
-  @Override
   public void mouseMoved(MouseEvent e)
-  {}
-  
-  @Override
-  public void mouseWheelMoved(MouseWheelEvent e)
-  {}
-  
-  @Override
-  public void setListenersEnabled(boolean b)
-  {}
+  {
+    mouse = e.getLocationOnScreen();
+  }
 }

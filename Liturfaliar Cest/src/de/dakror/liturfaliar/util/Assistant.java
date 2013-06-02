@@ -618,7 +618,8 @@ public final class Assistant
     }
   }
   
-  public static BufferedImage toBufferedImage(Image img) {
+  public static BufferedImage toBufferedImage(Image img)
+  {
     BufferedImage image = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
     image.getGraphics().drawImage(img, 0, 0, null);
     

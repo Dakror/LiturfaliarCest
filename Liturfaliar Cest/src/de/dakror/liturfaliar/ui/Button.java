@@ -251,7 +251,7 @@ public class Button extends Component
       }
       else
       {
-        g.drawImage(image, x, y, w, h, v.w);
+        g.drawImage(image.getScaledInstance(w,h,BufferedImage.SCALE_REPLICATE ), x, y, w, h, v.w);
       }
     }
     g.setFont(oldFont);

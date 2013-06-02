@@ -28,9 +28,11 @@ public class BottomSegment
   
   public void draw(Graphics2D g, Viewport v, Map m)
   {
-    health.draw(g, v, m);
-    stamina.draw(g, v, m);
-    hotbar.draw(g, v, m);
+    if (m.talk == null)
+    {
+      health.draw(g, v, m);
+      stamina.draw(g, v, m);
+      hotbar.draw(g, v, m);
+    }
   }
-  
 }

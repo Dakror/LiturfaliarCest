@@ -14,6 +14,7 @@ import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.MapPack;
 import de.dakror.liturfaliar.map.creature.Player;
 import de.dakror.liturfaliar.ovscenes.OVScene_Info;
+import de.dakror.liturfaliar.ovscenes.OVScene_Inventory;
 import de.dakror.liturfaliar.ovscenes.OVScene_Pause;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.CursorText;
@@ -112,12 +113,17 @@ public class Scene_Game implements Scene, MapPackEventListener
       mappack.getActiveMap().keyReleased(e);
     if (e.getExtendedKeyCode() == KeyEvent.VK_ESCAPE)
     {
-      setPaused(!isPaused());
       v.toggleOVScene(new OVScene_Pause(this), "Pause");
       Handler.setListenerEnabled(this, !isPaused());
       v.setFramesFrozen(isPaused());
       if (isPaused())
         v.playSound("008-System08");
+    }
+    else if (e.getExtendedKeyCode() == KeyEvent.VK_I)
+    {
+      v.toggleOVScene(new OVScene_Inventory(this), "Inventory");
+      Handler.setListenerEnabled(this, !isPaused());
+      v.setFramesFrozen(isPaused());
     }
   }
   
