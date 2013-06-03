@@ -1,4 +1,4 @@
-package de.dakror.liturfaliar.event;
+package de.dakror.liturfaliar.event.listener;
 
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;

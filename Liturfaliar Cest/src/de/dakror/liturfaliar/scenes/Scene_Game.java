@@ -9,7 +9,9 @@ import java.awt.event.MouseWheelEvent;
 import org.json.JSONException;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.MapPackEventListener;
+import de.dakror.liturfaliar.event.dispatcher.DatabaseEventDispatcher;
+import de.dakror.liturfaliar.event.dispatcher.MapPackEventDispatcher;
+import de.dakror.liturfaliar.event.listener.MapPackEventListener;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.MapPack;
 import de.dakror.liturfaliar.map.creature.Player;
@@ -47,7 +49,7 @@ public class Scene_Game implements Scene, MapPackEventListener
     player = new Player(v.savegame, v.w);
     Database.setStringVar("playername", player.getName());
     setMapPack(new MapPack(CFG.MAPPACK, v.w));
-    mappack.addMapPackEventListener(this);
+    MapPackEventDispatcher.addMapPackEventListener(this);
     try
     {
       mappack.setActiveMap(new Map(CFG.MAPPACK, v.savegame.getJSONObject("mappack").getJSONObject("pos").getString("map")));
@@ -148,9 +150,10 @@ public class Scene_Game implements Scene, MapPackEventListener
   }
   
   @Override
-  public void onMapChange(Map oldmap, Map newmap)
+  public void mapChanged(Map oldmap, Map newmap)
   {
-    Database.removeDatabaseEventListener(oldmap);
+    DatabaseEventDispatcher.removeDatabaseEventListener(oldmap);
+    
     newmap.creatures.add(player);
     if (!(newmap.getMusic() + ".wav").equals(v.MusicID) && newmap.getMusic().length() > 0)
       v.playMusic(newmap.getMusic(), true);

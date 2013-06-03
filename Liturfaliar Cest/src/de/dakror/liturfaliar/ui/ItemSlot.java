@@ -1,20 +1,24 @@
 package de.dakror.liturfaliar.ui;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.event.listener.ItemSlotEventListener;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.Item.Categories;
 import de.dakror.liturfaliar.item.Item.Types;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
-public class ItemSlot extends Component
+public class ItemSlot extends Component implements ItemSlotEventListener
 {
   public static final int       SIZE    = 55;
   
@@ -27,9 +31,15 @@ public class ItemSlot extends Component
   private ArrayList<Categories> categoryFilter;
   private ArrayList<Types>      typesFilter;
   
+  private int                   ax, ay;
+  
+  private boolean               hover;
+  
   public ItemSlot(int x, int y)
   {
     super(x, y, SIZE, SIZE);
+    
+    hover = false;
     
     categoryFilter = new ArrayList<Categories>();
     typesFilter = new ArrayList<Types>();
@@ -70,13 +80,13 @@ public class ItemSlot extends Component
   
   public void draw(int x1, int y1, Graphics2D g, Viewport v)
   {
-    int x = this.x + x1;
-    int y = this.y + y1;
+    ax = this.x + x1;
+    ay = this.y + y1;
     
-    g.drawImage(Viewport.loadImage("tileset/" + tileset), x, y, SIZE, SIZE, null);
+    g.drawImage(Viewport.loadImage("tileset/" + tileset), ax, ay, SIZE, SIZE, null);
     
     if (item != null)
-      item.drawSlot(x, y, g, v);
+      item.drawSlot(ax, ay, g, v);
     
     if (keyString != null)
     {
@@ -89,9 +99,12 @@ public class ItemSlot extends Component
         width = g.getFontMetrics().stringWidth(keyString);
       }
       
-      Assistant.Shadow(new RoundRectangle2D.Double(x, y + SIZE - height, width, height, 5, 5), Colors.DGRAY, 0.8f, g);
-      Assistant.drawHorizontallyCenteredString(keyString, x, width, y + SIZE - 2, g, font.getSize() - 2, Colors.GRAY);
+      Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + SIZE - height, width, height, 5, 5), Colors.DGRAY, 0.8f, g);
+      Assistant.drawHorizontallyCenteredString(keyString, ax, width, ay + SIZE - 2, g, font.getSize() - 2, Colors.GRAY);
     }
+    
+    if (hover)
+      Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + SIZE - height, width, height, 5, 5), Color.WHITE, 0.2f, g);
   }
   
   public Item getItem()
@@ -109,6 +122,8 @@ public class ItemSlot extends Component
   {
     if (item != null)
       item.mouseMoved(e);
+    
+    hover = new Area(new Rectangle2D.Double(ax, ay, width, height)).contains(e.getLocationOnScreen());
   }
   
   @Override
@@ -135,4 +150,16 @@ public class ItemSlot extends Component
     
     return slots;
   }
+  
+  @Override
+  public void itemPressed(MouseEvent e, ItemSlot slot)
+  {}
+  
+  @Override
+  public void itemDragged(MouseEvent e, ItemSlot slot)
+  {}
+  
+  @Override
+  public void itemReleased(MouseEvent e, ItemSlot slot)
+  {}
 }

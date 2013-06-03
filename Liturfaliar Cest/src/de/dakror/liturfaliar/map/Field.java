@@ -8,7 +8,7 @@ import java.util.Iterator;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.MapEventListener;
+import de.dakror.liturfaliar.event.listener.MapEventListener;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.map.data.FieldData;
 import de.dakror.liturfaliar.settings.CFG;

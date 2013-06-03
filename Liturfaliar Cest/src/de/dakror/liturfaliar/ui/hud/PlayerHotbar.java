@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.PlayerHotbarEventListener;
+import de.dakror.liturfaliar.event.listener.PlayerHotbarEventListener;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.ui.ItemSlot;
 

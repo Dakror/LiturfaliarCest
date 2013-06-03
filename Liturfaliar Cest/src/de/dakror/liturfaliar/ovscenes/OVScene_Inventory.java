@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.scenes.Scene_Game;
@@ -77,8 +78,7 @@ public class OVScene_Inventory extends OVScene
     
     for (ItemSlot is : equipSlots)
     {
-      if (is != null)
-        is.draw(v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350, g, v);
+      is.draw(v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350, g, v);
     }
     
     // -- stats -- //
@@ -94,6 +94,15 @@ public class OVScene_Inventory extends OVScene
       sg.setPaused(false);
       v.setFramesFrozen(false);
       Handler.setListenerEnabled(sg, true);
+    }
+  }
+  
+  @Override
+  public void mouseMoved(MouseEvent e)
+  {
+    for (ItemSlot slot : equipSlots)
+    {
+      slot.mouseMoved(e);
     }
   }
 }

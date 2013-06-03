@@ -3,13 +3,12 @@ package de.dakror.liturfaliar.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import de.dakror.liturfaliar.event.DatabaseEventListener;
+import de.dakror.liturfaliar.event.dispatcher.DatabaseEventDispatcher;
 
 public class Database
 {
-  private static ArrayList<DatabaseEventListener> listeners   = new ArrayList<DatabaseEventListener>();
-  private static HashMap<String, String>          stringvars  = new HashMap<String, String>();
-  private static HashMap<String, Boolean>         booleanvars = new HashMap<String, Boolean>();
+  private static HashMap<String, String>  stringvars  = new HashMap<String, String>();
+  private static HashMap<String, Boolean> booleanvars = new HashMap<String, Boolean>();
   
   public static String getStringVar(String key)
   {
@@ -28,21 +27,13 @@ public class Database
   public static void setBooleanVar(String key, Boolean value)
   {
     booleanvars.put(key, value);
-    for (DatabaseEventListener del : listeners)
-    {
-      if (del != null)
-        del.booleanVarChanged(key, value);
-    }
+    DatabaseEventDispatcher.dispatchBooleanVarChanged(key, value);
   }
   
   public static void setStringVar(String key, String value)
   {
     stringvars.put(key, value);
-    for (DatabaseEventListener del : listeners)
-    {
-      if (del != null)
-        del.stringVarChanged(key, value);
-    }
+    DatabaseEventDispatcher.dispatchStringVarChanged(key, value);
   }
   
   public String[] getStringVarNames()
@@ -65,16 +56,5 @@ public class Database
       res = res.replace("%" + key + "%", stringvars.get(key));
     }
     return res;
-  }
-  
-  public static void addDatabaseEventListener(DatabaseEventListener del)
-  {
-    listeners.add(del);
-  }
-  
-  public static void removeDatabaseEventListener(DatabaseEventListener del)
-  {
-    if (listeners.indexOf(del) > -1)
-      listeners.set(listeners.indexOf(del), null);
   }
 }

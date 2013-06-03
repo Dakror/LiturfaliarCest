@@ -22,8 +22,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.DatabaseEventListener;
-import de.dakror.liturfaliar.event.MapEventListener;
+import de.dakror.liturfaliar.event.dispatcher.DatabaseEventDispatcher;
+import de.dakror.liturfaliar.event.dispatcher.MapEventDispatcher;
+import de.dakror.liturfaliar.event.listener.DatabaseEventListener;
 import de.dakror.liturfaliar.fx.Animation;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.map.creature.NPC;
@@ -33,28 +34,26 @@ import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Compressor;
-import de.dakror.liturfaliar.util.Database;
 import de.dakror.liturfaliar.util.FileManager;
 
 public class Map implements DatabaseEventListener
 {
-  private boolean                     peaceful;
-  private int                         x, y, height, width;
+  private boolean              peaceful;
+  private int                  x, y, height, width;
   
-  private BufferedImage               lrender;
-  private BufferedImage               hrender;
-  private Area                        bump;
-  private JSONObject                  data;
-  private MapPack                     mappack;
-  private ArrayList<MapEventListener> listeners  = new ArrayList<MapEventListener>();
-  private ArrayList<Animation>        animations = new ArrayList<Animation>();
+  private BufferedImage        lrender;
+  private BufferedImage        hrender;
+  private Area                 bump;
+  private JSONObject           data;
+  private MapPack              mappack;
+  private ArrayList<Animation> animations = new ArrayList<Animation>();
   
-  public float                        alpha;
+  public float                 alpha;
   
-  public ArrayList<Field>             aboveFields;
-  public ArrayList<Field>             fields;
-  public ArrayList<Creature>          creatures;
-  public Talk                         talk;
+  public ArrayList<Field>      aboveFields;
+  public ArrayList<Field>      fields;
+  public ArrayList<Creature>   creatures;
+  public Talk                  talk;
   
   public Map(JSONObject data)
   {
@@ -112,36 +111,27 @@ public class Map implements DatabaseEventListener
   {
     if (talk == null)
       talk = t;
-    for (MapEventListener l : listeners)
-    {
-      if (l != null)
-        l.talkStarted(t, this);
-    }
+    
+    MapEventDispatcher.dispatchTalkStarted(t, this);
   }
   
   public void endTalk()
   {
     talk = null;
-    for (MapEventListener l : listeners)
-    {
-      if (l != null)
-        l.talkEnded(talk, this);
-    }
+    
+    MapEventDispatcher.dispatchTalkEnded(talk, this);
   }
   
   public void changeTalk(Talk t)
   {
     talk = t;
-    for (MapEventListener l : listeners)
-    {
-      if (l != null)
-        l.talkChanged(talk, t, this);
-    }
+    
+    MapEventDispatcher.dispatchTalkChanged(talk, t, this);
   }
   
   public void init() throws Exception
   {
-    Database.addDatabaseEventListener(this);
+    DatabaseEventDispatcher.addDatabaseEventListener(this);
     alpha = 1.0f;
     creatures = new ArrayList<Creature>();
     aboveFields = new ArrayList<Field>();
@@ -530,16 +520,6 @@ public class Map implements DatabaseEventListener
   @Override
   public void booleanVarChanged(String key, boolean value)
   {}
-  
-  public void addMapEventListener(MapEventListener t)
-  {
-    listeners.add(t);
-  }
-  
-  public void removeMapEventListener(MapEventListener t)
-  {
-    listeners.set(listeners.indexOf(t), null);
-  }
   
   public static String[] getMaps(String pack, String dir)
   {

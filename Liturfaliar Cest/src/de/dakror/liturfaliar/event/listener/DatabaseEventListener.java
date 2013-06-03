@@ -1,4 +1,4 @@
-package de.dakror.liturfaliar.event;
+package de.dakror.liturfaliar.event.listener;
 
 public interface DatabaseEventListener
 {

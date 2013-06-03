@@ -3,20 +3,18 @@ package de.dakror.liturfaliar.map;
 import java.awt.Window;
 import java.io.File;
 import java.io.FileFilter;
-import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.liturfaliar.event.MapPackEventListener;
+import de.dakror.liturfaliar.event.dispatcher.MapPackEventDispatcher;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.FileManager;
 
 public class MapPack
 {
-  private ArrayList<MapPackEventListener> mappackeventlisteners;
-  private Map                             activeMap;
-  private JSONObject                      data;
+  private Map        activeMap;
+  private JSONObject data;
   
   public MapPack(String name, Window w)
   {
@@ -24,23 +22,12 @@ public class MapPack
     {
       // -- loading maps -- //
       data = new JSONObject(Assistant.getFileContent(new File(FileManager.dir, "Maps/" + name + "/pack.json")));
-      mappackeventlisteners = new ArrayList<MapPackEventListener>();
     }
     catch (Exception e)
     {
       e.printStackTrace();
       System.exit(0);
     }
-  }
-  
-  public void addMapPackEventListener(MapPackEventListener mpel)
-  {
-    mappackeventlisteners.add(mpel);
-  }
-  
-  public void removeMapPackEventListener(MapPackEventListener mpel)
-  {
-    mappackeventlisteners.set(mappackeventlisteners.indexOf(mpel), null);
   }
   
   public String getName()
@@ -111,11 +98,8 @@ public class MapPack
   
   public void setActiveMap(Map activeMap)
   {
-    for (MapPackEventListener mpel : mappackeventlisteners)
-    {
-      if (mpel != null)
-        mpel.onMapChange(activeMap, activeMap);
-    }
+    MapPackEventDispatcher.dispatchMapChanged(activeMap, activeMap);
+    
     this.activeMap = activeMap;
     this.activeMap.setMapPack(this);
   }
