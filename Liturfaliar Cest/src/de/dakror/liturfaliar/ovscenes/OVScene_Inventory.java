@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.item.Item.Categories;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.ItemSlot;
@@ -37,21 +38,42 @@ public class OVScene_Inventory extends OVScene
     c1 = new Container(0, 0, v.w.getWidth(), 55);
     c1.tileset = null;
     
-    equipSlots = new ItemSlot[13];
+    equipSlots = new ItemSlot[12];
     equipSlots[0] = new ItemSlot(183, 80); // helmet
-    equipSlots[1] = new ItemSlot(80, 160); // cape
-    equipSlots[2] = new ItemSlot(266, 210); // shoulder
-    equipSlots[3] = new ItemSlot(155, 240); // shirt
-    equipSlots[4] = new ItemSlot(99, 240); // arm
-    equipSlots[5] = new ItemSlot(210, 240); // chestplate
-    equipSlots[6] = new ItemSlot(320, 270); // gloves
-    equipSlots[7] = new ItemSlot(183, 305); // belt
-    equipSlots[8] = new ItemSlot(75, 330); // left wpn
-    equipSlots[9] = new ItemSlot(290, 330); // right wpn
-    equipSlots[10] = new ItemSlot(155, 370); // pants
-    equipSlots[11] = new ItemSlot(210, 370); // leg armor
-    equipSlots[12] = new ItemSlot(182, 430); // boots
+    equipSlots[0].setCategoryFilter(Categories.HELMET);
     
+    equipSlots[1] = new ItemSlot(80, 160); // cape
+    equipSlots[1].setCategoryFilter(Categories.CAPE);
+    
+    equipSlots[2] = new ItemSlot(266, 210); // shoulder
+    equipSlots[2].setCategoryFilter(Categories.SHOULDER);
+    
+    equipSlots[3] = new ItemSlot(155, 240); // shirt
+    equipSlots[3].setCategoryFilter(Categories.SHIRT);
+    
+    equipSlots[4] = new ItemSlot(99, 240); // arm
+    equipSlots[4].setCategoryFilter(Categories.ARM);
+    
+    equipSlots[5] = new ItemSlot(210, 240); // armor
+    equipSlots[5].setCategoryFilter(Categories.ARMOR);
+    
+    equipSlots[6] = new ItemSlot(320, 270); // gloves
+    equipSlots[6].setCategoryFilter(Categories.GLOVES);
+    
+    equipSlots[7] = new ItemSlot(183, 305); // belt
+    equipSlots[7].setCategoryFilter(Categories.BELT);
+    
+    equipSlots[8] = new ItemSlot(75, 330); // left wpn
+    equipSlots[8].setCategoryFilter(Categories.WEAPON);
+    
+    equipSlots[9] = new ItemSlot(290, 330); // right wpn
+    equipSlots[9].setCategoryFilter(Categories.WEAPON);
+    
+    equipSlots[10] = new ItemSlot(183, 368); // pants
+    equipSlots[10].setCategoryFilter(Categories.PANTS);
+    
+    equipSlots[11] = new ItemSlot(182, 430); // boots
+    equipSlots[11].setCategoryFilter(Categories.BOOTS); 
   }
   
   @Override

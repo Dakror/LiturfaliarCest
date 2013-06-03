@@ -16,7 +16,7 @@ public class Item extends Component
 {
   public static enum Categories
   {
-    WEAPON;
+    WEAPON, GLOVES, ARM, SHOULDER, HELMET, SHIRT, ARMOR, BELT, PANTS, BOOTS, CAPE;
   }
   
   public static enum Types

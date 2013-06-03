@@ -20,20 +20,20 @@ import de.dakror.liturfaliar.util.Assistant;
 
 public class ItemSlot extends Component implements ItemSlotEventListener
 {
-  public static final int       SIZE    = 55;
+  public static final int  SIZE    = 55;
   
-  private Item                  item;
-  private int                   hotKey;
-  private String                keyString;
-  private boolean               mouseKey;
-  public String                 tileset = "Wood.png";
+  private Item             item;
+  private int              hotKey;
+  private String           keyString;
+  private boolean          mouseKey;
+  public String            tileset = "Wood.png";
   
-  private ArrayList<Categories> categoryFilter;
-  private ArrayList<Types>      typesFilter;
+  private Categories       categoryFilter;
+  private ArrayList<Types> typesFilter;
   
-  private int                   ax, ay;
+  private int              ax, ay;
   
-  private boolean               hover;
+  private boolean          hover;
   
   public ItemSlot(int x, int y)
   {
@@ -41,16 +41,12 @@ public class ItemSlot extends Component implements ItemSlotEventListener
     
     hover = false;
     
-    categoryFilter = new ArrayList<Categories>();
     typesFilter = new ArrayList<Types>();
   }
   
-  public void addCategoriesToFilter(Categories... categories)
+  public void setCategoryFilter(Categories c)
   {
-    for (Categories c : categories)
-    {
-      categoryFilter.add(c);
-    }
+    categoryFilter = c;
   }
   
   public void addTypesToFilter(Types... types)
@@ -84,6 +80,11 @@ public class ItemSlot extends Component implements ItemSlotEventListener
     ay = this.y + y1;
     
     g.drawImage(Viewport.loadImage("tileset/" + tileset), ax, ay, SIZE, SIZE, null);
+    
+    if (categoryFilter != null)
+    {
+      g.drawImage(Viewport.loadImage("system/" + categoryFilter.name().toLowerCase() + "ItemSlotFilter.png"), ax + 4, ay + 4, SIZE - 8, SIZE - 8, null);
+    }
     
     if (item != null)
       item.drawSlot(ax, ay, g, v);
