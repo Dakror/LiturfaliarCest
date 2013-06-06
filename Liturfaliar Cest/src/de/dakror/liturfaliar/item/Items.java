@@ -7,8 +7,8 @@ public enum Items
   BOYSHIRT(12, 2, "Jungen-Oberteil", "1_gray", Types.SHIRT, 0),
   GIRLSHIRT(12, 2, "Leichtes Kleid", "16_black", Types.SHIRT, 0),
   BOYPANTS(7, 391, "Hose", "1_brown", Types.PANTS, 0),
-  BOYBOOTS(0, 3, "Schuhe", "1_black", Types.PANTS, 0),
-  GIRLBOOTS(0, 3, "Halbschuhe", "8_black", Types.PANTS, 0);
+  BOYBOOTS(0, 3, "Schuhe", "1_black", Types.SHOES, 0),
+  GIRLBOOTS(0, 3, "Halbschuhe", "8_black", Types.SHOES, 0);
   
   private int ix, iy, damage;
   private String name, charPath;

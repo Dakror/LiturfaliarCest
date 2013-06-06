@@ -110,7 +110,7 @@ public class OVScene_Pause extends OVScene
   {
     try
     {
-      JSONObject save = v.savegame;
+      JSONObject save = sg.getPlayer().getData();
       JSONObject mappack = save.getJSONObject("mappack");
       JSONObject pos = new JSONObject();
       pos.put("map", sg.getMapPack().getActiveMap().getName());
@@ -118,6 +118,7 @@ public class OVScene_Pause extends OVScene
       pos.put("y", (v.w.getHeight() / 2 - CFG.FIELDSIZE * 3 / 4) - sg.getMapPack().getActiveMap().getY());
       mappack.put("pos", pos);
       save.put("mappack", mappack);
+      
       FileManager.setSave(save);
     }
     catch (Exception e)

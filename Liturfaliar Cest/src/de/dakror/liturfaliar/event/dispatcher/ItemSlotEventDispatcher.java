@@ -20,27 +20,35 @@ public class ItemSlotEventDispatcher
     listeners.set(listeners.indexOf(l), null);
   }
   
-  public static void dispatchItemPressed(MouseEvent e, ItemSlot slot)
+  public static void dispatchSlotPressed(MouseEvent e, ItemSlot slot)
+  {
+    try
+    {
+      for (ItemSlotEventListener l : listeners)
+      {
+        if (l != null)
+          l.slotPressed(e, slot);
+      }
+    }
+    catch (Exception e1)
+    {}
+  }
+  
+  public static void dispatchSlotDragged(MouseEvent e, ItemSlot slot)
   {
     for (ItemSlotEventListener l : listeners)
     {
-      l.itemPressed(e, slot);
+      if (l != null)
+        l.slotDragged(e, slot);
     }
   }
   
-  public static void dispatchItemDragged(MouseEvent e, ItemSlot slot)
+  public static void dispatchSlotReleased(MouseEvent e, ItemSlot slot)
   {
     for (ItemSlotEventListener l : listeners)
     {
-      l.itemDragged(e, slot);
-    }
-  }
-  
-  public static void dispatchItemReleased(MouseEvent e, ItemSlot slot)
-  {
-    for (ItemSlotEventListener l : listeners)
-    {
-      l.itemReleased(e, slot);
+      if (l != null)
+        l.slotReleased(e, slot);
     }
   }
   

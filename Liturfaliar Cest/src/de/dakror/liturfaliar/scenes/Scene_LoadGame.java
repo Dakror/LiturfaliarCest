@@ -49,6 +49,8 @@ public class Scene_LoadGame implements Scene
     c1 = new Container(0, 0, v.w.getWidth(), 55);
     c1.tileset = null;
     datas = FileManager.getSaves();
+    if(datas.length == 0) v.setScene(new Scene_MainMenu());
+    
     saves = new Button[datas.length];
     int charsperpage = 5;
     int fullwidth = v.w.getWidth() / 2;

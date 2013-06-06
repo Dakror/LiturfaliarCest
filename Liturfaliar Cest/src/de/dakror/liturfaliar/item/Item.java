@@ -2,6 +2,7 @@ package de.dakror.liturfaliar.item;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
@@ -16,6 +17,8 @@ import de.dakror.liturfaliar.ui.Tooltip;
 public class Item extends Component
 {
   public static final int SPACING = 4;
+  
+  public Point            mouse   = new Point(0, 0);
   
   int                     iconx, icony;
   
@@ -51,6 +54,20 @@ public class Item extends Component
     init();
   }
   
+  public Item(Item other)
+  {
+    super(other.x, other.y, ItemSlot.SIZE - SPACING * 2, ItemSlot.SIZE - SPACING * 2);
+    
+    type = other.getType();
+    name = other.name;
+    iconx = other.iconx;
+    icony = other.icony;
+    charPath = other.getCharPath();
+    mouse = other.mouse;
+    
+    init();
+  }
+  
   public Item(JSONObject o)
   {
     super(0, 0, ItemSlot.SIZE - SPACING * 2, ItemSlot.SIZE - SPACING * 2);
@@ -79,13 +96,11 @@ public class Item extends Component
     tooltip.follow = true;
   }
   
-  public void drawSlot(int x, int y, Graphics2D g, Viewport v)
+  public void draw(int x1, int y1, Graphics2D g, Viewport v)
   {
-    setX(x + SPACING);
-    setY(y + SPACING);
-    
+    setX(x1 + SPACING);
+    setY(y1 + SPACING);
     g.drawImage(icon, getX() + (getWidth() / 2 - icon.getWidth(null) / 2), getY() + (getHeight() / 2 - icon.getHeight(null) / 2), icon.getWidth(null), icon.getHeight(null), v.w);
-    
     tooltip.draw(g, v);
   }
   
@@ -95,11 +110,14 @@ public class Item extends Component
   
   @Override
   public void draw(Graphics2D g, Viewport v)
-  {}
+  {
+    g.drawImage(icon, mouse.x - icon.getWidth(null) / 2, mouse.y - icon.getHeight(null) / 2, icon.getWidth(null), icon.getHeight(null), v.w);
+  }
   
   @Override
   public void mouseMoved(MouseEvent e)
   {
+    mouse = e.getLocationOnScreen();
     tooltip.mouseMoved(e);
   }
   
@@ -124,5 +142,10 @@ public class Item extends Component
   public String getCharPath()
   {
     return charPath;
+  }
+  
+  public Types getType()
+  {
+    return type;
   }
 }

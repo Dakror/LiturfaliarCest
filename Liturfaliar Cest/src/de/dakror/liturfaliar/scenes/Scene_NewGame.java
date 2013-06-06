@@ -8,6 +8,7 @@ import java.awt.event.MouseWheelEvent;
 import java.io.File;
 import java.net.URISyntaxException;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -227,6 +228,7 @@ public class Scene_NewGame implements Scene
       JSONObject cfg = new JSONObject();
       cfg.put("name", name.value);
       cfg.put("equip", equip.serializeEquipment());
+      cfg.put("inventory", new JSONArray());
       
       save.put("char", cfg);
       

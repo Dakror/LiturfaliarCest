@@ -7,6 +7,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,20 +23,20 @@ import de.dakror.liturfaliar.util.Vector;
 
 public class Player extends Creature
 {
-  private boolean    init                = true;
+  private boolean   init                = true;
   
-  private JSONObject data;
+  public JSONObject data;
   
   // -- up -- left -- right -- down -- //
-  boolean[]          dirs                = { false, false, false, false };
-  Vector             lastPos;
-  Vector             relPos;
+  boolean[]         dirs                = { false, false, false, false };
+  Vector            lastPos;
+  Vector            relPos;
   
-  public boolean     preventTargetChoose = false;
-  public int         dirAfterReachedGoal = -1;
+  public boolean    preventTargetChoose = false;
+  public int        dirAfterReachedGoal = -1;
   
-  boolean            sprint;
-  long               time;
+  boolean           sprint;
+  long              time;
   
   public Player(JSONObject save, Window w)
   {
@@ -293,6 +294,14 @@ public class Player extends Creature
   
   public JSONObject getData()
   {
+    try
+    {
+      data.getJSONObject("char").put("equip", equipment.serializeEquipment());
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+    }
     return data;
   }
   
@@ -311,5 +320,30 @@ public class Player extends Creature
   public void talkEnded(Talk t, Map m)
   {
     frozen = false;
+  }
+  
+  public void setInventory(JSONArray o)
+  {
+    try
+    {
+      data.getJSONObject("char").put("inventory", o);
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+    }
+  }
+  
+  public JSONArray getInventory()
+  {
+    try
+    {
+      return data.getJSONObject("char").getJSONArray("inventory");
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+      return null;
+    }
   }
 }

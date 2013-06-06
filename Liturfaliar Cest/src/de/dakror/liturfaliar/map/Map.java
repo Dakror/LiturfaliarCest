@@ -283,7 +283,7 @@ public class Map implements DatabaseEventListener
       
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
-    // -- field data -- // for (Field[] f1 : ground) { for (Field f : f1) { f.drawUp(g, v, this); } } */
+    
     if (CFG.UIDEBUG)
     {
       Assistant.Shadow(v.w.getBounds(), Color.black, 0.4f, g);

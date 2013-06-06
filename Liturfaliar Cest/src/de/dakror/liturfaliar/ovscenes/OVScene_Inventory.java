@@ -7,19 +7,29 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
 import de.dakror.liturfaliar.item.Categories;
+import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Handler;
 
-public class OVScene_Inventory extends OVScene
+public class OVScene_Inventory extends OVScene implements Inventory
 {
-  Scene_Game sg;
-  Container  c1;
+  public static final int WIDTH  = 12;
+  public static final int HEIGHT = 8;
   
-  ItemSlot[] equipSlots;
+  
+  Scene_Game              sg;
+  Container               c1;
+  
+  ItemSlot[]              equipSlots;
+  ItemSlot[]              inventory;
+  
+  ItemSlot                pickedUp;
+  ItemSlot                pickUpSource;
   
   public OVScene_Inventory(Scene_Game sg)
   {
@@ -35,10 +45,12 @@ public class OVScene_Inventory extends OVScene
     v.w.addMouseListener(this);
     v.w.addMouseMotionListener(this);
     v.w.addMouseWheelListener(this);
+    ItemSlotEventDispatcher.addItemSlotEventListener(this);
     c1 = new Container(0, 0, v.w.getWidth(), 55);
     c1.tileset = null;
     
     equipSlots = new ItemSlot[12];
+    
     equipSlots[0] = new ItemSlot(183, 80); // helmet
     equipSlots[0].setCategoryFilter(Categories.HELMET);
     if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.HELMET))
@@ -96,6 +108,20 @@ public class OVScene_Inventory extends OVScene
     equipSlots[11].setCategoryFilter(Categories.BOOTS);
     if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.BOOTS))
       equipSlots[11].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.BOOTS));
+    
+    for (ItemSlot is : equipSlots)
+    {
+      is.setInventory(this);
+    }
+    
+    inventory = ItemSlot.createSlotGrid(0, 0, WIDTH, HEIGHT);
+    
+    ItemSlot.loadItemSlots(sg.getPlayer().getInventory(), inventory);
+    
+    for (ItemSlot is : inventory)
+    {
+      is.setInventory(this);
+    }
   }
   
   @Override
@@ -110,7 +136,17 @@ public class OVScene_Inventory extends OVScene
     Assistant.drawHorizontallyCenteredString("Inventar", v.w.getWidth(), 43, g, 45, Color.white);
     
     // -- inventory -- //
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 190, v.w.getHeight() / 2 - 350, 800, 700, g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 190, v.w.getHeight() / 2 - 350, ItemSlot.SIZE * WIDTH + 20, 700, g, v.w);
+    
+    for (ItemSlot is : inventory)
+    {
+      is.draw(v.w.getWidth() / 2 - 180, v.w.getHeight() / 2 - 350 + 110, g, v);
+    }
+    
+    for (ItemSlot is : inventory)
+    {
+      is.drawTooltip(g, v);
+    }
     
     // -- character equip -- //
     Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350, 410, 550, g, v.w);
@@ -133,6 +169,8 @@ public class OVScene_Inventory extends OVScene
     // -- stats -- //
     Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350 + 550, 410, 150, g, v.w);
     
+    if (pickedUp != null)
+      pickedUp.getItem().draw(g, v);
   }
   
   @Override
@@ -140,6 +178,12 @@ public class OVScene_Inventory extends OVScene
   {
     if (e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_I)
     {
+      if (pickedUp != null)
+        pickUpSource.setItem(pickedUp.getItem());
+      
+      
+      sg.getPlayer().setInventory(ItemSlot.serializeItemSlots(inventory));
+      ItemSlotEventDispatcher.removeItemSlotEventListener(this);
       v.removeOVScene("Inventory");
       sg.setPaused(false);
       v.setFramesFrozen(false);
@@ -150,9 +194,74 @@ public class OVScene_Inventory extends OVScene
   @Override
   public void mouseMoved(MouseEvent e)
   {
+    for (ItemSlot slot : inventory)
+    {
+      slot.mouseMoved(e);
+    }
+    
     for (ItemSlot slot : equipSlots)
     {
       slot.mouseMoved(e);
     }
+    
+    if (pickedUp != null)
+      pickedUp.mouseMoved(e);
+  }
+  
+  @Override
+  public void mousePressed(MouseEvent e)
+  {
+    for (ItemSlot slot : inventory)
+    {
+      slot.mousePressed(e);
+    }
+    
+    for (ItemSlot slot : equipSlots)
+    {
+      slot.mousePressed(e);
+    }
+    
+    if (pickedUp != null)
+      pickedUp.mousePressed(e);
+  }
+  
+  @Override
+  public void slotPressed(MouseEvent e, ItemSlot slot)
+  {
+    if (slot.getCategoryFilter() != null) // is from equip menu
+    {
+      sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), null);
+    }
+    
+    pickedUp = new ItemSlot(slot);
+    pickUpSource = slot;
+    
+    slot.setItem(null);
+  }
+  
+  @Override
+  public void slotDragged(MouseEvent e, ItemSlot slot)
+  {}
+  
+  @Override
+  public void slotReleased(MouseEvent e, ItemSlot slot)
+  {
+    if (slot.getCategoryFilter() != null) // is from equip menu
+    {
+      sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), slot.getItem());
+    }
+  }
+  
+  @Override
+  public ItemSlot getPickedUpItemSlot()
+  {
+    return pickedUp;
+    
+  }
+  
+  @Override
+  public void setPickedUpItemSlot(ItemSlot item)
+  {
+    pickedUp = item;
   }
 }
