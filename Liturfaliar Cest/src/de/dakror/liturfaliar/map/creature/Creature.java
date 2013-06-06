@@ -11,6 +11,7 @@ import java.awt.geom.Rectangle2D;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.listener.MapEventListener;
 import de.dakror.liturfaliar.fx.Emoticon;
+import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.settings.Attributes;
@@ -37,6 +38,7 @@ public class Creature implements MapEventListener
   protected Emoticon        emoticon;
   
   protected Attributes      attr;
+  protected Equipment       equipment;
   
   public Creature(int x, int y, int w, int h)
   {
@@ -237,6 +239,16 @@ public class Creature implements MapEventListener
   public void setEmoticon(int type, boolean animate, long length)
   {
     emoticon = new Emoticon(this, type, animate, length);
+  }
+  
+  public Equipment getEquipment()
+  {
+    return equipment;
+  }
+  
+  public void setEquipment(Equipment equipment)
+  {
+    this.equipment = equipment;
   }
   
   public Emoticon getEmoticon()

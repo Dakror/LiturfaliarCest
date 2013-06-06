@@ -71,6 +71,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.data.Door;
@@ -875,7 +876,7 @@ public class MapEditor
       map.mouseDown = null;
       map.mousePos = null;
       map.repaint();
-        
+      
       w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + mappackdata.getString("name") + "/" + m);
       map.removeAll();
       msp.setViewportView(map);
@@ -1701,7 +1702,7 @@ public class MapEditor
                       BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1, v);
                       int d = Arrays.asList(dirs).indexOf(((String) dir.getSelectedItem())) - 1;
                       d = (d < 0) ? 0 : d;
-                      Assistant.drawChar(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], d, 0, new JSONObject(Assistant.getURLContent(getClass().getResource("/json/char.json"))).getJSONObject("default").getJSONObject("Mann"), (Graphics2D) bi.getGraphics(), null, true);// Assistant.Rect(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], Color.cyan, null, (Graphics2D) bi.getGraphics());
+                      Assistant.drawChar(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], d, 0, Equipment.getDefault(true), (Graphics2D) bi.getGraphics(), null, true);// Assistant.Rect(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], Color.cyan, null, (Graphics2D) bi.getGraphics());
                       l.setIcon(new ImageIcon(bi));
                     }
                     catch (JSONException e1)

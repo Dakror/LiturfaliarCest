@@ -233,10 +233,6 @@ public class Map implements DatabaseEventListener
     {
       talk.update();
     }
-    /*
-     * final Map self = this; Comparator<Creature> comp = new Comparator<Creature>() {
-     * @Override public int compare(Creature o1, Creature o2) { double pos1 = Math.sqrt(Math.pow(o1.getRelativePos(self)[0], 2) + Math.pow(o1.getRelativePos(self)[1], 2)); double pos2 = Math.sqrt(Math.pow(o2.getRelativePos(self)[0], 2) + Math.pow(o2.getRelativePos(self)[1], 2)); return (int) (pos1 - pos2); } }; Collections.sort(creatures, comp); for (Creature c : creatures) { c.update(this); for (Field[] f : ground) { for (Field f2 : f) { if (c.getBumpArea(this).contains(new Point2D.Double(f2.getX() * CFG.FIELDSIZE + CFG.FIELDSIZE * 0.5, f2.getY() * CFG.FIELDSIZE + CFG.FIELDSIZE * 0.5))) { for (MapEventListener l : listeners) { if (l != null) { l.fieldTriggered(c); } } } else if (c.getBumpArea(this).intersects(f2.getX() * CFG.FIELDSIZE, f2.getY() * CFG.FIELDSIZE, CFG.FIELDSIZE, CFG.FIELDSIZE)) { for (MapEventListener l : listeners) { if (l != null) { l.fieldTouched(c); } } } } } }
-     */
   }
   
   public void draw(Graphics2D g, Viewport v)
@@ -280,7 +276,7 @@ public class Map implements DatabaseEventListener
     for (Field field : aboveFields)
     {
       int[] relpos = getPlayer().getRelativePos(this);
-      if (new Point(field.getX(), field.getY()).distance(new Point2D.Double(relpos[0], relpos[1])) < CFG.FIELDSIZE)
+      if (new Point(field.getX(), field.getY()).distance(new Point2D.Double(relpos[0], relpos[1])) < CFG.FIELDSIZE * 0.8)
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
       
       g.drawImage(field.getImage(), x + field.getX(), y + field.getY(), v.w);

@@ -38,6 +38,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.item.Categories;
+import de.dakror.liturfaliar.item.Equipment;
 
 
 /**
@@ -309,21 +311,47 @@ public final class Assistant
     g.drawImage(img, x + w - 32, y + h - 32, x + w, y + h, 64, 64, 96, 96, win);
   }
   
-  public static void drawChar(int x, int y, int w, int h, int dir, int frame, JSONObject cfg, Graphics2D g, Window window, boolean ch)
+  // dir is real dir from image: down = 0, left = 1, right = 2, up = 3
+  public static void drawChar(int x, int y, int w, int h, int dir, int frame, Equipment equip, Graphics2D g, Window window, boolean ch)
   {
-    try
+    if (ch)
     {
-      String[] parts = { "skin", "eyes", "hair", "hat", "trouser", "gloves", "shirt" };
-      for (String s : parts)
+      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "b"))
+        drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_b", g, window, ch);
+
+      
+      if (equip.hasEquipmentItem(Categories.SKIN))
       {
-        if (cfg.getInt(s) != -1)
-          drawChar(x, y, w, h, dir, frame, s, cfg.getInt(s) + "", g, window, ch);
+        drawChar(x, y, w, h, dir, frame, "skin", equip.getEquipmentItem(Categories.SKIN).getCharPath() + "_b", g, window, ch);
+        drawChar(x, y, w, h, dir, frame, "skin", equip.getEquipmentItem(Categories.SKIN).getCharPath() + "_f", g, window, ch);
       }
+      if (equip.hasEquipmentItem(Categories.EYES))
+        drawChar(x, y, w, h, dir, frame, "eyes", equip.getEquipmentItem(Categories.EYES).getCharPath(), g, window, ch);
+      
+      if (equip.hasEquipmentItem(Categories.PANTS))
+        drawChar(x, y, w, h, dir, frame, "pants", equip.getEquipmentItem(Categories.PANTS).getCharPath(), g, window, ch);
+      
+      if (equip.hasEquipmentItem(Categories.BOOTS))
+        drawChar(x, y, w, h, dir, frame, "boots", equip.getEquipmentItem(Categories.BOOTS).getCharPath(), g, window, ch);
+      
+      if (equip.hasEquipmentItem(Categories.SHIRT))
+        drawChar(x, y, w, h, dir, frame, "shirt", equip.getEquipmentItem(Categories.SHIRT).getCharPath(), g, window, ch);
+      
+      if (equip.hasEquipmentItem(Categories.HAIR))
+        drawChar(x, y, w, h, dir, frame, "hair", equip.getEquipmentItem(Categories.HAIR).getCharPath(), g, window, ch);
+      
+      
+      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "m"))
+        drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_m", g, window, ch);
+      
+      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "f"))
+        drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_f", g, window, ch);
     }
-    catch (JSONException e)
-    {
-      e.printStackTrace();
-    }
+  }
+  
+  private static boolean charLevelExists(Categories c, String path, String level)
+  {
+    return Assistant.class.getResource("char/" + c.name().toLowerCase() + "/" + path + "_" + level + ".png") == null;
   }
   
   public static void drawChar(int x, int y, int w, int h, int dir, int frame, String type, String image, Graphics2D g, Window window, boolean ch)

@@ -66,6 +66,11 @@ public class Scene_Game implements Scene, MapPackEventListener
     // -- //
   }
   
+  public Player getPlayer()
+  {
+    return player;
+  }
+  
   @Override
   public void update(long timePassed)
   {

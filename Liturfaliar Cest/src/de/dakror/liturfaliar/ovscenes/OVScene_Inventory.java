@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.item.Item.Categories;
+import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.ItemSlot;
@@ -41,39 +41,61 @@ public class OVScene_Inventory extends OVScene
     equipSlots = new ItemSlot[12];
     equipSlots[0] = new ItemSlot(183, 80); // helmet
     equipSlots[0].setCategoryFilter(Categories.HELMET);
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.HELMET))
+      equipSlots[0].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.HELMET));
     
     equipSlots[1] = new ItemSlot(80, 160); // cape
     equipSlots[1].setCategoryFilter(Categories.CAPE);
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.CAPE))
+      equipSlots[1].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.CAPE));
     
     equipSlots[2] = new ItemSlot(266, 210); // shoulder
     equipSlots[2].setCategoryFilter(Categories.SHOULDER);
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.SHOULDER))
+      equipSlots[2].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.SHOULDER));
     
     equipSlots[3] = new ItemSlot(155, 240); // shirt
     equipSlots[3].setCategoryFilter(Categories.SHIRT);
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.SHIRT))
+      equipSlots[3].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.SHIRT));
     
     equipSlots[4] = new ItemSlot(99, 240); // arm
     equipSlots[4].setCategoryFilter(Categories.ARM);
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.ARM))
+      equipSlots[4].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.ARM));
     
     equipSlots[5] = new ItemSlot(210, 240); // armor
     equipSlots[5].setCategoryFilter(Categories.ARMOR);
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.ARMOR))
+      equipSlots[5].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.ARMOR));
     
     equipSlots[6] = new ItemSlot(320, 270); // gloves
     equipSlots[6].setCategoryFilter(Categories.GLOVES);
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.GLOVES))
+      equipSlots[6].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.GLOVES));
     
     equipSlots[7] = new ItemSlot(183, 305); // belt
     equipSlots[7].setCategoryFilter(Categories.BELT);
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.BELT))
+      equipSlots[7].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.BELT));
     
     equipSlots[8] = new ItemSlot(75, 330); // left wpn
     equipSlots[8].setCategoryFilter(Categories.WEAPON);
+    
+    // TODO: for weapon equipment special care is needed (2-hand weapons, etc.)
     
     equipSlots[9] = new ItemSlot(290, 330); // right wpn
     equipSlots[9].setCategoryFilter(Categories.WEAPON);
     
     equipSlots[10] = new ItemSlot(183, 368); // pants
     equipSlots[10].setCategoryFilter(Categories.PANTS);
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.PANTS))
+      equipSlots[10].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.PANTS));
     
     equipSlots[11] = new ItemSlot(182, 430); // boots
-    equipSlots[11].setCategoryFilter(Categories.BOOTS); 
+    equipSlots[11].setCategoryFilter(Categories.BOOTS);
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.BOOTS))
+      equipSlots[11].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.BOOTS));
   }
   
   @Override
@@ -103,8 +125,14 @@ public class OVScene_Inventory extends OVScene
       is.draw(v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350, g, v);
     }
     
+    for (ItemSlot is : equipSlots)
+    {
+      is.drawTooltip(g, v);
+    }
+    
     // -- stats -- //
     Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350 + 550, 410, 150, g, v.w);
+    
   }
   
   @Override

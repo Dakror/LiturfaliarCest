@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.settings.Balance;
@@ -46,9 +47,10 @@ public class Player extends Creature
     layer = CFG.PLAYERLAYER;
     setData(save);
     frozen = false;
-    
     try
     {
+      equipment = new Equipment(save.getJSONObject("char").getJSONObject("equip"));
+      
       relPos = goTo = new Vector(save.getJSONObject("mappack").getJSONObject("pos").getInt("x"), save.getJSONObject("mappack").getJSONObject("pos").getInt("y"));
       
       attr.loadAttributes(save.getJSONObject("attr"));
@@ -105,7 +107,7 @@ public class Player extends Creature
   
   @Override
   public void update(long timePassed, Map m)
-  {    
+  {
     if (init)
     {
       m.setPos(CFG.MAPCENTER.x - getRelativePos(m)[0], CFG.MAPCENTER.y - getRelativePos(m)[1]);
@@ -169,38 +171,33 @@ public class Player extends Creature
   public void draw(Graphics2D g, Viewport v, Map m)
   {
     super.draw(g, v, m);
-    try
-    {
-      int frame = 0;
-      
-      int x = 0, y = 0;
-      
-      if (dirs[0])
-        y--;
-      if (dirs[3])
-        y++;
-      if (dirs[1])
-        x--;
-      if (dirs[2])
-        x++;
-      
-      if ((x != 0 || y != 0) && !frozen)
-        frame = v.getFrame((sprint) ? 0.3f : 0.5f);
-      
-      if (dirs[0] && !dirs[3])
-        dir = 3;
-      if (dirs[1] && !dirs[2])
-        dir = 1;
-      if (dirs[2] && !dirs[1])
-        dir = 2;
-      if (dirs[3] && !dirs[0])
-        dir = 0;
-      Assistant.drawChar(CFG.MAPCENTER.x, CFG.MAPCENTER.y, w, h, dir, frame, data.getJSONObject("char"), g, v.w, true);
-    }
-    catch (JSONException e)
-    {
-      e.printStackTrace();
-    }
+    
+    int frame = 0;
+    
+    int x = 0, y = 0;
+    
+    if (dirs[0])
+      y--;
+    if (dirs[3])
+      y++;
+    if (dirs[1])
+      x--;
+    if (dirs[2])
+      x++;
+    
+    if ((x != 0 || y != 0) && !frozen)
+      frame = v.getFrame((sprint) ? 0.3f : 0.5f);
+    
+    if (dirs[0] && !dirs[3])
+      dir = 3;
+    if (dirs[1] && !dirs[2])
+      dir = 1;
+    if (dirs[2] && !dirs[1])
+      dir = 2;
+    if (dirs[3] && !dirs[0])
+      dir = 0;
+    
+    Assistant.drawChar(CFG.MAPCENTER.x, CFG.MAPCENTER.y, w, h, dir, frame, equipment, g, v.w, true);
   }
   
   @Override

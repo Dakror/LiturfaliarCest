@@ -15,6 +15,8 @@ public class DatabaseEventDispatcher
   
   public static void removeDatabaseEventListener(DatabaseEventListener l)
   {
+    if (listeners.indexOf(l) == -1)
+      return;
     listeners.set(listeners.indexOf(l), null);
   }
   
@@ -22,14 +24,17 @@ public class DatabaseEventDispatcher
   {
     for (DatabaseEventListener l : listeners)
     {
-      l.stringVarChanged(key, value);
+      if (l != null)
+        l.stringVarChanged(key, value);
     }
-  }  
+  }
+  
   public static void dispatchBooleanVarChanged(String key, boolean value)
   {
     for (DatabaseEventListener l : listeners)
     {
-      l.booleanVarChanged(key, value);
+      if (l != null)
+        l.booleanVarChanged(key, value);
     }
   }
 }

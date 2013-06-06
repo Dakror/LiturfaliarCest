@@ -18,10 +18,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.ui.Button;
+import de.dakror.liturfaliar.ui.Chooser;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.Dialog;
-import de.dakror.liturfaliar.ui.Chooser;
 import de.dakror.liturfaliar.ui.Tooltip;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.FileManager;
@@ -52,14 +53,16 @@ public class Scene_LoadGame implements Scene
     int charsperpage = 5;
     int fullwidth = v.w.getWidth() / 2;
     int space = 25;
-    int width = fullwidth / 5 - 25;
+    int width = fullwidth / 5 - 27;
+    
     mouse = new Point(0, 0);
+    
     for (int i = 0; i < saves.length; i++)
     {
       try
       {
         BufferedImage bi = new BufferedImage(width, width / 3 * 4, BufferedImage.TYPE_INT_ARGB);
-        Assistant.drawChar(0, 0, width, width / 3 * 4, 0, 0, datas[i].getJSONObject("char"), (Graphics2D) bi.getGraphics(), null, false);
+        Assistant.drawChar(0, 0, width, width / 3 * 4, 0, 0, new Equipment(datas[i].getJSONObject("char").getJSONObject("equip")), (Graphics2D) bi.getGraphics(), null, true);
         saves[i] = new Button(v.w.getWidth() / 4 + (i % charsperpage) * (width + space), v.w.getHeight() / 2 - (width / 3 * 2), width, width / 3 * 4, 0, 0, width, width / 3 * 4, bi);
         saves[i].tileset = null;
         saves[i].hovermod = 4;

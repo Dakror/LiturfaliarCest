@@ -223,11 +223,11 @@ public class Button extends Component
         Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g, v.w);
       if (handle.state == 2)
       {
-        g.drawImage(Viewport.loadImage("icon/white/" + icon + ".png"), x, y, w, h, v.w);
+        g.drawImage(Viewport.loadImage("icon/white/" + icon + ".png"), x + ((iw != 0) ? (w / 2 - iw / 2) : 0), y + ((ih != 0) ? (h / 2 - ih / 2) : 0), (iw != 0) ? iw : w, (ih != 0) ? ih : h, v.w);
       }
       else
       {
-        g.drawImage(Viewport.loadImage("icon/black/" + icon + ".png"), x, y, w, h, v.w);
+        g.drawImage(Viewport.loadImage("icon/black/" + icon + ".png"), x + ((iw != 0) ? (w / 2 - iw / 2) : 0), y + ((ih != 0) ? (h / 2 - ih / 2) : 0), (iw != 0) ? iw : w, (ih != 0) ? ih : h, v.w);
       }
       if (disabled)
         Assistant.Shadow(new RoundRectangle2D.Double(x, y, w, h, 8, 8), Color.black, 0.6f, g);
@@ -251,7 +251,7 @@ public class Button extends Component
       }
       else
       {
-        g.drawImage(image.getScaledInstance(w,h,BufferedImage.SCALE_REPLICATE ), x, y, w, h, v.w);
+        g.drawImage(image.getScaledInstance(w, h, BufferedImage.SCALE_REPLICATE), x, y, w, h, v.w);
       }
     }
     g.setFont(oldFont);

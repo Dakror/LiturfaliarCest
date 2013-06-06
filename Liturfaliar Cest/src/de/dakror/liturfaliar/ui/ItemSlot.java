@@ -12,9 +12,9 @@ import java.util.ArrayList;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.listener.ItemSlotEventListener;
+import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Item;
-import de.dakror.liturfaliar.item.Item.Categories;
-import de.dakror.liturfaliar.item.Item.Types;
+import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
@@ -81,7 +81,7 @@ public class ItemSlot extends Component implements ItemSlotEventListener
     
     g.drawImage(Viewport.loadImage("tileset/" + tileset), ax, ay, SIZE, SIZE, null);
     
-    if (categoryFilter != null)
+    if (categoryFilter != null && item == null)
     {
       g.drawImage(Viewport.loadImage("system/" + categoryFilter.name().toLowerCase() + "ItemSlotFilter.png"), ax + 4, ay + 4, SIZE - 8, SIZE - 8, null);
     }
@@ -106,6 +106,12 @@ public class ItemSlot extends Component implements ItemSlotEventListener
     
     if (hover)
       Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + SIZE - height, width, height, 5, 5), Color.WHITE, 0.2f, g);
+  }
+  
+  public void drawTooltip(Graphics2D g, Viewport v)
+  {
+    if (item != null)
+      item.tooltip.draw(g, v);
   }
   
   public Item getItem()

@@ -5,140 +5,111 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.io.File;
+import java.net.URISyntaxException;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.item.Categories;
+import de.dakror.liturfaliar.item.Equipment;
+import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.map.MapPack;
 import de.dakror.liturfaliar.settings.Balance;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Button;
+import de.dakror.liturfaliar.ui.Chooser;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.Dialog;
 import de.dakror.liturfaliar.ui.InputBar;
 import de.dakror.liturfaliar.ui.Notification;
-import de.dakror.liturfaliar.ui.Chooser;
 import de.dakror.liturfaliar.ui.Tooltip;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.FileManager;
 
 public class Scene_NewGame implements Scene
 {
-  Chooser[]  bodyparts;
-  Button     start;
-  Button     random;
-  Chooser    gender;
-  InputBar   name;
-  JSONObject charData;
-  JSONObject cfg;
-  Container  c1, c2;
-  Dialog     tutorial;
-  boolean    openDialog;
-  Viewport   v;
+  boolean   openDialog;
+  
+  Dialog    tutorial;
+  Chooser   gender;
+  Chooser[] parts;
+  String[]  partsENG = { "hair", "eyes" };
+  String[]  partsDEU = { "Haare", "Augen" };
+  
+  Button    start;
+  Button    random;
+  InputBar  name;
+  Container c1;
+  Equipment equip;
+  
+  Viewport  v;
   
   @Override
   public void init(Viewport v)
   {
     this.v = v;
     v.play();
-    gender = new Chooser(v.w.getWidth() / 2 + 30, v.w.getHeight() / 3 - 30, v.w.getWidth() / 6 - 60, 35, "", "Mann", "Frau");
+    
+    c1 = new Container(0, 0, v.w.getWidth(), 55);
+    c1.tileset = null;
+    
+    equip = Equipment.getDefault(true);
+    
+    gender = new Chooser(v.w.getWidth() / 2 + 20, v.w.getHeight() / 2 - 220, 280, 28, "", "Junge", "Mädchen");
     gender.alternate = true;
     gender.showIndex = true;
-    openDialog = false;
-    try
-    {
-      charData = new JSONObject(Assistant.getURLContent(getClass().getResource("/json/char.json")));
-      JSONObject nat = charData.getJSONObject("native");
-      JSONObject f = nat.getJSONObject("female");
-      bodyparts = new Chooser[10];
-      for (int i = 0; i < 5; i++)
-      {
-        bodyparts[i] = new Chooser(v.w.getWidth() / 2, v.w.getHeight() / 3 + i * 50 + 20, v.w.getWidth() / 6, 35, new String[] { "Haut", "Haare", "Augen", "Oberteil", "Hose" }[i], new Object[][] { Assistant.getArrayFromLimits(0, 7), JSONArrToObj(f.getJSONArray("hair")), JSONArrToObj(f.getJSONArray("eyes")), JSONArrToObj(f.getJSONArray("shirt")), JSONArrToObj(f.getJSONArray("trouser")) }[i]);
-        bodyparts[i].alternate = true;
-      }
-      JSONObject m = nat.getJSONObject("male");
-      for (int i = 0; i < 5; i++)
-      {
-        bodyparts[i + 5] = new Chooser(v.w.getWidth() / 2, v.w.getHeight() / 3 + i * 50 + 20, v.w.getWidth() / 6, 35, new String[] { "Haut", "Haare", "Augen", "Oberteil", "Hose" }[i], new Object[][] { Assistant.getArrayFromLimits(0, 7), JSONArrToObj(m.getJSONArray("hair")), JSONArrToObj(m.getJSONArray("eyes")), JSONArrToObj(m.getJSONArray("shirt")), JSONArrToObj(m.getJSONArray("trouser")) }[i]);
-        bodyparts[i + 5].alternate = true;
-      }
-      cfg = charData.getJSONObject("default").getJSONObject("Mann");
-    }
-    catch (JSONException e)
-    {
-      e.printStackTrace();
-    }
-    c1 = new Container(v.w.getWidth() / 3, v.w.getHeight() / 3 + 330, v.w.getWidth() / 3, 200);
-    c1.tileset = null;
-    c2 = new Container(0, 0, v.w.getWidth(), 55);
-    c2.tileset = null;
-    name = new InputBar(v.w.getWidth() / 2 - 125, v.w.getHeight() / 3 + 400, 250, 25.0f, "", Color.white);
+    
+    name = new InputBar(v.w.getWidth() / 2 + 16, v.w.getHeight() / 2 + 192, 224, 25, "Name", Color.white);
     name.max = 15;
     name.allowed += "_1234567890";
     name.centered = true;
-    random = new Button(v.w.getWidth() / 2 + 150, v.w.getHeight() / 3 + 400, 35, 35, "refresh_icon");
+    
+    random = new Button(v.w.getWidth() / 2 + 256, v.w.getHeight() / 2 + 176, 64, 64, "refresh_icon");
     random.soundMOVER = false;
-    random.clickmod = 0;
-    random.hovermod = 4;
+    random.tileset = "Wood";
+    random.clickmod = random.hovermod = 0;
+    random.iw = random.ih = -44;
     random.tooltip = new Tooltip("<#999999;30;1>Zufall[br]<#ffffff;15;1>Generiere einen[br]zufälligen Namen.", random);
-    random.tooltip.setX(v.w.getWidth() / 2 + 185);
-    start = new Button(v.w.getWidth() / 2 - 140, v.w.getHeight() / 3 + 450, 280, "Start", Color.white, 30.0f);
-    start.clickmod = 0;
-    start.hovermod = 4;
+    random.tooltip.setX(v.w.getWidth() / 2 + 320);
+    
+    start = new Button(v.w.getWidth() / 2 - 320, v.w.getHeight() / 2 + 260, 640, "Spiel starten", Color.white, 25.0f);
+    
+    parts = new Chooser[partsDEU.length];
+    
+    for (int i = 0; i < parts.length; i++)
+    {
+      try
+      {
+        parts[i] = new Chooser(v.w.getWidth() / 2 + 20, v.w.getHeight() / 2 - 220 + 40 * (i + 1), 280, 28, partsDEU[i], (Object[]) new File(getClass().getResource("/img/char/" + partsENG[i]).toURI()).list());
+        parts[i].alternate = true;
+      }
+      catch (URISyntaxException e)
+      {
+        e.printStackTrace();
+      }
+    }
   }
   
   @Override
   public void update(long timePassed)
   {
     gender.update();
-    for (int i = 0; i < bodyparts.length; i++)
-    {
-      if ((gender.getSelected(false).equals("Mann") && i >= 5) || (gender.getSelected(false).equals("Frau") && i < 5))
-      {
-        bodyparts[i].update();
-        Integer s = (Integer) bodyparts[i].getSelected(true);
-        if (s != null)
-        {
-          try
-          {
-            cfg.put(new String[] { "skin", "hair", "eyes", "shirt", "trouser" }[i % 5], s);
-          }
-          catch (Exception e)
-          {
-            e.printStackTrace();
-          }
-        }
-      }
-    }
-    String gender = (String) this.gender.getSelected(true);
-    if (gender != null)
-    {
-      try
-      {
-        cfg = charData.getJSONObject("default").getJSONObject(gender);
-      }
-      catch (JSONException e)
-      {
-        e.printStackTrace();
-      }
-    }
-    name.update();
     random.update();
+    start.update();
+    
+    if (name.value.length() == 0 || name.value.equals("Name"))
+      start.disabled = true;
+    else start.disabled = false;
+    
     if (random.getState() == 1)
     {
       name.value = Assistant.getRandomName();
       random.setState(2);
     }
-    if (name.value.length() == 0)
-    {
-      start.disabled = true;
-    }
-    else
-    {
-      start.disabled = false;
-    }
+    
     if (start.getState() == 1)
     {
       switch (createSave())
@@ -162,6 +133,21 @@ public class Scene_NewGame implements Scene
       }
       start.setState(0);
     }
+    
+    for (Chooser c : parts)
+    {
+      c.update();
+    }
+    
+    if (gender.getSelected(false).equals("Junge") != equip.isMale())
+      equip = Equipment.getDefault(!equip.isMale());
+    for (int i = 0; i < parts.length; i++)
+    {
+      String sel;
+      if ((sel = (String) parts[i].getSelected(true)) != null)
+        equip.setEquipmentItem(Categories.valueOf(partsENG[i].toUpperCase()), new Item(Types.valueOf(partsENG[i].toUpperCase()), sel.replaceAll("(_.{1}\\.png)|(\\.png)", "")));
+    }
+    
     if (tutorial != null && tutorial.buttons.length > 0)
     {
       if (tutorial.buttons[0].getState() == 1)
@@ -177,14 +163,50 @@ public class Scene_NewGame implements Scene
         v.setScene(new Scene_Game());
       }
     }
-    start.update();
+    
     if (tutorial != null)
       tutorial.update();
   }
   
+  @Override
+  public void draw(Graphics2D g)
+  {
+    if (openDialog)
+    {
+      tutorial = new Dialog("Tutorial?", "Möchtest du kurz in die Steuerung und[br]Benutzeroberfläche eingeführt werden?", Dialog.MESSAGE, v);
+      tutorial.closeDisabled = true;
+      tutorial.draw(g, v);
+      tutorial.setButtons("Ja", "Nein");
+      tutorial.update();
+      openDialog = false;
+    }
+    
+    Assistant.drawMenuBackground(g, v.w);
+    c1.draw(g, v);
+    Assistant.drawHorizontallyCenteredString("Neues Spiel", v.w.getWidth(), 43, g, 45, Color.white);
+    
+    if (equip != null)
+      Assistant.drawChar(v.w.getWidth() / 2 - 320, v.w.getHeight() / 2 - 240, 320, 480, 0, v.getFrame(2.5f) % 4, equip, g, v.w, true);
+    
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2, v.w.getHeight() / 2 - 240, 320, 416, g, v.w);
+    
+    gender.draw(g, v);
+    name.draw(g, v);
+    random.draw(g, v);
+    start.draw(g, v);
+    
+    for (Chooser c : parts)
+    {
+      c.draw(g, v);
+    }
+    if (tutorial != null)
+      tutorial.draw(g, v);
+    
+  }
+  
   public int createSave()
   {
-    if (FileManager.doesSaveExists(name.value))
+    if (FileManager.doesSaveExist(name.value))
       return 0;
     else
     {
@@ -201,7 +223,10 @@ public class Scene_NewGame implements Scene
     JSONObject save = new JSONObject();
     try
     {
+      // -- char -- //
+      JSONObject cfg = new JSONObject();
       cfg.put("name", name.value);
+      cfg.put("equip", equip.serializeEquipment());
       
       save.put("char", cfg);
       
@@ -216,6 +241,7 @@ public class Scene_NewGame implements Scene
       
       save.put("attr", attr);
       
+      // -- map(-pack) -- //
       MapPack mp = new MapPack(CFG.MAPPACK, v.w);
       JSONObject mappack = new JSONObject();
       mappack.put("name", mp.getName());
@@ -231,53 +257,8 @@ public class Scene_NewGame implements Scene
   }
   
   @Override
-  public void draw(Graphics2D g)
-  {
-    if (openDialog)
-    {
-      tutorial = new Dialog("Tutorial?", "Möchtest du kurz in die Steuerung und[br]Benutzeroberfläche eingeführt werden?", Dialog.MESSAGE, v);
-      tutorial.closeDisabled = true;
-      tutorial.draw(g, v);
-      tutorial.setButtons("Ja", "Nein");
-      tutorial.update();
-      openDialog = false;
-    }
-    Assistant.drawMenuBackground(g, v.w);
-    gender.draw(g, v);
-    for (int i = 0; i < bodyparts.length; i++)
-    {
-      if ((gender.getSelected(false).equals("Mann") && i >= 5) || (gender.getSelected(false).equals("Frau") && i < 5))
-        bodyparts[i].draw(g, v);
-    }
-    if (cfg != null)
-      Assistant.drawChar(v.w.getWidth() / 3, v.w.getHeight() / 4, v.w.getWidth() / 6, (int) (v.w.getWidth() / 6 * 4 / 3), 0, 0, cfg, g, v.w, false);
-    c1.draw(g, v);
-    c2.draw(g, v);
-    Assistant.drawHorizontallyCenteredString("Neues Spiel starten", v.w.getWidth(), 43, g, 45, Color.white);
-    Assistant.drawHorizontallyCenteredString("Dein Name:", v.w.getWidth() / 2 - 125, 250, v.w.getHeight() / 3 + 370, g, 35, Color.white);
-    name.draw(g, v);
-    random.draw(g, v);
-    start.draw(g, v);
-    if (tutorial != null)
-      tutorial.draw(g, v);
-  }
-  
-  public static Object[] JSONArrToObj(JSONArray a)
-  {
-    Object[] res = new Object[a.length()];
-    for (int i = 0; i < res.length; i++)
-    {
-      try
-      {
-        res[i] = a.get(i);
-      }
-      catch (JSONException e)
-      {
-        e.printStackTrace();
-      }
-    }
-    return res;
-  }
+  public void keyTyped(KeyEvent e)
+  {}
   
   @Override
   public void keyPressed(KeyEvent e)
@@ -287,13 +268,14 @@ public class Scene_NewGame implements Scene
       v.setScene(new Scene_MainMenu());
       v.playSound("002-System02");
     }
+    
     gender.keyPressed(e);
-    for (int i = 0; i < bodyparts.length; i++)
-    {
-      if ((gender.getSelected(false).equals("Mann") && i >= 5) || (gender.getSelected(false).equals("Frau") && i < 5))
-        bodyparts[i].keyPressed(e);
-    }
     name.keyPressed(e);
+    
+    for (Chooser c : parts)
+    {
+      c.keyPressed(e);
+    }
   }
   
   @Override
@@ -301,55 +283,57 @@ public class Scene_NewGame implements Scene
   {}
   
   @Override
-  public void mousePressed(MouseEvent e)
+  public void mouseWheelMoved(MouseWheelEvent e)
   {}
-  
-  @Override
-  public void mouseMoved(MouseEvent e)
-  {
-    gender.mouseMoved(e);
-    if (bodyparts != null)
-    {
-      for (int i = 0; i < bodyparts.length; i++)
-      {
-        if ((gender.getSelected(false).equals("Mann") && i >= 5) || (gender.getSelected(false).equals("Frau") && i < 5))
-          bodyparts[i].mouseMoved(e);
-      }
-    }
-    name.mouseMoved(e);
-    random.mouseMoved(e);
-    start.mouseMoved(e);
-    if (tutorial != null)
-      tutorial.mouseMoved(e);
-  }
   
   @Override
   public void mouseDragged(MouseEvent e)
   {}
   
   @Override
-  public void mouseReleased(MouseEvent e)
+  public void mouseMoved(MouseEvent e)
   {
-    gender.mouseReleased(e);
-    for (int i = 0; i < bodyparts.length; i++)
+    gender.mouseMoved(e);
+    name.mouseMoved(e);
+    random.mouseMoved(e);
+    start.mouseMoved(e);
+    
+    for (Chooser c : parts)
     {
-      if ((gender.getSelected(false).equals("Mann") && i >= 5) || (gender.getSelected(false).equals("Frau") && i < 5))
-        bodyparts[i].mouseReleased(e);
+      c.mouseMoved(e);
     }
-    name.mouseReleased(e);
-    random.mouseReleased(e);
-    start.mouseReleased(e);
+    
     if (tutorial != null)
-      tutorial.mouseReleased(e);
+      tutorial.mouseMoved(e);
   }
-  
-  @Override
-  public void keyTyped(KeyEvent e)
-  {}
   
   @Override
   public void mouseClicked(MouseEvent e)
   {}
+  
+  @Override
+  public void mousePressed(MouseEvent e)
+  {
+    random.mousePressed(e);
+    start.mousePressed(e);
+  }
+  
+  @Override
+  public void mouseReleased(MouseEvent e)
+  {
+    gender.mouseReleased(e);
+    name.mouseReleased(e);
+    random.mouseReleased(e);
+    start.mouseReleased(e);
+    
+    for (Chooser c : parts)
+    {
+      c.mouseReleased(e);
+    }
+    
+    if (tutorial != null)
+      tutorial.mouseReleased(e);
+  }
   
   @Override
   public void mouseEntered(MouseEvent e)
@@ -359,7 +343,4 @@ public class Scene_NewGame implements Scene
   public void mouseExited(MouseEvent e)
   {}
   
-  @Override
-  public void mouseWheelMoved(MouseWheelEvent e)
-  {}
 }

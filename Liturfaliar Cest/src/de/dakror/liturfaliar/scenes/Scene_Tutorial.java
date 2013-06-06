@@ -9,6 +9,7 @@ import java.awt.event.MouseWheelEvent;
 import org.json.JSONException;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.ui.Box;
 import de.dakror.liturfaliar.ui.Button;
 import de.dakror.liturfaliar.ui.Container;
@@ -70,7 +71,7 @@ public class Scene_Tutorial implements Scene
       dir = 0;
     try
     {
-      Assistant.drawChar(v.w.getWidth() / 5 * 2, v.w.getHeight() / 2 - v.w.getWidth() / 5 * 3 / 4, v.w.getWidth() / 5, v.w.getWidth() / 5 * 3 / 2, dir, frame, v.savegame.getJSONObject("char"), g, v.w, true);
+      Assistant.drawChar(v.w.getWidth() / 5 * 2, v.w.getHeight() / 2 - v.w.getWidth() / 5 * 3 / 4, v.w.getWidth() / 5, v.w.getWidth() / 5 * 3 / 2, dir, frame, new Equipment(v.savegame.getJSONObject("equip")), g, v.w, true);
     }
     catch (JSONException e)
     {

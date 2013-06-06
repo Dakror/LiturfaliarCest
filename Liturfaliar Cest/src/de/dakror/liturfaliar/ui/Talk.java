@@ -164,12 +164,7 @@ public class Talk extends Component
       Assistant.drawChar(0, 0, 32, 48, 0, 0, "chars", by.getCharacter(), (Graphics2D) g, null, true);
     else if (perspectives[perspective].indexOf("player") > -1)
     {
-      try
-      {
-        Assistant.drawChar(0, 0, 32, 48, 0, 0, m.getPlayer().getData().getJSONObject("char"), (Graphics2D) g, null, true);
-      }
-      catch (JSONException e)
-      {}
+      Assistant.drawChar(0, 0, 32, 48, 0, 0, m.getPlayer().getEquipment(), (Graphics2D) g, null, true);
     }
     speaker = bi;
   }

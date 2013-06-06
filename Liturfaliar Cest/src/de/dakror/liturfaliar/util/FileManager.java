@@ -66,7 +66,7 @@ public class FileManager
     return result;
   }
   
-  public static boolean doesSaveExists(String savename)
+  public static boolean doesSaveExist(String savename)
   {
     return new File(saves, savename + ".save").exists();
   }
@@ -94,7 +94,6 @@ public class FileManager
     {
       e.printStackTrace();
     }
-    
   }
   
   /**
