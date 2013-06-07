@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.ui.Component;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.Tooltip;
@@ -28,6 +29,8 @@ public class Item extends Component
   String                  charPath;
   
   public Tooltip          tooltip;
+  
+  private Attributes      attributes;
   
   public Item(Types t, String path)
   {
@@ -147,5 +150,15 @@ public class Item extends Component
   public Types getType()
   {
     return type;
+  }
+  
+  public Attributes getAttributes()
+  {
+    return attributes;
+  }
+  
+  public void setAttributes(Attributes attributes)
+  {
+    this.attributes = attributes;
   }
 }

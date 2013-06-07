@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Player;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.ProgressBar;
 
@@ -34,7 +35,7 @@ public class PlayerStamina extends HUDComponent
     visible = m.talk == null;
     
     if (visible)
-      bar.value = player.getAttributes().getAttribute("stamina").getValue() / (float) player.getAttributes().getAttribute("stamina").getMaximum();
+      bar.value = player.getAttributes().getAttribute(Attr.stamina).getValue() / (float) player.getAttributes().getAttribute(Attr.stamina).getMaximum();
     
     if (bar.value == 1)
     {
@@ -56,7 +57,7 @@ public class PlayerStamina extends HUDComponent
   {
     if (!visible && bar == null)
     {
-      if (player.getAttributes().getAttribute("stamina").getMaximum() == -1)
+      if (player.getAttributes().getAttribute(Attr.stamina).getMaximum() == -1)
         return;
       
       setX(v.w.getWidth() / 2 - ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);

@@ -241,6 +241,9 @@ public class Scene_NewGame implements Scene
       attr.put("stamina", Balance.Player.INITSTAMINA);
       attr.put("maxstamina", Balance.Player.INITSTAMINA);
       
+      attr.put("speed", 1);
+      attr.put("maxspeed", 1);
+      
       save.put("attr", attr);
       
       // -- map(-pack) -- //

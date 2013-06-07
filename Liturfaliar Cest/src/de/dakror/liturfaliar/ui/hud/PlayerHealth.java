@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Player;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.ProgressBar;
 
@@ -23,7 +24,7 @@ public class PlayerHealth extends HUDComponent
   public void update(Map m)
   {
     if (visible)
-      bar.value = player.getAttributes().getAttribute("health").getValue() / player.getAttributes().getAttribute("health").getMaximum();
+      bar.value = player.getAttributes().getAttribute(Attr.health).getValue() / (float) player.getAttributes().getAttribute(Attr.health).getMaximum();
   }
   
   @Override

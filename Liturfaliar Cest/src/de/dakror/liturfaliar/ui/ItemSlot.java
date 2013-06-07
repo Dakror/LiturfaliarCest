@@ -174,23 +174,25 @@ public class ItemSlot extends Component implements ItemSlotEventListener
     else if (item != null && e.getButton() == 1 && new Rectangle(ax, ay, getWidth(), getHeight()).contains(e.getLocationOnScreen()) && inventory != null)
     {
       if (inventory.getPickedUpItemSlot() == null)
+      {
         item.mouse = e.getLocationOnScreen();
+        ItemSlotEventDispatcher.dispatchSlotPressed(e, this);
+      }
       else if ((categoryFilter != null && !inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(inventory.getPickedUpItemSlot().getItem().getType()) == -1))
         return;
       else
       {
-        Item oldPickedUp = inventory.getPickedUpItemSlot().getItem();
+        Item oldPickedUp = new Item(inventory.getPickedUpItemSlot().getItem());
         
-        inventory.setPickedUpItemSlot(this);
+        inventory.setPickedUpItemSlot(new ItemSlot(this));
         
-        item = new Item(oldPickedUp);
+        item = oldPickedUp;
         
         item.tooltip.visible = true;
         item.tooltip.setX(e.getXOnScreen());
         item.tooltip.setY(e.getYOnScreen());
         return;
       }
-      ItemSlotEventDispatcher.dispatchSlotPressed(e, this);
     }
     else if (e.getButton() == 1 && new Rectangle(ax, ay, getWidth(), getHeight()).contains(e.getLocationOnScreen()) && inventory != null)
     {

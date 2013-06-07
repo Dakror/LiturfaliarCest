@@ -15,6 +15,7 @@ import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Balance;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;
@@ -118,19 +119,19 @@ public class Player extends Creature
     
     if (!sprint)
     {
-      if ((System.currentTimeMillis() - time) > Balance.Player.STAMINAREGEN && attr.getAttribute("stamina").getValue() < attr.getAttribute("stamina").getMaximum())
+      if ((System.currentTimeMillis() - time) > Balance.Player.STAMINAREGEN && attr.getAttribute(Attr.stamina).getValue() < attr.getAttribute(Attr.stamina).getMaximum())
       {
-        attr.getAttribute("stamina").increaseValue(1);
+        attr.getAttribute(Attr.stamina).increaseValue(1);
         time = System.currentTimeMillis();
       }
     }
     
-    if (sprint && (dirs[0] || dirs[1] || dirs[2] || dirs[3]) && (System.currentTimeMillis() - time) > Balance.Player.STAMINADECREASE && attr.getAttribute("stamina").getValue() > 0 && !m.isPeaceful())
+    if (sprint && (dirs[0] || dirs[1] || dirs[2] || dirs[3]) && (System.currentTimeMillis() - time) > Balance.Player.STAMINADECREASE && attr.getAttribute(Attr.stamina).getValue() > 0 && !m.isPeaceful())
     {
-      attr.getAttribute("stamina").decreaseValue(1);
+      attr.getAttribute(Attr.stamina).decreaseValue(1);
       time = System.currentTimeMillis();
     }
-    if (attr.getAttribute("stamina").getValue() == 0)
+    if (attr.getAttribute(Attr.stamina).getValue() == 0)
     {
       sprint = false;
     }

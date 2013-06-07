@@ -5,6 +5,8 @@ import java.util.HashMap;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.dakror.liturfaliar.settings.Attributes;
+
 public class Equipment
 {
   HashMap<String, Item> equips = new HashMap<String, Item>();
@@ -133,5 +135,13 @@ public class Equipment
     e.setMale(male);
     
     return e;
+  }
+
+  public Attributes getAttributes() {
+    Attributes attr = new Attributes();
+    
+    
+    
+    return attr;
   }
 }
