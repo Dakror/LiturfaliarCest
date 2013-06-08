@@ -136,11 +136,16 @@ public class Equipment
     
     return e;
   }
-
-  public Attributes getAttributes() {
+  
+  public Attributes getAttributes()
+  {
     Attributes attr = new Attributes();
     
-    
+    for (Item e : equips.values())
+    {
+      if (e != null)
+        attr.add(e.getAttributes());
+    }
     
     return attr;
   }

@@ -53,6 +53,7 @@ public class Item extends Component
     iconx = i.getIconX();
     icony = i.getIconY();
     charPath = i.getCharPath();
+    attributes = i.getAttributes();
     
     init();
   }
@@ -67,6 +68,7 @@ public class Item extends Component
     icony = other.icony;
     charPath = other.getCharPath();
     mouse = other.mouse;
+    attributes = other.getAttributes();
     
     init();
   }
@@ -82,6 +84,7 @@ public class Item extends Component
       iconx = o.getInt("iconx");
       icony = o.getInt("icony");
       charPath = o.getString("char");
+      attributes = new Attributes(o.getJSONObject("attr"));
     }
     catch (JSONException e)
     {
@@ -97,6 +100,9 @@ public class Item extends Component
     
     tooltip = new Tooltip("<#999999;30;1>" + name + "[br]<#ffffff;17;1>Typ: <#4444ff;17;1>" + type.getName(), this);
     tooltip.follow = true;
+    
+    if (attributes == null)
+      attributes = new Attributes();
   }
   
   public void draw(int x1, int y1, Graphics2D g, Viewport v)
@@ -134,6 +140,7 @@ public class Item extends Component
       o.put("iconx", iconx);
       o.put("icony", icony);
       o.put("char", charPath);
+      o.put("attr", attributes.serializeAttributes());
     }
     catch (JSONException e)
     {

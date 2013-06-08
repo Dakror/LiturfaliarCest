@@ -16,6 +16,7 @@ import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
+import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Balance;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;
@@ -346,5 +347,11 @@ public class Player extends Creature
       e.printStackTrace();
       return null;
     }
+  }
+  
+  @Override
+  public Attributes getAttributes()
+  {
+    return equipment.getAttributes().add(attr);
   }
 }

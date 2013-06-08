@@ -15,9 +15,10 @@ public class Attributes
     stamina("Ausdauer"),
     mana("Mana"),
     protection("Rüstung"),
-    speed("Tempo"),
+    speed("Lauftempo"),
     attackspeed("Angriffstempo"),
-    weight("Gewicht");
+    weight("Gewicht"),
+    damage("Schaden");
     
     private String text;
     
@@ -39,9 +40,30 @@ public class Attributes
     attributes = new HashMap<Attr, Attribute>();
     for (Attr attr : Attr.values())
     {
-      attributes.put(attr, new Attribute(-1, -1));
+      attributes.put(attr, new Attribute(0, 0));
     }
+  }
+  
+  public Attributes(Object... args)
+  {
+    this();
     
+    if (args.length % 2 != 0)
+      return;
+    
+    for (int i = 0; i < args.length; i += 2)
+    {
+      if (args[i] instanceof Attr)
+      {
+        attributes.put((Attr) args[i], new Attribute((Integer) args[i + 1], (Integer) args[i + 1]));
+      }
+    }
+  }
+  
+  public Attributes(JSONObject o)
+  {
+    this();
+    loadAttributes(o);
   }
   
   public void loadAttributes(JSONObject o)
@@ -63,28 +85,30 @@ public class Attributes
     }
   }
   
-  public Attributes sum(Attributes o)
+  public Attributes add(Attributes... os)
   {
-    CFG.p(serializeAttributes());
-    for (Attr attr : Attr.values())
+    for (Attributes o : os)
     {
-      Attribute attribute = attributes.get(attr);
-      if(attribute.isEmpty() || o.attributes.get(attr).isEmpty()) continue;
-      
-      int max = attribute.getMaximum() + o.attributes.get(attr).getMaximum();
-      
-      attribute.setMaximum((max > 0) ? max : 0);
-      
-      int val = attribute.getValue() + o.attributes.get(attr).getValue();
-      
-      if (val <= attribute.getMaximum())
-        attribute.setValue((val > -1) ? val : -1);
+      for (Attr attr : Attr.values())
+      {
+        Attribute attribute = attributes.get(attr);
+        if (attribute.isEmpty() && o.attributes.get(attr).isEmpty())
+          continue;
+        
+        int max = attribute.getMaximum() + o.attributes.get(attr).getMaximum();
+        
+        attribute.setMaximum((max > 0) ? max : 0);
+        
+        int val = attribute.getValue() + o.attributes.get(attr).getValue();
+        
+        if (val <= attribute.getMaximum())
+          attribute.setValue((val > -1) ? val : -1);
+      }
     }
-    
-    CFG.p(serializeAttributes());
     
     return this;
   }
+
   
   public JSONObject serializeAttributes()
   {

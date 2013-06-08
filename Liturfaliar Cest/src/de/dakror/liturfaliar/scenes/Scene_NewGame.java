@@ -228,7 +228,11 @@ public class Scene_NewGame implements Scene
       JSONObject cfg = new JSONObject();
       cfg.put("name", name.value);
       cfg.put("equip", equip.serializeEquipment());
-      cfg.put("inventory", new JSONArray());
+      JSONArray inv = new JSONArray();
+      
+      // inv.put(new Item(Items.POCKETKNIFE).serializeItem());
+      
+      cfg.put("inventory", inv);
       
       save.put("char", cfg);
       

@@ -34,12 +34,12 @@ public class ItemSlotEventDispatcher
     {}
   }
   
-  public static void dispatchSlotDragged(MouseEvent e, ItemSlot slot)
+  public static void dispatchSlotHovered(MouseEvent e, ItemSlot slot)
   {
     for (ItemSlotEventListener l : listeners)
     {
       if (l != null)
-        l.slotDragged(e, slot);
+        l.slotHovered(e, slot);
     }
   }
   

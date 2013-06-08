@@ -111,7 +111,7 @@ public class ItemSlot extends Component implements ItemSlotEventListener
     
     g.drawImage(Viewport.loadImage("tileset/" + tileset), ax, ay, SIZE, SIZE, null);
     
-    if (categoryFilter != null)
+    if (categoryFilter != null && item == null)
     {
       g.drawImage(Viewport.loadImage("system/" + categoryFilter.name().toLowerCase() + "ItemSlotFilter.png"), ax + 4, ay + 4, SIZE - 8, SIZE - 8, null);
     }
@@ -161,6 +161,9 @@ public class ItemSlot extends Component implements ItemSlotEventListener
       item.mouseMoved(e);
     
     hover = new Area(new Rectangle2D.Double(ax, ay, width, height)).contains(e.getLocationOnScreen());
+    
+    if (hover)
+      ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
   }
   
   @Override
@@ -283,7 +286,7 @@ public class ItemSlot extends Component implements ItemSlotEventListener
   {}
   
   @Override
-  public void slotDragged(MouseEvent e, ItemSlot slot)
+  public void slotHovered(MouseEvent e, ItemSlot slot)
   {}
   
   @Override

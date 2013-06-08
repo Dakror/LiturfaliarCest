@@ -1,27 +1,31 @@
 package de.dakror.liturfaliar.item;
 
+import de.dakror.liturfaliar.settings.Attributes;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
+
 
 public enum Items
 {
-  POCKETKNIFE(1, 274, "Taschenmesser", "", Types.SWORD, 3),
-  BOYSHIRT(12, 2, "Jungen-Oberteil", "1_gray", Types.SHIRT, 0),
-  GIRLSHIRT(12, 2, "Leichtes Kleid", "16_black", Types.SHIRT, 0),
-  BOYPANTS(7, 391, "Hose", "1_brown", Types.PANTS, 0),
-  BOYBOOTS(0, 3, "Schuhe", "1_black", Types.SHOES, 0),
-  GIRLBOOTS(0, 3, "Halbschuhe", "8_black", Types.SHOES, 0);
+  POCKETKNIFE(1, 274, "Taschenmesser", "", Types.SWORD, new Attributes()),
+  BOYSHIRT(12, 2, "Jungen-Oberteil", "1_gray", Types.SHIRT, new Attributes(Attr.protection, 1)),
+  GIRLSHIRT(12, 2, "Leichtes Kleid", "16_black", Types.SHIRT, new Attributes()),
+  BOYPANTS(7, 391, "Hose", "1_brown", Types.PANTS, new Attributes()),
+  BOYBOOTS(0, 3, "Schuhe", "1_black", Types.SHOES, new Attributes()),
+  GIRLBOOTS(0, 3, "Halbschuhe", "8_black", Types.SHOES, new Attributes());
   
-  private int ix, iy, damage;
-  private String name, charPath;
-  private Types  type;
+  private int        ix, iy;
+  private Attributes attributes;
+  private String     name, charPath;
+  private Types      type;
   
-  private Items(int ix, int iy, String name, String path, Types type, int dmg)
+  private Items(int ix, int iy, String name, String path, Types type, Attributes attr)
   {
     this.ix = ix;
     this.iy = iy;
     this.name = name;
     this.charPath = path;
     this.type = type;
-    this.damage = dmg;
+    this.attributes = attr;
   }
   
   public int getIconX()
@@ -34,9 +38,9 @@ public enum Items
     return iy;
   }
   
-  public int getDamage()
+  public Attributes getAttributes()
   {
-    return damage;
+    return attributes;
   }
   
   public String getName()

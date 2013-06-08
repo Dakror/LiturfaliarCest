@@ -11,16 +11,20 @@ import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
 import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.scenes.Scene_Game;
+import de.dakror.liturfaliar.settings.Attributes;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
+import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.ui.Container;
+import de.dakror.liturfaliar.ui.HTMLLabel;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.util.Assistant;
+import de.dakror.liturfaliar.util.Database;
 import de.dakror.liturfaliar.util.Handler;
 
 public class OVScene_Inventory extends OVScene implements Inventory
 {
   public static final int WIDTH  = 12;
   public static final int HEIGHT = 8;
-  
   
   Scene_Game              sg;
   Container               c1;
@@ -30,6 +34,9 @@ public class OVScene_Inventory extends OVScene implements Inventory
   
   ItemSlot                pickedUp;
   ItemSlot                pickUpSource;
+  
+  HTMLLabel               labels;
+  HTMLLabel               stats;
   
   public OVScene_Inventory(Scene_Game sg)
   {
@@ -122,6 +129,8 @@ public class OVScene_Inventory extends OVScene implements Inventory
     {
       is.setInventory(this);
     }
+    
+    updateStats(true);
   }
   
   @Override
@@ -168,6 +177,8 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     // -- stats -- //
     Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350 + 550, 410, 150, g, v.w);
+    labels.draw(g, v);
+    stats.draw(g, v);
     
     if (pickedUp != null)
       pickedUp.getItem().draw(g, v);
@@ -181,8 +192,8 @@ public class OVScene_Inventory extends OVScene implements Inventory
       if (pickedUp != null)
         pickUpSource.setItem(pickedUp.getItem());
       
-      
       sg.getPlayer().setInventory(ItemSlot.serializeItemSlots(inventory));
+      
       ItemSlotEventDispatcher.removeItemSlotEventListener(this);
       v.removeOVScene("Inventory");
       sg.setPaused(false);
@@ -229,27 +240,84 @@ public class OVScene_Inventory extends OVScene implements Inventory
   public void slotPressed(MouseEvent e, ItemSlot slot)
   {
     if (slot.getCategoryFilter() != null) // is from equip menu
-    {
       sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), null);
-    }
+    
     
     pickedUp = new ItemSlot(slot);
     pickUpSource = slot;
     
     slot.setItem(null);
+    
+    updateStats(true);
   }
   
   @Override
-  public void slotDragged(MouseEvent e, ItemSlot slot)
-  {}
+  public void slotHovered(MouseEvent e, ItemSlot slot)
+  {
+    if (slot.getCategoryFilter() != null && pickedUp != null && slot.getCategoryFilter().equals(pickedUp.getItem().getType().getCategory())) // is from equip menu
+    {
+      Attributes attributes = pickedUp.getItem().getAttributes();
+      
+      Attributes player = sg.getPlayer().getAttributes();
+      
+      for (Attr attr : Attr.values())
+      {
+        String color = "#ffffff";
+        
+        if(attributes.getAttribute(attr).getValue() == 0) continue;
+        
+        if (attributes.getAttribute(attr).getValue() > player.getAttribute(attr).getValue())
+          color = "#00b000";
+        else if (attributes.getAttribute(attr).getValue() < player.getAttribute(attr).getValue())
+          color = "#b00000";
+        
+        Database.setStringVar("ov_inv_attr_color_" + attr.name(), color);
+        Database.setStringVar("ov_inv_attr_" + attr.name(), attributes.getAttribute(attr).getValue() + "");
+      }
+      
+      updateStats(false);
+    } else updateStats(true);
+  }
   
   @Override
   public void slotReleased(MouseEvent e, ItemSlot slot)
   {
     if (slot.getCategoryFilter() != null) // is from equip menu
-    {
       sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), slot.getItem());
+    
+    updateStats(true);
+  }
+  
+  public void updateStats(boolean force)
+  {
+    String w = "<" + Assistant.ColorToHex(Colors.GRAY) + ";20;0>";
+    String br = "[br]";
+    
+    Attributes attributes = sg.getPlayer().getAttributes();
+    
+    if (force)
+    {
+      for (Attr attr : Attr.values())
+      {
+        Database.setStringVar("ov_inv_attr_color_" + attr.name(), "#ffffff");
+        Database.setStringVar("ov_inv_attr_" + attr.name(), attributes.getAttribute(attr).getValue() + "");
+      }
     }
+    
+    String lb = w + Attr.protection.getText() + br +
+    
+    Attr.stamina.getText() + br;
+    
+    labels = new HTMLLabel(v.w.getWidth() / 2 - 590, v.w.getHeight() / 2 - 350 + 550, 97, 130, lb);
+    
+    String st = w + ": <%ov_inv_attr_color_" + Attr.protection.name() + "%;20;1>%ov_inv_attr_" + Attr.protection.name() + "%" + br +
+    
+    w + ": <%ov_inv_attr_color_" + Attr.stamina.name() + "%;20;1>%ov_inv_attr_" + Attr.stamina.name() + "%" + br;
+    
+    if (stats == null)
+      stats = new HTMLLabel(v.w.getWidth() / 2 - 487, v.w.getHeight() / 2 - 350 + 550, 97, 130, st);
+    else stats.doUpdate(st);
+    
   }
   
   @Override

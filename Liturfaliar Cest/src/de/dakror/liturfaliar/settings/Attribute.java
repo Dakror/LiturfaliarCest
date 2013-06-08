@@ -10,14 +10,9 @@ public class Attribute
     maximum = max;
   }
   
-  public int getValue()
+  public void decreaseValue(int v)
   {
-    return value;
-  }
-  
-  public void setValue(int value)
-  {
-    this.value = value;
+    increaseValue(-v);
   }
   
   public int getMaximum()
@@ -25,9 +20,9 @@ public class Attribute
     return maximum;
   }
   
-  public void setMaximum(int maximum)
+  public int getValue()
   {
-    this.maximum = maximum;
+    return value;
   }
   
   public void increaseValue(int v)
@@ -43,18 +38,23 @@ public class Attribute
     else value = 0;
   }
   
-  public void decreaseValue(int v)
+  public boolean isEmpty()
   {
-    increaseValue(-v);
+    return maximum == 0 || value == 0;
+  }
+  
+  public void setMaximum(int maximum)
+  {
+    this.maximum = maximum;
+  }
+  
+  public void setValue(int value)
+  {
+    this.value = value;
   }
   
   public String toString()
   {
     return getClass().getName() + "[max=" + maximum + ",value=" + value + "]";
-  }
-  
-  public boolean isEmpty()
-  {
-    return maximum == -1 || value == -1;
   }
 }

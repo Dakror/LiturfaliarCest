@@ -318,7 +318,7 @@ public final class Assistant
     {
       if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "b"))
         drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_b", g, window, ch);
-
+      
       
       if (equip.hasEquipmentItem(Categories.SKIN))
       {

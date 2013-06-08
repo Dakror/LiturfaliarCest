@@ -10,6 +10,6 @@ public class Balance
     public static final int    INITSTAMINA     = 21;
     
     public static final long   STAMINADECREASE = 500;
-    public static final long   STAMINAREGEN    = 300;
+    public static final long   STAMINAREGEN    = 300; 
   }
 }
