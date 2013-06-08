@@ -8,10 +8,10 @@ public enum Items
 {
   POCKETKNIFE(1, 274, "Taschenmesser", "", Types.SWORD, new Attributes()),
   BOYSHIRT(12, 2, "Jungen-Oberteil", "1_gray", Types.SHIRT, new Attributes(Attr.protection, 1)),
-  GIRLSHIRT(12, 2, "Leichtes Kleid", "16_black", Types.SHIRT, new Attributes()),
-  BOYPANTS(7, 391, "Hose", "1_brown", Types.PANTS, new Attributes()),
-  BOYBOOTS(0, 3, "Schuhe", "1_black", Types.SHOES, new Attributes()),
-  GIRLBOOTS(0, 3, "Halbschuhe", "8_black", Types.SHOES, new Attributes());
+  GIRLSHIRT(12, 2, "Leichtes Kleid", "16_black", Types.SHIRT, new Attributes(Attr.protection, 1)),
+  BOYPANTS(7, 391, "Hose", "1_brown", Types.PANTS, new Attributes(Attr.protection, 1)),
+  BOYBOOTS(0, 3, "Schuhe", "1_black", Types.SHOES, new Attributes(Attr.protection, 1)),
+  GIRLBOOTS(0, 3, "Halbschuhe", "8_black", Types.SHOES, new Attributes(Attr.protection, 1));
   
   private int        ix, iy;
   private Attributes attributes;

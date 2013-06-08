@@ -8,6 +8,8 @@ public interface ItemSlotEventListener
 {
   public void slotPressed(MouseEvent e, ItemSlot slot);
   
+  public void slotExited(MouseEvent e, ItemSlot slot);
+  
   public void slotHovered(MouseEvent e, ItemSlot slot);
   
   public void slotReleased(MouseEvent e, ItemSlot slot);

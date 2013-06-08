@@ -140,6 +140,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
   @Override
   public void draw(Graphics2D g)
   {
+    
     Assistant.Shadow(v.w.getBounds(), Color.black, 0.6f, g);
     c1.draw(g, v);
     Assistant.drawHorizontallyCenteredString("Inventar", v.w.getWidth(), 43, g, 45, Color.white);
@@ -231,9 +232,6 @@ public class OVScene_Inventory extends OVScene implements Inventory
     {
       slot.mousePressed(e);
     }
-    
-    if (pickedUp != null)
-      pickedUp.mousePressed(e);
   }
   
   @Override
@@ -258,42 +256,58 @@ public class OVScene_Inventory extends OVScene implements Inventory
     {
       Attributes attributes = pickedUp.getItem().getAttributes();
       
-      Attributes player = sg.getPlayer().getAttributes();
+      if (slot.equals(pickedUp))
+        return;
+      
+      Attributes player = sg.getPlayer().getAttributes(false);
+      Attributes totalplayer = sg.getPlayer().getAttributes(true);
       
       for (Attr attr : Attr.values())
       {
         String color = "#ffffff";
         
-        if(attributes.getAttribute(attr).getValue() == 0) continue;
-        
-        if (attributes.getAttribute(attr).getValue() > player.getAttribute(attr).getValue())
+        if (slot.getItem() == null && player.getAttribute(attr).getValue() > 0)
+        {
+          if (player.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() > player.getAttribute(attr).getValue())
+            color = "#00b000";
+          else if (player.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() < player.getAttribute(attr).getValue())
+            color = "#b00000";
+        }
+        else if (slot.getItem() != null)
+        {
+          if (attributes.getAttribute(attr).getValue() > slot.getItem().getAttributes().getAttribute(attr).getValue())
+            color = "#00b000";
+          else if (attributes.getAttribute(attr).getValue() < slot.getItem().getAttributes().getAttribute(attr).getValue())
+            color = "#b00000";
+        }
+        else
+        {
           color = "#00b000";
-        else if (attributes.getAttribute(attr).getValue() < player.getAttribute(attr).getValue())
-          color = "#b00000";
+        }
         
         Database.setStringVar("ov_inv_attr_color_" + attr.name(), color);
-        Database.setStringVar("ov_inv_attr_" + attr.name(), attributes.getAttribute(attr).getValue() + "");
+        Database.setStringVar("ov_inv_attr_" + attr.name(), (totalplayer.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() - ((slot.getItem() != null) ? slot.getItem().getAttributes().getAttribute(attr).getValue() : 0)) + "");
       }
       
       updateStats(false);
-    } else updateStats(true);
+    }
   }
   
   @Override
   public void slotReleased(MouseEvent e, ItemSlot slot)
   {
     if (slot.getCategoryFilter() != null) // is from equip menu
-      sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), slot.getItem());
+      sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), slot.getItem());  
     
     updateStats(true);
   }
   
   public void updateStats(boolean force)
   {
+    Attributes attributes = sg.getPlayer().getAttributes(true);
+   
     String w = "<" + Assistant.ColorToHex(Colors.GRAY) + ";20;0>";
     String br = "[br]";
-    
-    Attributes attributes = sg.getPlayer().getAttributes();
     
     if (force)
     {
@@ -331,5 +345,11 @@ public class OVScene_Inventory extends OVScene implements Inventory
   public void setPickedUpItemSlot(ItemSlot item)
   {
     pickedUp = item;
+  }
+  
+  @Override
+  public void slotExited(MouseEvent e, ItemSlot slot)
+  {
+    updateStats(true);
   }
 }

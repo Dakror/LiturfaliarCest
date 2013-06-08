@@ -120,11 +120,7 @@ public class Scene_Game implements Scene, MapPackEventListener
       mappack.getActiveMap().keyReleased(e);
     if (e.getExtendedKeyCode() == KeyEvent.VK_ESCAPE)
     {
-      v.toggleOVScene(new OVScene_Pause(this), "Pause");
-      Handler.setListenerEnabled(this, !isPaused());
-      v.setFramesFrozen(isPaused());
-      if (isPaused())
-        v.playSound("008-System08");
+      togglePaused();
     }
     else if (e.getExtendedKeyCode() == KeyEvent.VK_I)
     {
@@ -137,6 +133,15 @@ public class Scene_Game implements Scene, MapPackEventListener
   public boolean isPaused()
   {
     return pause;
+  }
+  
+  public void togglePaused()
+  {
+    v.toggleOVScene(new OVScene_Pause(this), "Pause");
+    Handler.setListenerEnabled(this, !isPaused());
+    v.setFramesFrozen(isPaused());
+    if (isPaused())
+      v.playSound("008-System08");
   }
   
   public void setPaused(boolean pause)

@@ -34,6 +34,20 @@ public class ItemSlotEventDispatcher
     {}
   }
   
+  public static void dispatchSlotExited(MouseEvent e, ItemSlot slot)
+  {
+    try
+    {
+      for (ItemSlotEventListener l : listeners)
+      {
+        if (l != null)
+          l.slotExited(e, slot);
+      }
+    }
+    catch (Exception e1)
+    {}
+  }
+  
   public static void dispatchSlotHovered(MouseEvent e, ItemSlot slot)
   {
     for (ItemSlotEventListener l : listeners)

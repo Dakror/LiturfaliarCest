@@ -97,18 +97,18 @@ public class Attributes
         
         int max = attribute.getMaximum() + o.attributes.get(attr).getMaximum();
         
-        attribute.setMaximum((max > 0) ? max : 0);
+        attribute.setMaximum(max);
         
         int val = attribute.getValue() + o.attributes.get(attr).getValue();
         
         if (val <= attribute.getMaximum())
-          attribute.setValue((val > -1) ? val : -1);
+          attribute.setValue(val);
       }
     }
     
     return this;
   }
-
+  
   
   public JSONObject serializeAttributes()
   {

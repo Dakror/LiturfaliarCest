@@ -36,6 +36,7 @@ import de.dakror.liturfaliar.editor.MapEditor;
 import de.dakror.liturfaliar.ovscenes.OVScene;
 import de.dakror.liturfaliar.ovscenes.OVScene_Info;
 import de.dakror.liturfaliar.scenes.Scene;
+import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.scenes.Scene_Logo;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.CursorText;
@@ -514,6 +515,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   @Override
   public void windowDeactivated(WindowEvent e)
   {
+    if (scene instanceof Scene_Game && !((Scene_Game) scene).isPaused())
+      ((Scene_Game) scene).togglePaused();
     pause();
   }
   

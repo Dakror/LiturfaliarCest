@@ -352,6 +352,14 @@ public class Player extends Creature
   @Override
   public Attributes getAttributes()
   {
-    return equipment.getAttributes().add(attr);
+    return getAttributes(false);
+  }
+  
+  public Attributes getAttributes(boolean equip)
+  {
+    if (equip)
+      return equipment.getAttributes().add(attr);
+    
+    return attr;
   }
 }

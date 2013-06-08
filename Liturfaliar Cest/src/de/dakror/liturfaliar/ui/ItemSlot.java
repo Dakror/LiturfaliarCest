@@ -17,7 +17,6 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
-import de.dakror.liturfaliar.event.listener.ItemSlotEventListener;
 import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.item.Item;
@@ -25,7 +24,7 @@ import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
-public class ItemSlot extends Component implements ItemSlotEventListener
+public class ItemSlot extends Component
 {
   public static final int  SIZE    = 55;
   
@@ -51,10 +50,7 @@ public class ItemSlot extends Component implements ItemSlotEventListener
     hover = false;
     
     typesFilter = new ArrayList<Types>();
-    
-    ItemSlotEventDispatcher.addItemSlotEventListener(this);
   }
-  
   
   public ItemSlot(ItemSlot other)
   {
@@ -70,9 +66,7 @@ public class ItemSlot extends Component implements ItemSlotEventListener
     ay = other.ay;
     hover = other.hover;
     inventory = other.inventory;
-    ItemSlotEventDispatcher.addItemSlotEventListener(this);
   }
-  
   
   public void setCategoryFilter(Categories c)
   {
@@ -160,6 +154,9 @@ public class ItemSlot extends Component implements ItemSlotEventListener
     if (item != null)
       item.mouseMoved(e);
     
+    if (hover && !new Area(new Rectangle2D.Double(ax, ay, width, height)).contains(e.getLocationOnScreen()))
+      ItemSlotEventDispatcher.dispatchSlotExited(e, this);
+    
     hover = new Area(new Rectangle2D.Double(ax, ay, width, height)).contains(e.getLocationOnScreen());
     
     if (hover)
@@ -179,7 +176,9 @@ public class ItemSlot extends Component implements ItemSlotEventListener
       if (inventory.getPickedUpItemSlot() == null)
       {
         item.mouse = e.getLocationOnScreen();
+        
         ItemSlotEventDispatcher.dispatchSlotPressed(e, this);
+        ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
       }
       else if ((categoryFilter != null && !inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(inventory.getPickedUpItemSlot().getItem().getType()) == -1))
         return;
@@ -194,6 +193,8 @@ public class ItemSlot extends Component implements ItemSlotEventListener
         item.tooltip.visible = true;
         item.tooltip.setX(e.getXOnScreen());
         item.tooltip.setY(e.getYOnScreen());
+        ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
+        ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
         return;
       }
     }
@@ -281,18 +282,6 @@ public class ItemSlot extends Component implements ItemSlotEventListener
     }
   }
   
-  @Override
-  public void slotPressed(MouseEvent e, ItemSlot slot)
-  {}
-  
-  @Override
-  public void slotHovered(MouseEvent e, ItemSlot slot)
-  {}
-  
-  @Override
-  public void slotReleased(MouseEvent e, ItemSlot slot)
-  {}
-  
   public Inventory getInventory()
   {
     return inventory;
@@ -303,18 +292,15 @@ public class ItemSlot extends Component implements ItemSlotEventListener
     this.inventory = inventory;
   }
   
-  
   public ArrayList<Types> getTypesFilter()
   {
     return typesFilter;
   }
   
-  
   public void setTypesFilter(ArrayList<Types> typesFilter)
   {
     this.typesFilter = typesFilter;
   }
-  
   
   public Categories getCategoryFilter()
   {
