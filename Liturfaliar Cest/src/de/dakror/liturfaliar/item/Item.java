@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.settings.Attributes;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.ui.Component;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.Tooltip;
@@ -98,11 +99,21 @@ public class Item extends Component
   {
     icon = ((BufferedImage) Viewport.loadImage("system/icons.png")).getSubimage(iconx * 24, icony * 24, 24, 24).getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_REPLICATE);
     
-    tooltip = new Tooltip("<#999999;30;1>" + name + "[br]<#ffffff;17;1>Typ: <#4444ff;17;1>" + type.getName(), this);
-    tooltip.follow = true;
+    String c = "<#ffffff;17;1>";
+    String a = "";
     
     if (attributes == null)
       attributes = new Attributes();
+    
+    for (Attr attr : Attr.values())
+    {
+      if (attributes.getAttribute(attr).getValue() != 0)
+        a += c + attr.getText() + ": " + ((!attr.equals(Attr.weight)) ? ((attributes.getAttribute(attr).getValue() < 0.0) ? "-" : "+") : "") + (attributes.getAttribute(attr).getValue() + "").replace(".0", "").replace(".", ",") + "[br]";
+    }
+    
+    tooltip = new Tooltip("<#999999;30;1>" + name + "[br]<#6666ff;19;1>" + type.getName() + "[br]" + c + " [br]" + a, this);
+    tooltip.follow = true;
+    
   }
   
   public void draw(int x1, int y1, Graphics2D g, Viewport v)

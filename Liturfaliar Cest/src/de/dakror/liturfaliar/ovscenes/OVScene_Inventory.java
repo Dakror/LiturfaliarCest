@@ -35,8 +35,8 @@ public class OVScene_Inventory extends OVScene implements Inventory
   ItemSlot                pickedUp;
   ItemSlot                pickUpSource;
   
-  HTMLLabel               labels;
-  HTMLLabel               stats;
+  HTMLLabel               labels1, labels2;
+  HTMLLabel               stats1, stats2;
   
   public OVScene_Inventory(Scene_Game sg)
   {
@@ -153,11 +153,6 @@ public class OVScene_Inventory extends OVScene implements Inventory
       is.draw(v.w.getWidth() / 2 - 180, v.w.getHeight() / 2 - 350 + 110, g, v);
     }
     
-    for (ItemSlot is : inventory)
-    {
-      is.drawTooltip(g, v);
-    }
-    
     // -- character equip -- //
     Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350, 410, 550, g, v.w);
     
@@ -171,15 +166,22 @@ public class OVScene_Inventory extends OVScene implements Inventory
       is.draw(v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350, g, v);
     }
     
-    for (ItemSlot is : equipSlots)
+    // -- stats -- //
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350 + 550, 410, 150, g, v.w);
+    labels1.draw(g, v);
+    stats1.draw(g, v);
+    labels2.draw(g, v);
+    stats2.draw(g, v);
+    
+    for (ItemSlot is : inventory)
     {
       is.drawTooltip(g, v);
     }
     
-    // -- stats -- //
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350 + 550, 410, 150, g, v.w);
-    labels.draw(g, v);
-    stats.draw(g, v);
+    for (ItemSlot is : equipSlots)
+    {
+      is.drawTooltip(g, v);
+    }
     
     if (pickedUp != null)
       pickedUp.getItem().draw(g, v);
@@ -266,27 +268,23 @@ public class OVScene_Inventory extends OVScene implements Inventory
       {
         String color = "#ffffff";
         
-        if (slot.getItem() == null && player.getAttribute(attr).getValue() > 0)
+        if (slot.getItem() == null)
         {
           if (player.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() > player.getAttribute(attr).getValue())
             color = "#00b000";
           else if (player.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() < player.getAttribute(attr).getValue())
             color = "#b00000";
         }
-        else if (slot.getItem() != null)
+        else
         {
           if (attributes.getAttribute(attr).getValue() > slot.getItem().getAttributes().getAttribute(attr).getValue())
             color = "#00b000";
           else if (attributes.getAttribute(attr).getValue() < slot.getItem().getAttributes().getAttribute(attr).getValue())
             color = "#b00000";
         }
-        else
-        {
-          color = "#00b000";
-        }
         
         Database.setStringVar("ov_inv_attr_color_" + attr.name(), color);
-        Database.setStringVar("ov_inv_attr_" + attr.name(), (totalplayer.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() - ((slot.getItem() != null) ? slot.getItem().getAttributes().getAttribute(attr).getValue() : 0)) + "");
+        Database.setStringVar("ov_inv_attr_" + attr.name(), ((totalplayer.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() - ((slot.getItem() != null) ? slot.getItem().getAttributes().getAttribute(attr).getValue() : 0.0)) + "").replace(".0", "").replace(".", ","));
       }
       
       updateStats(false);
@@ -297,7 +295,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
   public void slotReleased(MouseEvent e, ItemSlot slot)
   {
     if (slot.getCategoryFilter() != null) // is from equip menu
-      sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), slot.getItem());  
+      sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), slot.getItem());
     
     updateStats(true);
   }
@@ -305,7 +303,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
   public void updateStats(boolean force)
   {
     Attributes attributes = sg.getPlayer().getAttributes(true);
-   
+    
     String w = "<" + Assistant.ColorToHex(Colors.GRAY) + ";20;0>";
     String br = "[br]";
     
@@ -314,24 +312,47 @@ public class OVScene_Inventory extends OVScene implements Inventory
       for (Attr attr : Attr.values())
       {
         Database.setStringVar("ov_inv_attr_color_" + attr.name(), "#ffffff");
-        Database.setStringVar("ov_inv_attr_" + attr.name(), attributes.getAttribute(attr).getValue() + "");
+        Database.setStringVar("ov_inv_attr_" + attr.name(), (attributes.getAttribute(attr).getValue() + "").replace(".0", "").replace(".", ","));
       }
     }
+    String lb1 = w + Attr.protection.getText() + br +
     
-    String lb = w + Attr.protection.getText() + br +
+    Attr.stamina.getText() + br +
     
-    Attr.stamina.getText() + br;
+    Attr.speed.getText() + br +
     
-    labels = new HTMLLabel(v.w.getWidth() / 2 - 590, v.w.getHeight() / 2 - 350 + 550, 97, 130, lb);
+    Attr.attackspeed.getText() + br +
     
-    String st = w + ": <%ov_inv_attr_color_" + Attr.protection.name() + "%;20;1>%ov_inv_attr_" + Attr.protection.name() + "%" + br +
+    Attr.weight.getText() + br;
     
-    w + ": <%ov_inv_attr_color_" + Attr.stamina.name() + "%;20;1>%ov_inv_attr_" + Attr.stamina.name() + "%" + br;
+    String lb2 = "";
     
-    if (stats == null)
-      stats = new HTMLLabel(v.w.getWidth() / 2 - 487, v.w.getHeight() / 2 - 350 + 550, 97, 130, st);
-    else stats.doUpdate(st);
+    labels1 = new HTMLLabel(v.w.getWidth() / 2 - 590, v.w.getHeight() / 2 - 350 + 546, 130, 150, lb1);
+    labels2 = new HTMLLabel(v.w.getWidth() / 2 - 590 + 205, v.w.getHeight() / 2 - 350 + 546, 130, 150, lb2);
     
+    String st1 =
+    
+    w + " <%ov_inv_attr_color_" + Attr.protection.name() + "%;20;1>%ov_inv_attr_" + Attr.protection.name() + "%" + br +
+    
+    w + " <%ov_inv_attr_color_" + Attr.stamina.name() + "%;20;1>%ov_inv_attr_" + Attr.stamina.name() + "%" + br +
+    
+    w + " <%ov_inv_attr_color_" + Attr.speed.name() + "%;20;1>%ov_inv_attr_" + Attr.speed.name() + "%" + br +
+    
+    w + " <%ov_inv_attr_color_" + Attr.attackspeed.name() + "%;20;1>%ov_inv_attr_" + Attr.attackspeed.name() + "%" + br +
+    
+    w + " <%ov_inv_attr_color_" + Attr.weight.name() + "%;20;1>%ov_inv_attr_" + Attr.weight.name() + "%" + br;
+    
+    
+    String st2 = "";
+    
+    
+    if (stats1 == null)
+      stats1 = new HTMLLabel(v.w.getWidth() / 2 - 590 + 125, v.w.getHeight() / 2 - 350 + 546, 97, 150, st1);
+    else stats1.doUpdate(st1);
+    
+    if (stats2 == null)
+      stats2 = new HTMLLabel(v.w.getWidth() / 2 - 590 + 125 + 205, v.w.getHeight() / 2 - 350 + 546, 97, 150, st2);
+    else stats2.doUpdate(st2);
   }
   
   @Override

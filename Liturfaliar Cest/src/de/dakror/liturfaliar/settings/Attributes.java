@@ -55,7 +55,7 @@ public class Attributes
     {
       if (args[i] instanceof Attr)
       {
-        attributes.put((Attr) args[i], new Attribute((Integer) args[i + 1], (Integer) args[i + 1]));
+        attributes.put((Attr) args[i], new Attribute(Double.parseDouble(args[i + 1].toString()), Double.parseDouble(args[i + 1].toString())));
       }
     }
   }
@@ -75,8 +75,8 @@ public class Attributes
         String key = i.next().toString();
         
         if (key.indexOf("max") > -1)
-          attributes.get(Attr.valueOf(key.replace("max", ""))).setMaximum(o.getInt(key));
-        else attributes.get(Attr.valueOf(key)).setValue(o.getInt(key));
+          attributes.get(Attr.valueOf(key.replace("max", ""))).setMaximum(o.getDouble(key));
+        else attributes.get(Attr.valueOf(key)).setValue(o.getDouble(key));
       }
     }
     catch (JSONException e)
@@ -95,11 +95,11 @@ public class Attributes
         if (attribute.isEmpty() && o.attributes.get(attr).isEmpty())
           continue;
         
-        int max = attribute.getMaximum() + o.attributes.get(attr).getMaximum();
+        double max = attribute.getMaximum() + o.attributes.get(attr).getMaximum();
         
         attribute.setMaximum(max);
         
-        int val = attribute.getValue() + o.attributes.get(attr).getValue();
+        double val = attribute.getValue() + o.attributes.get(attr).getValue();
         
         if (val <= attribute.getMaximum())
           attribute.setValue(val);
@@ -108,7 +108,6 @@ public class Attributes
     
     return this;
   }
-  
   
   public JSONObject serializeAttributes()
   {

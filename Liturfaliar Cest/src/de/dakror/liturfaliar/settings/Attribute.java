@@ -2,9 +2,9 @@ package de.dakror.liturfaliar.settings;
 
 public class Attribute
 {
-  private int value, maximum;
+  private double value, maximum;
   
-  public Attribute(int val, int max)
+  public Attribute(double val, double max)
   {
     value = val;
     maximum = max;
@@ -15,19 +15,19 @@ public class Attribute
     increaseValue(-v);
   }
   
-  public int getMaximum()
+  public double getMaximum()
   {
     return maximum;
   }
   
-  public int getValue()
+  public double getValue()
   {
     return value;
   }
   
-  public void increaseValue(int v)
+  public void increaseValue(double v)
   {
-    int sum = value + v;
+    double sum = value + v;
     
     if (sum > 0)
     {
@@ -40,15 +40,15 @@ public class Attribute
   
   public boolean isEmpty()
   {
-    return maximum == 0 || value == 0;
+    return maximum == 0.0 || value == 0.0;
   }
   
-  public void setMaximum(int maximum)
+  public void setMaximum(double maximum)
   {
     this.maximum = maximum;
   }
   
-  public void setValue(int value)
+  public void setValue(double value)
   {
     this.value = value;
   }

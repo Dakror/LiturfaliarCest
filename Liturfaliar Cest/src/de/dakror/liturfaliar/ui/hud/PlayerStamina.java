@@ -35,7 +35,7 @@ public class PlayerStamina extends HUDComponent
     visible = m.talk == null;
     
     if (visible)
-      bar.value = player.getAttributes().getAttribute(Attr.stamina).getValue() / (float) player.getAttributes().getAttribute(Attr.stamina).getMaximum();
+      bar.value = (float) (player.getAttributes().getAttribute(Attr.stamina).getValue() / (float) player.getAttributes().getAttribute(Attr.stamina).getMaximum());
     
     if (bar.value == 1)
     {
