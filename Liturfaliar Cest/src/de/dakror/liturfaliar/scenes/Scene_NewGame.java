@@ -227,14 +227,13 @@ public class Scene_NewGame implements Scene
       // -- char -- //
       JSONObject cfg = new JSONObject();
       cfg.put("name", name.value);
+      
+      // -- equipment -- //
       cfg.put("equip", equip.serializeEquipment());
+      
+      // -- inventory -- //
       JSONArray inv = new JSONArray();
-      
-      // inv.put(new Item(Items.POCKETKNIFE).serializeItem());
-      
       cfg.put("inventory", inv);
-      
-      save.put("char", cfg);
       
       // -- attributes -- //
       JSONObject attr = new JSONObject();
@@ -248,7 +247,9 @@ public class Scene_NewGame implements Scene
       attr.put("speed", 1);
       attr.put("maxspeed", 1);
       
-      save.put("attr", attr);
+      cfg.put("attr", attr);
+      
+      save.put("char", cfg);
       
       // -- map(-pack) -- //
       MapPack mp = new MapPack(CFG.MAPPACK, v.w);

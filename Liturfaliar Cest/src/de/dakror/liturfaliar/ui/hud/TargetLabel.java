@@ -1,7 +1,6 @@
 package de.dakror.liturfaliar.ui.hud;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 
 import de.dakror.liturfaliar.Viewport;
@@ -9,16 +8,18 @@ import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.creature.Player;
+import de.dakror.liturfaliar.ui.Icon;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class TargetLabel extends HUDComponent
 {
   Creature target;
+  Icon     hostile;
   
   public TargetLabel()
   {
-    super(0, 0, 1, 1, 10);
-    this.target = null;
+    super(0, 0, 400, 64, 10);
+    target = null;
   }
   
   @Override
@@ -53,13 +54,16 @@ public class TargetLabel extends HUDComponent
           this.target = null;
           return;
         }
-        float fontsize = 35.0f;
-        setWidth(g.getFontMetrics(g.getFont().deriveFont(Font.BOLD, fontsize)).stringWidth(name) + 384);
-        setY(0);
         setX(v.w.getWidth() / 2 - getWidth() / 2);
-        setHeight(g.getFontMetrics(g.getFont().deriveFont(Font.BOLD, fontsize)).getHeight() + 64);
-        Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY() - getHeight() / 2, getWidth(), getHeight(), g, v.w);
-        Assistant.drawHorizontallyCenteredString(name, getX(), getWidth(), getY() + getHeight() / 3, g, (int) fontsize, Color.white);
+        Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY() - 10, getWidth(), getHeight(), g, v.w);
+        int ix = Assistant.drawHorizontallyCenteredString(name, getX(), getWidth(), getY() + getHeight() / 3, g, 22, Color.white);
+        if (target instanceof NPC && ((NPC) target).isHostile())
+        {
+          if (hostile == null)
+            hostile = new Icon(ix - 24, getY() + 5, 22, 22, 4, 238);
+          
+          hostile.draw(g, v.w);
+        }
       }
       catch (Exception e)
       {}

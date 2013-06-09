@@ -9,6 +9,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.dakror.liturfaliar.item.Equipment;
+import de.dakror.liturfaliar.settings.Attributes;
+
 public class NPCButton extends JButton
 {
   private static final long serialVersionUID = 1L;
@@ -20,6 +23,10 @@ public class NPCButton extends JButton
   public boolean            look;
   
   public JSONArray          talk;
+  
+  public Attributes         attributes;
+  
+  public Equipment          equipment;
   
   public NPCButton(int x, int y, int w, int h, int dir, String name, String sprite, double speed, boolean move, boolean look, int moveT, int lookT, Image i, int ID, MapEditor m)
   {
@@ -37,6 +44,7 @@ public class NPCButton extends JButton
     this.speed = speed;
     this.ID = ID;
     
+    this.attributes = new Attributes();
     this.talk = new JSONArray();
     
     setToolTipText("NPC #" + ID + ": " + name);
@@ -63,6 +71,9 @@ public class NPCButton extends JButton
       data.put("char", sprite);
       data.put("speed", speed);
       data.put("talk", talk);
+      data.put("attr", attributes.serializeAttributes());
+      data.put("equip", equipment.serializeEquipment());
+      
       JSONObject random = new JSONObject();
       random.put("move", move);
       random.put("look", look);

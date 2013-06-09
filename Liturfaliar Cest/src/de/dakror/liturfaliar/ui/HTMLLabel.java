@@ -47,7 +47,9 @@ public class HTMLLabel extends Component
   
   public void doUpdate(String newraw)
   {
-    raw = newraw;
+    if (newraw != null)
+      raw = newraw;
+    
     update = true;
   }
   

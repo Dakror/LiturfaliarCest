@@ -179,9 +179,8 @@ public final class Assistant
     int x = x1 + (w - fm.stringWidth(s)) / 2;
     g.drawString(s, x, h);
     g.setColor(old);
-    int nx = x + fm.stringWidth(s);
     g.setFont(oldf);
-    return nx;
+    return x;
   }
   
   public static int drawVerticallyCenteredString(String s, int x, int y1, int h, Graphics2D g, int theta, int size, Color c)

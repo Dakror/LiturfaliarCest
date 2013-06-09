@@ -72,10 +72,12 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Equipment;
+import de.dakror.liturfaliar.item.IconSelecter;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.data.Door;
 import de.dakror.liturfaliar.map.data.FieldData;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Compressor;
@@ -85,7 +87,6 @@ import de.dakror.universion.UniVersion;
 public class MapEditor
 {
   // -- filterReplace dialog -- //
-  JDialog           FRframe;
   JComboBox<String> FRoldTileset, FRnewTileset;
   JTextField        FRoldLayer, FRnewLayer, FRoldTX, FRoldTY, FRnewTX, FRnewTY;
   
@@ -101,7 +102,6 @@ public class MapEditor
   int               NPClastID           = 0;
   
   // -- talk dialog -- //
-  JDialog           talkFrame;
   JColorSlider      talkColorSlider;
   JScrollPane       talkScrollPane;
   JPanel            talkPanel;
@@ -160,10 +160,13 @@ public class MapEditor
       @Override
       public void windowClosing(WindowEvent e)
       {
+        v.w.setVisible(true);
         v.mapeditor = null;
       }
     });
     init();
+    viewport.w.setVisible(false);
+    
     w.setVisible(true);
     
     w.toFront();
@@ -330,6 +333,18 @@ public class MapEditor
       }
     });
     fmenu.add(fnpc);
+    
+    JMenuItem fis = new JMenuItem(new AbstractAction("Icon Selecter GUI")
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        new IconSelecter();
+      }
+    });
+    fmenu.add(fis);
     
     JMenuItem ffr = new JMenuItem(new AbstractAction("Felder per Filter ersetzen")
     {
@@ -974,7 +989,7 @@ public class MapEditor
     if (NPCframe == null)
     {
       NPCframe = new JDialog(w);
-      NPCframe.setTitle("NPC-Bearbeitung");
+      NPCframe.setTitle("NPC-Bearbeitung" + ((exist != null) ? " - NPC #" + exist.ID : ""));
       NPCframe.addWindowListener(new WindowAdapter()
       {
         @Override
@@ -1175,9 +1190,100 @@ public class MapEditor
     NPCframe.setLocationRelativeTo(null);
   }
   
+  public void showAttributesDialog(final NPCButton npc)
+  {
+    JDialog attrFrame = new JDialog(w);
+    attrFrame.setTitle("Attributs-Bearbeitung - NPC #" + npc.ID);
+    attrFrame.setResizable(false);
+    attrFrame.setAlwaysOnTop(true);
+    attrFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    
+    final JSpinner[] spinners = new JSpinner[Attr.values().length];
+    
+    JPanel panel = new JPanel(new SpringLayout());
+    
+    for (int i = 0; i < spinners.length; i++)
+    {
+      JLabel label = new JLabel(Attr.values()[i].getText() + ":");
+      panel.add(label);
+      JSpinner spinner = new JSpinner(new SpinnerNumberModel(npc.attributes.getAttribute(Attr.values()[i]).getValue(), -1000000000.0, 1000000000.0, 1.0));
+      label.setLabelFor(spinner);
+      spinners[i] = spinner;
+      panel.add(spinner);
+    }
+    
+    panel.add(new JLabel());
+    
+    final JButton attrOk = new JButton("Speichern");
+    attrOk.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        for (int i = 0; i < spinners.length; i++)
+        {
+          npc.attributes.getAttribute(Attr.values()[i]).setValue(Double.valueOf(spinners[i].getValue().toString()));
+          npc.attributes.getAttribute(Attr.values()[i]).setMaximum(Double.valueOf(spinners[i].getValue().toString()));
+        }
+      }
+    });
+    panel.add(attrOk);
+    
+    SpringUtilities.makeCompactGrid(panel, spinners.length + 1, 2, 6, 6, 6, 6);
+    
+    attrFrame.setContentPane(panel);
+    
+    attrFrame.pack();
+    attrFrame.setLocationRelativeTo(null);
+    attrFrame.setVisible(true);
+  }
+  
+  public void showEquipmentDialog(final NPCButton npc)
+  {
+    // final JDialog adjFrame = new JDialog(w);
+    //
+    // final JDialog viewFrame = new JDialog(w);
+    //
+    // adjFrame.setTitle("Ausrüstungs-Bearbeitung");
+    // adjFrame.setResizable(false);
+    // adjFrame.setAlwaysOnTop(true);
+    // adjFrame.addWindowListener(new WindowAdapter()
+    // {
+    // @Override
+    // public void windowClosed(WindowEvent e)
+    // {
+    // viewFrame.dispose();
+    // }
+    //
+    // });
+    // adjFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    //
+    // viewFrame.setTitle("Ausrüstungs-Bearbeitung");
+    // viewFrame.setResizable(false);
+    // viewFrame.setAlwaysOnTop(true);
+    // viewFrame.addWindowListener(new WindowAdapter()
+    // {
+    // @Override
+    // public void windowClosed(WindowEvent e)
+    // {
+    // adjFrame.dispose();
+    // }
+    //
+    // });
+    // viewFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    //
+    // JPanel panel = new JPanel(new SpringLayout());
+    //
+    // JSpinner[] spinners = new JSpinner[Categories.values().length + 1];
+    //
+    // for (int i =0; i <spinners.length; i++) {
+    // JLabel label = new JLabel(Categories.values()[i].name());
+    // }
+  }
+  
   public void showTalkDialog(final NPCButton npc)
   {
-    talkFrame = new JDialog(w);
+    final JDialog talkFrame = new JDialog(w);
     talkFrame.setTitle("Talk-Bearbeitung - NPC #" + npc.ID);
     talkFrame.setResizable(false);
     talkFrame.setAlwaysOnTop(true);
@@ -1382,6 +1488,30 @@ public class MapEditor
         }
       });
       jpm.add(edit);
+      
+      JMenuItem eedit = new JMenuItem(new AbstractAction("Ausrüstung bearbeiten")
+      {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          showEquipmentDialog(fNPC);
+        }
+      });
+      jpm.add(eedit);
+      
+      JMenuItem aedit = new JMenuItem(new AbstractAction("Attribute bearbeiten")
+      {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          showAttributesDialog(fNPC);
+        }
+      });
+      jpm.add(aedit);
       
       JMenuItem tedit = new JMenuItem(new AbstractAction("Talk bearbeiten")
       {
@@ -1981,7 +2111,7 @@ public class MapEditor
   
   public void showFilterReplaceDialog()
   {
-    FRframe = new JDialog(w, "Felder per Filter ersetzen");
+    JDialog FRframe = new JDialog(w, "Felder per Filter ersetzen");
     FRframe.setResizable(false);
     FRframe.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     
@@ -2002,7 +2132,6 @@ public class MapEditor
             ((TileButton) c).repaint();
           }
         }
-        FRframe = null;
         dragmode = mDrag.isSelected();
         
         map.mouseDown = null;

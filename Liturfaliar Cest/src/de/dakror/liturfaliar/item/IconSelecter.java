@@ -20,15 +20,18 @@ import javax.swing.UIManager;
 
 import de.dakror.liturfaliar.Viewport;
 
-public class IconSelecter
+public class IconSelecter extends JFrame
 {
+  private static final long serialVersionUID = 1L;
+  
   /**
    * Small GUI program to choose an icon from the massive icons.png file
    * 
    * @param args
    */
-  public static void main(String[] args)
+  public IconSelecter()
   {
+    super("Icon Selecter GUI");
     ToolTipManager.sharedInstance().setInitialDelay(0);
     try
     {
@@ -38,10 +41,8 @@ public class IconSelecter
     {
       e1.printStackTrace();
     }
-    
-    JFrame frame = new JFrame("Icon Selecter GUI");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setResizable(false);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setResizable(false);
     
     BufferedImage image = (BufferedImage) Viewport.loadImage("system/icons.png");
     
@@ -77,10 +78,10 @@ public class IconSelecter
     JScrollPane pane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     pane.setPreferredSize(new Dimension((image.getWidth() / 24) * size + 30, 900));
     pane.getVerticalScrollBar().setUnitIncrement(size);
-    frame.setContentPane(pane);
-    frame.pack();
-    frame.setLocationRelativeTo(null);
-    frame.setVisible(true);
+    setContentPane(pane);
+    pack();
+    setLocationRelativeTo(null);
+    setVisible(true);
   }
   
 }

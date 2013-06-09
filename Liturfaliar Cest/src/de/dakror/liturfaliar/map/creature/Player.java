@@ -56,7 +56,7 @@ public class Player extends Creature
       
       relPos = goTo = new Vector(save.getJSONObject("mappack").getJSONObject("pos").getInt("x"), save.getJSONObject("mappack").getJSONObject("pos").getInt("y"));
       
-      attr.loadAttributes(save.getJSONObject("attr"));
+      attr.loadAttributes(save.getJSONObject("char").getJSONObject("attr"));
     }
     catch (JSONException e)
     {

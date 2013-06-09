@@ -25,7 +25,7 @@ import de.dakror.liturfaliar.util.Handler;
 public class OVScene_Inventory extends OVScene implements Inventory
 {
   public static final int WIDTH  = 12;
-  public static final int HEIGHT = 8;
+  public static final int HEIGHT = 11;
   
   Scene_Game              sg;
   Container               c1;
@@ -38,6 +38,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
   
   HTMLLabel               labels1, labels2;
   HTMLLabel               stats1, stats2;
+  HTMLLabel               invWeight;
   
   public OVScene_Inventory(Scene_Game sg)
   {
@@ -151,8 +152,10 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     for (ItemSlot is : inventory)
     {
-      is.draw(v.w.getWidth() / 2 - 180, v.w.getHeight() / 2 - 350 + 110, g, v);
+      is.draw(v.w.getWidth() / 2 - 180, v.w.getHeight() / 2 - 350 + 110 - 52, g, v);
     }
+    
+    invWeight.draw(g, v);
     
     // -- character equip -- //
     Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350, 410, 550, g, v.w);
@@ -331,6 +334,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
     labels1 = new HTMLLabel(v.w.getWidth() / 2 - 590, v.w.getHeight() / 2 - 350 + 546, 130, 150, lb1);
     labels2 = new HTMLLabel(v.w.getWidth() / 2 - 590 + 205, v.w.getHeight() / 2 - 350 + 546, 130, 150, lb2);
     
+    
     String st1 =
     
     w + ":<%ov_inv_attr_color_" + Attr.protection.name() + "%;20;1>%ov_inv_attr_" + Attr.protection.name() + "%" + br +
@@ -353,6 +357,23 @@ public class OVScene_Inventory extends OVScene implements Inventory
     if (stats2 == null)
       stats2 = new HTMLLabel(v.w.getWidth() / 2 - 590 + 125 + 205, v.w.getHeight() / 2 - 350 + 546, 97, 150, st2);
     else stats2.doUpdate(st2);
+    
+    if (invWeight == null)
+      invWeight = new HTMLLabel(v.w.getWidth() / 2 - 175, v.w.getHeight() / 2 - 350 + 110 - 52 + HEIGHT * ItemSlot.SIZE - 7, 160, 30, w + "Gewicht: <#ffffff;20;1>" + Attribute.FORMAT.format(getInventoryWeight()) + " kg[br]");
+    else invWeight.doUpdate(w + "Gewicht: <#ffffff;20;1>" + Attribute.FORMAT.format(getInventoryWeight()) + " kg[br]");
+  }
+  
+  public double getInventoryWeight()
+  {
+    double w = 0.0;
+    
+    for (ItemSlot is : inventory)
+    {
+      if (is.getItem() != null)
+        w += is.getItem().getAttributes().getAttribute(Attr.weight).getValue();
+    }
+    
+    return w;
   }
   
   @Override
