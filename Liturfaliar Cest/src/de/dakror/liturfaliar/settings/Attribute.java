@@ -1,8 +1,12 @@
 package de.dakror.liturfaliar.settings;
 
+import java.text.DecimalFormat;
+
 public class Attribute
 {
-  private double value, maximum;
+  public static final DecimalFormat FORMAT = new DecimalFormat("#.#");
+  
+  private double                    value, maximum;
   
   public Attribute(double val, double max)
   {

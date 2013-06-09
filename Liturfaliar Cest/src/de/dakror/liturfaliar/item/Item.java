@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.ui.Component;
@@ -108,7 +109,7 @@ public class Item extends Component
     for (Attr attr : Attr.values())
     {
       if (attributes.getAttribute(attr).getValue() != 0)
-        a += c + attr.getText() + ": " + ((!attr.equals(Attr.weight)) ? ((attributes.getAttribute(attr).getValue() < 0.0) ? "-" : "+") : "") + (attributes.getAttribute(attr).getValue() + "").replace(".0", "").replace(".", ",") + "[br]";
+        a += c + attr.getText() + ": " + ((!attr.equals(Attr.weight)) ? ((attributes.getAttribute(attr).getValue() < 0.0) ? "-" : "+") : "") + Attribute.FORMAT.format(attributes.getAttribute(attr).getValue()) + ((attr.equals(Attr.weight)) ? "kg" : "") + "[br]";
     }
     
     tooltip = new Tooltip("<#999999;30;1>" + name + "[br]<#6666ff;19;1>" + type.getName() + "[br]" + c + " [br]" + a, this);

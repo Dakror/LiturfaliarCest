@@ -11,6 +11,7 @@ import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
 import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.scenes.Scene_Game;
+import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Colors;
@@ -271,20 +272,20 @@ public class OVScene_Inventory extends OVScene implements Inventory
         if (slot.getItem() == null)
         {
           if (player.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() > player.getAttribute(attr).getValue())
-            color = "#00b000";
+            color = (attr.equals(Attr.weight)) ? Colors.WORSE : Colors.BETTER;
           else if (player.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() < player.getAttribute(attr).getValue())
-            color = "#b00000";
+            color = (attr.equals(Attr.weight)) ? Colors.BETTER : Colors.WORSE;
         }
         else
         {
           if (attributes.getAttribute(attr).getValue() > slot.getItem().getAttributes().getAttribute(attr).getValue())
-            color = "#00b000";
+            color = (attr.equals(Attr.weight)) ? Colors.WORSE : Colors.BETTER;
           else if (attributes.getAttribute(attr).getValue() < slot.getItem().getAttributes().getAttribute(attr).getValue())
-            color = "#b00000";
+            color = (attr.equals(Attr.weight)) ? Colors.BETTER : Colors.WORSE;
         }
         
         Database.setStringVar("ov_inv_attr_color_" + attr.name(), color);
-        Database.setStringVar("ov_inv_attr_" + attr.name(), ((totalplayer.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() - ((slot.getItem() != null) ? slot.getItem().getAttributes().getAttribute(attr).getValue() : 0.0)) + "").replace(".0", "").replace(".", ","));
+        Database.setStringVar("ov_inv_attr_" + attr.name(), Attribute.FORMAT.format(totalplayer.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() - ((slot.getItem() != null) ? slot.getItem().getAttributes().getAttribute(attr).getValue() : 0.0)));
       }
       
       updateStats(false);
@@ -312,7 +313,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
       for (Attr attr : Attr.values())
       {
         Database.setStringVar("ov_inv_attr_color_" + attr.name(), "#ffffff");
-        Database.setStringVar("ov_inv_attr_" + attr.name(), (attributes.getAttribute(attr).getValue() + "").replace(".0", "").replace(".", ","));
+        Database.setStringVar("ov_inv_attr_" + attr.name(), Attribute.FORMAT.format(attributes.getAttribute(attr).getValue()));
       }
     }
     String lb1 = w + Attr.protection.getText() + br +
@@ -332,19 +333,18 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     String st1 =
     
-    w + " <%ov_inv_attr_color_" + Attr.protection.name() + "%;20;1>%ov_inv_attr_" + Attr.protection.name() + "%" + br +
+    w + ":<%ov_inv_attr_color_" + Attr.protection.name() + "%;20;1>%ov_inv_attr_" + Attr.protection.name() + "%" + br +
     
-    w + " <%ov_inv_attr_color_" + Attr.stamina.name() + "%;20;1>%ov_inv_attr_" + Attr.stamina.name() + "%" + br +
+    w + ":<%ov_inv_attr_color_" + Attr.stamina.name() + "%;20;1>%ov_inv_attr_" + Attr.stamina.name() + "%" + br +
     
-    w + " <%ov_inv_attr_color_" + Attr.speed.name() + "%;20;1>%ov_inv_attr_" + Attr.speed.name() + "%" + br +
+    w + ":<%ov_inv_attr_color_" + Attr.speed.name() + "%;20;1>%ov_inv_attr_" + Attr.speed.name() + "%" + br +
     
-    w + " <%ov_inv_attr_color_" + Attr.attackspeed.name() + "%;20;1>%ov_inv_attr_" + Attr.attackspeed.name() + "%" + br +
+    w + ":<%ov_inv_attr_color_" + Attr.attackspeed.name() + "%;20;1>%ov_inv_attr_" + Attr.attackspeed.name() + "%" + br +
     
-    w + " <%ov_inv_attr_color_" + Attr.weight.name() + "%;20;1>%ov_inv_attr_" + Attr.weight.name() + "%" + br;
+    w + ":<%ov_inv_attr_color_" + Attr.weight.name() + "%;20;1>%ov_inv_attr_" + Attr.weight.name() + "% kg" + br;
     
     
     String st2 = "";
-    
     
     if (stats1 == null)
       stats1 = new HTMLLabel(v.w.getWidth() / 2 - 590 + 125, v.w.getHeight() / 2 - 350 + 546, 97, 150, st1);
