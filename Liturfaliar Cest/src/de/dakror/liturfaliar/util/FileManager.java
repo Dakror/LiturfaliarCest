@@ -3,7 +3,9 @@ package de.dakror.liturfaliar.util;
 import java.awt.Window;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
@@ -294,5 +296,30 @@ public class FileManager
       }
     }
     return null;
+  }
+  
+  public static String[] getCharParts(String dir)
+  {
+    
+    try
+    {
+      return new File(FileManager.class.getResource("/img/char/" + dir).toURI()).list(new FilenameFilter()
+      {
+        
+        @Override
+        public boolean accept(File dir, String name)
+        {
+          if (name.matches("_.{1}\\.png"))
+            return name.endsWith("_f.png");
+          
+          return true;
+        }
+      });
+    }
+    catch (URISyntaxException e)
+    {
+      e.printStackTrace();
+      return null;
+    }
   }
 }

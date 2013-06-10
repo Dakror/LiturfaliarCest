@@ -2,7 +2,7 @@ package de.dakror.liturfaliar.item;
 
 public enum Categories
 {
-  WEAPON,
+  WEAPON, // must be in first place
   GLOVES,
   ARM,
   SHOULDER,

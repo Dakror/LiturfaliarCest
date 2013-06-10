@@ -45,6 +45,8 @@ public class NPCButton extends JButton
     this.ID = ID;
     
     this.attributes = new Attributes();
+    this.equipment = new Equipment();
+    
     this.talk = new JSONArray();
     
     setToolTipText("NPC #" + ID + ": " + name);

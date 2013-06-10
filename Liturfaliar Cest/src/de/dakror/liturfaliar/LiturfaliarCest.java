@@ -1,7 +1,5 @@
 package de.dakror.liturfaliar;
 
-import java.io.File;
-
 import javax.swing.UIManager;
 
 import paulscode.sound.SoundSystem;
@@ -11,7 +9,6 @@ import paulscode.sound.libraries.LibraryJavaSound;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.FileManager;
-import de.dakror.reporter.Reporter;
 import de.dakror.universion.UniVersion;
 
 public class LiturfaliarCest
@@ -27,7 +24,7 @@ public class LiturfaliarCest
     
     if (!CFG.DEBUG)
     {
-      Reporter.init(new File(FileManager.dir, "Logs"));
+      // Reporter.init(new File(FileManager.dir, "Logs"));
     }
     
     try

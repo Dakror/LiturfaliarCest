@@ -40,6 +40,7 @@ import org.json.JSONObject;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Equipment;
+import de.dakror.liturfaliar.settings.CFG;
 
 
 /**
@@ -316,8 +317,10 @@ public final class Assistant
     if (ch)
     {
       if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "b"))
+      {
+        CFG.b("cape_b", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_b");
         drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_b", g, window, ch);
-      
+      }
       
       if (equip.hasEquipmentItem(Categories.SKIN))
       {
@@ -350,7 +353,7 @@ public final class Assistant
   
   private static boolean charLevelExists(Categories c, String path, String level)
   {
-    return Assistant.class.getResource("char/" + c.name().toLowerCase() + "/" + path + "_" + level + ".png") == null;
+    return Assistant.class.getResource("char/" + c.name().toLowerCase() + "/" + path + "_" + level + ".png") != null;
   }
   
   public static void drawChar(int x, int y, int w, int h, int dir, int frame, String type, String image, Graphics2D g, Window window, boolean ch)
