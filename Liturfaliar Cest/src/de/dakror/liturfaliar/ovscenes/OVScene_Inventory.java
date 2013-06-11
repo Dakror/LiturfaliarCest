@@ -58,6 +58,11 @@ public class OVScene_Inventory extends OVScene implements Inventory
     c1 = new Container(0, 0, v.w.getWidth(), 55);
     c1.tileset = null;
     
+    for (Attr attr : Attr.values())
+    {
+      Database.setStringVar("ov_inv_attr_" + attr.name(), Attribute.FORMAT.format(sg.getPlayer().getAttributes(true).getAttribute(attr).getValue()));
+    }
+    
     equipSlots = new ItemSlot[12];
     
     equipSlots[0] = new ItemSlot(183, 80); // helmet
@@ -118,12 +123,12 @@ public class OVScene_Inventory extends OVScene implements Inventory
     if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.BOOTS))
       equipSlots[11].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.BOOTS));
     
+    inventory = ItemSlot.createSlotGrid(0, 0, WIDTH, HEIGHT);
+    
     for (ItemSlot is : equipSlots)
     {
       is.setInventory(this);
     }
-    
-    inventory = ItemSlot.createSlotGrid(0, 0, WIDTH, HEIGHT);
     
     ItemSlot.loadItemSlots(sg.getPlayer().getInventory(), inventory);
     
@@ -288,7 +293,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
         }
         
         Database.setStringVar("ov_inv_attr_color_" + attr.name(), color);
-        Database.setStringVar("ov_inv_attr_" + attr.name(), Attribute.FORMAT.format(totalplayer.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() - ((slot.getItem() != null) ? slot.getItem().getAttributes().getAttribute(attr).getValue() : 0.0)));
+        Database.setStringVar("ov_inv_attr_display_" + attr.name(), Attribute.FORMAT.format(totalplayer.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() - ((slot.getItem() != null) ? slot.getItem().getAttributes().getAttribute(attr).getValue() : 0.0)));
       }
       
       updateStats(false);
@@ -317,6 +322,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
       {
         Database.setStringVar("ov_inv_attr_color_" + attr.name(), "#ffffff");
         Database.setStringVar("ov_inv_attr_" + attr.name(), Attribute.FORMAT.format(attributes.getAttribute(attr).getValue()));
+        Database.setStringVar("ov_inv_attr_display_" + attr.name(), Attribute.FORMAT.format(attributes.getAttribute(attr).getValue()));
       }
     }
     String lb1 = w + Attr.protection.getText() + br +
@@ -334,18 +340,17 @@ public class OVScene_Inventory extends OVScene implements Inventory
     labels1 = new HTMLLabel(v.w.getWidth() / 2 - 590, v.w.getHeight() / 2 - 350 + 546, 130, 150, lb1);
     labels2 = new HTMLLabel(v.w.getWidth() / 2 - 590 + 205, v.w.getHeight() / 2 - 350 + 546, 130, 150, lb2);
     
-    
     String st1 =
     
-    w + ":<%ov_inv_attr_color_" + Attr.protection.name() + "%;20;1>%ov_inv_attr_" + Attr.protection.name() + "%" + br +
+    w + " <%ov_inv_attr_color_" + Attr.protection.name() + "%;20;1>%ov_inv_attr_display_" + Attr.protection.name() + "%" + br +
     
-    w + ":<%ov_inv_attr_color_" + Attr.stamina.name() + "%;20;1>%ov_inv_attr_" + Attr.stamina.name() + "%" + br +
+    w + " <%ov_inv_attr_color_" + Attr.stamina.name() + "%;20;1>%ov_inv_attr_display_" + Attr.stamina.name() + "%" + br +
     
-    w + ":<%ov_inv_attr_color_" + Attr.speed.name() + "%;20;1>%ov_inv_attr_" + Attr.speed.name() + "%" + br +
+    w + " <%ov_inv_attr_color_" + Attr.speed.name() + "%;20;1>%ov_inv_attr_display_" + Attr.speed.name() + "%" + br +
     
-    w + ":<%ov_inv_attr_color_" + Attr.attackspeed.name() + "%;20;1>%ov_inv_attr_" + Attr.attackspeed.name() + "%" + br +
+    w + " <%ov_inv_attr_color_" + Attr.attackspeed.name() + "%;20;1>%ov_inv_attr_display_" + Attr.attackspeed.name() + "%" + br +
     
-    w + ":<%ov_inv_attr_color_" + Attr.weight.name() + "%;20;1>%ov_inv_attr_" + Attr.weight.name() + "% kg" + br;
+    w + " <%ov_inv_attr_color_" + Attr.weight.name() + "%;20;1>%ov_inv_attr_display_" + Attr.weight.name() + "% kg" + br;
     
     
     String st2 = "";
@@ -361,6 +366,17 @@ public class OVScene_Inventory extends OVScene implements Inventory
     if (invWeight == null)
       invWeight = new HTMLLabel(v.w.getWidth() / 2 - 175, v.w.getHeight() / 2 - 350 + 110 - 52 + HEIGHT * ItemSlot.SIZE - 7, 160, 30, w + "Gewicht: <#ffffff;20;1>" + Attribute.FORMAT.format(getInventoryWeight()) + " kg[br]");
     else invWeight.doUpdate(w + "Gewicht: <#ffffff;20;1>" + Attribute.FORMAT.format(getInventoryWeight()) + " kg[br]");
+    
+    for (ItemSlot is : equipSlots)
+    {
+      if (is.getItem() != null)
+        is.getItem().updateTooltip();
+    }
+    for (ItemSlot is : inventory)
+    {
+      if (is.getItem() != null)
+        is.getItem().updateTooltip();
+    }
   }
   
   public double getInventoryWeight()

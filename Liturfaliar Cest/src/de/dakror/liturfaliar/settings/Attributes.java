@@ -18,7 +18,11 @@ public class Attributes
     speed("Lauftempo"),
     attackspeed("Angriffstempo"),
     weight("Gewicht"),
-    damage("Schaden");
+    damage("Schaden"),
+    
+    strength("Stärke"),
+    accuracy("Genauigkeit"),
+    experience("Erfahrung");
     
     private String text;
     

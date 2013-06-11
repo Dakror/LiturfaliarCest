@@ -143,7 +143,7 @@ public class Talk extends Component
       int size = 96;
       int height = getHeight() > size ? size : getHeight();
       Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX() - height, getY(), height, height - 10, g, v.w);
-      g.drawImage(speaker, getX() - height + 10, getY() + 10, height - 20, height - 10, v.w);
+      g.drawImage(speaker, getX() - height + 10, getY() + 10 + ((this.by.getCharacter() == null) ? 5 : 0), height - 20, height - 10, v.w);
     }
     
     if (partDone)
@@ -157,14 +157,18 @@ public class Talk extends Component
   
   public void getSpeakerFace()
   {
-    BufferedImage bi = new BufferedImage(32, 32, 2);
+    BufferedImage bi = new BufferedImage(96, 96, BufferedImage.TYPE_INT_ARGB);
     Graphics g = bi.getGraphics();
-    g.setClip(0, 0, 32, 21);
+    g.setClip(0, 0, 96, 63);
     if (perspectives[perspective].indexOf("npc") > -1)
-      Assistant.drawChar(0, 0, 32, 48, 0, 0, "chars", by.getCharacter(), (Graphics2D) g, null, true);
+    {
+      if (by.getCharacter() != null)
+        Assistant.drawChar(0, 0, 96, 128, 0, 0, "chars", by.getCharacter(), (Graphics2D) g, null, true);
+      else Assistant.drawChar(0, 0, 96, 128, 0, 0, by.getEquipment(), (Graphics2D) g, null, true);
+    }
     else if (perspectives[perspective].indexOf("player") > -1)
     {
-      Assistant.drawChar(0, 0, 32, 48, 0, 0, m.getPlayer().getEquipment(), (Graphics2D) g, null, true);
+      Assistant.drawChar(0, 0, 96, 128, 0, 0, m.getPlayer().getEquipment(), (Graphics2D) g, null, true);
     }
     speaker = bi;
   }

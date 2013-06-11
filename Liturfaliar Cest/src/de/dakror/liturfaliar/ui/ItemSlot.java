@@ -55,7 +55,7 @@ public class ItemSlot extends Component
   public ItemSlot(ItemSlot other)
   {
     super(other.x, other.y, SIZE, SIZE);
-    item = new Item(other.item);
+    setItem(new Item(other.item));
     hotKey = other.hotKey;
     keyString = other.keyString;
     mouseKey = other.mouseKey;
@@ -204,6 +204,9 @@ public class ItemSlot extends Component
       {
         ItemSlot slot = inventory.getPickedUpItemSlot();
         if (slot == null || (categoryFilter != null && !slot.getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && slot.getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(slot.getItem().getType()) == -1))
+          return;
+        
+        if (categoryFilter != null && !slot.getItem().areRequirementsSatisfied())
           return;
         
         this.item = slot.getItem();

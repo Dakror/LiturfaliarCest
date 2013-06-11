@@ -13,9 +13,11 @@ import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
+import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.ui.Component;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.Tooltip;
+import de.dakror.liturfaliar.util.Database;
 
 public class Item extends Component
 {
@@ -32,7 +34,7 @@ public class Item extends Component
   
   public Tooltip          tooltip;
   
-  private Attributes      attributes;
+  private Attributes      attributes, requirements;
   
   public Item(Types t, String path)
   {
@@ -56,6 +58,7 @@ public class Item extends Component
     icony = i.getIconY();
     charPath = i.getCharPath();
     attributes = i.getAttributes();
+    requirements = i.getRequirement();
     
     init();
   }
@@ -71,6 +74,7 @@ public class Item extends Component
     charPath = other.getCharPath();
     mouse = other.mouse;
     attributes = other.getAttributes();
+    requirements = other.getRequirements();
     
     init();
   }
@@ -87,6 +91,7 @@ public class Item extends Component
       icony = o.getInt("icony");
       charPath = o.getString("char");
       attributes = new Attributes(o.getJSONObject("attr"));
+      requirements = new Attributes(o.getJSONObject("req"));
     }
     catch (JSONException e)
     {
@@ -100,21 +105,57 @@ public class Item extends Component
   {
     icon = ((BufferedImage) Viewport.loadImage("system/icons.png")).getSubimage(iconx * 24, icony * 24, 24, 24).getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_REPLICATE);
     
-    String c = "<#ffffff;17;1>";
-    String a = "";
-    
     if (attributes == null)
       attributes = new Attributes();
     
+    if (requirements == null)
+      requirements = new Attributes();
+    
+    updateTooltip();
+    
+  }
+  
+  public void updateTooltip()
+  {
+    String c = "<#ffffff;17;1>";
+    String g = "<#cccccc;17;1>";
+    
+    String req = "";
     for (Attr attr : Attr.values())
     {
-      if (attributes.getAttribute(attr).getValue() != 0)
-        a += c + attr.getText() + ": " + ((!attr.equals(Attr.weight)) ? ((attributes.getAttribute(attr).getValue() < 0.0) ? "-" : "+") : "") + Attribute.FORMAT.format(attributes.getAttribute(attr).getValue()) + ((attr.equals(Attr.weight)) ? "kg" : "") + "[br]";
+      if (requirements.getAttribute(attr).getValue() != 0)
+        req += "<" + ((getAttributeFromDatabase(attr.name()) >= requirements.getAttribute(attr).getValue()) ? Colors.BETTER : Colors.WORSE) + ";17;1>" + Attribute.FORMAT.format(requirements.getAttribute(attr).getValue()) + " " + attr.getText() + "[br]";
     }
     
-    tooltip = new Tooltip("<#999999;30;1>" + name + "[br]<#6666ff;19;1>" + type.getName() + "[br]" + c + " [br]" + a, this);
-    tooltip.follow = true;
+    String att = "";
+    for (Attr attr : Attr.values())
+    {
+      if (attr.equals(Attr.weight))
+        continue;
+      if (attributes.getAttribute(attr).getValue() != 0)
+        att += g + ((attributes.getAttribute(attr).getValue() < 0.0) ? "-" : "+") + Attribute.FORMAT.format(attributes.getAttribute(attr).getValue()) + " " + attr.getText() + "[br]";
+    }
     
+    String raw = "<#999999;30;1>" + name + "[br]<#6666ff;19;1>" + type.getName() + "[br]" + c + attributes.getAttribute(Attr.weight).getValue() + " kg[br]" + att + ((req.length() > 0) ? c + " [br]" + c + "Benötigt:[br]" + req : "");
+    
+    if (tooltip == null)
+    {
+      tooltip = new Tooltip(raw, this);
+      tooltip.follow = true;
+    }
+    else tooltip.rawText = raw;
+  }
+  
+  private int getAttributeFromDatabase(String key)
+  {
+    try
+    {
+      return Integer.parseInt(Database.filterString("%ov_inv_attr_" + key + "%"));
+    }
+    catch (Exception e)
+    {
+      return 0;
+    }
   }
   
   public void draw(int x1, int y1, Graphics2D g, Viewport v)
@@ -153,6 +194,7 @@ public class Item extends Component
       o.put("icony", icony);
       o.put("char", charPath);
       o.put("attr", attributes.serializeAttributes());
+      o.put("req", requirements.serializeAttributes());
     }
     catch (JSONException e)
     {
@@ -179,5 +221,26 @@ public class Item extends Component
   public void setAttributes(Attributes attributes)
   {
     this.attributes = attributes;
+  }
+  
+  public Attributes getRequirements()
+  {
+    return requirements;
+  }
+  
+  public void setRequirements(Attributes requirement)
+  {
+    this.requirements = requirement;
+  }
+  
+  public boolean areRequirementsSatisfied()
+  {
+    for (Attr attr : Attr.values())
+    {
+      if (requirements.getAttribute(attr).getValue() > 0)
+        if (getAttributeFromDatabase(attr.name()) < requirements.getAttribute(attr).getValue())
+          return false;
+    }
+    return true;
   }
 }
