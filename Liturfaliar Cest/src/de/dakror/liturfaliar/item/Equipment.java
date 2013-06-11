@@ -17,6 +17,9 @@ public class Equipment
   {
     for (Categories c : Categories.values())
     {
+      if (c.equals(Categories.WEAPON))
+        continue;
+      
       setEquipmentItem(c, null);
     }
     weapon1 = weapon2 = null;
@@ -70,6 +73,17 @@ public class Equipment
   public boolean hasEquipmentItem(Categories c)
   {
     return equips.get(c.name().toLowerCase()) != null;
+  }
+  
+  public boolean isProperlyFilled()
+  {
+    int filled = 0;
+    for (Item item : equips.values())
+    {
+      if (item != null)
+        filled++;
+    }
+    return filled > 1; // more than skin
   }
   
   public void setEquipmentItem(Categories c, Item item)

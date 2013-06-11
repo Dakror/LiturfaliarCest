@@ -1,6 +1,7 @@
 package de.dakror.liturfaliar;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
@@ -52,26 +53,27 @@ import de.dakror.liturfaliar.util.Handler;
  */
 public class Viewport extends GameFrame implements WindowListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener
 {
-  private boolean                               initialized    = false;
-  private boolean                               takeScreenshot = false;
-  private boolean                               pausedfromscene;
-  private boolean                               frozenFrames;
-  private long                                  time           = 0;
-  static private HashMap<Image, String>         REVcache       = new HashMap<Image, String>();
-  static private HashMap<String, BufferedImage> cache          = new HashMap<String, BufferedImage>();
-  public double                                 fMusicEffectID = 0.5d;
-  public double                                 fMusicID       = 0.3d;
-  public double                                 fSoundID       = 1.0d;
-  public HashMap<String, OVScene>               ovscenes       = new HashMap<String, OVScene>();
-  public JSONObject                             savegame;
-  public static Notification                    notification;
-  public Scene                                  scene;
-  public SoundSystem                            ss;
-  public String                                 MusicEffectID;
-  public String                                 MusicID;
-  public String                                 SoundID;
-  public Window                                 w;
-  public MapEditor                              mapeditor;
+  private boolean                       initialized    = false;
+  private boolean                       takeScreenshot = false;
+  private boolean                       pausedfromscene;
+  private boolean                       frozenFrames;
+  private long                          time           = 0;
+  static private HashMap<Image, String> REVcache       = new HashMap<Image, String>();
+  static private HashMap<String, Image> cache          = new HashMap<String, Image>();
+  static private HashMap<String, Scale> SCcache        = new HashMap<String, Scale>();
+  public double                         fMusicEffectID = 0.5d;
+  public double                         fMusicID       = 0.3d;
+  public double                         fSoundID       = 1.0d;
+  public HashMap<String, OVScene>       ovscenes       = new HashMap<String, OVScene>();
+  public JSONObject                     savegame;
+  public static Notification            notification;
+  public Scene                          scene;
+  public SoundSystem                    ss;
+  public String                         MusicEffectID;
+  public String                         MusicID;
+  public String                         SoundID;
+  public Window                         w;
+  public MapEditor                      mapeditor;
   
   /**
    * Constructor
@@ -227,7 +229,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     }
   }
   
-  public static BufferedImage loadImage(String path)
+  public static Image loadImage(String path)
   {
     String capitals = "QWERTZUIOPASDFGHJKLYXCVBNM";
     if (cache.containsKey(path))
@@ -252,6 +254,19 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
       cache.put(path, i);
       REVcache.put(i, path);
       return i;
+    }
+  }
+  
+  public static Image loadScaledImage(String path, int w, int h)
+  {
+    if (SCcache.containsKey(path))
+    {
+      return SCcache.get(path).getDimension(w, h);
+    }
+    else
+    {
+      SCcache.put(path, new Scale(path));
+      return SCcache.get(path).getDimension(w, h);
     }
   }
   
@@ -606,5 +621,31 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public void keyReleased(KeyEvent e)
   {
     Handler.keyReleased(e);
+  }
+  
+  static class Scale
+  {
+    Image                     image;
+    HashMap<Dimension, Image> cache = new HashMap<Dimension, Image>();
+    
+    public Scale(String p)
+    {
+      image = loadImage(p);
+    }
+    
+    public Image getDimension(int w, int h)
+    {
+      Dimension key = new Dimension(w, h);
+      
+      if (cache.containsKey(key))
+      {
+        return cache.get(key);
+      }
+      else
+      {
+        cache.put(key, image.getScaledInstance(w, h, Image.SCALE_REPLICATE));
+        return cache.get(key);
+      }
+    }
   }
 }

@@ -26,10 +26,12 @@ import de.dakror.liturfaliar.event.dispatcher.DatabaseEventDispatcher;
 import de.dakror.liturfaliar.event.dispatcher.MapEventDispatcher;
 import de.dakror.liturfaliar.event.listener.DatabaseEventListener;
 import de.dakror.liturfaliar.fx.Animation;
+import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.creature.Player;
 import de.dakror.liturfaliar.scenes.Scene_Game;
+import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
@@ -212,7 +214,7 @@ public class Map implements DatabaseEventListener
     {
       JSONObject o = npcs.getJSONObject(i);
       JSONObject random = o.getJSONObject("random");
-      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getInt("dir"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), i, o.getJSONArray("talk"));
+      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getInt("dir"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), i, new Attributes(o.getJSONObject("attr")), new Equipment(o.getJSONObject("equip")), o.getJSONArray("talk"));
       creatures.add(npc);
     }
   }

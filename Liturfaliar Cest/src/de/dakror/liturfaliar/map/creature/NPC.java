@@ -7,7 +7,9 @@ import java.awt.geom.Rectangle2D;
 import org.json.JSONArray;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
@@ -35,13 +37,17 @@ public class NPC extends Creature
   String                       character;
   Vector[]                     playerTalkTo;
   
-  public NPC(int x, int y, int w, int h, int d, String name, String c, double speed, boolean move, boolean look, int moveT, int lookT, int id, JSONArray talkdata)
+  public NPC(int x, int y, int w, int h, int d, String name, String c, double speed, boolean move, boolean look, int moveT, int lookT, int id, Attributes attributes, Equipment equip, JSONArray talkdata)
   {
     super(x, y, w, h);
     
     setHuman();
     
-    character = c;
+    attr = attributes;
+    
+    if (equip.isProperlyFilled())
+      equipment = equip;
+    else character = c;
     
     layer = CFG.PLAYERLAYER;
     frozen = false;
@@ -80,7 +86,10 @@ public class NPC extends Creature
       catch (Exception e)
       {}
     }
-    Assistant.drawChar(getPos()[0] + m.getX(), getPos()[1] + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, "chars", character, g, v.w, true);
+    if (character != null)
+      Assistant.drawChar(getPos()[0] + m.getX(), getPos()[1] + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, "chars", character, g, v.w, true);
+    else Assistant.drawChar(getPos()[0] + m.getX(), getPos()[1] + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, equipment, g, v.w, true);
+    
     if (emoticon != null)
     {
       emoticon.draw(g, m, v);

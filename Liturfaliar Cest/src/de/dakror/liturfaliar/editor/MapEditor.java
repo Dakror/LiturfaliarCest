@@ -1299,7 +1299,25 @@ public class MapEditor
         npc.equipment = EQ;
       }
     });
-    p.add(ok, BorderLayout.SOUTH);
+    p.add(ok, BorderLayout.LINE_END);
+    
+    JButton noEquip = new JButton("Ausrüstung entfernen");
+    noEquip.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        npc.equipment = new Equipment();
+        for (JSpinner s : EQspinners)
+        {
+          if (((SpinnerListModel) s.getModel()).getList().indexOf("none.png") > -1)
+            s.setValue("none.png");
+        }
+        updateEquipDialogPreview();
+      }
+    });
+    p.add(noEquip, BorderLayout.LINE_START);
+    
     
     viewFrame.setContentPane(p);
     viewFrame.pack();
