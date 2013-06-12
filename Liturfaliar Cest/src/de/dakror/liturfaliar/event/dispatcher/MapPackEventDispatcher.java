@@ -19,9 +19,12 @@ public class MapPackEventDispatcher
     listeners.set(listeners.indexOf(l), null);
   }
   
-  public static void dispatchMapChanged(Map oldmap, Map newmap) {
-    for (MapPackEventListener l :listeners) {
-      l.mapChanged(oldmap, newmap);
+  public static void dispatchMapChanged(Map oldmap, Map newmap)
+  {
+    for (MapPackEventListener l : listeners)
+    {
+      if (l != null)
+        l.mapChanged(oldmap, newmap);
     }
   }
 }

@@ -43,8 +43,8 @@ public final class CFG
   public static final int      TILES             = 123;
   
   
-  public static final int      BOUNDMALUS        = 3;
-  public static final int      BUMPMALUS         = 4;
+  public static final int      BOUNDMALUS        = 0;
+  public static final int      BUMPMALUS         = 5;
   public static final int[]    HUMANBOUNDS       = { FIELDSIZE - BOUNDMALUS, FIELDSIZE * 3 / 2 - BOUNDMALUS };
   public static final int[]    HUMANBUMPS        = { BUMPMALUS, FIELDSIZE, HUMANBOUNDS[0] - BUMPMALUS * 2, CFG.FIELDSIZE / 2 };
   public static Point          MAPCENTER         = new Point(0, 0);

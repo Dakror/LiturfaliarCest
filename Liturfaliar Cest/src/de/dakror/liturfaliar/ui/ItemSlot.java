@@ -206,7 +206,7 @@ public class ItemSlot extends Component
         if (slot == null || (categoryFilter != null && !slot.getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && slot.getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(slot.getItem().getType()) == -1))
           return;
         
-        if (categoryFilter != null && !slot.getItem().areRequirementsSatisfied())
+        if (categoryFilter != null && !slot.getItem().areRequirementsSatisfied(null))
           return;
         
         this.item = slot.getItem();

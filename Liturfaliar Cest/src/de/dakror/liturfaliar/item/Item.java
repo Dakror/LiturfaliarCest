@@ -233,12 +233,12 @@ public class Item extends Component
     this.requirements = requirement;
   }
   
-  public boolean areRequirementsSatisfied()
+  public boolean areRequirementsSatisfied(Attributes attributes)
   {
     for (Attr attr : Attr.values())
     {
       if (requirements.getAttribute(attr).getValue() > 0)
-        if (getAttributeFromDatabase(attr.name()) < requirements.getAttribute(attr).getValue())
+        if (((attributes == null) ? getAttributeFromDatabase(attr.name()) : attributes.getAttribute(attr).getValue()) < requirements.getAttribute(attr).getValue())
           return false;
     }
     return true;

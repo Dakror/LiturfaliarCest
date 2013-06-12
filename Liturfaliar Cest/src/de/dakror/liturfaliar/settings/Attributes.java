@@ -93,21 +93,17 @@ public class Attributes
   {
     for (Attributes o : os)
     {
-      for (Attr attr : Attr.values())
-      {
-        Attribute attribute = attributes.get(attr);
-        if (attribute.isEmpty() && o.attributes.get(attr).isEmpty())
-          continue;
-        
-        double max = attribute.getMaximum() + o.attributes.get(attr).getMaximum();
-        
-        attribute.setMaximum(max);
-        
-        double val = attribute.getValue() + o.attributes.get(attr).getValue();
-        
-        if (val <= attribute.getMaximum())
-          attribute.setValue(val);
-      }
+      attributes = Attributes.sum(this, o).attributes;
+    }
+    
+    return this;
+  }
+  
+  public Attributes sub(Attributes... os)
+  {
+    for (Attributes o : os)
+    {
+      attributes = Attributes.dif(this, o).attributes;
     }
     
     return this;
@@ -135,5 +131,44 @@ public class Attributes
   public Attribute getAttribute(Attr name)
   {
     return attributes.get(name);
+  }
+  
+  public static Attributes sum(Attributes a, Attributes b)
+  {
+    Attributes sum = new Attributes();
+    for (Attr attr : Attr.values())
+    {
+      if (a.getAttribute(attr).isEmpty() && b.getAttribute(attr).isEmpty())
+        continue;
+      
+      double max = a.getAttribute(attr).getMaximum() + b.getAttribute(attr).getMaximum();
+      
+      sum.getAttribute(attr).setMaximum(max);
+      
+      double val = a.getAttribute(attr).getValue() + b.getAttribute(attr).getValue();
+      
+      sum.getAttribute(attr).setValue((val <= max) ? val : max);
+    }
+    return sum;
+  }
+  
+  public static Attributes dif(Attributes a, Attributes b)
+  {
+    Attributes sum = new Attributes();
+    for (Attr attr : Attr.values())
+    {
+      if (a.getAttribute(attr).isEmpty() && b.getAttribute(attr).isEmpty())
+        continue;
+      
+      double max = a.getAttribute(attr).getMaximum() - b.getAttribute(attr).getMaximum();
+      
+      sum.getAttribute(attr).setMaximum(max);
+      
+      double val = a.getAttribute(attr).getValue() - b.getAttribute(attr).getValue();
+      
+      sum.getAttribute(attr).setValue((val <= max) ? val : max);
+      
+    }
+    return sum;
   }
 }

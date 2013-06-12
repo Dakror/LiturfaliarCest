@@ -8,6 +8,7 @@ import java.awt.event.MouseWheelEvent;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.event.dispatcher.MapPackEventDispatcher;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.scenes.Scene_LoadGame;
 import de.dakror.liturfaliar.scenes.Scene_MainMenu;
@@ -82,11 +83,13 @@ public class OVScene_Pause extends OVScene
       }
       case 2:
       {
+        MapPackEventDispatcher.removeMapPackEventListener(sg);
         v.setScene(new Scene_LoadGame());
         break;
       }
       case 3:
       {
+        MapPackEventDispatcher.removeMapPackEventListener(sg);
         save();
         v.setScene(new Scene_MainMenu());
         break;

@@ -251,13 +251,24 @@ public class OVScene_Inventory extends OVScene implements Inventory
     if (slot.getCategoryFilter() != null) // is from equip menu
       sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), null);
     
-    
     pickedUp = new ItemSlot(slot);
     pickUpSource = slot;
     
     slot.setItem(null);
     
     updateStats(true);
+    
+    for (ItemSlot is : equipSlots)
+    {
+      if (is.getItem() != null && !is.getItem().areRequirementsSatisfied(Attributes.dif(sg.getPlayer().getAttributes(true), is.getItem().getAttributes())))
+      {
+        sg.getPlayer().getEquipment().setEquipmentItem(is.getItem().getType().getCategory(), null);
+        getFirstEmptySlot().setItem(is.getItem());
+        is.setItem(null);
+        
+        updateStats(true);
+      }
+    }
   }
   
   @Override
@@ -409,5 +420,16 @@ public class OVScene_Inventory extends OVScene implements Inventory
   public void slotExited(MouseEvent e, ItemSlot slot)
   {
     updateStats(true);
+  }
+  
+  @Override
+  public ItemSlot getFirstEmptySlot()
+  {
+    for (ItemSlot is : inventory)
+    {
+      if (is.getItem() == null)
+        return is;
+    }
+    return null;
   }
 }

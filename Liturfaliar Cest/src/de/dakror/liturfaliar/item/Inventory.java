@@ -8,4 +8,6 @@ public interface Inventory extends ItemSlotEventListener
   public ItemSlot getPickedUpItemSlot();
   
   public void setPickedUpItemSlot(ItemSlot item);
+  
+  public ItemSlot getFirstEmptySlot();
 }
