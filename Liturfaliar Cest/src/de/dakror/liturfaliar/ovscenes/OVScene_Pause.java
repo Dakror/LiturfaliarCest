@@ -5,10 +5,13 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.dispatcher.MapPackEventDispatcher;
+import de.dakror.liturfaliar.map.creature.Creature;
+import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.scenes.Scene_LoadGame;
 import de.dakror.liturfaliar.scenes.Scene_MainMenu;
@@ -120,6 +123,17 @@ public class OVScene_Pause extends OVScene
       pos.put("x", (v.w.getWidth() / 2 - CFG.FIELDSIZE / 2) - sg.getMapPack().getActiveMap().getX());
       pos.put("y", (v.w.getHeight() / 2 - CFG.FIELDSIZE * 3 / 4) - sg.getMapPack().getActiveMap().getY());
       mappack.put("pos", pos);
+      
+      JSONArray npc = new JSONArray();
+      for (Creature c : sg.getMapPack().getActiveMap().creatures)
+      {
+        if (c instanceof NPC)
+        {
+          npc.put(((NPC) c).serializeNPC());
+        }
+      }
+      mappack.put("npc", npc);
+      
       save.put("mappack", mappack);
       
       FileManager.setSave(save);

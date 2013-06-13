@@ -91,6 +91,8 @@ public class FileManager
     try
     {
       Compressor.compressFile(new File(saves, save.getJSONObject("char").getString("name") + ".save"), save.toString());
+      if (CFG.DEBUG)
+        Assistant.setFileContent(new File(saves, save.getJSONObject("char").getString("name") + ".save.debug"), save.toString());
     }
     catch (JSONException e)
     {
@@ -103,7 +105,6 @@ public class FileManager
    */
   public static JSONObject[] getSaves()
   {
-    JSONObject[] result = new JSONObject[saves.listFiles().length];
     File[] files = saves.listFiles(new FileFilter()
     {
       @Override
@@ -112,7 +113,11 @@ public class FileManager
         return pathname.isFile() && pathname.getName().endsWith(".save");
       }
     });
+    
+    JSONObject[] result = new JSONObject[files.length];
+    
     List<File> list = Arrays.asList(files);
+    
     Collections.sort(list, new Comparator<File>()
     {
       @Override

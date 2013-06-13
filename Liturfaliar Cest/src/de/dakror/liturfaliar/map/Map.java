@@ -214,7 +214,7 @@ public class Map implements DatabaseEventListener
     {
       JSONObject o = npcs.getJSONObject(i);
       JSONObject random = o.getJSONObject("random");
-      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getInt("dir"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), i, new Attributes(o.getJSONObject("attr")), new Equipment(o.getJSONObject("equip")), o.getJSONArray("talk"));
+      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getInt("dir"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), o.getInt("id"), new Attributes(o.getJSONObject("attr")), new Equipment(o.getJSONObject("equip")), o.getJSONArray("talk"));
       creatures.add(npc);
     }
   }
@@ -344,6 +344,37 @@ public class Map implements DatabaseEventListener
     return null;
   }
   
+  public void setPlayer(Player p)
+  {
+    try
+    {
+      JSONArray npc = p.getData().getJSONObject("mappack").getJSONArray("npc");
+      for (int i = 0; i < creatures.size(); i++)
+      {
+        
+        if (creatures.get(i) instanceof NPC)
+        {
+          for (int j = 0; j < npc.length(); j++)
+          {
+            JSONObject o = npc.getJSONObject(i);
+            if (o.getInt("id") == ((NPC) creatures.get(i)).getID())
+            {
+              JSONObject random = o.getJSONObject("random");
+              creatures.set(i, new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getInt("dir"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), o.getInt("id"), new Attributes(o.getJSONObject("attr")), new Equipment(o.getJSONObject("equip")), o.getJSONArray("talk")));
+            }
+          }
+        }
+      }
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+    }
+    
+    creatures.add(p);
+    
+  }
+  
   public int getX()
   {
     return x;
@@ -397,13 +428,14 @@ public class Map implements DatabaseEventListener
   {
     if (key.startsWith("npc_"))
     {
-      ArrayList<NPC> list = new ArrayList<NPC>();
       for (Creature c : creatures)
       {
-        if (c instanceof NPC)
-          list.add((NPC) c);
+        if (c instanceof NPC && ((NPC) c).getID() == Integer.parseInt(key.replace("npc_", "")))
+        {
+          return (NPC) c;
+        }
       }
-      return list.get(Integer.parseInt(key.replace("npc_", "")));
+      return null;
     }
     else if (key.equals("player"))
     {

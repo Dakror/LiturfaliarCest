@@ -10,7 +10,8 @@ public enum Types
   PANTS(Categories.PANTS, "Hose"),
   CLOTHBOOTS(Categories.BOOTS, "Schuhe"),
   EYES(Categories.EYES, "Augen"),
-  SHOES(Categories.BOOTS, "Schuhe");
+  SHOES(Categories.BOOTS, "Schuhe"),
+  POTION(Categories.CONSUMABLE, "Trank");
   
   private String     name;
   private Categories category;

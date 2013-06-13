@@ -146,6 +146,9 @@ public class ItemSlot extends Component
   public void setItem(Item item)
   {
     this.item = item;
+    
+    if (this.item != null)
+      this.item.setItemSlot(this);
   }
   
   @Override

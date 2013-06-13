@@ -16,6 +16,7 @@ import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.item.Items;
 import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.map.MapPack;
 import de.dakror.liturfaliar.settings.Balance;
@@ -233,6 +234,9 @@ public class Scene_NewGame implements Scene
       
       // -- inventory -- //
       JSONArray inv = new JSONArray();
+      
+      inv.put(new Item(Items.HEALTHPOTION).serializeItem());
+      
       cfg.put("inventory", inv);
       
       // -- attributes -- //
@@ -256,6 +260,7 @@ public class Scene_NewGame implements Scene
       JSONObject mappack = new JSONObject();
       mappack.put("name", mp.getName());
       mappack.put("pos", mp.getData().getJSONObject("init"));
+      mappack.put("npc", new JSONArray());
       save.put("mappack", mappack);
       
       return save;

@@ -117,6 +117,8 @@ public class Attributes
       
       for (Attr attr : Attr.values())
       {
+        if (attributes.get(attr).isEmpty())
+          continue;
         o.put("max" + attr.name(), attributes.get(attr).getMaximum());
         o.put(attr.name(), attributes.get(attr).getValue());
       }

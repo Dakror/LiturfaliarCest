@@ -15,11 +15,8 @@ public class Equipment
   
   public Equipment()
   {
-    for (Categories c : Categories.values())
+    for (Categories c : Categories.EQUIPS)
     {
-      if (c.equals(Categories.WEAPON))
-        continue;
-      
       setEquipmentItem(c, null);
     }
     weapon1 = weapon2 = null;
@@ -34,11 +31,8 @@ public class Equipment
   {
     try
     {
-      for (Categories c : Categories.values())
+      for (Categories c : Categories.EQUIPS)
       {
-        if (c.equals(Categories.WEAPON))
-          continue;
-        
         JSONObject d = data.getJSONObject(c.name().toLowerCase());
         
         setEquipmentItem(c, (d.length() != 0) ? new Item(d) : null);

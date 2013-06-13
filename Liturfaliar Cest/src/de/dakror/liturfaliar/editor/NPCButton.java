@@ -68,6 +68,7 @@ public class NPCButton extends JButton
       data.put("y", y);
       data.put("w", w);
       data.put("h", h);
+      data.put("id", ID);
       data.put("dir", dir);
       data.put("name", name);
       data.put("char", sprite);

@@ -10,6 +10,7 @@ import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
 import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Inventory;
+import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
@@ -431,5 +432,11 @@ public class OVScene_Inventory extends OVScene implements Inventory
         return is;
     }
     return null;
+  }
+  
+  @Override
+  public Map getMap()
+  {
+    return sg.getMapPack().getActiveMap();
   }
 }

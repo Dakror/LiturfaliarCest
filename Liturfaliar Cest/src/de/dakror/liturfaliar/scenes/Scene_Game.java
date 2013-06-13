@@ -164,7 +164,7 @@ public class Scene_Game implements Scene, MapPackEventListener
   {
     DatabaseEventDispatcher.removeDatabaseEventListener(oldmap);
     
-    newmap.creatures.add(player);
+    newmap.setPlayer(player);
     if (!(newmap.getMusic() + ".wav").equals(v.MusicID) && newmap.getMusic().length() > 0)
       v.playMusic(newmap.getMusic(), true);
   }

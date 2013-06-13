@@ -83,6 +83,7 @@ import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.data.Door;
 import de.dakror.liturfaliar.map.data.FieldData;
+import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
@@ -92,6 +93,7 @@ import de.dakror.universion.UniVersion;
 
 public class MapEditor
 {
+  
   // -- filterReplace dialog -- //
   JComboBox<String> FRoldTileset, FRnewTileset;
   JTextField        FRoldLayer, FRnewLayer, FRoldTX, FRoldTY, FRnewTX, FRnewTY;
@@ -1326,8 +1328,9 @@ public class MapEditor
     
     JPanel panel = new JPanel(new SpringLayout());
     
-    EQspinners = new JSpinner[Categories.values().length - 1];
+    EQspinners = new JSpinner[Categories.EQUIPS.length];
     EQmale = new JCheckBox();
+    EQmale.setSelected(npc.equipment.isMale());
     
     EQmale.addChangeListener(new ChangeListener()
     {
@@ -1338,24 +1341,19 @@ public class MapEditor
       }
     });
     
-    for (int i = 0; i < Categories.values().length; i++)
+    for (int i = 0; i < Categories.EQUIPS.length; i++)
     {
-      if (Categories.values()[i].equals(Categories.WEAPON))
-      {
-        continue;
-      }
-      
-      JLabel l = new JLabel(Categories.values()[i].name());
+      JLabel l = new JLabel(Categories.EQUIPS[i].name());
       panel.add(l);
       
-      String[] chars = FileManager.getCharParts(Categories.values()[i].name().toLowerCase());
+      String[] chars = FileManager.getCharParts(Categories.EQUIPS[i].name().toLowerCase());
       
-      EQspinners[i - 1] = new JSpinner(new SpinnerListModel(chars));
-      EQspinners[i - 1].setPreferredSize(new Dimension(150, 30));
+      EQspinners[i] = new JSpinner(new SpinnerListModel(chars));
+      EQspinners[i].setPreferredSize(new Dimension(150, 30));
       
-      final JSpinner me = EQspinners[i - 1];
+      final JSpinner me = EQspinners[i];
       
-      EQspinners[i - 1].addMouseWheelListener(new MouseWheelListener()
+      EQspinners[i].addMouseWheelListener(new MouseWheelListener()
       {
         
         @Override
@@ -1371,15 +1369,15 @@ public class MapEditor
         }
       });
       if (Arrays.asList(chars).indexOf("none.png") > -1)
-        EQspinners[i - 1].setValue("none.png");
+        EQspinners[i].setValue("none.png");
       
-      if (npc.equipment.hasEquipmentItem(Categories.values()[i]))
+      if (npc.equipment.hasEquipmentItem(Categories.EQUIPS[i]))
       {
-        String string = npc.equipment.getEquipmentItem(Categories.values()[i]).getCharPath();
+        String string = npc.equipment.getEquipmentItem(Categories.EQUIPS[i]).getCharPath();
         
-        EQspinners[i - 1].setValue(((Arrays.asList(chars).indexOf(string + ".png") > -1) ? string : string + "_f") + ".png");
+        EQspinners[i].setValue(((Arrays.asList(chars).indexOf(string + ".png") > -1) ? string : string + "_f") + ".png");
       }
-      EQspinners[i - 1].addChangeListener(new ChangeListener()
+      EQspinners[i].addChangeListener(new ChangeListener()
       {
         @Override
         public void stateChanged(ChangeEvent e)
@@ -1387,8 +1385,8 @@ public class MapEditor
           updateEquipDialogPreview();
         }
       });
-      l.setLabelFor(EQspinners[i - 1]);
-      panel.add(EQspinners[i - 1]);
+      l.setLabelFor(EQspinners[i]);
+      panel.add(EQspinners[i]);
     }
     
     JLabel l = new JLabel("MALE");
@@ -1414,23 +1412,18 @@ public class MapEditor
       {
         EQ = new Equipment();
         EQ.setMale(EQmale.isSelected());
-        for (int i = 0; i < Categories.values().length; i++)
+        for (int i = 0; i < Categories.EQUIPS.length; i++)
         {
-          if (Categories.values()[i].equals(Categories.WEAPON))
-          {
-            continue;
-          }
-          
           try
           {
-            if (EQspinners[i - 1].getValue().toString().indexOf("none") > -1)
-              EQ.setEquipmentItem(Categories.values()[i], null);
+            if (EQspinners[i].getValue().toString().indexOf("none") > -1)
+              EQ.setEquipmentItem(Categories.EQUIPS[i], null);
             
-            else EQ.setEquipmentItem(Categories.values()[i], new Item(Types.valueOf(Categories.values()[i].name().replace("BOOTS", "SHOES")), EQspinners[i - 1].getValue().toString().replaceAll("(_.{1}\\.png)|(\\.png)", "")));
+            else EQ.setEquipmentItem(Categories.EQUIPS[i], new Item(Types.valueOf(Categories.EQUIPS[i].name().replace("BOOTS", "SHOES")), EQspinners[i].getValue().toString().replaceAll("(_.{1}\\.png)|(\\.png)", "")));
           }
           catch (Exception e1)
           {
-            EQ.setEquipmentItem(Categories.values()[i], null);
+            EQ.setEquipmentItem(Categories.EQUIPS[i], null);
           }
         }
         BufferedImage bi = new BufferedImage(320, 480, BufferedImage.TYPE_INT_ARGB);
@@ -1630,6 +1623,8 @@ public class MapEditor
         BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + data.getString("char") + ".png");
         npc = new NPCButton(data.getInt("x"), data.getInt("y"), data.getInt("w"), data.getInt("h"), data.getInt("dir"), data.getString("name"), data.getString("char"), data.getDouble("speed"), data.getJSONObject("random").getBoolean("move"), data.getJSONObject("random").getBoolean("look"), data.getJSONObject("random").getInt("moveT"), data.getJSONObject("random").getInt("lookT"), image.getSubimage(0, data.getInt("dir") * image.getHeight() / 4, image.getWidth() / 4, image.getHeight() / 4), NPClastID, this);
         npc.talk = data.getJSONArray("talk");
+        npc.equipment = new Equipment(data.getJSONObject("equip"));
+        npc.attributes = new Attributes(data.getJSONObject("attr"));
       }
       
       NPClastID++;

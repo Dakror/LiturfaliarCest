@@ -36,6 +36,8 @@ public class Item extends Component
   
   private Attributes      attributes, requirements;
   
+  ItemSlot                itemSlot;
+  
   public Item(Types t, String path)
   {
     super(0, 0, ItemSlot.SIZE - SPACING * 2, ItemSlot.SIZE - SPACING * 2);
@@ -221,6 +223,16 @@ public class Item extends Component
   public void setAttributes(Attributes attributes)
   {
     this.attributes = attributes;
+  }
+  
+  public ItemSlot getItemSlot()
+  {
+    return itemSlot;
+  }
+  
+  public void setItemSlot(ItemSlot itemSlot)
+  {
+    this.itemSlot = itemSlot;
   }
   
   public Attributes getRequirements()

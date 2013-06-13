@@ -5,6 +5,8 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Equipment;
@@ -212,5 +214,47 @@ public class NPC extends Creature
   public void setTalking(boolean talking)
   {
     this.talking = talking;
+  }
+  
+  public JSONObject serializeNPC()
+  {
+    JSONObject data = new JSONObject();
+    try
+    {
+      data.put("x", getPos()[0]);
+      data.put("y", getPos()[1]);
+      data.put("w", w);
+      data.put("h", h);
+      data.put("id", ID);
+      data.put("dir", dir);
+      data.put("name", name);
+      data.put("char", (character != null) ? character : "");
+      data.put("speed", getSpeed());
+      data.put("talk", talkdata);
+      data.put("attr", attr.serializeAttributes());
+      data.put("equip", equipment.serializeEquipment());
+      
+      JSONObject random = new JSONObject();
+      random.put("move", randomMove);
+      random.put("look", randomLook);
+      random.put("moveT", randomMoveT);
+      random.put("lookT", randomLookT);
+      data.put("random", random);
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+    }
+    return data;
+  }
+  
+  public int getID()
+  {
+    return ID;
+  }
+  
+  public void setID(int iD)
+  {
+    ID = iD;
   }
 }
