@@ -10,6 +10,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.item.action.EmptyAction;
+import de.dakror.liturfaliar.item.action.ItemAction;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
@@ -36,6 +38,8 @@ public class Item extends Component
   
   private Attributes      attributes, requirements;
   
+  ItemAction              action;
+  
   ItemSlot                itemSlot;
   
   public Item(Types t, String path)
@@ -46,7 +50,7 @@ public class Item extends Component
     iconx = 0;
     icony = 0;
     name = "";
-    
+   
     init();
   }
   
@@ -61,6 +65,7 @@ public class Item extends Component
     charPath = i.getCharPath();
     attributes = i.getAttributes();
     requirements = i.getRequirement();
+    action = i.getItemAction();
     
     init();
   }
@@ -77,6 +82,7 @@ public class Item extends Component
     mouse = other.mouse;
     attributes = other.getAttributes();
     requirements = other.getRequirements();
+    action = other.getAction();
     
     init();
   }
@@ -94,6 +100,7 @@ public class Item extends Component
       charPath = o.getString("char");
       attributes = new Attributes(o.getJSONObject("attr"));
       requirements = new Attributes(o.getJSONObject("req"));
+      action = ItemAction.load(o.getJSONObject("action"));
     }
     catch (JSONException e)
     {
@@ -112,6 +119,9 @@ public class Item extends Component
     
     if (requirements == null)
       requirements = new Attributes();
+    
+    if (action == null)
+      action = new EmptyAction();
     
     updateTooltip();
     
@@ -197,6 +207,7 @@ public class Item extends Component
       o.put("char", charPath);
       o.put("attr", attributes.serializeAttributes());
       o.put("req", requirements.serializeAttributes());
+      o.put("action", action.serializeItemAction());
     }
     catch (JSONException e)
     {
@@ -223,6 +234,16 @@ public class Item extends Component
   public void setAttributes(Attributes attributes)
   {
     this.attributes = attributes;
+  }
+  
+  public ItemAction getAction()
+  {
+    return action;
+  }
+  
+  public void setAction(ItemAction action)
+  {
+    this.action = action;
   }
   
   public ItemSlot getItemSlot()
@@ -254,5 +275,10 @@ public class Item extends Component
           return false;
     }
     return true;
+  }
+  
+  public void triggerAction()
+  {
+    action.actionTriggered(this);
   }
 }

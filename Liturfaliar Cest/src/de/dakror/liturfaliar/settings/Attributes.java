@@ -11,24 +11,31 @@ public class Attributes
 {
   public static enum Attr
   {
-    health("Lebenspunkte"),
-    stamina("Ausdauer"),
-    mana("Mana"),
-    protection("Rüstung"),
-    speed("Lauftempo"),
-    attackspeed("Angriffstempo"),
-    weight("Gewicht"),
-    damage("Schaden"),
+    health("Lebenspunkte", 0),
+    stamina("Ausdauer", 0),
+    mana("Mana", 0),
+    protection("Rüstung", Double.MIN_VALUE),
+    speed("Lauftempo", Double.MIN_VALUE),
+    attackspeed("Angriffstempo", Double.MIN_VALUE),
+    weight("Gewicht", 0),
+    damage("Schaden", 0),
     
-    strength("Stärke"),
-    accuracy("Genauigkeit"),
-    experience("Erfahrung");
+    strength("Stärke", 0),
+    accuracy("Genauigkeit", 0),
+    experience("Erfahrung", 0);
     
     private String text;
+    private double minimum;
     
-    private Attr(String text)
+    private Attr(String text, double m)
     {
       this.text = text;
+      this.minimum = m;
+    }
+    
+    public double getMinimum()
+    {
+      return minimum;
     }
     
     public String getText()
@@ -80,6 +87,7 @@ public class Attributes
         
         if (key.indexOf("max") > -1)
           attributes.get(Attr.valueOf(key.replace("max", ""))).setMaximum(o.getDouble(key));
+        
         else attributes.get(Attr.valueOf(key)).setValue(o.getDouble(key));
       }
     }
@@ -119,6 +127,7 @@ public class Attributes
       {
         if (attributes.get(attr).isEmpty())
           continue;
+        
         o.put("max" + attr.name(), attributes.get(attr).getMaximum());
         o.put(attr.name(), attributes.get(attr).getValue());
       }

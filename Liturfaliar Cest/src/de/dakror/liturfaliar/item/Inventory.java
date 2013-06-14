@@ -13,4 +13,8 @@ public interface Inventory extends ItemSlotEventListener
   public ItemSlot getFirstEmptySlot();
   
   public Map getMap();
+  
+  public void showContextMenu(ItemSlot slot, int x ,int y);
+  
+  public void hideContextMenu();
 }

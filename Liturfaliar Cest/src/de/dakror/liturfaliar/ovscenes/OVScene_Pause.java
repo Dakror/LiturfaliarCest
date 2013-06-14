@@ -30,7 +30,7 @@ public class OVScene_Pause extends OVScene
   TextSelect     ts;
   Container      c1;
   Notification   notification;
-  final String[] points = { "Weiter", "Speichern", "Laden", "Beenden" };
+  final String[] points = { "Weiter", "Speichern", "Sichern", "Laden", "Beenden" };
   
   public OVScene_Pause(Scene_Game sg)
   {
@@ -49,7 +49,7 @@ public class OVScene_Pause extends OVScene
     ts = new TextSelect(v.w.getWidth() / 2 - 150, 350, 300, 28 * points.length + 18, (Object[]) points);
     ts.soundCLICK = true;
     ts.soundMOVER = true;
-    final String[] tooltips = { null, "<#999999;30;1>Speichern[br]<#ffffff;17;1>Manuelles Speichern deiner Fortschritte.", "<#999999;30;1>Laden[br]<#ffffff;17;1>Lade einen älteren Spielstand.[br]<#6666ff;17;2>Deine Fortschritte werden [br]<#ff3333;17;2>NICHT<#6666ff;17;2> gespeichert![br]<#ff3333;17;2>Das aktuelle Spiel wird verlassen!", "<#999999;30;1>Beenden[br]<#ffffff;17;1>Beende das aktuelle Spiel[br]und kehre zum Hauptmenü zurück.[br]<#6666ff;17;2>Deine Fortschritte werden gespeichert!" };
+    final String[] tooltips = { null, "<#999999;30;1>Speichern[br]<#ffffff;17;1>Manuelles Speichern deiner Fortschritte.",  "<#999999;30;1>Sichern[br]<#ffffff;17;1>Es wird eine Kopie deines aktuellen Spielstands erstellt.","<#999999;30;1>Laden[br]<#ffffff;17;1>Lade einen älteren Spielstand.[br]<#6666ff;17;2>Deine Fortschritte werden [br]<#ff3333;17;2>NICHT<#6666ff;17;2> gespeichert![br]<#ff3333;17;2>Das aktuelle Spiel wird verlassen!", "<#999999;30;1>Beenden[br]<#ffffff;17;1>Beende das aktuelle Spiel[br]und kehre zum Hauptmenü zurück.[br]<#6666ff;17;2>Deine Fortschritte werden gespeichert!" };
     for (int i = 0; i < ts.elements.length; i++)
     {
       if (tooltips[i] != null)
@@ -86,11 +86,17 @@ public class OVScene_Pause extends OVScene
       }
       case 2:
       {
+        copy();
+        notification = new Notification("Spielstand gesichert.", Notification.DEFAULT);
+        break;
+      }
+      case 3:
+      {
         MapPackEventDispatcher.removeMapPackEventListener(sg);
         v.setScene(new Scene_LoadGame());
         break;
       }
-      case 3:
+      case 4:
       {
         MapPackEventDispatcher.removeMapPackEventListener(sg);
         save();
@@ -137,6 +143,38 @@ public class OVScene_Pause extends OVScene
       save.put("mappack", mappack);
       
       FileManager.setSave(save);
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+  }
+  
+  public void copy()
+  {
+    try
+    {
+      JSONObject save = sg.getPlayer().getData();
+      JSONObject mappack = save.getJSONObject("mappack");
+      JSONObject pos = new JSONObject();
+      pos.put("map", sg.getMapPack().getActiveMap().getName());
+      pos.put("x", (v.w.getWidth() / 2 - CFG.FIELDSIZE / 2) - sg.getMapPack().getActiveMap().getX());
+      pos.put("y", (v.w.getHeight() / 2 - CFG.FIELDSIZE * 3 / 4) - sg.getMapPack().getActiveMap().getY());
+      mappack.put("pos", pos);
+      
+      JSONArray npc = new JSONArray();
+      for (Creature c : sg.getMapPack().getActiveMap().creatures)
+      {
+        if (c instanceof NPC)
+        {
+          npc.put(((NPC) c).serializeNPC());
+        }
+      }
+      mappack.put("npc", npc);
+      
+      save.put("mappack", mappack);
+      
+      FileManager.copySave(save);
     }
     catch (Exception e)
     {

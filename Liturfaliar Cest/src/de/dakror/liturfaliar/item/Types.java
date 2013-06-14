@@ -11,7 +11,7 @@ public enum Types
   CLOTHBOOTS(Categories.BOOTS, "Schuhe"),
   EYES(Categories.EYES, "Augen"),
   SHOES(Categories.BOOTS, "Schuhe"),
-  POTION(Categories.CONSUMABLE, "Trank");
+  HEALPOTION(Categories.CONSUMABLE, "Heiltrank");
   
   private String     name;
   private Categories category;

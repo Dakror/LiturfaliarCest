@@ -187,7 +187,7 @@ public class TextSelect extends Component
     if (this.v != null)
       this.v.mouseMoved(e, this);
   }
-
+  
   @Override
   public void mousePressed(MouseEvent e)
   {

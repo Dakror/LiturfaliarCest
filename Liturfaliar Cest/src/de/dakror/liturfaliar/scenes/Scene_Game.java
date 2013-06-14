@@ -75,18 +75,13 @@ public class Scene_Game implements Scene, MapPackEventListener
   public void update(long timePassed)
   {
     if (isPaused())
-    {
       Assistant.setCursor(Viewport.loadImage("system/cursor.png"), v.w);
-      return;
-    }
+    
     if (v.ovscenes.size() > 0 || (v.ovscenes.size() == 1 && v.ovscenes.get(0) instanceof OVScene_Info))
-    {
       Assistant.setCursor(Viewport.loadImage("system/cursor.png"), v.w);
-    }
-    else
-    {
-      Assistant.setCursor(null, v.w);
-    }
+    
+    else Assistant.setCursor(null, v.w);
+    
     mappack.getActiveMap().update(timePassed, this);
     // -- HUD -- //
     targetLabel.update(mappack.getActiveMap());

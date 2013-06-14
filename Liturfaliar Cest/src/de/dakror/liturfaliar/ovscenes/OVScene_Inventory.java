@@ -2,44 +2,54 @@ package de.dakror.liturfaliar.ovscenes;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
 import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Inventory;
+import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.HTMLLabel;
 import de.dakror.liturfaliar.ui.ItemSlot;
+import de.dakror.liturfaliar.ui.TextSelect;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
 import de.dakror.liturfaliar.util.Handler;
 
 public class OVScene_Inventory extends OVScene implements Inventory
 {
-  public static final int WIDTH  = 12;
-  public static final int HEIGHT = 11;
+  public static final String USEITEM   = "Benutzen";
+  public static final String TRASHITEM = "Verschrotten";
+  public static final String THROWITEM = "Wegwerfen";
   
-  Scene_Game              sg;
-  Container               c1;
+  public static final int    WIDTH     = 12;
+  public static final int    HEIGHT    = 11;
   
-  ItemSlot[]              equipSlots;
-  ItemSlot[]              inventory;
+  Scene_Game                 sg;
+  Container                  c1;
   
-  ItemSlot                pickedUp;
-  ItemSlot                pickUpSource;
+  ItemSlot[]                 equipSlots;
+  ItemSlot[]                 inventory;
   
-  HTMLLabel               labels1, labels2;
-  HTMLLabel               stats1, stats2;
-  HTMLLabel               invWeight;
+  ItemSlot                   pickedUp;
+  ItemSlot                   pickUpSource;
+  
+  HTMLLabel                  labels1, labels2;
+  HTMLLabel                  stats1, stats2;
+  HTMLLabel                  invWeight;
+  
+  TextSelect                 contextMenu;
+  ItemSlot                   contextItemSlot;
   
   public OVScene_Inventory(Scene_Game sg)
   {
@@ -143,7 +153,37 @@ public class OVScene_Inventory extends OVScene implements Inventory
   
   @Override
   public void update(long timePassed)
-  {}
+  {
+    if (contextMenu != null)
+    {
+      contextMenu.update();
+      
+      if (contextMenu.getSelected(false) != null)
+      {
+        switch (contextMenu.getSelected(false))
+        {
+          case USEITEM:
+          {
+            contextItemSlot.getItem().triggerAction();
+            break;
+          }
+          case TRASHITEM:
+          {
+            break;
+          }
+          case THROWITEM:
+          {
+            break;
+          }
+          default:
+          {
+            CFG.p("didnt work");
+          }
+        }
+        contextMenu = null;
+      }
+    }
+  }
   
   @Override
   public void draw(Graphics2D g)
@@ -166,10 +206,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
     // -- character equip -- //
     Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350, 410, 550, g, v.w);
     
-    int h = 390;
-    int w = (int) (h * (3 / 4.0)); // = 260
-    
-    g.drawImage(Viewport.loadImage("system/EquipGuy.png").getScaledInstance(w, h, Image.SCALE_SMOOTH), v.w.getWidth() / 2 - 600 + 410 / 2 - w / 2, v.w.getHeight() / 2 - 350 + 550 / 2 - h / 2 - 20, v.w);
+    g.drawImage(Viewport.loadScaledImage("system/EquipGuy.png", 292, 390), v.w.getWidth() / 2 - 541, v.w.getHeight() / 2 - 290, v.w);
     
     for (ItemSlot is : equipSlots)
     {
@@ -195,6 +232,9 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     if (pickedUp != null)
       pickedUp.getItem().draw(g, v);
+    
+    if (contextMenu != null)
+      contextMenu.draw(g, v);
   }
   
   @Override
@@ -218,6 +258,12 @@ public class OVScene_Inventory extends OVScene implements Inventory
   @Override
   public void mouseMoved(MouseEvent e)
   {
+    if (contextMenu != null)
+    {
+      contextMenu.mouseMoved(e);
+      return;
+    }
+    
     for (ItemSlot slot : inventory)
     {
       slot.mouseMoved(e);
@@ -235,6 +281,13 @@ public class OVScene_Inventory extends OVScene implements Inventory
   @Override
   public void mousePressed(MouseEvent e)
   {
+    
+    if (contextMenu != null && contextMenu.getArea().contains(e.getLocationOnScreen()))
+    {
+      contextMenu.mousePressed(e);
+      return;
+    }
+    
     for (ItemSlot slot : inventory)
     {
       slot.mousePressed(e);
@@ -243,6 +296,49 @@ public class OVScene_Inventory extends OVScene implements Inventory
     for (ItemSlot slot : equipSlots)
     {
       slot.mousePressed(e);
+    }
+    
+    if (contextMenu != null && e.getButton() == 1)
+      contextMenu = null;
+  }
+  
+  @Override
+  public void mouseReleased(MouseEvent e)
+  {
+    if (contextMenu != null)
+    {
+      contextMenu.mouseReleased(e);
+      return;
+    }
+    
+    for (ItemSlot slot : inventory)
+    {
+      slot.mouseReleased(e);
+    }
+    
+    for (ItemSlot slot : equipSlots)
+    {
+      slot.mouseReleased(e);
+    }
+  }
+  
+  @Override
+  public void mouseDragged(MouseEvent e)
+  {
+    if (contextMenu != null)
+    {
+      contextMenu.mouseDragged(e);
+      return;
+    }
+    
+    for (ItemSlot slot : inventory)
+    {
+      slot.mouseDragged(e);
+    }
+    
+    for (ItemSlot slot : equipSlots)
+    {
+      slot.mouseDragged(e);
     }
   }
   
@@ -438,5 +534,33 @@ public class OVScene_Inventory extends OVScene implements Inventory
   public Map getMap()
   {
     return sg.getMapPack().getActiveMap();
+  }
+  
+  @Override
+  public void showContextMenu(ItemSlot slot, int x, int y)
+  {
+    if (slot.getItem() == null)
+      return;
+    
+    contextItemSlot = slot;
+    
+    Object[] options = {};
+    
+    Types type = slot.getItem().getType();
+    
+    if (type.getCategory().equals(Categories.CONSUMABLE))
+      options = new Object[] { USEITEM, THROWITEM };
+    
+    else if (Arrays.asList(Categories.EQUIPS).indexOf(type.getCategory()) > -1 || type.getCategory().equals(Categories.WEAPON))
+      options = new Object[] { TRASHITEM, THROWITEM };
+    
+    contextMenu = new TextSelect(x, y, 300, 28 * options.length + 18, options);
+  }
+  
+  @Override
+  public void hideContextMenu()
+  {
+    contextMenu = null;
+    contextItemSlot = null;
   }
 }

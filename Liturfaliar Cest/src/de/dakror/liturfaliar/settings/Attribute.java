@@ -31,15 +31,8 @@ public class Attribute
   
   public void increaseValue(double v)
   {
-    double sum = value + v;
-    
-    if (sum > 0)
-    {
-      if (sum < maximum)
-        value += v;
-      else value = maximum;
-    }
-    else value = 0;
+    if (value + v < maximum)
+      value += v;
   }
   
   public boolean isEmpty()

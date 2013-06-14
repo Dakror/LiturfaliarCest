@@ -15,7 +15,8 @@ public enum Items
   BOYPANTS(7, 391, "Hose", "1_brown", Types.PANTS, new Attributes(Attr.protection, 1, Attr.weight, 1.1), new Attributes(), new EmptyAction()),
   BOYBOOTS(0, 3, "Schuhe", "1_black", Types.SHOES, new Attributes(Attr.protection, 1, Attr.weight, 0.5), new Attributes(), new EmptyAction()),
   GIRLBOOTS(0, 3, "Halbschuhe", "8_black", Types.SHOES, new Attributes(Attr.protection, 1, Attr.weight, 0.5), new Attributes(), new EmptyAction()),
-  HEALTHPOTION(6, 132, "Heiltrank", "", Types.POTION, new Attributes(), new Attributes(), new Potion("player", Attr.health, 10));
+  HEALTHPOTION(6, 132, "Heiltrank", "", Types.HEALPOTION, new Attributes(), new Attributes(), new Potion("player", new Attributes(Attr.health, 10))),
+  TOXICPOTION(3, 132, "Gifttrank", "", Types.HEALPOTION, new Attributes(), new Attributes(), new Potion("player", new Attributes(Attr.health, -10)));
   
   private int ix, iy;
   private Attributes attributes, requirements;
@@ -32,7 +33,7 @@ public enum Items
     this.type = type;
     this.attributes = attr;
     this.requirements = requirements;
-    this.setItemAction(action);
+    this.itemAction = action;
   }
   
   public int getIconX()

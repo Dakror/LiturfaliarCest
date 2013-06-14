@@ -148,7 +148,9 @@ public class ItemSlot extends Component
     this.item = item;
     
     if (this.item != null)
+    {
       this.item.setItemSlot(this);
+    }
   }
   
   @Override
@@ -225,6 +227,17 @@ public class ItemSlot extends Component
   }
   
   @Override
+  public void mouseReleased(MouseEvent e)
+  {
+    if (e.getButton() == 3 && item != null && new Rectangle(ax, ay, getWidth(), getHeight()).contains(e.getLocationOnScreen()))
+    {
+      item.tooltip.visible = false;
+      inventory.showContextMenu(this, e.getXOnScreen(), e.getYOnScreen());
+    }
+    
+  }
+  
+  @Override
   public void keyPressed(KeyEvent e)
   {
     if (item != null && !mouseKey && e.getKeyCode() == hotKey)
@@ -279,11 +292,11 @@ public class ItemSlot extends Component
     {
       try
       {
-        slots[i].item = (data.getJSONObject(i).length() > 0) ? new Item(data.getJSONObject(i)) : null;
+        slots[i].setItem((data.getJSONObject(i).length() > 0) ? new Item(data.getJSONObject(i)) : null);
       }
       catch (JSONException e)
       {
-        slots[i].item = null;
+        slots[i].setItem(null);
       }
     }
   }

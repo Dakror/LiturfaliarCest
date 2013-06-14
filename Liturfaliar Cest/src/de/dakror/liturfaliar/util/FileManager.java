@@ -86,6 +86,20 @@ public class FileManager
     }
   }
   
+  public static void copySave(JSONObject save)
+  {
+    try
+    {
+      Compressor.compressFile(new File(saves, save.getJSONObject("char").getString("name") + " - Sicherung.save"), save.toString());
+      if (CFG.DEBUG)
+        Assistant.setFileContent(new File(saves, save.getJSONObject("char").getString("name") + " - Sicherung.save.debug"), save.toString());
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+    }
+  }
+  
   public static void setSave(JSONObject save)
   {
     try
