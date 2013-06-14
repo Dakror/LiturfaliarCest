@@ -49,7 +49,7 @@ public class OVScene_Pause extends OVScene
     ts = new TextSelect(v.w.getWidth() / 2 - 150, 350, 300, 28 * points.length + 18, (Object[]) points);
     ts.soundCLICK = true;
     ts.soundMOVER = true;
-    final String[] tooltips = { null, "<#999999;30;1>Speichern[br]<#ffffff;17;1>Manuelles Speichern deiner Fortschritte.",  "<#999999;30;1>Sichern[br]<#ffffff;17;1>Es wird eine Kopie deines aktuellen Spielstands erstellt.","<#999999;30;1>Laden[br]<#ffffff;17;1>Lade einen älteren Spielstand.[br]<#6666ff;17;2>Deine Fortschritte werden [br]<#ff3333;17;2>NICHT<#6666ff;17;2> gespeichert![br]<#ff3333;17;2>Das aktuelle Spiel wird verlassen!", "<#999999;30;1>Beenden[br]<#ffffff;17;1>Beende das aktuelle Spiel[br]und kehre zum Hauptmenü zurück.[br]<#6666ff;17;2>Deine Fortschritte werden gespeichert!" };
+    final String[] tooltips = { null, "<#999999;30;1>Speichern[br]<#ffffff;17;1>Manuelles Speichern deiner Fortschritte.", "<#999999;30;1>Sichern[br]<#ffffff;17;1>Es wird eine Kopie deines aktuellen Spielstands erstellt.", "<#999999;30;1>Laden[br]<#ffffff;17;1>Lade einen älteren Spielstand.[br]<#6666ff;17;2>Deine Fortschritte werden [br]<#ff3333;17;2>NICHT<#6666ff;17;2> gespeichert![br]<#ff3333;17;2>Das aktuelle Spiel wird verlassen!", "<#999999;30;1>Beenden[br]<#ffffff;17;1>Beende das aktuelle Spiel[br]und kehre zum Hauptmenü zurück.[br]<#6666ff;17;2>Deine Fortschritte werden gespeichert!" };
     for (int i = 0; i < ts.elements.length; i++)
     {
       if (tooltips[i] != null)

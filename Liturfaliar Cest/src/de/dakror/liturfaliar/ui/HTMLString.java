@@ -14,7 +14,8 @@ public class HTMLString
   
   public Color   c;
   public String  string;
- public HTMLString(String st, float sz, Color color, int styl)
+  
+  public HTMLString(String st, float sz, Color color, int styl)
   {
     string = st;
     size = sz;

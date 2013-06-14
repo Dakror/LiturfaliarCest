@@ -16,7 +16,7 @@ public class Tooltip extends Component
 {
   Component      parent;
   HTMLString[]   text;
-  public String         rawText;
+  public String  rawText;
   public boolean follow;
   public boolean visible;
   public String  tileset = "Tooltip";

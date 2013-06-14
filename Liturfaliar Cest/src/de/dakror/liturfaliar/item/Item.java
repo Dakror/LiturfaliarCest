@@ -50,7 +50,7 @@ public class Item extends Component
     iconx = 0;
     icony = 0;
     name = "";
-   
+    
     init();
   }
   

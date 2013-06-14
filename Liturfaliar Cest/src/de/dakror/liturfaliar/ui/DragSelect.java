@@ -66,7 +66,7 @@ public class DragSelect extends Component
   {
     return (int) i - (i % cell);
   }
-
+  
   @Override
   public void update()
   {}
