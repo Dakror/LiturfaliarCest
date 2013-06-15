@@ -26,13 +26,15 @@ import de.dakror.liturfaliar.util.Assistant;
 
 public class ItemSlot extends Component
 {
-  public static final int  SIZE    = 55;
+  public static final Font KEYFONT   = new Font("Arial", Font.BOLD, 18);
+  public static final Font STACKFONT = new Font("Arial", Font.BOLD, 22);
+  public static final int  SIZE      = 55;
   
   private Item             item;
   private int              hotKey;
   private String           keyString;
   private boolean          mouseKey;
-  public String            tileset = "Wood.png";
+  public String            tileset   = "Wood.png";
   
   private Categories       categoryFilter;
   private ArrayList<Types> typesFilter;
@@ -43,11 +45,14 @@ public class ItemSlot extends Component
   
   private Inventory        inventory;
   
+  private int              stackSize;
+  
   public ItemSlot(int x, int y)
   {
     super(x, y, SIZE, SIZE);
     
     hover = false;
+    stackSize = 0;
     
     typesFilter = new ArrayList<Types>();
   }
@@ -66,6 +71,7 @@ public class ItemSlot extends Component
     ay = other.ay;
     hover = other.hover;
     inventory = other.inventory;
+    stackSize = other.stackSize;
   }
   
   public void setCategoryFilter(Categories c)
@@ -98,6 +104,39 @@ public class ItemSlot extends Component
     draw(0, 0, g, v);
   }
   
+  public void drawLightWeight(Graphics2D g, Viewport v)
+  {
+    if (item != null)
+      item.draw(g, v);
+    
+    int ax = item.mouse.x - item.width / 2;
+    int ay = item.mouse.y - item.height / 2;
+    
+    if (keyString != null)
+    {
+      int width = g.getFontMetrics(KEYFONT).getAscent();
+      int height = width;
+      if (g.getFontMetrics(KEYFONT).stringWidth(keyString) > width)
+      {
+        width = g.getFontMetrics().stringWidth(keyString);
+      }
+      
+      Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + SIZE - height, width, height, 5, 5), Colors.DGRAY, 0.8f, g);
+      Assistant.drawHorizontallyCenteredString(keyString, ax, width, ay + SIZE - 2, g, KEYFONT.getSize() - 2, Color.white);
+    }
+    else if (stackSize > 1 && keyString == null)
+    {
+      int width = g.getFontMetrics(STACKFONT).getAscent();
+      int height = width;
+      if (g.getFontMetrics(STACKFONT).stringWidth(stackSize + "") > width)
+      {
+        width = g.getFontMetrics().stringWidth(stackSize + "");
+      }
+      Assistant.Shadow(new RoundRectangle2D.Double(ax + SIZE - width, ay + SIZE - height, width, height, 5, 5), Colors.DGRAY, 0.5f, g);
+      Assistant.drawHorizontallyCenteredString(stackSize + "", ax + SIZE - width, width, ay + SIZE - 2, g, STACKFONT.getSize() - 2, Colors.GRAY);
+    }
+  }
+  
   public void draw(int x1, int y1, Graphics2D g, Viewport v)
   {
     ax = this.x + x1;
@@ -115,17 +154,26 @@ public class ItemSlot extends Component
     
     if (keyString != null)
     {
-      Font font = new Font("Arial", Font.BOLD, 18);
-      
-      int width = g.getFontMetrics(font).getAscent();
+      int width = g.getFontMetrics(KEYFONT).getAscent();
       int height = width;
-      if (g.getFontMetrics(font).stringWidth(keyString) > width)
+      if (g.getFontMetrics(KEYFONT).stringWidth(keyString) > width)
       {
         width = g.getFontMetrics().stringWidth(keyString);
       }
       
       Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + SIZE - height, width, height, 5, 5), Colors.DGRAY, 0.8f, g);
-      Assistant.drawHorizontallyCenteredString(keyString, ax, width, ay + SIZE - 2, g, font.getSize() - 2, Colors.GRAY);
+      Assistant.drawHorizontallyCenteredString(keyString, ax, width, ay + SIZE - 2, g, KEYFONT.getSize() - 2, Color.white);
+    }
+    else if (stackSize > 1 && keyString == null)
+    {
+      int width = g.getFontMetrics(STACKFONT).getAscent();
+      int height = width;
+      if (g.getFontMetrics(STACKFONT).stringWidth(stackSize + "") > width)
+      {
+        width = g.getFontMetrics().stringWidth(stackSize + "");
+      }
+      Assistant.Shadow(new RoundRectangle2D.Double(ax + SIZE - width, ay + SIZE - height, width, height, 5, 5), Colors.DGRAY, 0.5f, g);
+      Assistant.drawHorizontallyCenteredString(stackSize + "", ax + SIZE - width, width, ay + SIZE - 2, g, STACKFONT.getSize() - 2, Colors.GRAY);
     }
     
     if (hover)
@@ -146,11 +194,32 @@ public class ItemSlot extends Component
   public void setItem(Item item)
   {
     this.item = item;
+    if (item != null)
+    {
+      if (stackSize + 1 < item.getType().getStackSize())
+        stackSize++;
+    }
+    else stackSize = 0;
     
     if (this.item != null)
-    {
       this.item.setItemSlot(this);
-    }
+  }
+  
+  public void addItem()
+  {
+    if (stackSize + 1 < item.getType().getStackSize())
+      stackSize++;
+  }
+  
+  public void subItem()
+  {
+    stackSize--;
+    
+    if (stackSize > 0)
+      return;
+    
+    stackSize = 0;
+    item = null;
   }
   
   @Override
@@ -189,18 +258,35 @@ public class ItemSlot extends Component
         return;
       else
       {
-        Item oldPickedUp = new Item(inventory.getPickedUpItemSlot().getItem());
+        ItemSlot oldPickedUp = new ItemSlot(inventory.getPickedUpItemSlot());
         
-        inventory.setPickedUpItemSlot(new ItemSlot(this));
-        
-        item = oldPickedUp;
-        
+        if (oldPickedUp.getItem().equals(item) && stackSize < item.getType().getStackSize())
+        {
+          int sum = stackSize + oldPickedUp.getStackSize();
+          if (sum <= item.getType().getStackSize())
+          {
+            stackSize += oldPickedUp.getStackSize();
+            inventory.setPickedUpItemSlot(null);
+          }
+          else
+          { 
+            stackSize = item.getType().getStackSize();
+            inventory.getPickedUpItemSlot().setStackSize(sum - stackSize);
+          } 
+        }
+        else
+        {
+          inventory.setPickedUpItemSlot(new ItemSlot(this));
+          item = oldPickedUp.getItem();
+          stackSize = oldPickedUp.getStackSize();
+        }
         item.tooltip.visible = true;
-        item.tooltip.setX(e.getXOnScreen());
-        item.tooltip.setY(e.getYOnScreen());
+        item.tooltip.setX(e.getXOnScreen() + item.tooltip.offset.x);
+        item.tooltip.setY(e.getYOnScreen() + item.tooltip.offset.y);
         ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
         ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
         return;
+        
       }
     }
     else if (e.getButton() == 1 && new Rectangle(ax, ay, getWidth(), getHeight()).contains(e.getLocationOnScreen()) && inventory != null)
@@ -214,7 +300,8 @@ public class ItemSlot extends Component
         if (categoryFilter != null && !slot.getItem().areRequirementsSatisfied(null))
           return;
         
-        this.item = slot.getItem();
+        item = slot.getItem();
+        stackSize = slot.getStackSize();
         
         inventory.setPickedUpItemSlot(null);
         
@@ -258,20 +345,52 @@ public class ItemSlot extends Component
   public static ItemSlot[] createSlotGrid(int x, int y, int w, int h)
   {
     ItemSlot[] slots = new ItemSlot[w * h];
-    for (int i = 0; i < w; i++)
+    for (int i = 0; i < h; i++)
     {
-      for (int j = 0; j < h; j++)
+      for (int j = 0; j < w; j++)
       {
-        slots[i * h + j] = new ItemSlot(x + i * ItemSlot.SIZE, y + j * ItemSlot.SIZE);
+        slots[i * w + j] = new ItemSlot(x + j * ItemSlot.SIZE, y + i * ItemSlot.SIZE);
       }
     }
     
     return slots;
   }
   
+  public static JSONObject serializeFakeItemSlot(Item item, int s)
+  {
+    JSONObject o = new JSONObject();
+    try
+    {
+      if (item != null)
+      {
+        o.put("item", item.serializeItem());
+        o.put("stack", s);
+      }
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+    }
+    return o;
+  }
+  
   public JSONObject serializeItemSlot()
   {
-    return (item == null) ? new JSONObject() : item.serializeItem();
+    JSONObject o = new JSONObject();
+    try
+    {
+      if (item != null)
+      {
+        o.put("item", item.serializeItem());
+        o.put("stack", stackSize);
+      }
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+    }
+    return o;
+    
   }
   
   public static JSONArray serializeItemSlots(ItemSlot... slots)
@@ -292,7 +411,12 @@ public class ItemSlot extends Component
     {
       try
       {
-        slots[i].setItem((data.getJSONObject(i).length() > 0) ? new Item(data.getJSONObject(i)) : null);
+        JSONObject o = data.getJSONObject(i);
+        if (o.length() == 0)
+          continue;
+        
+        slots[i].setItem(new Item(o.getJSONObject("item")));
+        slots[i].setStackSize(o.getInt("stack"));
       }
       catch (JSONException e)
       {
@@ -309,6 +433,16 @@ public class ItemSlot extends Component
   public void setInventory(Inventory inventory)
   {
     this.inventory = inventory;
+  }
+  
+  public int getStackSize()
+  {
+    return stackSize;
+  }
+  
+  public void setStackSize(int stackSize)
+  {
+    this.stackSize = stackSize;
   }
   
   public ArrayList<Types> getTypesFilter()

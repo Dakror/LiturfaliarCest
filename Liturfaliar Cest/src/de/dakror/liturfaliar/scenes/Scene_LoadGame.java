@@ -37,7 +37,6 @@ public class Scene_LoadGame implements Scene
   Chooser      chooser;
   int          active;
   Area         chars;
-  Dialog       dialog;
   Point        mouse;
   Viewport     v;
   
@@ -151,23 +150,22 @@ public class Scene_LoadGame implements Scene
       v.savegame = datas[active];
       v.setScene(new Scene_Game());
     }
-    if (dialog != null)
+    if (Viewport.dialog != null)
     {
-      dialog.update();
-      if (dialog.buttons[0].getState() == 1)
+      Viewport.dialog.update();
+      if (Viewport.dialog.buttons[0].getState() == 1)
       {
         FileManager.deleteSave(datas[active]);
-        dialog.closeRequested = true;
+        Viewport.dialog.closeRequested = true;
         if (datas.length - 1 > 0)
           v.setScene(new Scene_LoadGame());
         else v.setScene(new Scene_MainMenu());
       }
-      if (dialog.buttons[1].getState() == 1)
-        dialog.closeRequested = true;
-      if (dialog.closeRequested)
+      if (Viewport.dialog.buttons[1].getState() == 1)
+        Viewport.dialog.closeRequested = true;
+      if (Viewport.dialog.closeRequested)
       {
-        dialog.close(v);
-        dialog = null;
+        Viewport.dialog = null;
       }
     }
   }
@@ -175,11 +173,11 @@ public class Scene_LoadGame implements Scene
   @Override
   public void draw(Graphics2D g)
   {
-    if (delete.getState() == 1 && dialog == null)
+    if (delete.getState() == 1 && Viewport.dialog == null)
     {
-      dialog = new Dialog("Spielstand löschen", "Bist du sicher, dass du diesen Spielstand[br]löschen möchtest? Diese Aktion kann nicht[br]rückgängig gemacht werden.", Dialog.MESSAGE, v);
-      dialog.draw(g, v);
-      dialog.setButtons("Ja", "Nein");
+      Viewport.dialog = new Dialog("Spielstand löschen", "Bist du sicher, dass du diesen Spielstand[br]löschen möchtest? Diese Aktion kann nicht[br]rückgängig gemacht werden.", Dialog.MESSAGE);
+      Viewport.dialog.draw(g, v);
+      Viewport.dialog.setButtons("Ja", "Nein");
       delete.setState(0);
     }
     Assistant.drawMenuBackground(g, v.w);
@@ -229,8 +227,6 @@ public class Scene_LoadGame implements Scene
       start.draw(g, v);
     if (selected != -1)
       saves[selected].draw(g, v);
-    if (dialog != null)
-      dialog.draw(g, v);
   }
   
   @Override

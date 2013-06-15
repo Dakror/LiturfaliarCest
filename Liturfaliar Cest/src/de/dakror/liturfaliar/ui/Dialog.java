@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
-import de.dakror.liturfaliar.util.Handler;
 
 public class Dialog extends Component
 {
@@ -28,7 +27,7 @@ public class Dialog extends Component
   public boolean              closeDisabled = false;
   public boolean              closeRequested;
   
-  public Dialog(String title, String message, int type, Viewport v)
+  public Dialog(String title, String message, int type)
   {
     super(-1, -1, 640, -1);
     this.title = title;
@@ -36,19 +35,6 @@ public class Dialog extends Component
     this.message = message;
     this.children = new ArrayList<Component>();
     this.mouse = new Point(0, 0);
-    open(v);
-  }
-  
-  public void open(Viewport v)
-  {
-    Handler.setListenerEnabled(v.scene, false);
-    Handler.addListener(this);
-  }
-  
-  public void close(Viewport v)
-  {
-    Handler.removeListener(this);
-    Handler.setListenerEnabled(v.scene, true);
   }
   
   public void setButtons(String... titles)

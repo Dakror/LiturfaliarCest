@@ -10,21 +10,23 @@ import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
 import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Inventory;
+import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.item.Items;
 import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
-import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.HTMLLabel;
 import de.dakror.liturfaliar.ui.ItemSlot;
+import de.dakror.liturfaliar.ui.Notification;
 import de.dakror.liturfaliar.ui.TextSelect;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
-import de.dakror.liturfaliar.util.Handler;
 
 public class OVScene_Inventory extends OVScene implements Inventory
 {
@@ -61,10 +63,6 @@ public class OVScene_Inventory extends OVScene implements Inventory
   public void init(Viewport v)
   {
     this.v = v;
-    v.w.addKeyListener(this);
-    v.w.addMouseListener(this);
-    v.w.addMouseMotionListener(this);
-    v.w.addMouseWheelListener(this);
     ItemSlotEventDispatcher.addItemSlotEventListener(this);
     c1 = new Container(0, 0, v.w.getWidth(), 55);
     c1.tileset = null;
@@ -169,6 +167,24 @@ public class OVScene_Inventory extends OVScene implements Inventory
           }
           case TRASHITEM:
           {
+            if (contextItemSlot.getCategoryFilter() != null)
+            {
+              Viewport.notification = new Notification("Ausgerüstete Items können nicht\n\nverschrottet werden!", Notification.ERROR);
+              // break;
+            }
+            Item scrap = new Item(Items.SCRAP);
+            ItemSlot scrapSlot = getFirstSlot(scrap);
+            ItemSlot nullSlot = getFirstSlot(null);
+            
+            CFG.p(scrapSlot);
+            CFG.p(nullSlot);
+            
+            if (nullSlot != null)
+            {
+              nullSlot.setItem(scrap);
+              contextItemSlot.subItem();
+            }
+            
             break;
           }
           case THROWITEM:
@@ -231,7 +247,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
     }
     
     if (pickedUp != null)
-      pickedUp.getItem().draw(g, v);
+      pickedUp.drawLightWeight(g, v);
     
     if (contextMenu != null)
       contextMenu.draw(g, v);
@@ -248,10 +264,10 @@ public class OVScene_Inventory extends OVScene implements Inventory
       sg.getPlayer().setInventory(ItemSlot.serializeItemSlots(inventory));
       
       ItemSlotEventDispatcher.removeItemSlotEventListener(this);
-      v.removeOVScene("Inventory");
-      sg.setPaused(false);
+      sg.setPaused(false); 
       v.setFramesFrozen(false);
-      Handler.setListenerEnabled(sg, true);
+      v.removeOVScene("Inventory");
+      v.skipEvent = e;
     }
   }
   
@@ -360,7 +376,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
       if (is.getItem() != null && !is.getItem().areRequirementsSatisfied(Attributes.dif(sg.getPlayer().getAttributes(true), is.getItem().getAttributes())))
       {
         sg.getPlayer().getEquipment().setEquipmentItem(is.getItem().getType().getCategory(), null);
-        getFirstEmptySlot().setItem(is.getItem());
+        getFirstSlot(null).setItem(is.getItem());
         is.setItem(null);
         
         updateStats(true);
@@ -520,11 +536,16 @@ public class OVScene_Inventory extends OVScene implements Inventory
   }
   
   @Override
-  public ItemSlot getFirstEmptySlot()
+  public ItemSlot getFirstSlot(Item item)
   {
     for (ItemSlot is : inventory)
     {
-      if (is.getItem() == null)
+      if (item != null)
+      {
+        if (is.getItem() != null && is.getItem().equals(item))
+          return is;
+      }
+      else if (is.getItem() == null)
         return is;
     }
     return null;
@@ -551,7 +572,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
     if (type.getCategory().equals(Categories.CONSUMABLE))
       options = new Object[] { USEITEM, THROWITEM };
     
-    else if (Arrays.asList(Categories.EQUIPS).indexOf(type.getCategory()) > -1 || type.getCategory().equals(Categories.WEAPON))
+    else if (Arrays.asList(Categories.EQUIPS).indexOf(type.getCategory()) > -1 || type.getCategory().equals(Categories.WEAPON) || type.getCategory().equals(Categories.ITEM))
       options = new Object[] { TRASHITEM, THROWITEM };
     
     contextMenu = new TextSelect(x, y, 300, 28 * options.length + 18, options);

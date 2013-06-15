@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 
@@ -19,6 +20,7 @@ public class Tooltip extends Component
   public String  rawText;
   public boolean follow;
   public boolean visible;
+  public Point   offset  = new Point(0, 0);
   public String  tileset = "Tooltip";
   
   public Tooltip(String raw, Component p)
@@ -37,8 +39,8 @@ public class Tooltip extends Component
       visible = true;
       if (follow)
       {
-        setX(e.getXOnScreen());
-        setY(e.getYOnScreen());
+        setX(offset.x + e.getXOnScreen());
+        setY(offset.y + e.getYOnScreen());
       }
     }
     else

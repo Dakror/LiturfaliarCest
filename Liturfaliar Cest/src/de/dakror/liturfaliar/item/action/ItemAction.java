@@ -3,13 +3,16 @@ package de.dakror.liturfaliar.item.action;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Item;
 
 public abstract class ItemAction
 {
-  public abstract void actionTriggered(Item item);
+  public abstract void actionTriggered(Item item, Viewport v);
   
   public abstract JSONObject serializeItemAction();
+
+  public abstract boolean equals(ItemAction o);
   
   public static ItemAction loadItemAction(JSONObject o)
   {

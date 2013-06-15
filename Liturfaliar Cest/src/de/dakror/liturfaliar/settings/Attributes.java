@@ -144,6 +144,16 @@ public class Attributes
     return attributes.get(name);
   }
   
+  public boolean equals(Attributes o)
+  {
+    for (Attr attr : Attr.values())
+    {
+      if (!getAttribute(attr).equals(o.getAttribute(attr)))
+        return false;
+    }
+    return true;
+  }
+  
   public static Attributes sum(Attributes a, Attributes b)
   {
     Attributes sum = new Attributes();

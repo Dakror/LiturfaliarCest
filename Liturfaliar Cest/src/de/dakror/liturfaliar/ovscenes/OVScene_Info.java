@@ -25,8 +25,6 @@ public class OVScene_Info extends OVScene
     updates = 0;
     consistent = true;
     mouse = new Point(0, 0);
-    
-    v.w.addMouseMotionListener(this);
   }
   
   @Override

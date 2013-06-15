@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 
 public class Attribute
 {
-  public static final DecimalFormat FORMAT = new DecimalFormat("#.#");
+  public static final DecimalFormat FORMAT = new DecimalFormat("#.####");
   
   private double                    value, maximum;
   
@@ -48,6 +48,11 @@ public class Attribute
   public void setValue(double value)
   {
     this.value = value;
+  }
+  
+  public boolean equals(Attribute o)
+  {
+    return value == o.value && maximum == o.maximum;
   }
   
   public String toString()

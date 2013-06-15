@@ -24,7 +24,6 @@ import de.dakror.liturfaliar.ui.hud.BottomSegment;
 import de.dakror.liturfaliar.ui.hud.TargetLabel;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
-import de.dakror.liturfaliar.util.Handler;
 
 public class Scene_Game implements Scene, MapPackEventListener
 {
@@ -111,18 +110,20 @@ public class Scene_Game implements Scene, MapPackEventListener
   @Override
   public void keyReleased(KeyEvent e)
   {
+    if (e.equals(v.skipEvent))
+    {
+      v.skipEvent = null;
+      return;
+    }
+    
     if (mappack != null && mappack.getActiveMap() != null)
       mappack.getActiveMap().keyReleased(e);
-    if (e.getExtendedKeyCode() == KeyEvent.VK_ESCAPE)
-    {
+    if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
       togglePaused();
-    }
-    else if (e.getExtendedKeyCode() == KeyEvent.VK_I)
-    {
+    
+    else if (e.getKeyCode() == KeyEvent.VK_I)
       v.toggleOVScene(new OVScene_Inventory(this), "Inventory");
-      Handler.setListenerEnabled(this, !isPaused());
-      v.setFramesFrozen(isPaused());
-    }
+    
   }
   
   public boolean isPaused()
@@ -133,7 +134,9 @@ public class Scene_Game implements Scene, MapPackEventListener
   public void togglePaused()
   {
     v.toggleOVScene(new OVScene_Pause(this), "Pause");
-    Handler.setListenerEnabled(this, !isPaused());
+    
+    Viewport.sceneEnabled = !pause;
+    
     v.setFramesFrozen(isPaused());
     if (isPaused())
       v.playSound("008-System08");
@@ -142,6 +145,7 @@ public class Scene_Game implements Scene, MapPackEventListener
   public void setPaused(boolean pause)
   {
     this.pause = pause;
+    Viewport.sceneEnabled = !pause;
   }
   
   public MapPack getMapPack()

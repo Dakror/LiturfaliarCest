@@ -3,8 +3,8 @@ package de.dakror.liturfaliar.item.action;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Item;
-import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
@@ -22,7 +22,7 @@ public class Potion extends ItemAction
   }
   
   @Override
-  public void actionTriggered(Item item)
+  public void actionTriggered(Item item, Viewport v)
   {
     if (item.getItemSlot() == null)
       return;
@@ -35,16 +35,15 @@ public class Potion extends ItemAction
     {
       Attribute attribute = attributes.getAttribute(attr);
       
-      if (item.getType().equals(Types.HEALPOTION))
+      if (!changes.getAttribute(attr).isEmpty())
       {
-        if (!changes.getAttribute(attr).isEmpty())
-        {
-          double sum = changes.getAttribute(attr).getValue() + attribute.getValue();
-          attributes.getAttribute(attr).setValue((sum < attribute.getMaximum()) ? ((sum >= attr.getMinimum()) ? sum : attr.getMinimum()) : attribute.getMaximum());
-        }
+        double sum = changes.getAttribute(attr).getValue() + attribute.getValue();
+        attributes.getAttribute(attr).setValue((sum < attribute.getMaximum()) ? ((sum >= attr.getMinimum()) ? sum : attr.getMinimum()) : attribute.getMaximum());
       }
     }
     target.setAttributes(attributes);
+    item.getItemSlot().subItem();
+    v.playSound("184-DrinkPotion");
   }
   
   
@@ -76,5 +75,15 @@ public class Potion extends ItemAction
       e.printStackTrace();
       return null;
     }
+  }
+  
+  @Override
+  public boolean equals(ItemAction o)
+  {
+    if (o instanceof Potion)
+    {
+      return targetID.equals(((Potion) o).targetID) && changes.equals(((Potion) o).changes);
+    }
+    else return false;
   }
 }

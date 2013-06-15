@@ -42,6 +42,8 @@ public class Item extends Component
   
   ItemSlot                itemSlot;
   
+  Viewport                v;
+  
   public Item(Types t, String path)
   {
     super(0, 0, ItemSlot.SIZE - SPACING * 2, ItemSlot.SIZE - SPACING * 2);
@@ -154,6 +156,7 @@ public class Item extends Component
     {
       tooltip = new Tooltip(raw, this);
       tooltip.follow = true;
+      tooltip.offset = new Point(16, 16);
     }
     else tooltip.rawText = raw;
   }
@@ -172,6 +175,8 @@ public class Item extends Component
   
   public void draw(int x1, int y1, Graphics2D g, Viewport v)
   {
+    this.v = v;
+    
     setX(x1 + SPACING);
     setY(y1 + SPACING);
     g.drawImage(icon, getX() + (getWidth() / 2 - icon.getWidth(null) / 2), getY() + (getHeight() / 2 - icon.getHeight(null) / 2), icon.getWidth(null), icon.getHeight(null), v.w);
@@ -185,7 +190,7 @@ public class Item extends Component
   @Override
   public void draw(Graphics2D g, Viewport v)
   {
-    g.drawImage(icon, mouse.x - icon.getWidth(null) / 2, mouse.y - icon.getHeight(null) / 2, icon.getWidth(null), icon.getHeight(null), v.w);
+    g.drawImage(icon, mouse.x - width / 2, mouse.y - height / 2, width, height, v.w);
   }
   
   @Override
@@ -279,6 +284,11 @@ public class Item extends Component
   
   public void triggerAction()
   {
-    action.actionTriggered(this);
+    action.actionTriggered(this, v);
+  }
+  
+  public boolean equals(Item o)
+  {
+    return iconx == o.iconx && icony == o.icony && name.equals(o.name) && type.equals(o.type) && charPath.equals(o.charPath) && action.equals(o.action) && attributes.equals(o.attributes) && requirements.equals(o.requirements);
   }
 }

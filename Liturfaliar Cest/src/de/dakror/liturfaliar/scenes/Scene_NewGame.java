@@ -26,6 +26,7 @@ import de.dakror.liturfaliar.ui.Chooser;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.Dialog;
 import de.dakror.liturfaliar.ui.InputBar;
+import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.Notification;
 import de.dakror.liturfaliar.ui.Tooltip;
 import de.dakror.liturfaliar.util.Assistant;
@@ -35,7 +36,6 @@ public class Scene_NewGame implements Scene
 {
   boolean   openDialog;
   
-  Dialog    tutorial;
   Chooser   gender;
   Chooser[] parts;
   String[]  partsENG = { "hair", "eyes" };
@@ -150,24 +150,19 @@ public class Scene_NewGame implements Scene
         equip.setEquipmentItem(Categories.valueOf(partsENG[i].toUpperCase()), new Item(Types.valueOf(partsENG[i].toUpperCase()), sel.replaceAll("(_.{1}\\.png)|(\\.png)", "")));
     }
     
-    if (tutorial != null && tutorial.buttons.length > 0)
+    if (Viewport.dialog != null && Viewport.dialog.buttons.length > 0)
     {
-      if (tutorial.buttons[0].getState() == 1)
+      if (Viewport.dialog.buttons[0].getState() == 1)
       {
-        tutorial.close(v);
-        tutorial = null;
+        Viewport.dialog = null;
         v.setScene(new Scene_Tutorial());
       }
-      else if (tutorial.buttons[1].getState() == 1)
+      else if (Viewport.dialog.buttons[1].getState() == 1)
       {
-        tutorial.close(v);
-        tutorial = null;
+        Viewport.dialog = null;
         v.setScene(new Scene_Game());
       }
     }
-    
-    if (tutorial != null)
-      tutorial.update();
   }
   
   @Override
@@ -175,11 +170,11 @@ public class Scene_NewGame implements Scene
   {
     if (openDialog)
     {
-      tutorial = new Dialog("Tutorial?", "Möchtest du kurz in die Steuerung und[br]Benutzeroberfläche eingeführt werden?", Dialog.MESSAGE, v);
-      tutorial.closeDisabled = true;
-      tutorial.draw(g, v);
-      tutorial.setButtons("Ja", "Nein");
-      tutorial.update();
+      Viewport.dialog = new Dialog("Viewport.dialog?", "Möchtest du kurz in die Steuerung und[br]Benutzeroberfläche eingeführt werden?", Dialog.MESSAGE);
+      Viewport.dialog.closeDisabled = true;
+      Viewport.dialog.draw(g, v);
+      Viewport.dialog.setButtons("Ja", "Nein");
+      Viewport.dialog.update();
       openDialog = false;
     }
     
@@ -200,10 +195,7 @@ public class Scene_NewGame implements Scene
     for (Chooser c : parts)
     {
       c.draw(g, v);
-    }
-    if (tutorial != null)
-      tutorial.draw(g, v);
-    
+    }    
   }
   
   public int createSave()
@@ -235,8 +227,9 @@ public class Scene_NewGame implements Scene
       // -- inventory -- //
       JSONArray inv = new JSONArray();
       
-      inv.put(new Item(Items.HEALTHPOTION).serializeItem());
-      inv.put(new Item(Items.TOXICPOTION).serializeItem());
+      inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.HEALTHPOTION), 2));
+      inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.TOXICPOTION), 1));
+      inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.SCRAP), 8));
       
       cfg.put("inventory", inv);
       
@@ -318,9 +311,6 @@ public class Scene_NewGame implements Scene
     {
       c.mouseMoved(e);
     }
-    
-    if (tutorial != null)
-      tutorial.mouseMoved(e);
   }
   
   @Override
@@ -346,9 +336,6 @@ public class Scene_NewGame implements Scene
     {
       c.mouseReleased(e);
     }
-    
-    if (tutorial != null)
-      tutorial.mouseReleased(e);
   }
   
   @Override

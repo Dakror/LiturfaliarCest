@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Window;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -41,12 +42,12 @@ import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.scenes.Scene_Logo;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.CursorText;
+import de.dakror.liturfaliar.ui.Dialog;
 import de.dakror.liturfaliar.ui.HelpOverlay;
 import de.dakror.liturfaliar.ui.Notification;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.FileManager;
 import de.dakror.liturfaliar.util.GameFrame;
-import de.dakror.liturfaliar.util.Handler;
 
 /**
  * The Viewport is the framework for all seen stuff. It contains the update- and drawingloop.
@@ -74,6 +75,9 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public String                         SoundID;
   public Window                         w;
   public MapEditor                      mapeditor;
+  public InputEvent                     skipEvent;
+  public static boolean                 sceneEnabled;
+  public static Dialog                  dialog;
   
   /**
    * Constructor
@@ -96,6 +100,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
       return;
     if (scene != null)
       scene.update(paramLong);
+    
     try
     {
       for (String ovscene : ovscenes.keySet())
@@ -106,6 +111,9 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     }
     catch (ConcurrentModificationException e)
     {}
+    
+    if (dialog != null)
+      dialog.update();
   }
   
   /**
@@ -164,6 +172,9 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
         notification = null;
     }
     // static drawers
+    if (dialog != null)
+      dialog.draw(g, this);
+    
     CursorText.draw(g, w);
     HelpOverlay.draw(g, this);
   }
@@ -176,7 +187,6 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public void setScene(Scene s)
   {
     Assistant.setCursor(Viewport.loadImage("system/loading.png"), w);
-    Handler.removeListener(scene);
     initialized = false;
     pause();
     pausedfromscene = true;
@@ -186,8 +196,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     HelpOverlay.clear();
     scene = s;
     scene.init(this);
-    Handler.addListener(s);
     initialized = true;
+    sceneEnabled = true;
     Assistant.setCursor(Viewport.loadImage("system/cursor.png"), w);
   }
   
@@ -199,7 +209,6 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       if (ovscenes.get(keys.get(i)).consistent)
         newov.put(keys.get(i), ovscenes.get(keys.get(i)));
-      else ovscenes.get(keys.get(i)).setListenersEnabled(false);
     }
     ovscenes = newov;
   }
@@ -213,20 +222,16 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public void toggleOVScene(OVScene scene, String name)
   {
     if (ovscenes.containsKey(name))
-    {
-      ovscenes.get(name).setListenersEnabled(false);
       ovscenes.remove(name);
-    }
+    
     else addOVScene(scene, name);
   }
   
   public void removeOVScene(String name)
   {
     if (ovscenes.containsKey(name))
-    {
-      ovscenes.get(name).setListenersEnabled(false);
       ovscenes.remove(name);
-    }
+    
   }
   
   public static Image loadImage(String path)
@@ -530,8 +535,10 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   @Override
   public void windowDeactivated(WindowEvent e)
   {
+    
     if (scene instanceof Scene_Game && !((Scene_Game) scene).isPaused())
       ((Scene_Game) scene).togglePaused();
+    
     pause();
   }
   
@@ -548,55 +555,181 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   @Override
   public void mouseWheelMoved(MouseWheelEvent e)
   {
-    Handler.mouseWheelMoved(e);
+    try
+    {
+      for (String ovscene : ovscenes.keySet())
+      {
+        ovscenes.get(ovscene).mouseWheelMoved(e);
+      }
+    }
+    catch (ConcurrentModificationException e1)
+    {}
+    
+    if (scene != null && sceneEnabled && dialog == null)
+      scene.mouseWheelMoved(e);
+    
+    if (dialog != null)
+      dialog.mouseWheelMoved(e);
   }
   
   @Override
   public void mouseDragged(MouseEvent e)
   {
-    Handler.mouseDragged(e);
+    try
+    {
+      for (String ovscene : ovscenes.keySet())
+      {
+        ovscenes.get(ovscene).mouseDragged(e);
+      }
+    }
+    catch (ConcurrentModificationException e1)
+    {}
+    
+    if (scene != null && sceneEnabled && dialog == null)
+      scene.mouseDragged(e);
+    
+    if (dialog != null)
+      dialog.mouseDragged(e);
   }
   
   @Override
   public void mouseMoved(MouseEvent e)
   {
-    Handler.mouseMoved(e);
+    try
+    {
+      for (String ovscene : ovscenes.keySet())
+      {
+        ovscenes.get(ovscene).mouseMoved(e);
+      }
+    }
+    catch (ConcurrentModificationException e1)
+    {}
+    
+    if (scene != null && sceneEnabled && dialog == null)
+      scene.mouseMoved(e);
+    
+    if (dialog != null)
+      dialog.mouseMoved(e);
   }
   
   @Override
   public void mouseClicked(MouseEvent e)
   {
-    Handler.mouseClicked(e);
+    try
+    {
+      for (String ovscene : ovscenes.keySet())
+      {
+        ovscenes.get(ovscene).mouseClicked(e);
+      }
+    }
+    catch (ConcurrentModificationException e1)
+    {}
+    
+    if (scene != null && sceneEnabled && dialog == null)
+      scene.mouseClicked(e);
+    
+    if (dialog != null)
+      dialog.mouseClicked(e);
   }
   
   @Override
   public void mousePressed(MouseEvent e)
   {
-    Handler.mousePressed(e);
+    try
+    {
+      for (String ovscene : ovscenes.keySet())
+      {
+        ovscenes.get(ovscene).mousePressed(e);
+      }
+    }
+    catch (ConcurrentModificationException e1)
+    {}
+    
+    if (scene != null && sceneEnabled && dialog == null)
+      scene.mousePressed(e);
+    
+    if (dialog != null)
+      dialog.mousePressed(e);
   }
   
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    Handler.mouseReleased(e);
+    try
+    {
+      for (String ovscene : ovscenes.keySet())
+      {
+        ovscenes.get(ovscene).mouseReleased(e);
+      }
+    }
+    catch (ConcurrentModificationException e1)
+    {}
+    
+    if (scene != null && sceneEnabled && dialog == null)
+      scene.mouseReleased(e);
+    
+    if (dialog != null)
+      dialog.mouseReleased(e);
   }
   
   @Override
   public void mouseEntered(MouseEvent e)
   {
-    Handler.mouseEntered(e);
+    try
+    {
+      for (String ovscene : ovscenes.keySet())
+      {
+        ovscenes.get(ovscene).mouseEntered(e);
+      }
+    }
+    catch (ConcurrentModificationException e1)
+    {}
+    
+    if (scene != null && sceneEnabled && dialog == null)
+      scene.mouseEntered(e);
+    
+    if (dialog != null)
+      dialog.mouseEntered(e);
   }
   
   @Override
   public void mouseExited(MouseEvent e)
   {
-    Handler.mouseExited(e);
+    try
+    {
+      for (String ovscene : ovscenes.keySet())
+      {
+        ovscenes.get(ovscene).mouseExited(e);
+      }
+    }
+    catch (ConcurrentModificationException e1)
+    {}
+    
+    if (scene != null && sceneEnabled && dialog == null)
+      scene.mouseExited(e);
+    
+    if (dialog != null)
+      dialog.mouseExited(e);
   }
   
   @Override
   public void keyTyped(KeyEvent e)
   {
-    Handler.keyTyped(e);
+    try
+    {
+      for (String ovscene : ovscenes.keySet())
+      {
+        ovscenes.get(ovscene).keyTyped(e);
+      }
+    }
+    catch (ConcurrentModificationException e1)
+    {}
+    
+    if (scene != null && sceneEnabled && dialog == null)
+      scene.keyTyped(e);
+    
+    if (dialog != null)
+      dialog.keyTyped(e);
   }
   
   @Override
@@ -614,13 +747,44 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
         toggleOVScene(new OVScene_Info(), "Info");
         break;
     }
-    Handler.keyPressed(e);
+    
+    try
+    {
+      for (String ovscene : ovscenes.keySet())
+      {
+        ovscenes.get(ovscene).keyPressed(e);
+      }
+    }
+    catch (ConcurrentModificationException e1)
+    {}
+    
+    if (scene != null && sceneEnabled && dialog == null)
+      scene.keyPressed(e);
+    
+    if (dialog != null)
+      dialog.keyPressed(e);
   }
   
   @Override
   public void keyReleased(KeyEvent e)
   {
-    Handler.keyReleased(e);
+    try
+    {
+      for (String ovscene : ovscenes.keySet())
+      {
+        ovscenes.get(ovscene).keyReleased(e);
+      }
+    }
+    catch (ConcurrentModificationException e1)
+    {
+      e1.printStackTrace();
+    }
+    
+    if (scene != null && sceneEnabled && dialog == null)
+      scene.keyReleased(e);
+    
+    if (dialog != null)
+      dialog.keyReleased(e);
   }
   
   static class Scale

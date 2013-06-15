@@ -9,9 +9,8 @@ import java.awt.geom.Rectangle2D;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.settings.CFG;
-import de.dakror.liturfaliar.util.Listener;
 
-public abstract class Component implements Listener
+public abstract class Component
 {
   protected int x;
   protected int y;
@@ -83,47 +82,47 @@ public abstract class Component implements Listener
   
   public abstract void draw(Graphics2D g, Viewport v);
   
-  @Override
+  
   public void mouseWheelMoved(MouseWheelEvent e)
   {}
   
-  @Override
+  
   public void mouseDragged(MouseEvent e)
   {}
   
-  @Override
+  
   public void mouseMoved(MouseEvent e)
   {}
   
-  @Override
+  
   public void mouseClicked(MouseEvent e)
   {}
   
-  @Override
+  
   public void mousePressed(MouseEvent e)
   {}
   
-  @Override
+  
   public void mouseReleased(MouseEvent e)
   {}
   
-  @Override
+  
   public void mouseEntered(MouseEvent e)
   {}
   
-  @Override
+  
   public void mouseExited(MouseEvent e)
   {}
   
-  @Override
+  
   public void keyTyped(KeyEvent e)
   {}
   
-  @Override
+  
   public void keyPressed(KeyEvent e)
   {}
   
-  @Override
+  
   public void keyReleased(KeyEvent e)
   {}
 }

@@ -10,7 +10,7 @@ public interface Inventory extends ItemSlotEventListener
   
   public void setPickedUpItemSlot(ItemSlot item);
   
-  public ItemSlot getFirstEmptySlot();
+  public ItemSlot getFirstSlot(Item item);
   
   public Map getMap();
   
