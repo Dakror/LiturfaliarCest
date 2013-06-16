@@ -62,6 +62,16 @@ public class Tooltip extends Component
       }
       setWidth(mostwidth + 32);
     }
+    
+    int lx = getX();
+    int ly = getY();
+    
+    if (lx + getWidth() > v.w.getWidth())
+      lx -= (lx + getWidth()) - v.w.getWidth();
+    
+    if (ly + getHeight() > v.w.getHeight())
+      ly -= (ly + getHeight()) - v.w.getHeight();
+    
     Font oldFont = g.getFont();
     g.setFont(new Font("Times New Roman", g.getFont().getStyle(), g.getFont().getSize()));
     
@@ -70,7 +80,7 @@ public class Tooltip extends Component
       if (tileset != null)
       {
         setHeight(getHeightOfPreviousRows(text.length, g) + 32);
-        Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), getX(), getY(), getWidth() + 16 - (getWidth() % 16), getHeight(), g, v.w);
+        Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), lx, ly, getWidth() + 16 - (getWidth() % 16), getHeight(), g, v.w);
       }
       else
       {
@@ -78,7 +88,7 @@ public class Tooltip extends Component
         Color oldColor = g.getColor();
         g.setColor(Colors.DGRAY);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
-        g.fill(new RoundRectangle2D.Double(getX(), getY(), getWidth() + 16 - (getWidth() % 16), getHeight(), 8, 8));
+        g.fill(new RoundRectangle2D.Double(lx, ly, getWidth() + 16 - (getWidth() % 16), getHeight(), 8, 8));
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
         g.setColor(oldColor);
       }
@@ -86,11 +96,11 @@ public class Tooltip extends Component
       {
         if (i > 0)
         {
-          Assistant.drawString(text[i].string, getX() + 16 + ((!text[i - 1].br) ? text[i - 1].getWidth(g) : 0), getY() + getHeightOfPreviousRows(i + ((!text[i - 1].br) ? 0 : 1), g) + ((tileset != null) ? 8 : 0), g, text[i].c, g.getFont().deriveFont(text[i].style, (int) text[i].size));
+          Assistant.drawString(text[i].string, lx + 16 + ((!text[i - 1].br) ? text[i - 1].getWidth(g) : 0), ly + getHeightOfPreviousRows(i + ((!text[i - 1].br) ? 0 : 1), g) + ((tileset != null) ? 8 : 0), g, text[i].c, g.getFont().deriveFont(text[i].style, (int) text[i].size));
         }
         else
         {
-          Assistant.drawString(text[i].string, getX() + 16, getY() + getHeightOfPreviousRows(i + 1, g) + ((tileset != null) ? 8 : 0), g, text[i].c, g.getFont().deriveFont(text[i].style, (int) text[i].size));
+          Assistant.drawString(text[i].string, lx + 16, ly + getHeightOfPreviousRows(i + 1, g) + ((tileset != null) ? 8 : 0), g, text[i].c, g.getFont().deriveFont(text[i].style, (int) text[i].size));
         }
       }
     }

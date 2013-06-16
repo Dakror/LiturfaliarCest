@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.listener.PlayerHotbarEventListener;
 import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.map.creature.Player;
 import de.dakror.liturfaliar.ui.ItemSlot;
 
 public class PlayerHotbar extends HUDComponent
@@ -21,15 +22,23 @@ public class PlayerHotbar extends HUDComponent
   
   ArrayList<PlayerHotbarEventListener> listeners  = new ArrayList<PlayerHotbarEventListener>();
   
-  public PlayerHotbar()
+  Player                               player;
+  
+  public PlayerHotbar(Player p)
   {
     super(0, 0, ItemSlot.SIZE * SLOTCOUNT, ItemSlot.SIZE, 10);
+    player = p;
   }
   
   @Override
   public void update(Map m)
   {
     visible = m.talk == null;
+    
+    for (int i = 0; i < SLOTCOUNT; i++)
+    {
+      slots[i].setItem(player.getEquipment().getHotbarItem(i));
+    }
   }
   
   public void addPlayerHotbarEventListener(PlayerHotbarEventListener l)
@@ -54,6 +63,8 @@ public class PlayerHotbar extends HUDComponent
       
       for (int i = 0; i < SLOTCOUNT; i++)
       {
+        slots[i].setOnlyLabel(true);
+        slots[i].setItem(player.getEquipment().getHotbarItem(i));
         slots[i].setHotKey((i < KEYSLOTS.length) ? KEYSLOTS[i] : MOUSESLOTS[i - KEYSLOTS.length], i > KEYSLOTS.length - 1);
       }
       visible = true;

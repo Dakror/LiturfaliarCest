@@ -21,10 +21,12 @@ import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.ui.Container;
+import de.dakror.liturfaliar.ui.Dialog;
 import de.dakror.liturfaliar.ui.HTMLLabel;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.Notification;
 import de.dakror.liturfaliar.ui.TextSelect;
+import de.dakror.liturfaliar.ui.hud.PlayerHotbar;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
 
@@ -37,11 +39,14 @@ public class OVScene_Inventory extends OVScene implements Inventory
   public static final int    WIDTH     = 12;
   public static final int    HEIGHT    = 11;
   
+  boolean                    showTrashDialog;
+  
   Scene_Game                 sg;
   Container                  c1;
   
   ItemSlot[]                 equipSlots;
   ItemSlot[]                 inventory;
+  ItemSlot[]                 hotbar;
   
   ItemSlot                   pickedUp;
   ItemSlot                   pickUpSource;
@@ -132,7 +137,9 @@ public class OVScene_Inventory extends OVScene implements Inventory
     if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.BOOTS))
       equipSlots[11].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.BOOTS));
     
-    inventory = ItemSlot.createSlotGrid(0, 0, WIDTH, HEIGHT);
+    inventory = ItemSlot.createSlotGrid(v.w.getWidth() / 2 - 180, v.w.getHeight() / 2 - 350 + 110 - 52, WIDTH, HEIGHT);
+    
+    hotbar = ItemSlot.createSlotRow(v.w.getWidth() / 2 - PlayerHotbar.SLOTCOUNT * ItemSlot.SIZE / 2, v.w.getHeight() - ItemSlot.SIZE, PlayerHotbar.SLOTCOUNT);
     
     for (ItemSlot is : equipSlots)
     {
@@ -146,12 +153,36 @@ public class OVScene_Inventory extends OVScene implements Inventory
       is.setInventory(this);
     }
     
+    for (int i = 0; i < hotbar.length; i++)
+    {
+      hotbar[i].setInventory(this);
+      hotbar[i].setOnlyLabel(true);
+      hotbar[i].setItem(sg.getPlayer().getEquipment().getHotbarItem(i));
+      hotbar[i].setHotKey((i < PlayerHotbar.KEYSLOTS.length) ? PlayerHotbar.KEYSLOTS[i] : PlayerHotbar.MOUSESLOTS[i - PlayerHotbar.KEYSLOTS.length], i > PlayerHotbar.KEYSLOTS.length - 1);
+    }
+    
+    hotbar[7].setCategoryFilter(Categories.CONSUMABLE);
+    hotbar[7].showFilterImage = false;
+    
     updateStats(true);
   }
   
   @Override
   public void update(long timePassed)
   {
+    if (Viewport.dialog != null && Viewport.dialog.buttons.length > 0)
+    {
+      if (Viewport.dialog.buttons[0].getState() == 1)
+      {
+        trashItem();
+        Viewport.dialog = null;
+      }
+      else if (Viewport.dialog.buttons[1].getState() == 1)
+      {
+        Viewport.dialog = null;
+      }
+    }
+    
     if (contextMenu != null)
     {
       contextMenu.update();
@@ -170,21 +201,9 @@ public class OVScene_Inventory extends OVScene implements Inventory
             if (contextItemSlot.getCategoryFilter() != null)
             {
               Viewport.notification = new Notification("Ausgerüstete Items können nicht\n\nverschrottet werden!", Notification.ERROR);
-              // break;
+              break;
             }
-            Item scrap = new Item(Items.SCRAP);
-            ItemSlot scrapSlot = getFirstSlot(scrap);
-            ItemSlot nullSlot = getFirstSlot(null);
-            
-            CFG.p(scrapSlot);
-            CFG.p(nullSlot);
-            
-            if (nullSlot != null)
-            {
-              nullSlot.setItem(scrap);
-              contextItemSlot.subItem();
-            }
-            
+            showTrashDialog = true;
             break;
           }
           case THROWITEM:
@@ -204,7 +223,16 @@ public class OVScene_Inventory extends OVScene implements Inventory
   @Override
   public void draw(Graphics2D g)
   {
-    
+    if (showTrashDialog)
+    {
+      Viewport.dialog = new Dialog("Verschrotten", "Bist du sicher, dass du diesen Gegenstand verschrotten möchtest?[br]Diese Aktion kann nicht rückgängig gemacht werden!", Dialog.MESSAGE);
+      Viewport.dialog.closeDisabled = true;
+      Viewport.dialog.freezeOVScene = true;
+      Viewport.dialog.draw(g, v);
+      Viewport.dialog.setButtons("Ja", "Nein");
+      Viewport.dialog.update();
+      showTrashDialog = false;
+    }
     Assistant.Shadow(v.w.getBounds(), Color.black, 0.6f, g);
     c1.draw(g, v);
     Assistant.drawHorizontallyCenteredString("Inventar", v.w.getWidth(), 43, g, 45, Color.white);
@@ -214,7 +242,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     for (ItemSlot is : inventory)
     {
-      is.draw(v.w.getWidth() / 2 - 180, v.w.getHeight() / 2 - 350 + 110 - 52, g, v);
+      is.draw(g, v);
     }
     
     invWeight.draw(g, v);
@@ -227,6 +255,13 @@ public class OVScene_Inventory extends OVScene implements Inventory
     for (ItemSlot is : equipSlots)
     {
       is.draw(v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350, g, v);
+    }
+    
+    // -- hotbar -- //
+    
+    for (ItemSlot is : hotbar)
+    {
+      is.draw(g, v);
     }
     
     // -- stats -- //
@@ -246,11 +281,44 @@ public class OVScene_Inventory extends OVScene implements Inventory
       is.drawTooltip(g, v);
     }
     
+    for (ItemSlot is : hotbar)
+    {
+      is.drawTooltip(g, v);
+    }
     if (pickedUp != null)
       pickedUp.drawLightWeight(g, v);
     
     if (contextMenu != null)
       contextMenu.draw(g, v);
+  }
+  
+  public void trashItem()
+  {
+    Item scrap = new Item(Items.SCRAP);
+    ItemSlot scrapSlot = null;
+    ItemSlot nullSlot = getFirstSlot(null);
+    
+    for (ItemSlot is : inventory)
+    {
+      if (is.getItem() == null)
+        continue;
+      if (is.getItem().equals(scrap) && is.getStackSize() + 1 <= scrap.getType().getStackSize())
+      {
+        scrapSlot = is;
+        break;
+      }
+    }
+    
+    if (scrapSlot != null)
+    {
+      scrapSlot.addItem();
+      contextItemSlot.subItem();
+    }
+    else if (nullSlot != null)
+    {
+      nullSlot.setItem(scrap);
+      contextItemSlot.subItem();
+    }
   }
   
   @Override
@@ -264,7 +332,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
       sg.getPlayer().setInventory(ItemSlot.serializeItemSlots(inventory));
       
       ItemSlotEventDispatcher.removeItemSlotEventListener(this);
-      sg.setPaused(false); 
+      sg.setPaused(false);
       v.setFramesFrozen(false);
       v.removeOVScene("Inventory");
       v.skipEvent = e;
@@ -286,6 +354,11 @@ public class OVScene_Inventory extends OVScene implements Inventory
     }
     
     for (ItemSlot slot : equipSlots)
+    {
+      slot.mouseMoved(e);
+    }
+    
+    for (ItemSlot slot : hotbar)
     {
       slot.mouseMoved(e);
     }
@@ -314,6 +387,11 @@ public class OVScene_Inventory extends OVScene implements Inventory
       slot.mousePressed(e);
     }
     
+    for (ItemSlot slot : hotbar)
+    {
+      slot.mousePressed(e);
+    }
+    
     if (contextMenu != null && e.getButton() == 1)
       contextMenu = null;
   }
@@ -333,6 +411,11 @@ public class OVScene_Inventory extends OVScene implements Inventory
     }
     
     for (ItemSlot slot : equipSlots)
+    {
+      slot.mouseReleased(e);
+    }
+    
+    for (ItemSlot slot : hotbar)
     {
       slot.mouseReleased(e);
     }
@@ -356,13 +439,24 @@ public class OVScene_Inventory extends OVScene implements Inventory
     {
       slot.mouseDragged(e);
     }
+    
+    for (ItemSlot slot : hotbar)
+    {
+      slot.mouseDragged(e);
+    }
   }
   
   @Override
   public void slotPressed(MouseEvent e, ItemSlot slot)
   {
-    if (slot.getCategoryFilter() != null) // is from equip menu
+    if (slot.getCategoryFilter() != null && !slot.isOnlyLabel()) // is from equip menu
       sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), null);
+    
+    else if (slot.isOnlyLabel()) // is from hotbar
+    {
+      sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), null);
+      return;
+    }
     
     pickedUp = new ItemSlot(slot);
     pickUpSource = slot;
@@ -387,7 +481,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
   @Override
   public void slotHovered(MouseEvent e, ItemSlot slot)
   {
-    if (slot.getCategoryFilter() != null && pickedUp != null && slot.getCategoryFilter().equals(pickedUp.getItem().getType().getCategory())) // is from equip menu
+    if (slot.getCategoryFilter() != null && pickedUp != null && slot.getCategoryFilter().equals(pickedUp.getItem().getType().getCategory()) && !slot.isOnlyLabel()) // is from equip menu
     {
       Attributes attributes = pickedUp.getItem().getAttributes();
       
@@ -427,8 +521,11 @@ public class OVScene_Inventory extends OVScene implements Inventory
   @Override
   public void slotReleased(MouseEvent e, ItemSlot slot)
   {
-    if (slot.getCategoryFilter() != null) // is from equip menu
+    if (slot.getCategoryFilter() != null && !slot.isOnlyLabel()) // is from equip menu
       sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), slot.getItem());
+    
+    else if (slot.isOnlyLabel()) // is from hotbar
+      sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), slot.getItem());
     
     updateStats(true);
   }
@@ -509,8 +606,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     for (ItemSlot is : inventory)
     {
-      if (is.getItem() != null)
-        w += is.getItem().getAttributes().getAttribute(Attr.weight).getValue();
+      w += is.getWeight();
     }
     
     return w;

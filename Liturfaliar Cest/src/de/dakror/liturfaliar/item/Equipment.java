@@ -2,14 +2,17 @@ package de.dakror.liturfaliar.item;
 
 import java.util.HashMap;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.settings.Attributes;
+import de.dakror.liturfaliar.ui.hud.PlayerHotbar;
 
 public class Equipment
 {
   HashMap<String, Item> equips = new HashMap<String, Item>();
+  Item[]                hotbar;
   Item                  weapon1, weapon2;
   boolean               male;
   
@@ -20,6 +23,7 @@ public class Equipment
       setEquipmentItem(c, null);
     }
     weapon1 = weapon2 = null;
+    hotbar = new Item[PlayerHotbar.SLOTCOUNT];
   }
   
   public Equipment(JSONObject data)
@@ -42,11 +46,30 @@ public class Equipment
       
       if (data.getJSONObject("weapon2").length() > 0)
         setSecondWeapon(new Item(data.getJSONObject("weapon2")));
+      
+      JSONArray hb = data.getJSONArray("hotbar");
+      
+      hotbar = new Item[PlayerHotbar.SLOTCOUNT];
+      for (int i = 0; i < hb.length(); i++)
+      {
+        if (hb.getJSONObject(i).length() > 0)
+          hotbar[i] = new Item(hb.getJSONObject(i));
+      }
     }
     catch (JSONException e)
     {
       e.printStackTrace();
     }
+  }
+  
+  public void setHotbarItem(int index, Item item)
+  {
+    hotbar[index] = item;
+  }
+  
+  public Item getHotbarItem(int index)
+  {
+    return hotbar[index];
   }
   
   public void setFirstWeapon(Item item)
@@ -102,6 +125,15 @@ public class Equipment
       if (weapon2 != null)
         o.put("weapon2", weapon2.serializeItem());
       else o.put("weapon2", new JSONObject());
+      
+      JSONArray hb = new JSONArray();
+      for (int i = 0; i < hotbar.length; i++)
+      {
+        if (hotbar[i] == null)
+          hb.put(new JSONObject());
+        else hb.put(hotbar[i].serializeItem());
+      }
+      o.put("hotbar", hb);
     }
     catch (JSONException e)
     {

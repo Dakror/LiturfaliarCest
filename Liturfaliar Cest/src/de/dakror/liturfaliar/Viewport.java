@@ -559,6 +559,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
+        if (dialog != null && dialog.freezeOVScene)
+          continue;
         ovscenes.get(ovscene).mouseWheelMoved(e);
       }
     }
@@ -579,6 +581,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
+        if (dialog != null && dialog.freezeOVScene)
+          continue;
         ovscenes.get(ovscene).mouseDragged(e);
       }
     }
@@ -599,6 +603,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
+        if (dialog != null && dialog.freezeOVScene)
+          continue;
         ovscenes.get(ovscene).mouseMoved(e);
       }
     }
@@ -619,6 +625,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
+        if (dialog != null && dialog.freezeOVScene)
+          continue;
         ovscenes.get(ovscene).mouseClicked(e);
       }
     }
@@ -639,6 +647,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
+        if (dialog != null && dialog.freezeOVScene)
+          continue;
         ovscenes.get(ovscene).mousePressed(e);
       }
     }
@@ -659,6 +669,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
+        if (dialog != null && dialog.freezeOVScene)
+          continue;
         ovscenes.get(ovscene).mouseReleased(e);
       }
     }
@@ -679,6 +691,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
+        if (dialog != null && dialog.freezeOVScene)
+          continue;
         ovscenes.get(ovscene).mouseEntered(e);
       }
     }
@@ -699,6 +713,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
+        if (dialog != null && dialog.freezeOVScene)
+          continue;
         ovscenes.get(ovscene).mouseExited(e);
       }
     }
@@ -719,6 +735,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
+        if (dialog != null && dialog.freezeOVScene)
+          continue;
         ovscenes.get(ovscene).keyTyped(e);
       }
     }
@@ -752,6 +770,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
+        if (dialog != null && dialog.freezeOVScene)
+          continue;
         ovscenes.get(ovscene).keyPressed(e);
       }
     }
@@ -772,6 +792,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
+        if (dialog != null && dialog.freezeOVScene)
+          continue;
         ovscenes.get(ovscene).keyReleased(e);
       }
     }

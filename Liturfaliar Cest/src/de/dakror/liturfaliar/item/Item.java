@@ -180,7 +180,9 @@ public class Item extends Component
     setX(x1 + SPACING);
     setY(y1 + SPACING);
     g.drawImage(icon, getX() + (getWidth() / 2 - icon.getWidth(null) / 2), getY() + (getHeight() / 2 - icon.getHeight(null) / 2), icon.getWidth(null), icon.getHeight(null), v.w);
-    tooltip.draw(g, v);
+    
+    if (tooltip != null)
+      tooltip.draw(g, v);
   }
   
   @Override
@@ -197,7 +199,8 @@ public class Item extends Component
   public void mouseMoved(MouseEvent e)
   {
     mouse = e.getLocationOnScreen();
-    tooltip.mouseMoved(e);
+    if (tooltip != null)
+      tooltip.mouseMoved(e);
   }
   
   public JSONObject serializeItem()

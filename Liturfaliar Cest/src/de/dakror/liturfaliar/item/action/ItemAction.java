@@ -11,7 +11,7 @@ public abstract class ItemAction
   public abstract void actionTriggered(Item item, Viewport v);
   
   public abstract JSONObject serializeItemAction();
-
+  
   public abstract boolean equals(ItemAction o);
   
   public static ItemAction loadItemAction(JSONObject o)

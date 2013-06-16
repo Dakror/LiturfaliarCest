@@ -31,6 +31,28 @@ public class Potion extends ItemAction
     
     Attributes attributes = target.getAttributes();
     
+    boolean hasEffect = false;
+    
+    for (Attr attr : Attr.values())
+    {
+      Attribute attribute = attributes.getAttribute(attr);
+      
+      if (!changes.getAttribute(attr).isEmpty())
+      {
+        double sum = changes.getAttribute(attr).getValue() + attribute.getValue();
+        sum = (sum < attribute.getMaximum()) ? ((sum >= attr.getMinimum()) ? sum : attr.getMinimum()) : attribute.getMaximum();
+        
+        if (sum != attribute.getValue())
+        {
+          hasEffect = true;
+          break;
+        }
+      }
+    }
+    
+    if (!hasEffect)
+      return;
+    
     for (Attr attr : Attr.values())
     {
       Attribute attribute = attributes.getAttribute(attr);
@@ -45,7 +67,6 @@ public class Potion extends ItemAction
     item.getItemSlot().subItem();
     v.playSound("184-DrinkPotion");
   }
-  
   
   @Override
   public JSONObject serializeItemAction()

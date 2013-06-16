@@ -22,30 +22,31 @@ import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.settings.Colors;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class ItemSlot extends Component
 {
-  public static final Font KEYFONT   = new Font("Arial", Font.BOLD, 18);
-  public static final Font STACKFONT = new Font("Arial", Font.BOLD, 22);
-  public static final int  SIZE      = 55;
+  public static final Font KEYFONT         = new Font("Arial", Font.BOLD, 18);
+  public static final Font STACKFONT       = new Font("Arial", Font.BOLD, 22);
+  public static final int  SIZE            = 55;
+  
+  private boolean          mouseKey;
+  private boolean          hover;
+  private boolean          onlyLabel;
+  public boolean           showFilterImage = true;
+  
+  private int              hotKey;
+  private int              ax, ay;
+  private int              stackSize;
   
   private Item             item;
-  private int              hotKey;
+  public String            tileset         = "Wood.png";
   private String           keyString;
-  private boolean          mouseKey;
-  public String            tileset   = "Wood.png";
-  
   private Categories       categoryFilter;
   private ArrayList<Types> typesFilter;
-  
-  private int              ax, ay;
-  
-  private boolean          hover;
-  
   private Inventory        inventory;
   
-  private int              stackSize;
   
   public ItemSlot(int x, int y)
   {
@@ -144,7 +145,7 @@ public class ItemSlot extends Component
     
     g.drawImage(Viewport.loadImage("tileset/" + tileset), ax, ay, SIZE, SIZE, null);
     
-    if (categoryFilter != null && item == null)
+    if (categoryFilter != null && item == null && showFilterImage)
     {
       g.drawImage(Viewport.loadImage("system/" + categoryFilter.name().toLowerCase() + "ItemSlotFilter.png"), ax + 4, ay + 4, SIZE - 8, SIZE - 8, null);
     }
@@ -207,7 +208,7 @@ public class ItemSlot extends Component
   
   public void addItem()
   {
-    if (stackSize + 1 < item.getType().getStackSize())
+    if (stackSize + 1 <= item.getType().getStackSize())
       stackSize++;
   }
   
@@ -240,75 +241,102 @@ public class ItemSlot extends Component
   @Override
   public void mousePressed(MouseEvent e)
   {
-    if (keyString != null)
+    boolean clip = new Rectangle(ax, ay, getWidth(), getHeight()).contains(e.getLocationOnScreen());
+    
+    if (onlyLabel && clip)
     {
-      if (item != null && mouseKey && e.getButton() == hotKey)
-      {}
-    }
-    else if (item != null && e.getButton() == 1 && new Rectangle(ax, ay, getWidth(), getHeight()).contains(e.getLocationOnScreen()) && inventory != null)
-    {
-      if (inventory.getPickedUpItemSlot() == null)
+      if (e.getButton() == 1 && inventory != null && inventory.getPickedUpItemSlot() != null)
       {
-        item.mouse = e.getLocationOnScreen();
+        if ((categoryFilter != null && !inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(inventory.getPickedUpItemSlot().getItem().getType()) == -1))
+          return;
+        
+        setItem(new Item(inventory.getPickedUpItemSlot().getItem()));
+        
+        ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
+        ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
+        
+      }
+      else if (e.getButton() == 3)
+      {
+        setItem(null);
         
         ItemSlotEventDispatcher.dispatchSlotPressed(e, this);
         ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
       }
-      else if ((categoryFilter != null && !inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(inventory.getPickedUpItemSlot().getItem().getType()) == -1))
-        return;
-      else
+    }
+    else
+    {
+      
+      if (keyString != null)
       {
-        ItemSlot oldPickedUp = new ItemSlot(inventory.getPickedUpItemSlot());
-        
-        if (oldPickedUp.getItem().equals(item) && stackSize < item.getType().getStackSize())
+        if (item != null && mouseKey && e.getButton() == hotKey)
+        {}
+      }
+      else if (item != null && e.getButton() == 1 && clip && inventory != null)
+      {
+        if (inventory.getPickedUpItemSlot() == null)
         {
-          int sum = stackSize + oldPickedUp.getStackSize();
-          if (sum <= item.getType().getStackSize())
-          {
-            stackSize += oldPickedUp.getStackSize();
-            inventory.setPickedUpItemSlot(null);
-          }
-          else
-          { 
-            stackSize = item.getType().getStackSize();
-            inventory.getPickedUpItemSlot().setStackSize(sum - stackSize);
-          } 
+          item.mouse = e.getLocationOnScreen();
+          
+          ItemSlotEventDispatcher.dispatchSlotPressed(e, this);
+          ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
         }
+        else if ((categoryFilter != null && !inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(inventory.getPickedUpItemSlot().getItem().getType()) == -1))
+          return;
         else
         {
-          inventory.setPickedUpItemSlot(new ItemSlot(this));
-          item = oldPickedUp.getItem();
-          stackSize = oldPickedUp.getStackSize();
+          ItemSlot oldPickedUp = new ItemSlot(inventory.getPickedUpItemSlot());
+          
+          if (oldPickedUp.getItem().equals(item) && stackSize < item.getType().getStackSize())
+          {
+            int sum = stackSize + oldPickedUp.getStackSize();
+            if (sum <= item.getType().getStackSize())
+            {
+              stackSize += oldPickedUp.getStackSize();
+              inventory.setPickedUpItemSlot(null);
+            }
+            else
+            {
+              stackSize = item.getType().getStackSize();
+              inventory.getPickedUpItemSlot().setStackSize(sum - stackSize);
+            }
+          }
+          else
+          {
+            inventory.setPickedUpItemSlot(new ItemSlot(this));
+            item = oldPickedUp.getItem();
+            stackSize = oldPickedUp.getStackSize();
+          }
+          item.tooltip.visible = true;
+          item.tooltip.setX(e.getXOnScreen() + item.tooltip.offset.x);
+          item.tooltip.setY(e.getYOnScreen() + item.tooltip.offset.y);
+          ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
+          ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
+          return;
+          
         }
-        item.tooltip.visible = true;
-        item.tooltip.setX(e.getXOnScreen() + item.tooltip.offset.x);
-        item.tooltip.setY(e.getYOnScreen() + item.tooltip.offset.y);
-        ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
-        ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
-        return;
-        
       }
-    }
-    else if (e.getButton() == 1 && new Rectangle(ax, ay, getWidth(), getHeight()).contains(e.getLocationOnScreen()) && inventory != null)
-    {
-      if (item == null)
+      else if (e.getButton() == 1 && clip && inventory != null)
       {
-        ItemSlot slot = inventory.getPickedUpItemSlot();
-        if (slot == null || (categoryFilter != null && !slot.getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && slot.getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(slot.getItem().getType()) == -1))
-          return;
-        
-        if (categoryFilter != null && !slot.getItem().areRequirementsSatisfied(null))
-          return;
-        
-        item = slot.getItem();
-        stackSize = slot.getStackSize();
-        
-        inventory.setPickedUpItemSlot(null);
-        
-        this.item.tooltip.visible = true;
-        this.item.tooltip.setX(e.getXOnScreen());
-        this.item.tooltip.setY(e.getYOnScreen());
-        ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
+        if (item == null)
+        {
+          ItemSlot slot = inventory.getPickedUpItemSlot();
+          if (slot == null || (categoryFilter != null && !slot.getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && slot.getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(slot.getItem().getType()) == -1))
+            return;
+          
+          if (categoryFilter != null && !slot.getItem().areRequirementsSatisfied(null))
+            return;
+          
+          item = slot.getItem();
+          stackSize = slot.getStackSize();
+          
+          inventory.setPickedUpItemSlot(null);
+          
+          this.item.tooltip.visible = true;
+          this.item.tooltip.setX(e.getXOnScreen());
+          this.item.tooltip.setY(e.getYOnScreen());
+          ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
+        }
       }
     }
   }
@@ -316,12 +344,46 @@ public class ItemSlot extends Component
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    if (e.getButton() == 3 && item != null && new Rectangle(ax, ay, getWidth(), getHeight()).contains(e.getLocationOnScreen()))
+    if (isOnlyLabel())
+      return;
+    
+    boolean clip = new Rectangle(ax, ay, getWidth(), getHeight()).contains(e.getLocationOnScreen());
+    
+    if (e.getButton() == 3 && item != null && inventory != null && inventory.getPickedUpItemSlot() == null && clip)
     {
       item.tooltip.visible = false;
       inventory.showContextMenu(this, e.getXOnScreen(), e.getYOnScreen());
     }
-    
+    else if (e.getButton() == 3 && clip && inventory != null)
+    {
+      ItemSlot slot = inventory.getPickedUpItemSlot();
+      
+      if (slot == null || slot.getStackSize() < 1)
+        return;
+      
+      if (item != null && !item.equals(slot.getItem()))
+        return;
+      
+      if (item != null && item.equals(slot.getItem()) && stackSize == item.getType().getStackSize())
+        return;
+      
+      if (item == null)
+      {
+        setItem(slot.getItem());
+        slot.subItem();
+      }
+      else
+      {
+        addItem();
+        slot.subItem();
+      }
+      
+      if (slot.stackSize == 0)
+        inventory.setPickedUpItemSlot(null);
+      
+      ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
+      ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
+    }
   }
   
   @Override
@@ -458,5 +520,23 @@ public class ItemSlot extends Component
   public Categories getCategoryFilter()
   {
     return categoryFilter;
+  }
+  
+  public double getWeight()
+  {
+    if (item == null)
+      return 0;
+    
+    return item.getAttributes().getAttribute(Attr.weight).getValue() * ((stackSize > 0) ? stackSize : 1);
+  }
+  
+  public boolean isOnlyLabel()
+  {
+    return onlyLabel;
+  }
+  
+  public void setOnlyLabel(boolean onlyLabel)
+  {
+    this.onlyLabel = onlyLabel;
   }
 }

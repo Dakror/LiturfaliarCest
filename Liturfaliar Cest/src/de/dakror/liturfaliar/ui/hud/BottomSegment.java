@@ -16,7 +16,7 @@ public class BottomSegment
   {
     health = new PlayerHealth(p);
     stamina = new PlayerStamina(p);
-    hotbar = new PlayerHotbar();
+    hotbar = new PlayerHotbar(p);
   }
   
   public void update(Map m)

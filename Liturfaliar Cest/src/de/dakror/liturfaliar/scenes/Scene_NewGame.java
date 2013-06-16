@@ -170,7 +170,7 @@ public class Scene_NewGame implements Scene
   {
     if (openDialog)
     {
-      Viewport.dialog = new Dialog("Viewport.dialog?", "Möchtest du kurz in die Steuerung und[br]Benutzeroberfläche eingeführt werden?", Dialog.MESSAGE);
+      Viewport.dialog = new Dialog("Tutorial", "Möchtest du kurz in die Steuerung und[br]Benutzeroberfläche eingeführt werden?", Dialog.MESSAGE);
       Viewport.dialog.closeDisabled = true;
       Viewport.dialog.draw(g, v);
       Viewport.dialog.setButtons("Ja", "Nein");
@@ -195,7 +195,7 @@ public class Scene_NewGame implements Scene
     for (Chooser c : parts)
     {
       c.draw(g, v);
-    }    
+    }
   }
   
   public int createSave()

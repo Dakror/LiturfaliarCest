@@ -26,6 +26,7 @@ public class Dialog extends Component
   public Point                mouse;
   public boolean              closeDisabled = false;
   public boolean              closeRequested;
+  public boolean freezeOVScene = false;
   
   public Dialog(String title, String message, int type)
   {
