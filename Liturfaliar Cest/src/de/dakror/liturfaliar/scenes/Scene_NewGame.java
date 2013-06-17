@@ -309,7 +309,8 @@ public class Scene_NewGame implements Scene
     
     for (Chooser c : parts)
     {
-      c.mouseMoved(e);
+      if (c != null)
+        c.mouseMoved(e);
     }
   }
   

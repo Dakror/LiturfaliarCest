@@ -12,6 +12,7 @@ import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.dispatcher.DatabaseEventDispatcher;
 import de.dakror.liturfaliar.event.dispatcher.MapPackEventDispatcher;
 import de.dakror.liturfaliar.event.listener.MapPackEventListener;
+import de.dakror.liturfaliar.event.listener.PlayerHotbarEventListener;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.MapPack;
 import de.dakror.liturfaliar.map.creature.Player;
@@ -20,12 +21,13 @@ import de.dakror.liturfaliar.ovscenes.OVScene_Inventory;
 import de.dakror.liturfaliar.ovscenes.OVScene_Pause;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.CursorText;
+import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.hud.BottomSegment;
 import de.dakror.liturfaliar.ui.hud.TargetLabel;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
 
-public class Scene_Game implements Scene, MapPackEventListener
+public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEventListener
 {
   Viewport        v;
   private MapPack mappack;
@@ -224,5 +226,9 @@ public class Scene_Game implements Scene, MapPackEventListener
   
   @Override
   public void keyTyped(KeyEvent arg0)
+  {}
+  
+  @Override
+  public void slotTriggered(int index, ItemSlot slot)
   {}
 }

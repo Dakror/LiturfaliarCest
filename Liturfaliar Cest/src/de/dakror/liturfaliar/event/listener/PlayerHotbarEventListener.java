@@ -4,5 +4,5 @@ import de.dakror.liturfaliar.ui.ItemSlot;
 
 public interface PlayerHotbarEventListener
 {
-  public void slotTriggered(ItemSlot slot);
+  public void slotTriggered(int index, ItemSlot slot);
 }

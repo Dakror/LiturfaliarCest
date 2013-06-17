@@ -19,11 +19,11 @@ public class PlayerHotbarEventDispatcher
     listeners.set(listeners.indexOf(l), null);
   }
   
-  public static void dispatchSlotTriggered(ItemSlot slot)
+  public static void dispatchSlotTriggered(int index, ItemSlot slot)
   {
     for (PlayerHotbarEventListener l : listeners)
     {
-      l.slotTriggered(slot);
+      l.slotTriggered(index, slot);
     }
   }
 }

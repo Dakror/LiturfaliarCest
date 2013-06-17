@@ -133,6 +133,7 @@ public class Item extends Component
   {
     String c = "<#ffffff;17;1>";
     String g = "<#cccccc;17;1>";
+    String b = "<#cc7777;17;1>";
     
     String req = "";
     for (Attr attr : Attr.values())
@@ -144,13 +145,13 @@ public class Item extends Component
     String att = "";
     for (Attr attr : Attr.values())
     {
-      if (attr.equals(Attr.weight))
+      if (attr.equals(Attr.weight) || attr.equals(Attr.cooldown))
         continue;
       if (attributes.getAttribute(attr).getValue() != 0)
         att += g + ((attributes.getAttribute(attr).getValue() < 0.0) ? "-" : "+") + Attribute.FORMAT.format(attributes.getAttribute(attr).getValue()) + " " + attr.getText() + "[br]";
     }
     
-    String raw = "<#999999;30;1>" + name + "[br]<#6666ff;19;1>" + type.getName() + "[br]" + c + attributes.getAttribute(Attr.weight).getValue() + " kg[br]" + att + ((req.length() > 0) ? c + " [br]" + c + "Benötigt:[br]" + req : "");
+    String raw = "<#999999;30;1>" + name + "[br]<#6666ff;19;1>" + type.getName() + "[br]" + c + Attribute.FORMAT.format(attributes.getAttribute(Attr.weight).getValue()) + " kg[br]" + ((!attributes.getAttribute(Attr.cooldown).isEmpty()) ? b + Attribute.FORMAT.format(attributes.getAttribute(Attr.cooldown).getValue()) + "s " + Attr.cooldown.getText() + "[br]" : "") + att + ((req.length() > 0) ? c + " [br]" + c + "Benötigt:[br]" + req : "");
     
     if (tooltip == null)
     {

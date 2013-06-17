@@ -21,8 +21,8 @@ import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.Types;
-import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
+import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class ItemSlot extends Component
@@ -46,7 +46,6 @@ public class ItemSlot extends Component
   private Categories       categoryFilter;
   private ArrayList<Types> typesFilter;
   private Inventory        inventory;
-  
   
   public ItemSlot(int x, int y)
   {
@@ -163,9 +162,10 @@ public class ItemSlot extends Component
       }
       
       Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + SIZE - height, width, height, 5, 5), Colors.DGRAY, 0.8f, g);
-      Assistant.drawHorizontallyCenteredString(keyString, ax, width, ay + SIZE - 2, g, KEYFONT.getSize() - 2, Color.white);
+      Assistant.drawHorizontallyCenteredString(keyString, ax, width, ay + SIZE - 2, g, KEYFONT.getSize() - 2, Color.WHITE);
     }
-    else if (stackSize > 1 && keyString == null)
+    
+    if (stackSize > 1)
     {
       int width = g.getFontMetrics(STACKFONT).getAscent();
       int height = width;
@@ -251,6 +251,7 @@ public class ItemSlot extends Component
           return;
         
         setItem(new Item(inventory.getPickedUpItemSlot().getItem()));
+        stackSize = inventory.getPickedUpItemSlot().getStackSize();
         
         ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
         ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
