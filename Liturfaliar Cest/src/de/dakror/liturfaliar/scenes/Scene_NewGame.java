@@ -5,8 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.io.File;
-import java.net.URISyntaxException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,20 +32,24 @@ import de.dakror.liturfaliar.util.FileManager;
 
 public class Scene_NewGame implements Scene
 {
-  boolean   openDialog;
+  public static final Object[] hair     = { "10_black.png", "10_deepblue.png", "10_deeppurple.png", "10_gold.png", "10_gray.png", "10_navy.png", "10_redbrown.png", "11_aqua.png", "11_black.png", "11_blue.png", "11_brown.png", "11_cream.png", "11_gold.png", "11_gray.png", "11_green.png", "11_purple.png", "11_red.png", "11_wine.png", "12_aqua.png", "12_black.png", "12_blue.png", "12_cream.png", "12_deepblue.png", "12_deeppurple.png", "12_gold.png", "12_gray.png", "12_green.png", "12_navy.png", "12_orange.png", "12_red.png", "12_wine.png", "13_brown.png", "13_gold.png", "13_gray.png", "13_wine.png", "14_aqua.png", "14_black.png", "14_brown.png", "14_cream.png", "14_deepblue.png", "14_deepgreen.png", "14_deeppurple.png", "14_gold.png", "14_gray.png", "14_green.png", "14_navy.png", "14_orange.png", "14_red.png", "14_silver.png", "14_wine.png", "15_black.png", "15_deepblue.png", "15_deepgreen.png", "15_deeppurple.png", "15_navy.png", "15_ocher.png", "15_redbrown.png", "15_wine.png", "1_aqua.png", "1_black.png", "1_blue.png", "1_brown.png", "1_gold.png", "1_gray.png", "1_green.png", "1_lbrown.png", "1_red.png", "1_wine.png", "2_aqua.png", "2_black.png", "2_blue.png", "2_brown.png", "2_gold.png", "2_gray.png", "2_green.png", "2_lbrown.png", "2_red.png", "2_wine.png", "3_aqua.png", "3_black.png", "3_blue.png", "3_brown.png", "3_gold.png", "3_gray.png", "3_green.png", "3_lbrown.png", "3_red.png", "3_wine.png", "4_aqua.png", "4_black.png", "4_blue.png", "4_brown.png", "4_gold.png", "4_gray.png", "4_green.png", "4_lbrown.png", "4_red.png", "4_wine.png", "5_aqua.png", "5_black.png", "5_blue.png", "5_brown.png", "5_gold.png", "5_gray.png", "5_green.png", "5_lbrown.png", "5_red.png", "5_wine.png", "6_black.png", "6_black_s.png", "6_blue.png", "6_blue_s.png", "6_brown.png", "6_brown_s.png", "6_cream.png", "6_cream_s.png", "6_deepblue.png", "6_deepblue_s.png", "6_gold.png", "6_gold_s.png", "6_gray.png", "6_gray_s.png", "6_green.png", "6_green_s.png", "6_navy.png", "6_navy_s.png", "6_purple.png", "6_purple_s.png", "6_red.png", "6_red_s.png", "6_wine.png", "6_wine_s.png", "7_black.png", "7_blue.png", "7_brown.png", "7_cream.png", "7_deepblue.png", "7_gold.png", "7_gray.png", "7_green.png", "7_navy.png", "7_purple.png", "7_red.png", "7_wine.png", "8_black.png", "8_black_s.png", "8_blue.png", "8_blue_s.png", "8_brown.png", "8_brown_s.png", "8_cream.png", "8_cream_s.png", "8_deepblue.png", "8_deepblue_s.png", "8_gold.png", "8_gold_s.png", "8_gray.png", "8_gray_s.png", "8_green.png", "8_green_s.png", "8_navy.png", "8_navy_s.png", "8_purple.png", "8_purple_s.png", "8_red.png", "8_red_s.png", "8_wine.png", "8_wine_s.png", "9_aqua.png", "9_black.png", "9_blue.png", "9_brown.png", "9_gold.png", "9_gray.png", "9_green.png", "9_lbrown.png", "9_navy.png", "9_orange.png", "9_purple.png", "9_red.png", "9_wine.png", "none.png" };
+  public static final Object[] eyes     = { "1_aqua.png", "1_black.png", "1_blue.png", "1_brown.png", "1_gold.png", "1_gray.png", "1_green.png", "1_purple.png", "1_red.png", "2_aqua.png", "2_blue.png", "2_brown.png", "2_gold.png", "2_gray.png", "2_green.png", "2_pink.png", "2_purple.png", "2_red.png", "3_aqua.png", "3_black.png", "3_blue.png", "3_brown.png", "3_gold.png", "3_gray.png", "3_green.png", "3_purple.png", "3_red.png", "4_aqua.png", "4_black.png", "4_blue.png", "4_brown.png", "4_gold.png", "4_gray.png", "4_green.png", "4_purple.png", "4_red.png", "6_aqua.png", "6_black.png", "6_blue.png", "6_brown.png", "6_gold.png", "6_gray.png", "6_green.png", "6_pink.png", "6_red.png", "6_redpurple.png", "7_deeppurple.png", "7_gray.png", "7_green.png", "7_red.png", "none.png" };
   
-  Chooser   gender;
-  Chooser[] parts;
-  String[]  partsENG = { "hair", "eyes" };
-  String[]  partsDEU = { "Haare", "Augen" };
   
-  Button    start;
-  Button    random;
-  InputBar  name;
-  Container c1;
-  Equipment equip;
+  boolean                      openDialog;
   
-  Viewport  v;
+  Chooser                      gender;
+  Chooser[]                    parts;
+  String[]                     partsENG = { "hair", "eyes" };
+  String[]                     partsDEU = { "Haare", "Augen" };
+  
+  Button                       start;
+  Button                       random;
+  InputBar                     name;
+  Container                    c1;
+  Equipment                    equip;
+  
+  Viewport                     v;
   
   @Override
   public void init(Viewport v)
@@ -83,15 +85,8 @@ public class Scene_NewGame implements Scene
     
     for (int i = 0; i < parts.length; i++)
     {
-      try
-      {
-        parts[i] = new Chooser(v.w.getWidth() / 2 + 20, v.w.getHeight() / 2 - 220 + 40 * (i + 1), 280, 28, partsDEU[i], (Object[]) new File(getClass().getResource("/img/char/" + partsENG[i]).toURI()).list());
-        parts[i].alternate = true;
-      }
-      catch (URISyntaxException e)
-      {
-        e.printStackTrace();
-      }
+      parts[i] = new Chooser(v.w.getWidth() / 2 + 20, v.w.getHeight() / 2 - 220 + 40 * (i + 1), 280, 28, partsDEU[i], (partsENG[i].equals("hair")) ? hair : eyes);
+      parts[i].alternate = true;
     }
   }
   
