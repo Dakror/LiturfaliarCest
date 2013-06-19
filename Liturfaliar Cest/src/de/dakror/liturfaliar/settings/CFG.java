@@ -10,7 +10,7 @@ import java.awt.Point;
 public final class CFG
 {
   // -- UniVersion -- //
-  public static final int      VERSION           = 2013051212;
+  public static final int      VERSION           = 2013061922;
   public static final int      PHASE             = 0;
   // -- debug -- //
   public static boolean        UIDEBUG           = false;
