@@ -6,7 +6,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.dispatcher.DatabaseEventDispatcher;
@@ -15,10 +17,11 @@ import de.dakror.liturfaliar.event.dispatcher.PlayerHotbarEventDispatcher;
 import de.dakror.liturfaliar.event.listener.MapPackEventListener;
 import de.dakror.liturfaliar.event.listener.PlayerHotbarEventListener;
 import de.dakror.liturfaliar.item.Categories;
+import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.item.ItemDrop;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.MapPack;
 import de.dakror.liturfaliar.map.creature.Player;
-import de.dakror.liturfaliar.ovscenes.OVScene_Info;
 import de.dakror.liturfaliar.ovscenes.OVScene_Inventory;
 import de.dakror.liturfaliar.ovscenes.OVScene_Pause;
 import de.dakror.liturfaliar.settings.CFG;
@@ -26,7 +29,6 @@ import de.dakror.liturfaliar.ui.CursorText;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.hud.BottomSegment;
 import de.dakror.liturfaliar.ui.hud.TargetLabel;
-import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
 
 public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEventListener
@@ -56,6 +58,14 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     MapPackEventDispatcher.addMapPackEventListener(this);
     try
     {
+      JSONArray itemDrops = v.savegame.getJSONObject("mappack").getJSONArray("drops");
+      
+      for (int i = 0; i < itemDrops.length(); i++)
+      {
+        JSONObject o = itemDrops.getJSONObject(i);
+        mappack.addItemDrop(new ItemDrop(new Item(o.getJSONObject("item")), o.getInt("x"), o.getInt("y"), o.getString("map")));
+      }
+      
       mappack.setActiveMap(new Map(CFG.MAPPACK, v.savegame.getJSONObject("mappack").getJSONObject("pos").getString("map")));
     }
     catch (JSONException e)
@@ -78,14 +88,6 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   @Override
   public void update(long timePassed)
   {
-    if (isPaused())
-      Assistant.setCursor(Viewport.loadImage("system/cursor.png"), v.w);
-    
-    if (v.ovscenes.size() > 0 || (v.ovscenes.size() == 1 && v.ovscenes.get(0) instanceof OVScene_Info))
-      Assistant.setCursor(Viewport.loadImage("system/cursor.png"), v.w);
-    
-    else Assistant.setCursor(null, v.w);
-    
     mappack.getActiveMap().update(timePassed, this);
     // -- HUD -- //
     targetLabel.update(mappack.getActiveMap());

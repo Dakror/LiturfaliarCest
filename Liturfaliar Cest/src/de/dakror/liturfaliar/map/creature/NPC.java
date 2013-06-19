@@ -1,6 +1,7 @@
 package de.dakror.liturfaliar.map.creature;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 
@@ -140,7 +141,7 @@ public class NPC extends Creature
   @Override
   public void mousePressed(MouseEvent e, Map m)
   {
-    if (m.getPlayer().getField(m).distance(getField(m)) < 1.3 && m.getPlayer().isLookingAt(this, m) && e.getButton() == 1 && m.talk == null)
+    if (m.getPlayer().getField(m).distance(getField(m)) < 1.3 && m.getPlayer().isLookingAt(this, m) && e.getButton() == 1 && m.talk == null && getArea().contains(new Point(e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY())))
     {
       setTalking(true);
       m.talk = new Talk(this, m);

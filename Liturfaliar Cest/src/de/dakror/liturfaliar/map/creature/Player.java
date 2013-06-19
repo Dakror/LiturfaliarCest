@@ -13,12 +13,14 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Equipment;
+import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
-import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Attributes;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Balance;
 import de.dakror.liturfaliar.settings.CFG;
+import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Vector;
@@ -329,6 +331,27 @@ public class Player extends Creature
     try
     {
       data.getJSONObject("char").put("inventory", o);
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+    }
+  }
+  
+  public void putItemInFirstEmptyInventorySlot(Item item)
+  {
+    try
+    {
+      JSONArray inv = getInventory();
+      for (int i = 0; i < inv.length(); i++)
+      {
+        if (inv.getJSONObject(i).length() == 0)
+        {
+          inv.put(i, ItemSlot.serializeFakeItemSlot(item));
+          break;
+        }
+      }
+      setInventory(inv);
     }
     catch (JSONException e)
     {

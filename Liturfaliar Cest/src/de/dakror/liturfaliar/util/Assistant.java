@@ -42,13 +42,6 @@ import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.settings.CFG;
 
-
-/**
- * Static class for small tool functions.
- * 
- * @author Dakror
- * @version 05.10.2012
- */
 public final class Assistant
 {
   public static void setCursor(Image cursor, Window w)
@@ -60,12 +53,6 @@ public final class Assistant
     w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "Cursor"));
   }
   
-  /**
-   * Loads a Image out of the Resources within the jar file.
-   * 
-   * @param name - The path of the image to be loaded.
-   * @return - Loaded Image
-   */
   public static Image loadImage(String name)
   {
     try
@@ -78,11 +65,6 @@ public final class Assistant
     }
   }
   
-  /**
-   * Opens up a link in the users default browser.
-   * 
-   * @param url - Link to follow.
-   */
   public static void openLink(String url)
   {
     try
@@ -95,15 +77,6 @@ public final class Assistant
     }
   }
   
-  /**
-   * Draws a string to the graphics.
-   * 
-   * @param s - String to draw.
-   * @param x - X coordinate.
-   * @param y - Y coordinate.
-   * @param g - Graphcsi2D to draw on.
-   * @param c - Textcolor.
-   */
   public static void drawString(String s, int x, int y, Graphics2D g, Color c)
   {
     Color old = g.getColor();
@@ -112,15 +85,6 @@ public final class Assistant
     g.setColor(old);
   }
   
-  /**
-   * Draws a string to the graphics.
-   * 
-   * @param s - String to draw.
-   * @param x - X coordinate.
-   * @param y - Y coordinate.
-   * @param g - Graphcsi2D to draw on.
-   * @param f - Custom font to be used.
-   */
   public static void drawString(String s, int x, int y, Graphics2D g, Color c, Font f)
   {
     Color old = g.getColor();
@@ -132,16 +96,6 @@ public final class Assistant
     g.setFont(oldf);
   }
   
-  /**
-   * Draws a x-centered string to the graphics.
-   * 
-   * @param s - String to draw.
-   * @param w - Width to be centered in..
-   * @param h - Y coordinate.
-   * @param g - Graphcsi2D to draw on.
-   * @param size - Textsize.
-   * @param c - Textcolor.
-   */
   public static int drawHorizontallyCenteredString(String s, int w, int h, Graphics2D g, int size, Color c)
   {
     Color old = g.getColor();
@@ -159,17 +113,6 @@ public final class Assistant
     return nx;
   }
   
-  /**
-   * Draws a x-centered string to the graphics.
-   * 
-   * @param s - String to draw.
-   * @param x1 - X-value to be added to the centered coordinate.
-   * @param w - Width to be centered in..
-   * @param h - Y coordinate.
-   * @param g - Graphics2D to draw on.
-   * @param size - Textsize.
-   * @param c - Textcolor.
-   */
   public static int drawHorizontallyCenteredString(String s, int x1, int w, int h, Graphics2D g, int size, Color c)
   {
     Color old = g.getColor();
@@ -260,11 +203,6 @@ public final class Assistant
       OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(f), "UTF8");
       osw.write(s);
       osw.close();
-      /*
-       * BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-       * bw.write(s);
-       * bw.close();
-       */
     }
     catch (Exception e)
     {}

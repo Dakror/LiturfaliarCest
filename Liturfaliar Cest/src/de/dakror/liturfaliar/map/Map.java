@@ -27,6 +27,8 @@ import de.dakror.liturfaliar.event.dispatcher.MapEventDispatcher;
 import de.dakror.liturfaliar.event.listener.DatabaseEventListener;
 import de.dakror.liturfaliar.fx.Animation;
 import de.dakror.liturfaliar.item.Equipment;
+import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.item.ItemDrop;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.creature.Player;
@@ -49,6 +51,7 @@ public class Map implements DatabaseEventListener
   private JSONObject           data;
   private MapPack              mappack;
   private ArrayList<Animation> animations = new ArrayList<Animation>();
+  private ArrayList<ItemDrop>  itemDrops;
   
   public float                 alpha;
   
@@ -134,6 +137,7 @@ public class Map implements DatabaseEventListener
   public void init() throws Exception
   {
     DatabaseEventDispatcher.addDatabaseEventListener(this);
+    
     alpha = 1.0f;
     creatures = new ArrayList<Creature>();
     aboveFields = new ArrayList<Field>();
@@ -253,12 +257,20 @@ public class Map implements DatabaseEventListener
     {
       f.drawData(this, g, v);
     }
-    final Map self = this;
+    try
+    {
+      for (ItemDrop id : itemDrops)
+      {
+        id.draw(this, g, v);
+      }
+    }
+    catch (Exception e)
+    {}
     Comparator<Creature> comp = new Comparator<Creature>()
     {
       public int compare(Creature o1, Creature o2)
       {
-        return o1.getRelativePos(self)[1] - o2.getRelativePos(self)[1];
+        return o1.getRelativePos(Map.this)[1] - o2.getRelativePos(Map.this)[1];
       }
     };
     Collections.sort(creatures, comp);
@@ -274,7 +286,6 @@ public class Map implements DatabaseEventListener
       if (j.done)
         animations.remove(i);
     }
-    
     for (Field field : aboveFields)
     {
       int[] relpos = getPlayer().getRelativePos(this);
@@ -455,6 +466,8 @@ public class Map implements DatabaseEventListener
   public void setMapPack(MapPack mappack)
   {
     this.mappack = mappack;
+    
+    itemDrops = mappack.getItemDrops(this);
   }
   
   public void playAnimation(Animation a)
@@ -476,6 +489,11 @@ public class Map implements DatabaseEventListener
     {
       c.mouseMoved(e, this);
     }
+    
+    for (ItemDrop id : itemDrops)
+    {
+      id.mouseMoved(e, this);
+    }
   }
   
   public void mouseClicked(MouseEvent e)
@@ -493,6 +511,15 @@ public class Map implements DatabaseEventListener
       c.mousePressed(e, this);
     }
     
+    try
+    {
+      for (ItemDrop id : itemDrops)
+      {
+        id.mousePressed(e, this);
+      }
+    }
+    catch (Exception e1)
+    {}
   }
   
   public void mouseReleased(MouseEvent e)
@@ -500,11 +527,6 @@ public class Map implements DatabaseEventListener
     for (Creature c : creatures)
     {
       c.mouseReleased(e, this);
-    }
-    
-    if (talk != null)
-    {
-      talk.mouseReleased(e, this);
     }
   }
   
@@ -533,6 +555,9 @@ public class Map implements DatabaseEventListener
     {
       c.keyPressed(e, this);
     }
+    
+    if (talk != null && e.getKeyCode() == KeyEvent.VK_SPACE)
+      talk.triggerNext();
   }
   
   public void keyReleased(KeyEvent e)
@@ -579,5 +604,18 @@ public class Map implements DatabaseEventListener
   public void setPeaceful(boolean peaceful)
   {
     this.peaceful = peaceful;
+  }
+  
+  public void addItemDrop(Item item, int rx, int ry)
+  {
+    ItemDrop d = new ItemDrop(item, rx, ry, getName());
+    mappack.addItemDrop(d);
+    itemDrops.add(d);
+  }
+  
+  public void removeItemDrop(ItemDrop d)
+  {
+    mappack.removeItemDrop(d);
+    itemDrops.remove(d);
   }
 }

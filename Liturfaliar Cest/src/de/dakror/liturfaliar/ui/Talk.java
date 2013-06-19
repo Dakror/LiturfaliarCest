@@ -3,7 +3,6 @@ package de.dakror.liturfaliar.ui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +23,6 @@ public class Talk extends Component
   public static final int SPEED        = 10;
   public static final int LINEHEIGHT   = 30;
   
-  boolean                 firstClickSkipped;
   boolean                 showAll;
   boolean                 partDone;
   
@@ -50,7 +48,6 @@ public class Talk extends Component
     super(0, 0, 1, 1);
     try
     {
-      firstClickSkipped = false;
       showAll = false;
       by = b;
       m = map;
@@ -173,13 +170,8 @@ public class Talk extends Component
     speaker = bi;
   }
   
-  public void mouseReleased(MouseEvent e, Map m)
+  public void triggerNext()
   {
-    if (!this.firstClickSkipped)
-    {
-      this.firstClickSkipped = true;
-      return;
-    }
     if (!partDone)
     {
       showAll = true;

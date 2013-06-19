@@ -18,7 +18,6 @@ import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
-import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.Dialog;
@@ -204,11 +203,20 @@ public class OVScene_Inventory extends OVScene implements Inventory
           }
           case THROWITEM:
           {
+            int[] pos = sg.getPlayer().getRelativePos(sg.getMapPack().getActiveMap());
+            int ran = 16;
+            while (contextItemSlot.getItem() != null)
+            {
+              int rx = (int) Math.round(Math.random() * ran) - ran / 2;
+              int ry = (int) Math.round(Math.random() * ran) - ran / 2;
+              
+              Item item = new Item(contextItemSlot.getItem());
+              item.setStack(1);
+              
+              sg.getMapPack().getActiveMap().addItemDrop(item, pos[0] + rx, pos[1] + ry);
+              contextItemSlot.subItem();
+            }
             break;
-          }
-          default:
-          {
-            CFG.p("didnt work");
           }
         }
         contextMenu = null;
@@ -449,12 +457,10 @@ public class OVScene_Inventory extends OVScene implements Inventory
       sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), null);
     
     else if (slot.hasHotKey()) // is from hotbar
-    {
       sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), null);
-      return;
-    }
     
     pickedUp = new ItemSlot(slot);
+    pickedUp.setHotKey(-1, true);
     pickUpSource = slot;
     
     slot.setItem(null);
@@ -618,6 +624,8 @@ public class OVScene_Inventory extends OVScene implements Inventory
   @Override
   public void setPickedUpItemSlot(ItemSlot item)
   {
+    if (item != null)
+      item.setHotKey(-1, true);
     pickedUp = item;
   }
   
@@ -667,7 +675,18 @@ public class OVScene_Inventory extends OVScene implements Inventory
     else if (Arrays.asList(Categories.EQUIPS).indexOf(type.getCategory()) > -1 || type.getCategory().equals(Categories.WEAPON) || type.getCategory().equals(Categories.ITEM))
       options = new Object[] { TRASHITEM, THROWITEM };
     
-    contextMenu = new TextSelect(x, y, 300, 28 * options.length + 18, options);
+    int lx = x;
+    int ly = y;
+    int w = 300;
+    int h = 28 * options.length + 18;
+    
+    if (lx + w > v.w.getWidth())
+      lx -= (lx + w) - v.w.getWidth();
+    
+    if (ly + h > v.w.getHeight())
+      ly -= (ly + h) - v.w.getHeight();
+    
+    contextMenu = new TextSelect(lx, ly, w, h, options);
   }
   
   @Override

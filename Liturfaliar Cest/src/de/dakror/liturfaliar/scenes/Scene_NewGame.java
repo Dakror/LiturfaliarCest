@@ -255,6 +255,7 @@ public class Scene_NewGame implements Scene
       mappack.put("name", mp.getName());
       mappack.put("pos", mp.getData().getJSONObject("init"));
       mappack.put("npc", new JSONArray());
+      mappack.put("drops", new JSONArray());
       save.put("mappack", mappack);
       
       return save;

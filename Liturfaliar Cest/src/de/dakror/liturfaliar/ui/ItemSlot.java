@@ -68,6 +68,7 @@ public class ItemSlot extends Component
     ay = other.ay;
     hover = other.hover;
     inventory = other.inventory;
+    item.setItemSlot(this);
   }
   
   public void setCategoryFilter(Categories c)
@@ -89,6 +90,12 @@ public class ItemSlot extends Component
   
   public void setHotKey(int key, boolean mouse)
   {
+    if (key == -1)
+    {
+      keyString = null;
+      return;
+    }
+    
     hotKey = key;
     keyString = (mouse) ? ((key == 1) ? "ML" : "MR") : KeyEvent.getKeyText(key);
     mouseKey = mouse;
@@ -292,7 +299,7 @@ public class ItemSlot extends Component
           else
           {
             inventory.setPickedUpItemSlot(new ItemSlot(this));
-            item = new Item(oldPickedUp.getItem());
+            setItem(new Item(oldPickedUp.getItem()));
           }
           item.tooltip.visible = true;
           item.tooltip.setX(e.getXOnScreen() + item.tooltip.offset.x);
@@ -314,7 +321,7 @@ public class ItemSlot extends Component
           if (categoryFilter != null && !slot.getItem().areRequirementsSatisfied(null))
             return;
           
-          item = new Item(slot.getItem());
+          setItem(new Item(slot.getItem()));
           
           inventory.setPickedUpItemSlot(null);
           

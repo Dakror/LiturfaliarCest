@@ -6,10 +6,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.dispatcher.MapPackEventDispatcher;
+import de.dakror.liturfaliar.item.ItemDrop;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.scenes.Scene_Game;
@@ -117,42 +119,28 @@ public class OVScene_Pause extends OVScene
   
   public void save()
   {
-    try
-    {
-      JSONObject save = sg.getPlayer().getData();
-      JSONObject mappack = save.getJSONObject("mappack");
-      JSONObject pos = new JSONObject();
-      pos.put("map", sg.getMapPack().getActiveMap().getName());
-      pos.put("x", (v.w.getWidth() / 2 - CFG.FIELDSIZE / 2) - sg.getMapPack().getActiveMap().getX());
-      pos.put("y", (v.w.getHeight() / 2 - CFG.FIELDSIZE * 3 / 4) - sg.getMapPack().getActiveMap().getY());
-      mappack.put("pos", pos);
-      
-      JSONArray npc = new JSONArray();
-      for (Creature c : sg.getMapPack().getActiveMap().creatures)
-      {
-        if (c instanceof NPC)
-        {
-          npc.put(((NPC) c).serializeNPC());
-        }
-      }
-      mappack.put("npc", npc);
-      
-      save.put("mappack", mappack);
-      
-      FileManager.setSave(save);
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-    }
+    FileManager.setSave(getData());
   }
   
   public void copy()
   {
+    FileManager.copySave(getData());
+  }
+  
+  public JSONObject getData()
+  {
+    JSONObject save = sg.getPlayer().getData();
     try
     {
-      JSONObject save = sg.getPlayer().getData();
       JSONObject mappack = save.getJSONObject("mappack");
+      
+      JSONArray itemDrops = new JSONArray();
+      for (ItemDrop d : sg.getMapPack().getItemDrops(null))
+      {
+        itemDrops.put(d.serializeItemDrop());
+      }
+      mappack.put("drops", itemDrops);
+      
       JSONObject pos = new JSONObject();
       pos.put("map", sg.getMapPack().getActiveMap().getName());
       pos.put("x", (v.w.getWidth() / 2 - CFG.FIELDSIZE / 2) - sg.getMapPack().getActiveMap().getX());
@@ -170,13 +158,13 @@ public class OVScene_Pause extends OVScene
       mappack.put("npc", npc);
       
       save.put("mappack", mappack);
-      
-      FileManager.copySave(save);
     }
-    catch (Exception e)
+    catch (JSONException e)
     {
       e.printStackTrace();
     }
+    
+    return save;
   }
   
   @Override
