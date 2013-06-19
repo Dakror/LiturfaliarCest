@@ -21,7 +21,6 @@ import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.Types;
-import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
@@ -38,7 +37,6 @@ public class ItemSlot extends Component
   
   private int              hotKey;
   private int              ax, ay;
-  private int              stackSize;
   
   private Item             item;
   public String            tileset         = "Wood.png";
@@ -52,7 +50,6 @@ public class ItemSlot extends Component
     super(x, y, SIZE, SIZE);
     
     hover = false;
-    stackSize = 0;
     
     typesFilter = new ArrayList<Types>();
   }
@@ -71,7 +68,6 @@ public class ItemSlot extends Component
     ay = other.ay;
     hover = other.hover;
     inventory = other.inventory;
-    stackSize = other.stackSize;
   }
   
   public void setCategoryFilter(Categories c)
@@ -96,6 +92,11 @@ public class ItemSlot extends Component
     hotKey = key;
     keyString = (mouse) ? ((key == 1) ? "ML" : "MR") : KeyEvent.getKeyText(key);
     mouseKey = mouse;
+  }
+  
+  public boolean hasHotKey()
+  {
+    return keyString != null;
   }
   
   @Override
@@ -124,16 +125,16 @@ public class ItemSlot extends Component
       Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + SIZE - height, width, height, 5, 5), Colors.DGRAY, 0.8f, g);
       Assistant.drawHorizontallyCenteredString(keyString, ax, width, ay + SIZE - 2, g, KEYFONT.getSize() - 2, Color.white);
     }
-    else if (stackSize > 1 && keyString == null)
+    else if (item != null && item.getStack() > 1 && keyString == null)
     {
       int width = g.getFontMetrics(STACKFONT).getAscent();
       int height = width;
-      if (g.getFontMetrics(STACKFONT).stringWidth(stackSize + "") > width)
+      if (g.getFontMetrics(STACKFONT).stringWidth(item.getStack() + "") > width)
       {
-        width = g.getFontMetrics().stringWidth(stackSize + "");
+        width = g.getFontMetrics().stringWidth(item.getStack() + "");
       }
       Assistant.Shadow(new RoundRectangle2D.Double(ax + SIZE - width, ay + SIZE - height, width, height, 5, 5), Colors.DGRAY, 0.5f, g);
-      Assistant.drawHorizontallyCenteredString(stackSize + "", ax + SIZE - width, width, ay + SIZE - 2, g, STACKFONT.getSize() - 2, Colors.GRAY);
+      Assistant.drawHorizontallyCenteredString(item.getStack() + "", ax + SIZE - width, width, ay + SIZE - 2, g, STACKFONT.getSize() - 2, Colors.GRAY);
     }
   }
   
@@ -165,16 +166,16 @@ public class ItemSlot extends Component
       Assistant.drawHorizontallyCenteredString(keyString, ax, width, ay + SIZE - 2, g, KEYFONT.getSize() - 2, Color.WHITE);
     }
     
-    if (stackSize > 1)
+    if (item != null && item.getStack() > 1)
     {
       int width = g.getFontMetrics(STACKFONT).getAscent();
       int height = width;
-      if (g.getFontMetrics(STACKFONT).stringWidth(stackSize + "") > width)
+      if (g.getFontMetrics(STACKFONT).stringWidth(item.getStack() + "") > width)
       {
-        width = g.getFontMetrics().stringWidth(stackSize + "");
+        width = g.getFontMetrics().stringWidth(item.getStack() + "");
       }
       Assistant.Shadow(new RoundRectangle2D.Double(ax + SIZE - width, ay + SIZE - height, width, height, 5, 5), Colors.DGRAY, 0.5f, g);
-      Assistant.drawHorizontallyCenteredString(stackSize + "", ax + SIZE - width, width, ay + SIZE - 2, g, STACKFONT.getSize() - 2, Colors.GRAY);
+      Assistant.drawHorizontallyCenteredString(item.getStack() + "", ax + SIZE - width, width, ay + SIZE - 2, g, STACKFONT.getSize() - 2, Colors.GRAY);
     }
     
     if (hover)
@@ -195,12 +196,6 @@ public class ItemSlot extends Component
   public void setItem(Item item)
   {
     this.item = item;
-    if (item != null)
-    {
-      if (stackSize + 1 < item.getType().getStackSize())
-        stackSize++;
-    }
-    else stackSize = 0;
     
     if (this.item != null)
       this.item.setItemSlot(this);
@@ -208,18 +203,17 @@ public class ItemSlot extends Component
   
   public void addItem()
   {
-    if (stackSize + 1 <= item.getType().getStackSize())
-      stackSize++;
+    if (item.getStack() + 1 <= item.getType().getStackSize())
+      item.setStack(item.getStack() + 1);
   }
   
   public void subItem()
   {
-    stackSize--;
+    item.setStack(item.getStack() - 1);
     
-    if (stackSize > 0)
+    if (item.getStack() > 0)
       return;
     
-    stackSize = 0;
     item = null;
   }
   
@@ -251,7 +245,6 @@ public class ItemSlot extends Component
           return;
         
         setItem(new Item(inventory.getPickedUpItemSlot().getItem()));
-        stackSize = inventory.getPickedUpItemSlot().getStackSize();
         
         ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
         ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
@@ -265,15 +258,9 @@ public class ItemSlot extends Component
         ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
       }
     }
-    else
+    else if (clip)
     {
-      
-      if (keyString != null)
-      {
-        if (item != null && mouseKey && e.getButton() == hotKey)
-        {}
-      }
-      else if (item != null && e.getButton() == 1 && clip && inventory != null)
+      if (item != null && e.getButton() == 1 && clip && inventory != null)
       {
         if (inventory.getPickedUpItemSlot() == null)
         {
@@ -288,25 +275,24 @@ public class ItemSlot extends Component
         {
           ItemSlot oldPickedUp = new ItemSlot(inventory.getPickedUpItemSlot());
           
-          if (oldPickedUp.getItem().equals(item) && stackSize < item.getType().getStackSize())
+          if (oldPickedUp.getItem().equals(item) && item.getStack() < item.getType().getStackSize())
           {
-            int sum = stackSize + oldPickedUp.getStackSize();
+            int sum = item.getStack() + oldPickedUp.getItem().getStack();
             if (sum <= item.getType().getStackSize())
             {
-              stackSize += oldPickedUp.getStackSize();
+              item.setStack(item.getStack() + oldPickedUp.getItem().getStack());
               inventory.setPickedUpItemSlot(null);
             }
             else
             {
-              stackSize = item.getType().getStackSize();
-              inventory.getPickedUpItemSlot().setStackSize(sum - stackSize);
+              item.setStack(item.getType().getStackSize());
+              inventory.getPickedUpItemSlot().getItem().setStack(sum - item.getStack());
             }
           }
           else
           {
             inventory.setPickedUpItemSlot(new ItemSlot(this));
-            item = oldPickedUp.getItem();
-            stackSize = oldPickedUp.getStackSize();
+            item = new Item(oldPickedUp.getItem());
           }
           item.tooltip.visible = true;
           item.tooltip.setX(e.getXOnScreen() + item.tooltip.offset.x);
@@ -328,8 +314,7 @@ public class ItemSlot extends Component
           if (categoryFilter != null && !slot.getItem().areRequirementsSatisfied(null))
             return;
           
-          item = slot.getItem();
-          stackSize = slot.getStackSize();
+          item = new Item(slot.getItem());
           
           inventory.setPickedUpItemSlot(null);
           
@@ -359,18 +344,19 @@ public class ItemSlot extends Component
     {
       ItemSlot slot = inventory.getPickedUpItemSlot();
       
-      if (slot == null || slot.getStackSize() < 1)
+      if (slot == null || slot.getItem().getStack() < 1)
         return;
       
       if (item != null && !item.equals(slot.getItem()))
         return;
       
-      if (item != null && item.equals(slot.getItem()) && stackSize == item.getType().getStackSize())
+      if (item != null && item.equals(slot.getItem()) && item.getStack() == item.getType().getStackSize())
         return;
       
       if (item == null)
       {
-        setItem(slot.getItem());
+        setItem(new Item(slot.getItem()));
+        getItem().setStack(1);
         slot.subItem();
       }
       else
@@ -379,7 +365,7 @@ public class ItemSlot extends Component
         slot.subItem();
       }
       
-      if (slot.stackSize == 0)
+      if (slot.getItem() == null)
         inventory.setPickedUpItemSlot(null);
       
       ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
@@ -419,7 +405,7 @@ public class ItemSlot extends Component
     return slots;
   }
   
-  public static JSONObject serializeFakeItemSlot(Item item, int s)
+  public static JSONObject serializeFakeItemSlot(Item item)
   {
     JSONObject o = new JSONObject();
     try
@@ -427,7 +413,6 @@ public class ItemSlot extends Component
       if (item != null)
       {
         o.put("item", item.serializeItem());
-        o.put("stack", s);
       }
     }
     catch (JSONException e)
@@ -445,7 +430,6 @@ public class ItemSlot extends Component
       if (item != null)
       {
         o.put("item", item.serializeItem());
-        o.put("stack", stackSize);
       }
     }
     catch (JSONException e)
@@ -479,7 +463,6 @@ public class ItemSlot extends Component
           continue;
         
         slots[i].setItem(new Item(o.getJSONObject("item")));
-        slots[i].setStackSize(o.getInt("stack"));
       }
       catch (JSONException e)
       {
@@ -496,16 +479,6 @@ public class ItemSlot extends Component
   public void setInventory(Inventory inventory)
   {
     this.inventory = inventory;
-  }
-  
-  public int getStackSize()
-  {
-    return stackSize;
-  }
-  
-  public void setStackSize(int stackSize)
-  {
-    this.stackSize = stackSize;
   }
   
   public ArrayList<Types> getTypesFilter()
@@ -528,7 +501,7 @@ public class ItemSlot extends Component
     if (item == null)
       return 0;
     
-    return item.getAttributes().getAttribute(Attr.weight).getValue() * ((stackSize > 0) ? stackSize : 1);
+    return item.getWeight();
   }
   
   public boolean isOnlyLabel()

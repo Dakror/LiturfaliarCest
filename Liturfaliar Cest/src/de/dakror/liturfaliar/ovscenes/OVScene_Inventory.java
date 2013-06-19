@@ -156,13 +156,9 @@ public class OVScene_Inventory extends OVScene implements Inventory
     for (int i = 0; i < hotbar.length; i++)
     {
       hotbar[i].setInventory(this);
-      hotbar[i].setOnlyLabel(true);
       hotbar[i].setItem(sg.getPlayer().getEquipment().getHotbarItem(i));
       hotbar[i].setHotKey((i < PlayerHotbar.KEYSLOTS.length) ? PlayerHotbar.KEYSLOTS[i] : PlayerHotbar.MOUSESLOTS[i - PlayerHotbar.KEYSLOTS.length], i > PlayerHotbar.KEYSLOTS.length - 1);
     }
-    
-    hotbar[7].setCategoryFilter(Categories.CONSUMABLE);
-    hotbar[7].showFilterImage = false;
     
     updateStats(true);
   }
@@ -193,7 +189,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
         {
           case USEITEM:
           {
-            contextItemSlot.getItem().triggerAction();
+            contextItemSlot.getItem().triggerAction(getMap(), v);
             break;
           }
           case TRASHITEM:
@@ -294,7 +290,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
   
   public void trashItem()
   {
-    Item scrap = new Item(Items.SCRAP);
+    Item scrap = new Item(Items.SCRAP, 1);
     ItemSlot scrapSlot = null;
     ItemSlot nullSlot = getFirstSlot(null);
     
@@ -302,7 +298,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
     {
       if (is.getItem() == null)
         continue;
-      if (is.getItem().equals(scrap) && is.getStackSize() + 1 <= scrap.getType().getStackSize())
+      if (is.getItem().equals(scrap) && is.getItem().getStack() + 1 <= scrap.getType().getStackSize())
       {
         scrapSlot = is;
         break;
@@ -452,7 +448,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
     if (slot.getCategoryFilter() != null && !slot.isOnlyLabel()) // is from equip menu
       sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), null);
     
-    else if (slot.isOnlyLabel()) // is from hotbar
+    else if (slot.hasHotKey()) // is from hotbar
     {
       sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), null);
       return;
@@ -524,7 +520,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
     if (slot.getCategoryFilter() != null && !slot.isOnlyLabel()) // is from equip menu
       sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), slot.getItem());
     
-    else if (slot.isOnlyLabel()) // is from hotbar
+    else if (slot.hasHotKey()) // is from hotbar
       sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), slot.getItem());
     
     updateStats(true);

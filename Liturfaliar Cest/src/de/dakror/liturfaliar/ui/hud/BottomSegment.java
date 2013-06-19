@@ -1,6 +1,8 @@
 package de.dakror.liturfaliar.ui.hud;
 
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
@@ -34,5 +36,15 @@ public class BottomSegment
       stamina.draw(g, v, m);
       hotbar.draw(g, v, m);
     }
+  }
+  
+  public void mousePressed(MouseEvent e, Map m)
+  {
+    hotbar.mousePressed(e, m);
+  }
+  
+  public void keyPressed(KeyEvent e, Map m)
+  {
+    hotbar.keyPressed(e, m);
   }
 }

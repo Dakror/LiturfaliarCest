@@ -1419,7 +1419,7 @@ public class MapEditor
             if (EQspinners[i].getValue().toString().indexOf("none") > -1)
               EQ.setEquipmentItem(Categories.EQUIPS[i], null);
             
-            else EQ.setEquipmentItem(Categories.EQUIPS[i], new Item(Types.valueOf(Categories.EQUIPS[i].name().replace("BOOTS", "SHOES")), EQspinners[i].getValue().toString().replaceAll("(_.{1}\\.png)|(\\.png)", "")));
+            else EQ.setEquipmentItem(Categories.EQUIPS[i], new Item(Types.valueOf(Categories.EQUIPS[i].name().replace("BOOTS", "SHOES")), EQspinners[i].getValue().toString().replaceAll("(_.{1}\\.png)|(\\.png)", ""), 1));
           }
           catch (Exception e1)
           {

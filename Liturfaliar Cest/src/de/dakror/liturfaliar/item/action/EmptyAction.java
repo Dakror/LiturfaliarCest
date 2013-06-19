@@ -4,11 +4,12 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.map.Map;
 
 public class EmptyAction extends ItemAction
 {
   @Override
-  public void actionTriggered(Item item, Viewport v)
+  public void actionTriggered(Item item, Map m, Viewport v)
   {}
   
   @Override

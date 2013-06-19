@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
@@ -22,12 +23,15 @@ public class Potion extends ItemAction
   }
   
   @Override
-  public void actionTriggered(Item item, Viewport v)
+  public void actionTriggered(Item item, Map m, Viewport v)
   {
     if (item.getItemSlot() == null)
       return;
     
-    Creature target = item.getItemSlot().getInventory().getMap().getCreatureByAccessKey(targetID);
+    Creature target = m.getCreatureByAccessKey(targetID);
+    
+    if (target == null)
+      return;
     
     Attributes attributes = target.getAttributes();
     
@@ -64,8 +68,8 @@ public class Potion extends ItemAction
       }
     }
     target.setAttributes(attributes);
-    item.getItemSlot().subItem();
     v.playSound("184-DrinkPotion");
+    item.getItemSlot().subItem();
   }
   
   @Override

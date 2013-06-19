@@ -11,8 +11,10 @@ import org.json.JSONException;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.dispatcher.DatabaseEventDispatcher;
 import de.dakror.liturfaliar.event.dispatcher.MapPackEventDispatcher;
+import de.dakror.liturfaliar.event.dispatcher.PlayerHotbarEventDispatcher;
 import de.dakror.liturfaliar.event.listener.MapPackEventListener;
 import de.dakror.liturfaliar.event.listener.PlayerHotbarEventListener;
+import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.MapPack;
 import de.dakror.liturfaliar.map.creature.Player;
@@ -44,6 +46,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   public void init(Viewport v)
   {
     this.v = v;
+    PlayerHotbarEventDispatcher.addPlayerHotbarEventListener(this);
     v.setFramesFrozen(false);
     CFG.MAPCENTER = new Point((v.w.getWidth() / 2 - CFG.FIELDSIZE / 2), (v.w.getHeight() / 2 - CFG.FIELDSIZE * 3 / 4));
     
@@ -107,6 +110,8 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   {
     if (mappack != null && mappack.getActiveMap() != null)
       mappack.getActiveMap().keyPressed(e);
+    
+    bottomSegment.keyPressed(e, mappack.getActiveMap());
   }
   
   @Override
@@ -175,6 +180,9 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   {
     if (mappack != null && mappack.getActiveMap() != null)
       mappack.getActiveMap().mousePressed(e);
+    
+    bottomSegment.mousePressed(e, mappack.getActiveMap());
+    
   }
   
   @Override
@@ -230,5 +238,14 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   
   @Override
   public void slotTriggered(int index, ItemSlot slot)
-  {}
+  {
+    if (slot.getItem() == null)
+      return;
+    
+    if (slot.getItem().getType().getCategory().equals(Categories.CONSUMABLE))
+    {
+      slot.getItem().triggerAction(mappack.getActiveMap(), v);
+      player.getEquipment().setHotbarItem(index, slot.getItem());
+    }
+  }
 }

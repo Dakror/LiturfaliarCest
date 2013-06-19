@@ -147,7 +147,7 @@ public class Scene_NewGame implements Scene
     {
       String sel;
       if ((sel = (String) parts[i].getSelected(true)) != null)
-        equip.setEquipmentItem(Categories.valueOf(partsENG[i].toUpperCase()), new Item(Types.valueOf(partsENG[i].toUpperCase()), sel.replaceAll("(_.{1}\\.png)|(\\.png)", "")));
+        equip.setEquipmentItem(Categories.valueOf(partsENG[i].toUpperCase()), new Item(Types.valueOf(partsENG[i].toUpperCase()), sel.replaceAll("(_.{1}\\.png)|(\\.png)", ""), 1));
     }
     
     if (Viewport.dialog != null && Viewport.dialog.buttons.length > 0)
@@ -227,9 +227,9 @@ public class Scene_NewGame implements Scene
       // -- inventory -- //
       JSONArray inv = new JSONArray();
       
-      inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.HEALTHPOTION), 2));
-      inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.TOXICPOTION), 1));
-      inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.SCRAP), 8));
+      inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.HEALTHPOTION, 2)));
+      inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.TOXICPOTION, 1)));
+      inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.SCRAP, 8)));
       
       cfg.put("inventory", inv);
       
@@ -302,16 +302,21 @@ public class Scene_NewGame implements Scene
   @Override
   public void mouseMoved(MouseEvent e)
   {
-    gender.mouseMoved(e);
-    name.mouseMoved(e);
-    random.mouseMoved(e);
-    start.mouseMoved(e);
-    
-    for (Chooser c : parts)
+    try
     {
-      if (c != null)
-        c.mouseMoved(e);
+      gender.mouseMoved(e);
+      name.mouseMoved(e);
+      random.mouseMoved(e);
+      start.mouseMoved(e);
+      
+      for (Chooser c : parts)
+      {
+        if (c != null)
+          c.mouseMoved(e);
+      }
     }
+    catch (Exception e1)
+    {}
   }
   
   @Override

@@ -158,18 +158,18 @@ public class Equipment
     Equipment e = new Equipment();
     if (male)
     {
-      e.setEquipmentItem(Categories.HAIR, new Item(Types.HAIR, "1_red"));
-      e.setEquipmentItem(Categories.SHIRT, new Item(Items.BOYSHIRT));
-      e.setEquipmentItem(Categories.PANTS, new Item(Items.BOYPANTS));
-      e.setEquipmentItem(Categories.BOOTS, new Item(Items.BOYBOOTS));
-      e.setEquipmentItem(Categories.SKIN, new Item(Types.SKIN, "man"));
+      e.setEquipmentItem(Categories.HAIR, new Item(Types.HAIR, "1_red", 1));
+      e.setEquipmentItem(Categories.SHIRT, new Item(Items.BOYSHIRT, 1));
+      e.setEquipmentItem(Categories.PANTS, new Item(Items.BOYPANTS, 1));
+      e.setEquipmentItem(Categories.BOOTS, new Item(Items.BOYBOOTS, 1));
+      e.setEquipmentItem(Categories.SKIN, new Item(Types.SKIN, "man", 1));
     }
     else
     {
-      e.setEquipmentItem(Categories.HAIR, new Item(Types.HAIR, "7_brown"));
-      e.setEquipmentItem(Categories.SHIRT, new Item(Items.GIRLSHIRT));
-      e.setEquipmentItem(Categories.BOOTS, new Item(Items.GIRLBOOTS));
-      e.setEquipmentItem(Categories.SKIN, new Item(Types.SKIN, "woman"));
+      e.setEquipmentItem(Categories.HAIR, new Item(Types.HAIR, "7_brown", 1));
+      e.setEquipmentItem(Categories.SHIRT, new Item(Items.GIRLSHIRT, 1));
+      e.setEquipmentItem(Categories.BOOTS, new Item(Items.GIRLBOOTS, 1));
+      e.setEquipmentItem(Categories.SKIN, new Item(Types.SKIN, "woman", 1));
     }
     
     e.setMale(male);

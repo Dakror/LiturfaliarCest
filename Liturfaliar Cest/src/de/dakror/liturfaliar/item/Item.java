@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.action.EmptyAction;
 import de.dakror.liturfaliar.item.action.ItemAction;
+import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
@@ -26,6 +27,8 @@ public class Item extends Component
   public static final int SPACING = 4;
   
   public Point            mouse   = new Point(0, 0);
+  
+  int                     stack   = 0;
   
   int                     iconx, icony;
   
@@ -42,9 +45,7 @@ public class Item extends Component
   
   ItemSlot                itemSlot;
   
-  Viewport                v;
-  
-  public Item(Types t, String path)
+  public Item(Types t, String path, int s)
   {
     super(0, 0, ItemSlot.SIZE - SPACING * 2, ItemSlot.SIZE - SPACING * 2);
     type = t;
@@ -52,11 +53,11 @@ public class Item extends Component
     iconx = 0;
     icony = 0;
     name = "";
-    
+    stack = s;
     init();
   }
   
-  public Item(Items i)
+  public Item(Items i, int s)
   {
     super(0, 0, ItemSlot.SIZE - SPACING * 2, ItemSlot.SIZE - SPACING * 2);
     
@@ -68,7 +69,7 @@ public class Item extends Component
     attributes = i.getAttributes();
     requirements = i.getRequirement();
     action = i.getItemAction();
-    
+    stack = s;
     init();
   }
   
@@ -85,7 +86,7 @@ public class Item extends Component
     attributes = other.getAttributes();
     requirements = other.getRequirements();
     action = other.getAction();
-    
+    stack = other.stack;
     init();
   }
   
@@ -103,6 +104,7 @@ public class Item extends Component
       attributes = new Attributes(o.getJSONObject("attr"));
       requirements = new Attributes(o.getJSONObject("req"));
       action = ItemAction.load(o.getJSONObject("action"));
+      stack = o.getInt("stack");
     }
     catch (JSONException e)
     {
@@ -115,7 +117,6 @@ public class Item extends Component
   public void init()
   {
     icon = ((BufferedImage) Viewport.loadImage("system/icons.png")).getSubimage(iconx * 24, icony * 24, 24, 24).getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_REPLICATE);
-    
     if (attributes == null)
       attributes = new Attributes();
     
@@ -151,7 +152,7 @@ public class Item extends Component
         att += g + ((attributes.getAttribute(attr).getValue() < 0.0) ? "-" : "+") + Attribute.FORMAT.format(attributes.getAttribute(attr).getValue()) + " " + attr.getText() + "[br]";
     }
     
-    String raw = "<#999999;30;1>" + name + "[br]<#6666ff;19;1>" + type.getName() + "[br]" + c + Attribute.FORMAT.format(attributes.getAttribute(Attr.weight).getValue()) + " kg[br]" + ((!attributes.getAttribute(Attr.cooldown).isEmpty()) ? b + Attribute.FORMAT.format(attributes.getAttribute(Attr.cooldown).getValue()) + "s " + Attr.cooldown.getText() + "[br]" : "") + att + ((req.length() > 0) ? c + " [br]" + c + "Benötigt:[br]" + req : "");
+    String raw = "<#999999;30;1>" + name + "[br]<#6666ff;19;1>" + type.getName() + "[br]" + c + Attribute.FORMAT.format(attributes.getAttribute(Attr.weight).getValue() * stack) + " kg[br]" + ((!attributes.getAttribute(Attr.cooldown).isEmpty()) ? b + Attribute.FORMAT.format(attributes.getAttribute(Attr.cooldown).getValue()) + "s " + Attr.cooldown.getText() + "[br]" : "") + att + ((req.length() > 0) ? c + " [br]" + c + "Benötigt:[br]" + req : "");
     
     if (tooltip == null)
     {
@@ -176,8 +177,6 @@ public class Item extends Component
   
   public void draw(int x1, int y1, Graphics2D g, Viewport v)
   {
-    this.v = v;
-    
     setX(x1 + SPACING);
     setY(y1 + SPACING);
     g.drawImage(icon, getX() + (getWidth() / 2 - icon.getWidth(null) / 2), getY() + (getHeight() / 2 - icon.getHeight(null) / 2), icon.getWidth(null), icon.getHeight(null), v.w);
@@ -217,6 +216,7 @@ public class Item extends Component
       o.put("attr", attributes.serializeAttributes());
       o.put("req", requirements.serializeAttributes());
       o.put("action", action.serializeItemAction());
+      o.put("stack", stack);
     }
     catch (JSONException e)
     {
@@ -250,6 +250,18 @@ public class Item extends Component
     return action;
   }
   
+  public int getStack()
+  {
+    return stack;
+  }
+  
+  public void setStack(int stack)
+  {
+    this.stack = (stack <= type.getStackSize()) ? stack : type.getStackSize();
+    
+    updateTooltip();
+  }
+  
   public void setAction(ItemAction action)
   {
     this.action = action;
@@ -263,6 +275,21 @@ public class Item extends Component
   public void setItemSlot(ItemSlot itemSlot)
   {
     this.itemSlot = itemSlot;
+  }
+  
+  public double getWeight()
+  {
+    return attributes.getAttribute(Attr.weight).getValue() * ((stack > 0) ? stack : 1);
+  }
+  
+  public String getName()
+  {
+    return name;
+  }
+  
+  public void setName(String name)
+  {
+    this.name = name;
   }
   
   public Attributes getRequirements()
@@ -286,9 +313,9 @@ public class Item extends Component
     return true;
   }
   
-  public void triggerAction()
+  public void triggerAction(Map m, Viewport v)
   {
-    action.actionTriggered(this, v);
+    action.actionTriggered(this, m, v);
   }
   
   public boolean equals(Item o)
