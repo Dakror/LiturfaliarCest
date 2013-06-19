@@ -185,6 +185,13 @@ public class Item extends Component
       tooltip.draw(g, v);
   }
   
+  public void drawWithoutTooltip(int x1, int y1, Graphics2D g, Viewport v)
+  {
+    setX(x1 + SPACING);
+    setY(y1 + SPACING);
+    g.drawImage(icon, getX() + (getWidth() / 2 - icon.getWidth(null) / 2), getY() + (getHeight() / 2 - icon.getHeight(null) / 2), icon.getWidth(null), icon.getHeight(null), v.w);
+  }
+  
   @Override
   public void update()
   {}

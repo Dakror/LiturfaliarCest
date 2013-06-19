@@ -52,6 +52,7 @@ public class Map implements DatabaseEventListener
   private MapPack              mappack;
   private ArrayList<Animation> animations = new ArrayList<Animation>();
   private ArrayList<ItemDrop>  itemDrops;
+  private ItemDrop             hoveredItemDrop;
   
   public float                 alpha;
   
@@ -261,7 +262,10 @@ public class Map implements DatabaseEventListener
     {
       for (ItemDrop id : itemDrops)
       {
-        id.draw(this, g, v);
+        if ((hoveredItemDrop != null && id.equals(hoveredItemDrop)) || hoveredItemDrop == null)
+          id.draw(this, g, v);
+        
+        else id.drawWithoutTooltip(this, g, v);
       }
     }
     catch (Exception e)
@@ -485,6 +489,7 @@ public class Map implements DatabaseEventListener
   
   public void mouseMoved(MouseEvent e)
   {
+    hoveredItemDrop = null;
     for (Creature c : creatures)
     {
       c.mouseMoved(e, this);
@@ -493,6 +498,9 @@ public class Map implements DatabaseEventListener
     for (ItemDrop id : itemDrops)
     {
       id.mouseMoved(e, this);
+      
+      if (hoveredItemDrop == null && id.getArea(this).contains(e.getLocationOnScreen()))
+        hoveredItemDrop = id;
     }
   }
   
@@ -504,7 +512,7 @@ public class Map implements DatabaseEventListener
     }
   }
   
-  public void mousePressed(MouseEvent e)
+  public void mousePressed(MouseEvent e, Viewport v)
   {
     for (Creature c : creatures)
     {
@@ -515,7 +523,7 @@ public class Map implements DatabaseEventListener
     {
       for (ItemDrop id : itemDrops)
       {
-        id.mousePressed(e, this);
+        id.mousePressed(e, this, v);
       }
     }
     catch (Exception e1)

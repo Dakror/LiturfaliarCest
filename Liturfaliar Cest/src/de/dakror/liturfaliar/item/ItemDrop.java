@@ -3,6 +3,8 @@ package de.dakror.liturfaliar.item;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -98,18 +100,29 @@ public class ItemDrop
     item.draw(m.getX() + x, m.getY() + y, g, v);
   }
   
+  public void drawWithoutTooltip(Map m, Graphics2D g, Viewport v)
+  {
+    item.drawWithoutTooltip(m.getX() + x, m.getY() + y, g, v);
+  }
+  
+  public Area getArea(Map m)
+  {
+    return new Area(new Rectangle2D.Double(m.getX() + x, m.getY() + y, 24, 24));
+  }
+  
   public void mouseMoved(MouseEvent e, Map m)
   {
     item.mouseMoved(e);
   }
   
-  public void mousePressed(MouseEvent e, Map m)
+  public void mousePressed(MouseEvent e, Map m, Viewport v)
   {
     int[] p = m.getPlayer().getRelativePos(m);
     if (new Point(p[0], p[1]).distance(x, y) < CFG.FIELDSIZE * 2)
     {
-      m.getPlayer().putItemInFirstEmptyInventorySlot(item);
+      m.getPlayer().putItemInFirstInventorySlot(item);
       m.removeItemDrop(this);
+      v.playSound("064-Swing03");
     }
   }
 }

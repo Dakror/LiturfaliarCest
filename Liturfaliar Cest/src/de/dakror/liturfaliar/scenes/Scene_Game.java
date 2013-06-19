@@ -181,7 +181,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   public void mousePressed(MouseEvent e)
   {
     if (mappack != null && mappack.getActiveMap() != null)
-      mappack.getActiveMap().mousePressed(e);
+      mappack.getActiveMap().mousePressed(e, v);
     
     bottomSegment.mousePressed(e, mappack.getActiveMap());
     

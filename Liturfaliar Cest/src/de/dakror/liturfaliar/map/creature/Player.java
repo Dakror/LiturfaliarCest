@@ -338,20 +338,34 @@ public class Player extends Creature
     }
   }
   
-  public void putItemInFirstEmptyInventorySlot(Item item)
+  public void putItemInFirstInventorySlot(Item item)
   {
     try
     {
       JSONArray inv = getInventory();
       for (int i = 0; i < inv.length(); i++)
       {
+        if (inv.getJSONObject(i).length() > 0)
+        {
+          Item cItem = new Item(inv.getJSONObject(i).getJSONObject("item"));
+          if (cItem.equals(item) && cItem.getStack() < cItem.getType().getStackSize())
+          {
+            cItem.setStack(cItem.getStack() + 1);
+            inv.put(i, ItemSlot.serializeFakeItemSlot(cItem));
+            setInventory(inv);
+            return;
+          }
+        }
+      }
+      for (int i = 0; i < inv.length(); i++)
+      {
         if (inv.getJSONObject(i).length() == 0)
         {
           inv.put(i, ItemSlot.serializeFakeItemSlot(item));
-          break;
+          setInventory(inv);
+          return;
         }
       }
-      setInventory(inv);
     }
     catch (JSONException e)
     {
