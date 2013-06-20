@@ -10,7 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.dispatcher.MapPackEventDispatcher;
 import de.dakror.liturfaliar.item.ItemDrop;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.map.creature.NPC;
@@ -91,13 +90,11 @@ public class OVScene_Pause extends OVScene
       }
       case 3:
       {
-        MapPackEventDispatcher.removeMapPackEventListener(sg);
         v.setScene(new Scene_LoadGame());
         break;
       }
       case 4:
       {
-        MapPackEventDispatcher.removeMapPackEventListener(sg);
         save();
         v.setScene(new Scene_MainMenu());
         break;

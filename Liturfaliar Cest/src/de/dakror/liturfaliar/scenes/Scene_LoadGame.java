@@ -41,7 +41,7 @@ public class Scene_LoadGame implements Scene
   Viewport     v;
   
   @Override
-  public void init(Viewport v)
+  public void construct(Viewport v)
   {
     this.v = v;
     v.play();
@@ -332,5 +332,9 @@ public class Scene_LoadGame implements Scene
   
   @Override
   public void mouseWheelMoved(MouseWheelEvent e)
+  {}
+  
+  @Override
+  public void destruct()
   {}
 }

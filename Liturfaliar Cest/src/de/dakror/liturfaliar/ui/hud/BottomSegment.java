@@ -43,8 +43,8 @@ public class BottomSegment
     hotbar.mousePressed(e, m);
   }
   
-  public void keyPressed(KeyEvent e, Map m)
+  public void keyReleased(KeyEvent e, Map m)
   {
-    hotbar.keyPressed(e, m);
+    hotbar.keyReleased(e, m);
   }
 }

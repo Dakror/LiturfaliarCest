@@ -104,6 +104,7 @@ public class ItemDrop
   {
     item.drawWithoutTooltip(m.getX() + x, m.getY() + y, g, v);
   }
+
   
   public Area getArea(Map m)
   {

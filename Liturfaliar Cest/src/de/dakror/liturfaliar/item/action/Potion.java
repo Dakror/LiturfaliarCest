@@ -9,6 +9,7 @@ import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 
 public class Potion extends ItemAction
@@ -25,13 +26,21 @@ public class Potion extends ItemAction
   @Override
   public void actionTriggered(Item item, Map m, Viewport v)
   {
+    CFG.p("i got called");
+    
     if (item.getItemSlot() == null)
+    {
+      CFG.p("no itemslot");
       return;
+    }
     
     Creature target = m.getCreatureByAccessKey(targetID);
     
     if (target == null)
+    {
+      CFG.p("no target");
       return;
+    }
     
     Attributes attributes = target.getAttributes();
     
@@ -55,7 +64,10 @@ public class Potion extends ItemAction
     }
     
     if (!hasEffect)
+    {
+      CFG.p("has no effect");
       return;
+    }
     
     for (Attr attr : Attr.values())
     {
@@ -87,6 +99,11 @@ public class Potion extends ItemAction
       e.printStackTrace();
     }
     return o;
+  }
+  
+  public Attributes getChanges()
+  {
+    return changes;
   }
   
   public static ItemAction loadItemAction(JSONObject o)

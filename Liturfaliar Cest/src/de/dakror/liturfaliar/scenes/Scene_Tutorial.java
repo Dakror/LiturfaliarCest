@@ -29,7 +29,7 @@ public class Scene_Tutorial implements Scene
   boolean[]  dirs = { false, false, false, false };
   
   @Override
-  public void init(Viewport v)
+  public void construct(Viewport v)
   {
     this.v = v;
     c1 = new Container(0, 0, v.w.getWidth(), 55, null);
@@ -179,5 +179,9 @@ public class Scene_Tutorial implements Scene
   
   @Override
   public void mouseWheelMoved(MouseWheelEvent e)
+  {}
+  
+  @Override
+  public void destruct()
   {}
 }

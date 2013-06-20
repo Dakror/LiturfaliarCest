@@ -52,7 +52,7 @@ public class Scene_NewGame implements Scene
   Viewport                     v;
   
   @Override
-  public void init(Viewport v)
+  public void construct(Viewport v)
   {
     this.v = v;
     v.play();
@@ -348,4 +348,7 @@ public class Scene_NewGame implements Scene
   public void mouseExited(MouseEvent e)
   {}
   
+  @Override
+  public void destruct()
+  {}
 }

@@ -30,7 +30,7 @@ public class Scene_Logo implements Scene
   ArrayList<ZipAssistant> downloader;
   
   @Override
-  public void init(Viewport v)
+  public void construct(Viewport v)
   {
     this.v = v;
     time = 0;
@@ -180,5 +180,9 @@ public class Scene_Logo implements Scene
   
   @Override
   public void mouseWheelMoved(MouseWheelEvent e)
+  {}
+  
+  @Override
+  public void destruct()
   {}
 }

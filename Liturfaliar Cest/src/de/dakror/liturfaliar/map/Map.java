@@ -300,7 +300,16 @@ public class Map implements DatabaseEventListener
       
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
-    
+    try
+    {
+      for (ItemDrop id : itemDrops)
+      {
+        if ((hoveredItemDrop != null && id.equals(hoveredItemDrop)) || hoveredItemDrop == null)
+          id.getItem().tooltip.draw(g, v);
+      }
+    }
+    catch (Exception e)
+    {}
     if (CFG.UIDEBUG)
     {
       Assistant.Shadow(v.w.getBounds(), Color.black, 0.4f, g);

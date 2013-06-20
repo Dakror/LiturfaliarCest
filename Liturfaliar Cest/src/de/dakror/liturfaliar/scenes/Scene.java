@@ -9,7 +9,9 @@ import de.dakror.liturfaliar.Viewport;
 
 public interface Scene
 {
-  public void init(Viewport v);
+  public void construct(Viewport v);
+  
+  public void destruct();
   
   public void update(long timePassed);
   

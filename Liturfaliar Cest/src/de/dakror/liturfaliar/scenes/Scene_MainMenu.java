@@ -30,7 +30,7 @@ public class Scene_MainMenu implements Scene
   Viewport      v;
   
   @Override
-  public void init(Viewport v)
+  public void construct(Viewport v)
   {
     this.v = v;
     optionsSliders[0] = new ProgressBar(v.w.getWidth() / 2 - 100, v.w.getHeight() - 80, 200, (float) v.fSoundID, true, "ffc744", "Soundeffekte", true);
@@ -278,5 +278,9 @@ public class Scene_MainMenu implements Scene
   
   @Override
   public void mouseWheelMoved(MouseWheelEvent e)
+  {}
+  
+  @Override
+  public void destruct()
   {}
 }

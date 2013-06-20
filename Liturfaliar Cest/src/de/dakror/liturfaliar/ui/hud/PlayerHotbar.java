@@ -72,7 +72,7 @@ public class PlayerHotbar extends HUDComponent
   }
   
   @Override
-  public void keyPressed(KeyEvent e, Map m)
+  public void keyReleased(KeyEvent e, Map m)
   {
     List<Integer> slots = Arrays.asList(KEYSLOTS);
     if (slots.contains(e.getKeyCode()))

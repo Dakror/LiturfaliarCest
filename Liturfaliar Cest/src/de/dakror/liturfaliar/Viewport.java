@@ -192,10 +192,10 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     pausedfromscene = true;
     
     clearOVScenes();
-    
+    scene.destruct();
     HelpOverlay.clear();
     scene = s;
-    scene.init(this);
+    scene.construct(this);
     initialized = true;
     sceneEnabled = true;
     Assistant.setCursor(Viewport.loadImage("system/cursor.png"), w);

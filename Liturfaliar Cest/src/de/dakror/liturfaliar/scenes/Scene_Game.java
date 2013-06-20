@@ -45,7 +45,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   // --------- //
   
   @Override
-  public void init(Viewport v)
+  public void construct(Viewport v)
   {
     this.v = v;
     PlayerHotbarEventDispatcher.addPlayerHotbarEventListener(this);
@@ -112,8 +112,6 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   {
     if (mappack != null && mappack.getActiveMap() != null)
       mappack.getActiveMap().keyPressed(e);
-    
-    bottomSegment.keyPressed(e, mappack.getActiveMap());
   }
   
   @Override
@@ -133,6 +131,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     else if (e.getKeyCode() == KeyEvent.VK_I)
       v.toggleOVScene(new OVScene_Inventory(this), "Inventory");
     
+    bottomSegment.keyReleased(e, mappack.getActiveMap());
   }
   
   public boolean isPaused()
@@ -184,7 +183,6 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
       mappack.getActiveMap().mousePressed(e, v);
     
     bottomSegment.mousePressed(e, mappack.getActiveMap());
-    
   }
   
   @Override
@@ -249,5 +247,12 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
       slot.getItem().triggerAction(mappack.getActiveMap(), v);
       player.getEquipment().setHotbarItem(index, slot.getItem());
     }
+  }
+  
+  @Override
+  public void destruct()
+  {
+    MapPackEventDispatcher.removeMapPackEventListener(this);
+    PlayerHotbarEventDispatcher.removePlayerHotbarEventListener(this);
   }
 }

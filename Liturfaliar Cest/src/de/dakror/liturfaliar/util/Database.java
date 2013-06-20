@@ -48,13 +48,20 @@ public class Database
   
   public static String filterString(String raw)
   {
-    String res = raw;
-    for (String key : stringvars.keySet())
+    try
     {
-      if (key == null || stringvars.get(key) == null)
-        continue;
-      res = res.replace("%" + key + "%", stringvars.get(key));
+      String res = raw;
+      for (String key : stringvars.keySet())
+      {
+        if (key == null || stringvars.get(key) == null)
+          continue;
+        res = res.replace("%" + key + "%", stringvars.get(key));
+      }
+      return res;
     }
-    return res;
+    catch (Exception e)
+    {
+      return raw;
+    }
   }
 }
