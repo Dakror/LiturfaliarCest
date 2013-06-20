@@ -192,7 +192,9 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     pausedfromscene = true;
     
     clearOVScenes();
-    scene.destruct();
+    
+    if(scene != null)scene.destruct();
+    
     HelpOverlay.clear();
     scene = s;
     scene.construct(this);
