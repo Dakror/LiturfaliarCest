@@ -292,10 +292,12 @@ public class Map implements DatabaseEventListener
     }
     for (Field field : aboveFields)
     {
-      int[] relpos = getPlayer().getRelativePos(this);
-      if (new Point(field.getX(), field.getY()).distance(new Point2D.Double(relpos[0], relpos[1])) < CFG.FIELDSIZE * 0.8)
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
-      
+      if (getPlayer() != null)
+      {
+        int[] relpos = getPlayer().getRelativePos(this);
+        if (new Point(field.getX(), field.getY()).distance(new Point2D.Double(relpos[0], relpos[1])) < CFG.FIELDSIZE * 0.8)
+          g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+      }
       g.drawImage(field.getImage(), x + field.getX(), y + field.getY(), v.w);
       
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
