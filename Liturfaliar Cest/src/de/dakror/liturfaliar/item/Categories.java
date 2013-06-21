@@ -18,7 +18,8 @@ public enum Categories
   HAIR,
   EYES,
   ITEM,
-  CONSUMABLE;
+  CONSUMABLE,
+  SKILL;
   
   public static final Categories[] EQUIPS = { GLOVES, ARM, SHOULDER, HELMET, SHIRT, ARMOR, BELT, PANTS, BOOTS, CAPE, SKIN, HAIR, EYES };
   

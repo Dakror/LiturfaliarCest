@@ -12,7 +12,10 @@ public enum Types
   EYES(Categories.EYES, "Augen", 1),
   SHOES(Categories.BOOTS, "Schuhe", 1),
   ITEM(Categories.ITEM, "Gegenstand", 10),
-  POTION(Categories.CONSUMABLE, "Trank", 10);
+  POTION(Categories.CONSUMABLE, "Trank", 10),
+  SWORDSKILL(Categories.SKILL, "Schwert-Fähigkeit", 1),
+  BOWSKILL(Categories.SKILL, "Bogen-Fähigkeit", 1),
+  PERKSKILL(Categories.SKILL, "Status-Fähigkeit", 1);
   
   private String     name;
   private Categories category;

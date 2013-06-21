@@ -24,6 +24,7 @@ import de.dakror.liturfaliar.map.MapPack;
 import de.dakror.liturfaliar.map.creature.Player;
 import de.dakror.liturfaliar.ovscenes.OVScene_Inventory;
 import de.dakror.liturfaliar.ovscenes.OVScene_Pause;
+import de.dakror.liturfaliar.ovscenes.OVScene_Skills;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.CursorText;
 import de.dakror.liturfaliar.ui.ItemSlot;
@@ -129,7 +130,16 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
       togglePaused();
     
     else if (e.getKeyCode() == KeyEvent.VK_I)
+    {
+      v.removeOVScene("Skills");
       v.toggleOVScene(new OVScene_Inventory(this), "Inventory");
+    }
+    
+    else if (e.getKeyCode() == KeyEvent.VK_J)
+    {
+      v.removeOVScene("Inventory");
+      v.toggleOVScene(new OVScene_Skills(this), "Skills");
+    }
     
     bottomSegment.keyReleased(e, mappack.getActiveMap());
   }
