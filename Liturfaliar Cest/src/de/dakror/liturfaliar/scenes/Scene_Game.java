@@ -141,7 +141,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
       v.toggleOVScene(new OVScene_Skills(this), "Skills");
     }
     
-    bottomSegment.keyReleased(e, mappack.getActiveMap());
+    if(bottomSegment != null)bottomSegment.keyReleased(e, mappack.getActiveMap());
   }
   
   public boolean isPaused()
