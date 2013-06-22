@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.item.Items;
 import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.scenes.Scene_Game;
@@ -15,16 +17,22 @@ import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.Flicker;
 import de.dakror.liturfaliar.ui.Flicker.FlickObject;
 import de.dakror.liturfaliar.ui.ItemSlot;
+import de.dakror.liturfaliar.ui.SkillSlot;
 import de.dakror.liturfaliar.ui.hud.PlayerHotbar;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class OVScene_Skills extends OVScene implements Inventory
 {
-  Scene_Game sg;
-  Container  c1;
-  Flicker    flicker;
+  Scene_Game           sg;
+  Container            c1;
+  int                  lastSelectedTree = -1;
+  Flicker              flicker;
   
-  ItemSlot[] hotbar;
+  ItemSlot[]           hotbar;
+  ArrayList<SkillSlot> slots            = new ArrayList<SkillSlot>();
+  
+  int                  rX;
+  int                  rY;
   
   public OVScene_Skills(Scene_Game sg)
   {
@@ -55,6 +63,12 @@ public class OVScene_Skills extends OVScene implements Inventory
   public void update(long timePassed)
   {
     flicker.update();
+    
+    if (flicker.getSelectedIndex() != lastSelectedTree)
+    {
+      lastSelectedTree = flicker.getSelectedIndex();
+      loadSkillTree();
+    }
   }
   
   @Override
@@ -66,6 +80,10 @@ public class OVScene_Skills extends OVScene implements Inventory
     
     // -- tree area -- //
     Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), v.w.getWidth() / 2 - 400, 100, 800, v.w.getHeight() - 300, g, v.w);
+    for (SkillSlot ss : slots)
+    {
+      ss.draw(g, v);
+    }
     
     // -- type area -- //
     flicker.draw(g, v);
@@ -74,6 +92,34 @@ public class OVScene_Skills extends OVScene implements Inventory
     for (ItemSlot is : hotbar)
     {
       is.draw(g, v);
+    }
+    
+    // -- tooltips -- //
+    for (SkillSlot is : slots)
+    {
+      is.getItem().tooltip.draw(g, v);
+    }
+    for (ItemSlot is : hotbar)
+    {
+      is.drawTooltip(g, v);
+    }
+  }
+  
+  public void loadSkillTree()
+  {
+    int x = v.w.getWidth() / 2 - 400 + 50;
+    int y = 100 + 50;
+    
+    slots.clear();
+    
+    String key = flicker.getSelectedObject().getKey();
+    if (key.equals(Types.SWORDSKILL.getName()))
+    {
+      SkillSlot s = new SkillSlot(x, y, new Item(Items.SWORD0, 1));
+      SkillSlot s1 = new SkillSlot(x, y + SkillSlot.VGAP, new Item(Items.SWORD1, 1));
+      s.setChildren(s1);
+      slots.add(s);
+      slots.add(s1);
     }
   }
   
@@ -123,7 +169,6 @@ public class OVScene_Skills extends OVScene implements Inventory
   public void hideContextMenu()
   {}
   
-  
   @Override
   public void keyReleased(KeyEvent e)
   {
@@ -143,12 +188,23 @@ public class OVScene_Skills extends OVScene implements Inventory
     {
       slot.mouseMoved(e);
     }
+    
+    for (SkillSlot slot : slots)
+    {
+      slot.mouseMoved(e);
+    }
   }
   
   @Override
   public void mousePressed(MouseEvent e)
   {
     for (ItemSlot slot : hotbar)
+    {
+      slot.mousePressed(e);
+    }
+    
+    
+    for (SkillSlot slot : slots)
     {
       slot.mousePressed(e);
     }
@@ -164,6 +220,11 @@ public class OVScene_Skills extends OVScene implements Inventory
       slot.mouseReleased(e);
     }
     
+    for (SkillSlot slot : slots)
+    {
+      slot.mouseReleased(e);
+    }
+    
     flicker.mouseReleased(e);
   }
   
@@ -174,7 +235,5 @@ public class OVScene_Skills extends OVScene implements Inventory
     {
       slot.mouseDragged(e);
     }
-    
-    flicker.mouseDragged(e);
   }
 }

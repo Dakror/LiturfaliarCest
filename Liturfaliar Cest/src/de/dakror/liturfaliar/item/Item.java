@@ -12,7 +12,8 @@ import org.json.JSONObject;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.action.EmptyAction;
 import de.dakror.liturfaliar.item.action.ItemAction;
-import de.dakror.liturfaliar.item.action.Potion;
+import de.dakror.liturfaliar.item.action.PotionAction;
+import de.dakror.liturfaliar.item.action.SkillAction;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
@@ -153,24 +154,32 @@ public class Item extends Component
         att += g + ((attributes.getAttribute(attr).getValue() < 0.0) ? "" : "+") + Attribute.FORMAT.format(attributes.getAttribute(attr).getValue()) + " " + attr.getText() + "[br]";
     }
     
-    String name = "<#999999;30;1>" + this.name + "[br]<#6666ff;19;1>" + type.getName();
+    String name = "<#999999;30;1>" + this.name;
+    String category = "<#6666ff;19;1>" + type.getName();
     String weight = c + Attribute.FORMAT.format(attributes.getAttribute(Attr.weight).getValue() * stack) + " kg";
     String cooldown = ((!attributes.getAttribute(Attr.cooldown).isEmpty()) ? b + Attribute.FORMAT.format(attributes.getAttribute(Attr.cooldown).getValue()) + "s " + Attr.cooldown.getText() : "");
     String required = ((req.length() > 0) ? c + " [br]" + c + "Benötigt:[br]" + req : "");
     String action = "";
     
-    if (type.equals(Types.POTION) && this.action instanceof Potion)
+    if (type.equals(Types.POTION) && this.action instanceof PotionAction)
     {
       action = "[br]";
       for (Attr attr : Attr.values())
       {
-        Potion potion = (Potion) this.action;
+        PotionAction potion = (PotionAction) this.action;
         if (potion.getChanges().getAttribute(attr).getValue() != 0)
           action += g + ((potion.getChanges().getAttribute(attr).getValue() < 0.0) ? "" : "+") + Attribute.FORMAT.format(potion.getChanges().getAttribute(attr).getValue()) + " " + attr.getText() + "[br]";
       }
     }
     
-    String raw = name + "[br]" + weight + "[br]" + att + required + action + cooldown;
+    String raw = name + "[br]" + category + "[br]"+ weight + "[br]" + att + required + action + cooldown;
+    
+    if (type.getCategory().equals(Categories.SKILL))
+    {
+      SkillAction sa =(SkillAction) this. action;
+      raw = name + "[br]" + sa.getDescription();
+    }
+    
     
     if (tooltip == null)
     {

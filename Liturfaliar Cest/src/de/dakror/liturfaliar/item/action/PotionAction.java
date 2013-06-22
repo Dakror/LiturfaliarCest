@@ -12,12 +12,12 @@ import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 
-public class Potion extends ItemAction
+public class PotionAction extends ItemAction
 {
   Attributes changes;
   String     targetID;
   
-  public Potion(String t, Attributes c)
+  public PotionAction(String t, Attributes c)
   {
     changes = c;
     targetID = t;
@@ -90,7 +90,7 @@ public class Potion extends ItemAction
     JSONObject o = new JSONObject();
     try
     {
-      o.put("type", "Potion");
+      o.put("type", getClass().getSimpleName());
       o.put("target", targetID);
       o.put("attr", changes.serializeAttributes());
     }
@@ -110,7 +110,7 @@ public class Potion extends ItemAction
   {
     try
     {
-      return new Potion(o.getString("target"), new Attributes(o.getJSONObject("attr")));
+      return new PotionAction(o.getString("target"), new Attributes(o.getJSONObject("attr")));
     }
     catch (JSONException e)
     {
@@ -122,9 +122,9 @@ public class Potion extends ItemAction
   @Override
   public boolean equals(ItemAction o)
   {
-    if (o instanceof Potion)
+    if (o instanceof PotionAction)
     {
-      return targetID.equals(((Potion) o).targetID) && changes.equals(((Potion) o).changes);
+      return targetID.equals(((PotionAction) o).targetID) && changes.equals(((PotionAction) o).changes);
     }
     else return false;
   }

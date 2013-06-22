@@ -3,7 +3,6 @@ package de.dakror.liturfaliar.ovscenes;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.event.MouseEvent;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.util.Assistant;
@@ -13,6 +12,10 @@ public class OVScene_Info extends OVScene
   long  frames;
   long  updates;
   long  time;
+  long  updInterval;
+  
+  int   cacheFPS;
+  int   cacheUPS;
   
   Point mouse;
   
@@ -24,6 +27,7 @@ public class OVScene_Info extends OVScene
     frames = 0;
     updates = 0;
     consistent = true;
+    updInterval = 0;
     mouse = new Point(0, 0);
   }
   
@@ -31,6 +35,13 @@ public class OVScene_Info extends OVScene
   public void update(long timePassed)
   {
     updates++;
+    
+    if (System.currentTimeMillis() - updInterval > 500)
+    {
+      cacheFPS = Math.round(frames / (float) ((System.currentTimeMillis() - time) / 1000.0f));
+      cacheUPS = Math.round(updates / (float) ((System.currentTimeMillis() - time) / 1000.0f));
+      updInterval = System.currentTimeMillis();
+    }
   }
   
   @Override
@@ -38,18 +49,8 @@ public class OVScene_Info extends OVScene
   {
     frames++;
     // show fps
-    Assistant.drawString(Math.round(frames / (float) ((System.currentTimeMillis() - time) / 1000.0f)) + " FPS", 0, 30, g, Color.white, g.getFont().deriveFont(30.0f));
+    Assistant.drawString(cacheFPS + " FPS", 0, 30, g, Color.white, g.getFont().deriveFont(30.0f));
     // show updates
-    Assistant.drawString(Math.round(updates / (float) ((System.currentTimeMillis() - time) / 1000.0f)) + " UPS", 0, 60, g, Color.white, g.getFont().deriveFont(30.0f));
-    // show mouseX
-    Assistant.drawString(mouse.x + " x", 0, 90, g, Color.white, g.getFont().deriveFont(30.0f));
-    // show mouseY
-    Assistant.drawString(mouse.y + " y", 0, 120, g, Color.white, g.getFont().deriveFont(30.0f));
-  }
-  
-  @Override
-  public void mouseMoved(MouseEvent e)
-  {
-    mouse = e.getPoint();
+    Assistant.drawString(cacheUPS + " UPS", 0, 60, g, Color.white, g.getFont().deriveFont(30.0f));
   }
 }

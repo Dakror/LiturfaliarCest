@@ -79,7 +79,6 @@ public class Flicker extends Component
     g.setClip(x + 10, y, width - 20, height);
     for (int i = 0; i < objects.length; i++)
     {
-      
       int ix = (int) (x + i * (s + space) + space + width / 2.0 - ((objects.length * (s + space)) / 2.0) - dragX) - space / 2;
       
       int iy = y + height / 2 - s / 2;
@@ -126,23 +125,6 @@ public class Flicker extends Component
     
     press = e.getWhen();
     Ppress = e.getPoint();
-  }
-  
-  @Override
-  public void mouseDragged(MouseEvent e)
-  {
-    if (dragInit == 0)
-      dragInit = e.getX() - (x + 13) + dragX;
-    
-    else
-    {
-      int d = e.getX() - (x + 13) - dragInit;
-      
-      int fx = (int) (space + width / 2.0 - ((objects.length * (s + space)) / 2.0) - d) - (s + space) / 2;
-      int lx = (int) ((objects.length - 1) * (s + space) + space + width / 2.0 - ((objects.length * (s + space)) / 2.0) - d) + (s - space) / 2;
-      if (fx + s / 2 < width / 2 && lx + s / 2 > width / 2)
-        dragX = -d;
-    }
   }
   
   public FlickObject getSelectedObject()

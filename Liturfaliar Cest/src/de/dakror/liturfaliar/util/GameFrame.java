@@ -40,7 +40,6 @@ public abstract class GameFrame
       w.setUndecorated(true);
       try
       {
-        
         w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/morpheus.ttf")).deriveFont(20f));
       }
       catch (Exception e)

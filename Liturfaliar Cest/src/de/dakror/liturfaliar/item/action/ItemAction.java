@@ -28,8 +28,8 @@ public abstract class ItemAction
     {
       switch (o.getString("type"))
       {
-        case "Potion":
-          return Potion.loadItemAction(o);
+        case "PotionAction":
+          return PotionAction.loadItemAction(o);
       }
     }
     catch (JSONException e)

@@ -14,4 +14,7 @@ public class Colors
   // -- item equips -- //
   public static final String BETTER = "#00b000";
   public static final String WORSE  = "#f00000";
+  
+  // -- skill tree arrow -- //
+  public static final Color ARROW = Color.decode("#ffdb00");
 }
