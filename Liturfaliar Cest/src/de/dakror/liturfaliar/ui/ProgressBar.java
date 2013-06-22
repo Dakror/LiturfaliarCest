@@ -60,9 +60,9 @@ public class ProgressBar extends Component
   {
     if (!editable)
       return;
-    if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), 23)).contains(e.getLocationOnScreen()))
+    if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), 23)).contains(e.getPoint()))
     {
-      value = (e.getXOnScreen() - getX()) / (float) getWidth();
+      value = (e.getX() - getX()) / (float) getWidth();
     }
   }
   
@@ -70,9 +70,9 @@ public class ProgressBar extends Component
   {
     if (!editable)
       return;
-    if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), 23)).contains(e.getLocationOnScreen()))
+    if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), 23)).contains(e.getPoint()))
     {
-      value = (e.getXOnScreen() - getX()) / (float) getWidth();
+      value = (e.getX() - getX()) / (float) getWidth();
     }
   }
   

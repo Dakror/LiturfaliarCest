@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.Window;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -73,7 +72,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public String                         MusicEffectID;
   public String                         MusicID;
   public String                         SoundID;
-  public Window                         w;
+  // public Window w;
   public MapEditor                      mapeditor;
   public InputEvent                     skipEvent;
   public static boolean                 sceneEnabled;
@@ -316,7 +315,6 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
    */
   public void init()
   {
-    w = s.getFullScreenWindow();
     w.addWindowListener(this);
     w.addKeyListener(this);
     w.addMouseListener(this);
@@ -324,6 +322,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     w.addMouseWheelListener(this);
     w.setIconImage(Assistant.loadImage("system/logo.png"));
     Assistant.setCursor(Viewport.loadImage("system/cursor.png"), w);
+    
     FileManager.mk(this);
     FileManager.loadOptions(this);
     try
@@ -602,6 +601,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   @Override
   public void mouseMoved(MouseEvent e)
   {
+    
     try
     {
       for (String ovscene : ovscenes.keySet())

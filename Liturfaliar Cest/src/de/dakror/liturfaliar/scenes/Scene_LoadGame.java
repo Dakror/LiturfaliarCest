@@ -252,7 +252,7 @@ public class Scene_LoadGame implements Scene
   @Override
   public void mouseMoved(MouseEvent e)
   {
-    mouse = e.getLocationOnScreen();
+    mouse = e.getPoint();
     if (saves == null)
       return;
     if (chooser != null)
@@ -293,7 +293,7 @@ public class Scene_LoadGame implements Scene
     {
       for (int i = 5 * ((Integer) chooser.getSelected(false) - 1); i < ((5 * (Integer) chooser.getSelected(false) < saves.length) ? 5 * (Integer) chooser.getSelected(false) : saves.length); i++)
       {
-        if (saves[i] == null || !chars.contains(e.getLocationOnScreen()))
+        if (saves[i] == null || !chars.contains(e.getPoint()))
           continue;
         saves[i].mouseReleased(e);
       }
@@ -303,7 +303,7 @@ public class Scene_LoadGame implements Scene
     {
       for (int i = 0; i < saves.length; i++)
       {
-        if (saves[i] == null || !chars.contains(e.getLocationOnScreen()))
+        if (saves[i] == null || !chars.contains(e.getPoint()))
           continue;
         saves[i].mouseReleased(e);
       }

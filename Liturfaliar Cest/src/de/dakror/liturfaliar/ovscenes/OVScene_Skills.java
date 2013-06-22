@@ -53,7 +53,9 @@ public class OVScene_Skills extends OVScene implements Inventory
   
   @Override
   public void update(long timePassed)
-  {}
+  {
+    flicker.update();
+  }
   
   @Override
   public void draw(Graphics2D g)

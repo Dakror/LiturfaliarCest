@@ -141,7 +141,7 @@ public class NPC extends Creature
   @Override
   public void mousePressed(MouseEvent e, Map m)
   {
-    if (m.getPlayer().getField(m).distance(getField(m)) < 1.3 && m.getPlayer().isLookingAt(this, m) && e.getButton() == 1 && m.talk == null && getArea().contains(new Point(e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY())))
+    if (m.getPlayer().getField(m).distance(getField(m)) < 1.3 && m.getPlayer().isLookingAt(this, m) && e.getButton() == 1 && m.talk == null && getArea().contains(new Point(e.getX() - m.getX(), e.getY() - m.getY())))
     {
       setTalking(true);
       m.talk = new Talk(this, m);

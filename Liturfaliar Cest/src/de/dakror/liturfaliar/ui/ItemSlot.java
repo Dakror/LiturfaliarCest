@@ -230,10 +230,10 @@ public class ItemSlot extends Component
     if (item != null)
       item.mouseMoved(e);
     
-    if (hover && !new Area(new Rectangle2D.Double(ax, ay, width, height)).contains(e.getLocationOnScreen()))
+    if (hover && !new Area(new Rectangle2D.Double(ax, ay, width, height)).contains(e.getPoint()))
       ItemSlotEventDispatcher.dispatchSlotExited(e, this);
     
-    hover = new Area(new Rectangle2D.Double(ax, ay, width, height)).contains(e.getLocationOnScreen());
+    hover = new Area(new Rectangle2D.Double(ax, ay, width, height)).contains(e.getPoint());
     
     if (hover)
       ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
@@ -242,7 +242,7 @@ public class ItemSlot extends Component
   @Override
   public void mousePressed(MouseEvent e)
   {
-    boolean clip = new Rectangle(ax, ay, getWidth(), getHeight()).contains(e.getLocationOnScreen());
+    boolean clip = new Rectangle(ax, ay, getWidth(), getHeight()).contains(e.getPoint());
     
     if (onlyLabel && clip)
     {
@@ -271,7 +271,7 @@ public class ItemSlot extends Component
       {
         if (inventory.getPickedUpItemSlot() == null)
         {
-          item.mouse = e.getLocationOnScreen();
+          item.mouse = e.getPoint();
           
           ItemSlotEventDispatcher.dispatchSlotPressed(e, this);
           ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
@@ -302,8 +302,8 @@ public class ItemSlot extends Component
             setItem(new Item(oldPickedUp.getItem()));
           }
           item.tooltip.visible = true;
-          item.tooltip.setX(e.getXOnScreen() + item.tooltip.offset.x);
-          item.tooltip.setY(e.getYOnScreen() + item.tooltip.offset.y);
+          item.tooltip.setX(e.getX() + item.tooltip.offset.x);
+          item.tooltip.setY(e.getY() + item.tooltip.offset.y);
           ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
           ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
           return;
@@ -326,8 +326,8 @@ public class ItemSlot extends Component
           inventory.setPickedUpItemSlot(null);
           
           this.item.tooltip.visible = true;
-          this.item.tooltip.setX(e.getXOnScreen());
-          this.item.tooltip.setY(e.getYOnScreen());
+          this.item.tooltip.setX(e.getX());
+          this.item.tooltip.setY(e.getY());
           ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
         }
       }
@@ -340,12 +340,12 @@ public class ItemSlot extends Component
     if (isOnlyLabel())
       return;
     
-    boolean clip = new Rectangle(ax, ay, getWidth(), getHeight()).contains(e.getLocationOnScreen());
+    boolean clip = new Rectangle(ax, ay, getWidth(), getHeight()).contains(e.getPoint());
     
     if (e.getButton() == 3 && item != null && inventory != null && inventory.getPickedUpItemSlot() == null && clip)
     {
       item.tooltip.visible = false;
-      inventory.showContextMenu(this, e.getXOnScreen(), e.getYOnScreen());
+      inventory.showContextMenu(this, e.getX(), e.getY());
     }
     else if (e.getButton() == 3 && clip && inventory != null)
     {

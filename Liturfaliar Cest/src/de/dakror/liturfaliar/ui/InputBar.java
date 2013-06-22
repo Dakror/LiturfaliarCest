@@ -135,7 +135,7 @@ public class InputBar extends Component
   {
     if (this.disabled)
       return;
-    this.focus = new Area(new Rectangle2D.Double(this.getX(), this.getY(), this.getWidth(), this.getHeight())).contains(e.getLocationOnScreen());
+    this.focus = new Area(new Rectangle2D.Double(this.getX(), this.getY(), this.getWidth(), this.getHeight())).contains(e.getPoint());
     if (this.focus && this.value == this.pre)
     {
       this.value = "";
@@ -146,7 +146,7 @@ public class InputBar extends Component
   {
     if (this.disabled)
       return;
-    this.hover = new Area(new Rectangle2D.Double(this.getX(), this.getY(), this.getWidth(), this.getHeight())).contains(e.getLocationOnScreen());
+    this.hover = new Area(new Rectangle2D.Double(this.getX(), this.getY(), this.getWidth(), this.getHeight())).contains(e.getPoint());
     if (this.tooltip != null)
       this.tooltip.mouseMoved(e);
   }

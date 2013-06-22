@@ -5,13 +5,9 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
-import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class Flicker extends Component
@@ -41,61 +37,58 @@ public class Flicker extends Component
     }
   }
   
-  ArrayList<FlickObject> objects;
+  FlickObject[] objects;
   
-  int                    selectedIndex;
-  int                    FselectedIndex = -1;
-  int                    dragX;
-  int                    dragInit;
-  int                    s              = (height - 36);
-  int                    space          = 10;
-  int                    scrollSpeed    = 5;
-  long                   press;
-  Point                  Ppress;
+  int           selectedIndex;
+  int           FselectedIndex = -1;
+  int           dragX;
+  int           dragInit;
+  int           s              = (height - 36);
+  int           space          = 12;
+  int           scrollSpeed    = 10;
+  long          press;
+  Point         Ppress;
   
   public Flicker(int x, int y, int w, int h, FlickObject... o)
   {
     super(x, y, w, h);
-    objects = new ArrayList<FlickObject>(Arrays.asList(o));
+    objects = o;
   }
   
   @Override
   public void update()
-  {}
-  
-  @Override
-  public void draw(Graphics2D g, Viewport v)
   {
-    if (press != 0 && FselectedIndex > -1)
+    if (FselectedIndex > -1)
     {
       if (FselectedIndex != selectedIndex)
       {
-        int ix = (int) (FselectedIndex * (s + space) + space + width / 2.0 - ((objects.size() * (s + space)) / 2.0) - dragX) - space / 2;
+        int ix = (int) (FselectedIndex * (s + space) + space + width / 2.0 - ((objects.length * (s + space)) / 2.0) - dragX) - space / 2;
         int left = (ix + this.s / 2) - (width / 2);
         dragX += ((FselectedIndex > selectedIndex) ? 1 : -1) * ((Math.abs(left) > scrollSpeed) ? scrollSpeed : Math.abs(left));
       }
       else FselectedIndex = -1;
     }
-    
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), x + width / 2 - s / 2 - 11, y + height / 2 - s / 2 - 11, s + 22, s + 22, g, v.w);
+  }
+  
+  @Override
+  public void draw(Graphics2D g, Viewport v)
+  {
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), x, y, width, height, g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), x + width / 2 - s / 2 - 11, y, s + 22, height, g, v.w);
     Shape oldClip = g.getClip();
     g.setClip(x + 10, y, width - 20, height);
-    for (int i = 0; i < objects.size(); i++)
+    for (int i = 0; i < objects.length; i++)
     {
       
-      int ix = (int) (x + i * (s + space) + space + width / 2.0 - ((objects.size() * (s + space)) / 2.0) - dragX) - space / 2;
+      int ix = (int) (x + i * (s + space) + space + width / 2.0 - ((objects.length * (s + space)) / 2.0) - dragX) - space / 2;
       
       int iy = y + height / 2 - s / 2;
       int s = this.s;
       
       if (Math.abs((ix + this.s / 2) - (x + width / 2)) < 1)
-      {
-        // CFG.b("sel", i);
         selectedIndex = i;
-      }
       
-      Assistant.Shadow(new RoundRectangle2D.Double(ix - (s - this.s) / 2, iy - (s - this.s) / 2, s, s, 16, 16), Colors.DGRAY, 0.7f, g);
-      g.drawImage(objects.get(i).getIcon(), ix - (s - this.s) / 2, iy - (s - this.s) / 2, s, s, v.w);
+      g.drawImage(objects[i].getIcon(), ix - (s - this.s) / 2, iy - (s - this.s) / 2, s, s, v.w);
     }
     g.setClip(oldClip);
   }
@@ -103,13 +96,13 @@ public class Flicker extends Component
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    if (!getArea().contains(e.getLocationOnScreen()))
+    if (!getArea().contains(e.getPoint()))
       return;
     
-    if (e.getButton() == 1 && e.getWhen() - press < 200 && e.getLocationOnScreen().distance(Ppress) < 10)
+    if (e.getButton() == 1 && e.getWhen() - press < 200 && e.getPoint().distance(Ppress) < 10)
     {
-      int index = (int) ((e.getXOnScreen() - x) - (space + width / 2.0 - ((objects.size() * (s + space)) / 2.0) - dragX)) / (s + 13);
-      if (index > -1 && index < objects.size())
+      int index = (int) ((e.getX() - x) - (space + width / 2.0 - ((objects.length * (s + space)) / 2.0) - dragX)) / (s + 13);
+      if (index > -1 && index < objects.length)
         FselectedIndex = index;
       
       else FselectedIndex = -1;
@@ -117,7 +110,7 @@ public class Flicker extends Component
     else if (e.getButton() == 1)
     {
       dragInit = 0;
-      int modolo = (dragX + (objects.size() - 1) * (s + space) / 2) % (s + space);
+      int modolo = (dragX + (objects.length - 1) * (s + space) / 2) % (s + space);
       if (modolo < (s + space) / 2)
         dragX -= modolo;
       
@@ -132,23 +125,38 @@ public class Flicker extends Component
       return;
     
     press = e.getWhen();
-    Ppress = e.getLocationOnScreen();
+    Ppress = e.getPoint();
   }
   
   @Override
   public void mouseDragged(MouseEvent e)
   {
     if (dragInit == 0)
-      dragInit = e.getXOnScreen() - (x + 13) + dragX;
+      dragInit = e.getX() - (x + 13) + dragX;
     
     else
     {
-      int d = e.getXOnScreen() - (x + 13) - dragInit;
+      int d = e.getX() - (x + 13) - dragInit;
       
-      int fx = (int) (space + width / 2.0 - ((objects.size() * (s + space)) / 2.0) - d) - (s + space) / 2;
-      int lx = (int) ((objects.size() - 1) * (s + space) + space + width / 2.0 - ((objects.size() * (s + space)) / 2.0) - d) + (s - space) / 2;
+      int fx = (int) (space + width / 2.0 - ((objects.length * (s + space)) / 2.0) - d) - (s + space) / 2;
+      int lx = (int) ((objects.length - 1) * (s + space) + space + width / 2.0 - ((objects.length * (s + space)) / 2.0) - d) + (s - space) / 2;
       if (fx + s / 2 < width / 2 && lx + s / 2 > width / 2)
         dragX = -d;
     }
+  }
+  
+  public FlickObject getSelectedObject()
+  {
+    return objects[selectedIndex];
+  }
+  
+  public int getSelectedIndex()
+  {
+    return selectedIndex;
+  }
+  
+  public void setSelectedIndex(int i)
+  {
+    FselectedIndex = i;
   }
 }

@@ -223,7 +223,7 @@ public class Item extends Component
   @Override
   public void mouseMoved(MouseEvent e)
   {
-    mouse = e.getLocationOnScreen();
+    mouse = e.getPoint();
     if (tooltip != null)
       tooltip.mouseMoved(e);
   }

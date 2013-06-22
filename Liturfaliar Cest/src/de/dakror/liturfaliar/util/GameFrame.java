@@ -3,19 +3,21 @@ package de.dakror.liturfaliar.util;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Window;
+import java.awt.Toolkit;
+import java.awt.image.BufferStrategy;
+
+import javax.swing.JFrame;
+
+import de.dakror.liturfaliar.settings.CFG;
 
 public abstract class GameFrame
 {
-  protected boolean       running;
-  protected boolean       frozen;
-  protected ScreenManager s;
+  protected boolean running;
+  protected boolean frozen;
+  public JFrame     w;
   
   public GameFrame()
-  {
-    this.s = new ScreenManager();
-    this.s.setFullScreen(null);
-  }
+  {}
   
   public void start()
   {
@@ -33,26 +35,30 @@ public abstract class GameFrame
   {
     try
     {
-      Window w = this.s.getFullScreenWindow();
+      w = new JFrame(CFG.WINDOWTITLE);
+      w.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+      w.setUndecorated(true);
       try
       {
+        
         w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/morpheus.ttf")).deriveFont(20f));
       }
       catch (Exception e)
       {
         e.printStackTrace();
       }
-      w.setAlwaysOnTop(true);
       w.setBackground(Color.black);
       w.setForeground(Color.white);
       this.running = true;
       init();
+      w.setVisible(true);
+      w.createBufferStrategy(2);
       mainloop();
       close();
     }
     finally
     {
-      this.s.restoreScreen();
+      w.dispose();
     }
   }
   
@@ -73,19 +79,18 @@ public abstract class GameFrame
         tickTime += timePassed;
         update(timePassed);
       }
+      BufferStrategy s = w.getBufferStrategy();
+      Graphics2D g = (Graphics2D) s.getDrawGraphics();
+      g.translate(w.getInsets().left, w.getInsets().top);
       
-      Graphics2D g = this.s.getGraphics();
-      try
-      {
-        g.clearRect(0, 0, this.s.getFullScreenWindow().getWidth(), this.s.getFullScreenWindow().getHeight());
-      }
-      catch (Exception e)
-      {
-        continue;
-      }
+      
+      g.clearRect(0, 0, w.getWidth(), w.getHeight());
       draw(g);
       g.dispose();
-      this.s.update();
+      
+      BufferStrategy strat = w.getBufferStrategy();
+      if (!strat.contentsLost())
+        strat.show();
     }
   }
   

@@ -43,12 +43,12 @@ public class DragSelect extends Component
   
   public void mousePressed(MouseEvent e)
   {
-    if (e.getButton() == 1 && this.parent.contains(e.getLocationOnScreen()))
+    if (e.getButton() == 1 && this.parent.contains(e.getPoint()))
     {
       this.setWidth(0);
       this.setHeight(0);
-      this.setX(e.getXOnScreen());
-      this.setY(e.getYOnScreen());
+      this.setX(e.getX());
+      this.setY(e.getY());
     }
   }
   
@@ -56,10 +56,10 @@ public class DragSelect extends Component
   {
     if (e.getModifiers() != this.button)
       return;
-    if (this.parent.contains(new Point(e.getXOnScreen(), getY())))
-      this.setWidth(e.getXOnScreen() - this.getX());
-    if (this.parent.contains(new Point(getX(), e.getYOnScreen())))
-      this.setHeight(e.getYOnScreen() - this.getY());
+    if (this.parent.contains(new Point(e.getX(), getY())))
+      this.setWidth(e.getX() - this.getX());
+    if (this.parent.contains(new Point(getX(), e.getY())))
+      this.setHeight(e.getY() - this.getY());
   }
   
   public int roundToGrid(int i, int cell)

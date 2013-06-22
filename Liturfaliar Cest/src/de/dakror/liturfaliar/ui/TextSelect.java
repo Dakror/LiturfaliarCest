@@ -177,7 +177,7 @@ public class TextSelect extends Component
   @Override
   public void mouseMoved(MouseEvent e)
   {
-    if (new Area(new Rectangle2D.Double(getX() + 9, getY() + 8, getWidth() - 18, getHeight() - 16)).contains(e.getLocationOnScreen()))
+    if (new Area(new Rectangle2D.Double(getX() + 9, getY() + 8, getWidth() - 18, getHeight() - 16)).contains(e.getPoint()))
     {
       for (Button b : this.elements)
       {
@@ -198,7 +198,7 @@ public class TextSelect extends Component
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    if (new Area(new Rectangle2D.Double(getX() + 9, getY() + 8, getWidth() - 18, getHeight() - 16)).contains(e.getLocationOnScreen()))
+    if (new Area(new Rectangle2D.Double(getX() + 9, getY() + 8, getWidth() - 18, getHeight() - 16)).contains(e.getPoint()))
     {
       for (Button b : this.elements)
       {

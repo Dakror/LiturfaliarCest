@@ -34,13 +34,13 @@ public class Tooltip extends Component
   
   public void mouseMoved(MouseEvent e)
   {
-    if (parent.getArea().contains(e.getLocationOnScreen()))
+    if (parent.getArea().contains(e.getPoint()))
     {
       visible = true;
       if (follow)
       {
-        setX(offset.x + e.getXOnScreen());
-        setY(offset.y + e.getYOnScreen());
+        setX(offset.x + e.getX());
+        setY(offset.y + e.getY());
       }
     }
     else

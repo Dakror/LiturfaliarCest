@@ -50,9 +50,9 @@ public class ScrollBar extends Component
     this.drag.mouseDragged(e);
     if (this.dir == ScrollBar.VERTICAL)
     {
-      if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight())).contains(e.getLocationOnScreen()))
+      if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight())).contains(e.getPoint()))
       {
-        value = e.getYOnScreen() - getY();
+        value = e.getY() - getY();
         if (value < 0)
           value = 0;
         if (value > getHeight() - getWidth())
@@ -61,9 +61,9 @@ public class ScrollBar extends Component
     }
     else
     {
-      if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight())).contains(e.getLocationOnScreen()))
+      if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight())).contains(e.getPoint()))
       {
-        value = e.getXOnScreen() - getX();
+        value = e.getX() - getX();
         if (value < 0)
           value = 0;
         if (value > getWidth() - getHeight())
@@ -77,9 +77,9 @@ public class ScrollBar extends Component
     this.drag.mousePressed(e);
     if (this.dir == ScrollBar.VERTICAL)
     {
-      if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight())).contains(e.getLocationOnScreen()) && !new Area(new Rectangle2D.Double(getX(), getY() + this.value, getWidth(), getWidth())).contains(e.getLocationOnScreen()))
+      if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight())).contains(e.getPoint()) && !new Area(new Rectangle2D.Double(getX(), getY() + this.value, getWidth(), getWidth())).contains(e.getPoint()))
       {
-        value = e.getYOnScreen() - getY();
+        value = e.getY() - getY();
         if (value < 0)
           value = 0;
         if (value > getHeight() - getWidth())
@@ -88,9 +88,9 @@ public class ScrollBar extends Component
     }
     else
     {
-      if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight())).contains(e.getLocationOnScreen()) && !new Area(new Rectangle2D.Double(getX() + this.value, getY(), getHeight(), getHeight())).contains(e.getLocationOnScreen()))
+      if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight())).contains(e.getPoint()) && !new Area(new Rectangle2D.Double(getX() + this.value, getY(), getHeight(), getHeight())).contains(e.getPoint()))
       {
-        value = e.getXOnScreen() - getX();
+        value = e.getX() - getX();
         if (value < 0)
           value = 0;
         if (value > getWidth() - getHeight())
@@ -127,7 +127,7 @@ public class ScrollBar extends Component
   
   public void mouseMoved(MouseEvent e, Component parent)
   {
-    if (getArea().contains(e.getLocationOnScreen()) || parent.getArea().contains(e.getLocationOnScreen()))
+    if (getArea().contains(e.getPoint()) || parent.getArea().contains(e.getPoint()))
     {
       this.focus = true;
     }

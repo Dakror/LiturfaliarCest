@@ -72,7 +72,7 @@ public abstract class Component
   
   public void HelpOverlayClicked(MouseEvent e, String desc)
   {
-    if (CFG.HELPOVERLAYCREATE && getArea().contains(e.getLocationOnScreen()))
+    if (CFG.HELPOVERLAYCREATE && getArea().contains(e.getPoint()))
     {
       System.out.println("new HelpOverlayContainer(" + getX() + ", " + getY() + ", " + getWidth() + ", " + getHeight() + ", \"" + desc + "\")");
     }

@@ -375,7 +375,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
   public void mousePressed(MouseEvent e)
   {
     
-    if (contextMenu != null && contextMenu.getArea().contains(e.getLocationOnScreen()))
+    if (contextMenu != null && contextMenu.getArea().contains(e.getPoint()))
     {
       contextMenu.mousePressed(e);
       return;

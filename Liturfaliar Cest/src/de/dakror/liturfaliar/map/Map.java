@@ -510,7 +510,7 @@ public class Map implements DatabaseEventListener
     {
       id.mouseMoved(e, this);
       
-      if (hoveredItemDrop == null && id.getArea(this).contains(e.getLocationOnScreen()))
+      if (hoveredItemDrop == null && id.getArea(this).contains(e.getPoint()))
         hoveredItemDrop = id;
     }
   }

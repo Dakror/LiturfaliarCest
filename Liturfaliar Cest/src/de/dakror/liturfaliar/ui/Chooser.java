@@ -147,7 +147,7 @@ public class Chooser extends Component
   {
     if (disabled)
       return;
-    focus = getArea().contains(e.getLocationOnScreen());
+    focus = getArea().contains(e.getPoint());
     prev.mouseMoved(e);
     next.mouseMoved(e);
   }

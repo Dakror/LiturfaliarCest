@@ -41,7 +41,7 @@ public class HandleArea extends Component
   {
     if (this.v == null || this.state == 1)
       return;
-    if (getArea().contains(e.getLocationOnScreen()))
+    if (getArea().contains(e.getPoint()))
     {
       if (this.soundMOVER && this.state == 0)
         this.v.playSound("181-Hover");
@@ -55,7 +55,8 @@ public class HandleArea extends Component
   {
     if ((e.getButton() != 1 && !this.allowRightClick) || this.v == null || !this.mouseReleased)
       return;
-    if (getArea().contains(e.getLocationOnScreen()))
+    
+    if (getArea().contains(e.getPoint()))
     {
       if (this.soundCLICK)
         this.v.playSound("182-Click");
@@ -69,7 +70,7 @@ public class HandleArea extends Component
   {
     if ((e.getButton() != 1 && !this.allowRightClick) || this.v == null || this.mouseReleased)
       return;
-    if (getArea().contains(e.getLocationOnScreen()))
+    if (getArea().contains(e.getPoint()))
     {
       if (this.soundCLICK)
         this.v.playSound("182-Click");

@@ -221,7 +221,6 @@ public class Scene_MainMenu implements Scene
     if (mapeditor != null)
     {
       mapeditor.mouseMoved(e);
-      
     }
   }
   

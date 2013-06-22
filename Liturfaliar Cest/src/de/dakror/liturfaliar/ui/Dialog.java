@@ -150,7 +150,7 @@ public class Dialog extends Component
   
   public void mouseMoved(MouseEvent e)
   {
-    this.mouse = e.getLocationOnScreen();
+    this.mouse = e.getPoint();
     if (this.buttons.length > 0)
     {
       for (int i = 0; i < this.buttons.length; i++)

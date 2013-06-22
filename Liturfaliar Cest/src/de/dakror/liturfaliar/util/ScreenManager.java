@@ -13,6 +13,12 @@ import javax.swing.JFrame;
 
 import de.dakror.liturfaliar.settings.CFG;
 
+
+/**
+ * UNUSED
+ * 
+ * @author Dakror
+ */
 public class ScreenManager
 {
   private GraphicsDevice vc;

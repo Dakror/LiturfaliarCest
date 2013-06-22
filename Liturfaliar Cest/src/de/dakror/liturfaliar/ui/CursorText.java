@@ -54,6 +54,6 @@ public class CursorText
   
   public static void mouseMoved(MouseEvent e)
   {
-    mouse = e.getLocationOnScreen();
+    mouse = e.getPoint();
   }
 }

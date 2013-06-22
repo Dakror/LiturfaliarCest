@@ -50,6 +50,6 @@ public class OVScene_Info extends OVScene
   @Override
   public void mouseMoved(MouseEvent e)
   {
-    mouse = e.getLocationOnScreen();
+    mouse = e.getPoint();
   }
 }
