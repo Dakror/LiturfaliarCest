@@ -117,9 +117,11 @@ public class OVScene_Skills extends OVScene implements Inventory
     {
       SkillSlot s = new SkillSlot(x, y, new Item(Items.SWORD0, 1));
       SkillSlot s1 = new SkillSlot(x, y + SkillSlot.VGAP, new Item(Items.SWORD1, 1));
-      s.setChildren(s1);
+      SkillSlot s2 = new SkillSlot(x + SkillSlot.HGAP, y + SkillSlot.VGAP, new Item(Items.SWORD1, 1));
+      s.setChildren(s1, s2);
       slots.add(s);
       slots.add(s1);
+      slots.add(s2);
     }
   }
   

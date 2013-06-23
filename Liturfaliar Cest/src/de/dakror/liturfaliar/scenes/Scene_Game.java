@@ -141,7 +141,8 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
       v.toggleOVScene(new OVScene_Skills(this), "Skills");
     }
     
-    if(bottomSegment != null)bottomSegment.keyReleased(e, mappack.getActiveMap());
+    if (bottomSegment != null)
+      bottomSegment.keyReleased(e, mappack.getActiveMap());
   }
   
   public boolean isPaused()
@@ -192,7 +193,8 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     if (mappack != null && mappack.getActiveMap() != null)
       mappack.getActiveMap().mousePressed(e, v);
     
-    bottomSegment.mousePressed(e, mappack.getActiveMap());
+    if (bottomSegment != null)
+      bottomSegment.mousePressed(e, mappack.getActiveMap());
   }
   
   @Override

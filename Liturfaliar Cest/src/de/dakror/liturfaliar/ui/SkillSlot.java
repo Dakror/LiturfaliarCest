@@ -1,24 +1,22 @@
 package de.dakror.liturfaliar.ui;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Shape;
-import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.settings.Colors;
+import de.dakror.liturfaliar.util.Assistant;
 
 public class SkillSlot extends Component
 {
   public static final int HGAP = 100;
-  public static final int VGAP = 160;
-  public static final int SIZE = 66;
+  public static final int VGAP = 130;
+  public static final int SIZE = 55;
   
   SkillSlot[]             children;
   private Item            item;
@@ -46,49 +44,43 @@ public class SkillSlot extends Component
   {
     if (children != null)
     {
-      Color oldColor = g.getColor();
-      Stroke oldStroke = g.getStroke();
-      g.setColor(Colors.ARROW);
-      int lineWidth = 1;
-      g.setStroke(new BasicStroke(lineWidth));
       for (SkillSlot child : children)
       {
-        g.fill(createArrowShape(new Point(x + width / 2 + 4, y + SIZE), new Point(child.getX() + child.getWidth() / 2 + 4, child.getY())));
+        Point a = new Point(x + width / 2 + 4, y + SIZE);
+        Point b = new Point(child.getX() + child.getWidth() / 2 + 4, child.getY() - 2);
+        if(Math.toDegrees(getAngle(a,b))<= -45) {
+          a.translate(SIZE / 2 - 4, 0);
+        }
+        if(Math.toDegrees(getAngle(a,b))>= 45) {
+          a.translate(-SIZE / 2 - 4, 0);
+        }
+        Assistant.Shadow(createArrowShape(a, b), Colors.ARROW, 1, g);
       }
-      g.setStroke(oldStroke);
-      g.setColor(oldColor);
     }
     g.drawImage(Viewport.loadImage("tileset/Wood.png"), x - 2, y - 2, SIZE + 12, SIZE + 12, null);
     item.draw(x, y, g, v);
   }
   
+  public double getAngle(Point fromPt, Point toPt){
+    return Math.atan2(toPt.y - fromPt.y, toPt.x - fromPt.x) - Math.toRadians(90);
+  }
+  
   public Shape createArrowShape(Point fromPt, Point toPt)
   {
     Polygon arrowPolygon = new Polygon();
-    arrowPolygon.addPoint(-6, 1);
-    arrowPolygon.addPoint(3, 1);
-    arrowPolygon.addPoint(3, 3);
-    arrowPolygon.addPoint(6, 0);
-    arrowPolygon.addPoint(3, -3);
-    arrowPolygon.addPoint(3, -1);
-    arrowPolygon.addPoint(-6, -1);
-    
-    Point midPoint = midpoint(fromPt, toPt);
-    
-    double rotate = Math.atan2(toPt.y - fromPt.y, toPt.x - fromPt.x);
+    arrowPolygon.addPoint(3, -100);
+    arrowPolygon.addPoint(-3, -100);
+    arrowPolygon.addPoint(-3, -10);
+    arrowPolygon.addPoint(-10, -10);
+    arrowPolygon.addPoint(0, 0);
+    arrowPolygon.addPoint(10, -10);
+    arrowPolygon.addPoint(3, -10);
+    double rotate = getAngle(fromPt, toPt);
     
     AffineTransform transform = new AffineTransform();
-    transform.translate(midPoint.x, midPoint.y);
-    double ptDistance = fromPt.distance(toPt);
-    double scale = ptDistance / 12.0; // 12 because it's the length of the arrow polygon.
-    transform.scale(scale, scale);
+    transform.translate(toPt.x, toPt.y);
     transform.rotate(rotate);
     return transform.createTransformedShape(arrowPolygon);
-  }
-  
-  private static Point midpoint(Point p1, Point p2)
-  {
-    return new Point((int) ((p1.x + p2.x) / 2.0), (int) ((p1.y + p2.y) / 2.0));
   }
   
   @Override
