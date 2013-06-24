@@ -8,6 +8,7 @@ public class Balance
     public static final double SPRINT          = 4.0;
     public static final int    INITHEALTH      = 13;
     public static final int    INITSTAMINA     = 21;
+    public static final int    INITGOLD        = 10;
     
     public static final long   STAMINADECREASE = 500;
     public static final long   STAMINAREGEN    = 300;

@@ -21,7 +21,6 @@ import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Balance;
 import de.dakror.liturfaliar.settings.CFG;
-import de.dakror.liturfaliar.settings.Currencies;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
@@ -45,7 +44,6 @@ public class Player extends Creature
   long              time;
   
   ArrayList<Item>   skills              = new ArrayList<Item>();
-  Currencies        curr;
   
   public Player(JSONObject save, Window w)
   {
@@ -62,8 +60,6 @@ public class Player extends Creature
       equipment = new Equipment(save.getJSONObject("char").getJSONObject("equip"));
       
       relPos = goTo = new Vector(save.getJSONObject("mappack").getJSONObject("pos").getInt("x"), save.getJSONObject("mappack").getJSONObject("pos").getInt("y"));
-      
-      curr = new Currencies(save.getJSONObject("char").getJSONObject("curr"));
       
       attr.loadAttributes(save.getJSONObject("char").getJSONObject("attr"));
       

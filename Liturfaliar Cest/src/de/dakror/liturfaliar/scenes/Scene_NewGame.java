@@ -19,7 +19,6 @@ import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.map.MapPack;
 import de.dakror.liturfaliar.settings.Balance;
 import de.dakror.liturfaliar.settings.CFG;
-import de.dakror.liturfaliar.settings.Currencies;
 import de.dakror.liturfaliar.ui.Button;
 import de.dakror.liturfaliar.ui.Chooser;
 import de.dakror.liturfaliar.ui.Container;
@@ -220,9 +219,6 @@ public class Scene_NewGame implements Scene
       // -- equipment -- //
       cfg.put("equip", equip.serializeEquipment());
       
-      // -- currencies -- //
-      cfg.put("curr", new Currencies().serializeCurrencies());
-      
       // -- skills -- //
       cfg.put("skills", new JSONArray());
       
@@ -243,6 +239,13 @@ public class Scene_NewGame implements Scene
       
       attr.put("stamina", Balance.Player.INITSTAMINA);
       attr.put("maxstamina", Balance.Player.INITSTAMINA);
+      
+      attr.put("gold", Balance.Player.INITGOLD);
+      attr.put("maxgold", Balance.Player.INITGOLD);
+      
+      
+      attr.put("skillpoint", 1);
+      attr.put("maxskillpoint", 1);
       
       attr.put("experience", 1);
       attr.put("maxexperience", 1);

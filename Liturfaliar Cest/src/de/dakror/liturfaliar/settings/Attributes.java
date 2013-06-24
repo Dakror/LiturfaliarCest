@@ -23,7 +23,11 @@ public class Attributes
     
     strength("Stärke", 0),
     accuracy("Genauigkeit", 0),
-    experience("Erfahrung", 0);
+    experience("Erfahrung", 0),
+    gold("Gold", 0),
+    skillpoint("Fähigkeitspunkte", 0),
+    
+    ;
     
     private String text;
     private double minimum;
