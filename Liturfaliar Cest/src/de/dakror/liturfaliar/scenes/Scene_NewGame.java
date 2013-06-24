@@ -243,11 +243,10 @@ public class Scene_NewGame implements Scene
       attr.put("gold", Balance.Player.INITGOLD);
       attr.put("maxgold", Balance.Player.INITGOLD);
       
-      
       attr.put("skillpoint", 1);
       attr.put("maxskillpoint", 1);
       
-      attr.put("experience", 1);
+      attr.put("experience", 0);
       attr.put("maxexperience", 1);
       
       attr.put("speed", 1);

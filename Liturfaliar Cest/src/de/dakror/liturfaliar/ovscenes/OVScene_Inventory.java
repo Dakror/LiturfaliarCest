@@ -22,6 +22,7 @@ import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.Dialog;
 import de.dakror.liturfaliar.ui.HTMLLabel;
+import de.dakror.liturfaliar.ui.Icon;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.Notification;
 import de.dakror.liturfaliar.ui.TextSelect;
@@ -53,6 +54,9 @@ public class OVScene_Inventory extends OVScene implements Inventory
   HTMLLabel                  labels1, labels2;
   HTMLLabel                  stats1, stats2;
   HTMLLabel                  invWeight;
+  HTMLLabel                  money;
+  
+  Icon                       goldIcon;
   
   TextSelect                 contextMenu;
   ItemSlot                   contextItemSlot;
@@ -250,6 +254,17 @@ public class OVScene_Inventory extends OVScene implements Inventory
     }
     
     invWeight.draw(g, v);
+    
+    if (money == null)
+    {
+      String gold = (int) sg.getPlayer().getAttributes().getAttribute(Attr.gold).getValue() + "";
+      int length = g.getFontMetrics(g.getFont().deriveFont(0, 20)).stringWidth(gold);
+      money = new HTMLLabel(v.w.getWidth() / 2 - 175 + ItemSlot.SIZE * WIDTH - 40 - length, v.w.getHeight() / 2 - 350 + 110 - 52 + HEIGHT * ItemSlot.SIZE - 7, length, 30, "<" + Assistant.ColorToHex(Colors.GRAY) + ";20;0>" + gold + "[br]");
+      
+      goldIcon = new Icon(v.w.getWidth() / 2 - 175 + ItemSlot.SIZE * WIDTH - 40, v.w.getHeight() / 2 - 350 + 110 - 52 + HEIGHT * ItemSlot.SIZE - 3, 30, 30, 13, 12);
+    }
+    money.draw(g, v);
+    goldIcon.draw(g, v.w);
     
     // -- character equip -- //
     Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350, 410, 550, g, v.w);

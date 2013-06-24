@@ -24,7 +24,7 @@ public class PlayerExperience extends HUDComponent
   public void update(Map m)
   {
     if (visible)
-      bar.value = (float) ((player.getAttributes().getAttribute(Attr.experience).getMaximum() - player.getXPforLevel(0)) / (float) (player.getXPforLevel(1) - player.getXPforLevel(0)));
+      bar.value = (float) ((player.getAttributes().getAttribute(Attr.experience).getValue() - player.getXPforLevel(0)) / (float) (player.getXPforLevel(1) - player.getXPforLevel(0)));
   }
   
   @Override
