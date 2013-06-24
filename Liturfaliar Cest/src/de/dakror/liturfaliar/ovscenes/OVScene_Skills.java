@@ -82,6 +82,11 @@ public class OVScene_Skills extends OVScene implements Inventory
     Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), v.w.getWidth() / 2 - 400, 100, 800, v.w.getHeight() - 300, g, v.w);
     for (SkillSlot ss : slots)
     {
+      ss.drawArrows(g, v);
+    }
+    
+    for (SkillSlot ss : slots)
+    {
       ss.draw(g, v);
     }
     
@@ -99,6 +104,7 @@ public class OVScene_Skills extends OVScene implements Inventory
     {
       is.getItem().tooltip.draw(g, v);
     }
+    
     for (ItemSlot is : hotbar)
     {
       is.drawTooltip(g, v);
@@ -107,21 +113,32 @@ public class OVScene_Skills extends OVScene implements Inventory
   
   public void loadSkillTree()
   {
-    int x = v.w.getWidth() / 2 - 400 + 50;
+    int x = v.w.getWidth() / 2 - 400;
+    
     int y = 100 + 50;
+    int width = 800;
+    // int height = v.w.getHeight() - 300;
+    int cx = x + width / 2 - SkillSlot.SIZE / 2;
     
     slots.clear();
     
     String key = flicker.getSelectedObject().getKey();
     if (key.equals(Types.SWORDSKILL.getName()))
     {
-      SkillSlot s = new SkillSlot(x, y, new Item(Items.SWORD0, 1));
-      SkillSlot s1 = new SkillSlot(x, y + SkillSlot.VGAP, new Item(Items.SWORD1, 1));
-      SkillSlot s2 = new SkillSlot(x + SkillSlot.HGAP, y + SkillSlot.VGAP, new Item(Items.SWORD1, 1));
-      s.setChildren(s1, s2);
+      SkillSlot s = new SkillSlot(cx, y, new Item(Items.SWORD0, 1));
       slots.add(s);
+      
+      SkillSlot s1 = new SkillSlot(cx - SkillSlot.HGAP * 3, y, new Item(Items.SWORD1, 1));
       slots.add(s1);
+      s1.setParents(s);
+      
+      SkillSlot s2 = new SkillSlot(cx - SkillSlot.HGAP * 3, y + SkillSlot.VGAP, new Item(Items.SWORD2, 1));
       slots.add(s2);
+      s2.setParents(s1);
+      
+      SkillSlot s3 = new SkillSlot(cx - SkillSlot.HGAP * 3, y + SkillSlot.VGAP * 2, new Item(Items.SWORD3, 1));
+      slots.add(s3);
+      s3.setParents(s2);
     }
   }
   

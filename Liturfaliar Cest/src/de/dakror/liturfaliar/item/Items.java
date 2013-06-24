@@ -22,8 +22,12 @@ public enum Items
   // -- skills -- //
   
   // -- swordskills -- // // TODO: SKILL ACTIONS
-  SWORD0(13, 508, "Schwert-Talent", "", Types.SWORDSKILL, new Attributes(), new Attributes(), new SkillAction("<#ffffff;15;2>Das Talent, mit schwertähnlichen[br]<#ffffff;15;2>Waffen umzugehen.")),
-  SWORD1(8, 510, "Schwung", "", Types.SWORDSKILL, new Attributes(), new Attributes(), new SkillAction("<#ffffff;15;2>Ein einhändiger Frontalangriff mit[br]<#ffffff;15;2>geringem Schaden.[br]<#ffffff;15;1> [br]<#ffffff;15;1>Schwunggröße: 60%")), ;
+  SWORD0(13, 508, "Schwert-Talent", "", Types.SWORDSKILL, new Attributes(), new Attributes(), new SkillAction("<#ffffff;15;2>Das Talent, mit schwertähnlichen[br]<#ffffff;15;2>Waffen umzugehen und einen[br]<#ffffff;15;2>einfachen Schlag auszuführen.")),
+  SWORD1(14, 511, "Schwung", "", Types.SWORDSKILL, new Attributes(), new Attributes(), new SkillAction("<#ffffff;15;2>Ein zweihändiger Frontalangriff mit[br]<#ffffff;15;2>geringem Schaden und geringem Radius.")),
+  SWORD2(13, 511, "Weiter Schwung", "", Types.SWORDSKILL, new Attributes(), new Attributes(), new SkillAction("<#ffffff;15;2>Ein zweihändiger Frontalangriff mit[br]<#ffffff;15;2>mittlerem Schaden und weitem Radius.")),
+  SWORD3(10, 511, "Rundumschlag", "", Types.SWORDSKILL, new Attributes(), new Attributes(), new SkillAction("<#ffffff;15;2>Ein zweihändiger Rundumangriff mit[br]<#ffffff;15;2>großem Schaden.")),
+  
+  ;
   
   private int ix, iy;
   private Attributes attributes, requirements;

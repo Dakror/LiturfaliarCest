@@ -18,8 +18,9 @@ public class SkillSlot extends Component
   public static final int VGAP = 130;
   public static final int SIZE = 55;
   
-  SkillSlot[]             children;
+  SkillSlot[]             parents;
   private Item            item;
+  public boolean          drawArrow;
   
   public SkillSlot(int x, int y, Item i)
   {
@@ -28,48 +29,68 @@ public class SkillSlot extends Component
     item.setWidth(SIZE);
     item.setHeight(SIZE);
     item.init();
+    drawArrow = true;
   }
   
-  public void setChildren(SkillSlot... s)
+  public void setParents(SkillSlot... s)
   {
-    children = s;
+    parents = s;
   }
   
   @Override
   public void update()
   {}
   
+  public void drawArrows(Graphics2D g, Viewport v){
+    if (parents != null && drawArrow)
+    {
+      for (SkillSlot parent : parents)
+      {
+        Point a = new Point(parent.getX() + parent.getWidth() / 2 + 4, parent.getY() + SIZE);
+        Point b = new Point(x + width / 2 + 4, y - 2);
+        
+        double angle = Math.toDegrees(getAngle(a, b));
+        if (angle <= -45 && angle >= - 90)
+        {
+          a.translate(SIZE / 2, 0);
+          b.translate(-SIZE / 2, 4);
+        }
+        if (angle <= - 90)
+        {
+          a.translate(-SIZE / 2, -SIZE / 2 +  4);
+          b.translate(SIZE / 2 + 5, SIZE / 2 + 7);
+        }
+        
+        if (angle >= 45 && angle <= 90)
+        {
+          a.translate(-SIZE / 2, 0);
+          b.translate(SIZE / 2 + 4, 0);
+        }
+        Shape arrow = createArrowShape(a, b);
+        
+        Assistant.Shadow(arrow, Colors.ARROW, 1, g);
+      }
+    }
+  }
+  
   @Override
   public void draw(Graphics2D g, Viewport v)
   {
-    if (children != null)
-    {
-      for (SkillSlot child : children)
-      {
-        Point a = new Point(x + width / 2 + 4, y + SIZE);
-        Point b = new Point(child.getX() + child.getWidth() / 2 + 4, child.getY() - 2);
-        if(Math.toDegrees(getAngle(a,b))<= -45) {
-          a.translate(SIZE / 2 - 4, 0);
-        }
-        if(Math.toDegrees(getAngle(a,b))>= 45) {
-          a.translate(-SIZE / 2 - 4, 0);
-        }
-        Assistant.Shadow(createArrowShape(a, b), Colors.ARROW, 1, g);
-      }
-    }
+    
     g.drawImage(Viewport.loadImage("tileset/Wood.png"), x - 2, y - 2, SIZE + 12, SIZE + 12, null);
-    item.draw(x, y, g, v);
+    item.draw(x, y, g, v);    
   }
   
-  public double getAngle(Point fromPt, Point toPt){
+  public double getAngle(Point fromPt, Point toPt)
+  {
     return Math.atan2(toPt.y - fromPt.y, toPt.x - fromPt.x) - Math.toRadians(90);
   }
   
   public Shape createArrowShape(Point fromPt, Point toPt)
   {
     Polygon arrowPolygon = new Polygon();
-    arrowPolygon.addPoint(3, -100);
-    arrowPolygon.addPoint(-3, -100);
+    arrowPolygon.addPoint(3, ((toPt.distanceSq(fromPt) < 0) ? 1 : -1) * (int) toPt.distance(fromPt));
+    arrowPolygon.addPoint(-3, ((toPt.distanceSq(fromPt) < 0) ? 1 : -1) * (int) toPt.distance(fromPt));
     arrowPolygon.addPoint(-3, -10);
     arrowPolygon.addPoint(-10, -10);
     arrowPolygon.addPoint(0, 0);
