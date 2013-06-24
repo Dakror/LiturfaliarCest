@@ -55,8 +55,8 @@ public class OVScene_Skills extends OVScene implements Inventory
       hotbar[i].setItem(sg.getPlayer().getEquipment().getHotbarItem(i));
       hotbar[i].setHotKey((i < PlayerHotbar.KEYSLOTS.length) ? PlayerHotbar.KEYSLOTS[i] : PlayerHotbar.MOUSESLOTS[i - PlayerHotbar.KEYSLOTS.length], i > PlayerHotbar.KEYSLOTS.length - 1);
     }
-    int h = 100 - 36;
-    flicker = new Flicker(v.w.getWidth() / 2 - 400, v.w.getHeight() - 200, 800, 100, new FlickObject(9, 8, h, Types.PERKSKILL.getName()), new FlickObject(1, 0, h, Types.SWORDSKILL.getName()), new FlickObject(0, 253, h, Types.BOWSKILL.getName()));
+    int h = 96 - 36;
+    flicker = new Flicker(v.w.getWidth() / 2 - 400, v.w.getHeight() - 200, 800, 96, new FlickObject(9, 8, h, Types.PERKSKILL.getName()), new FlickObject(1, 0, h, Types.SWORDSKILL.getName()), new FlickObject(0, 253, h, Types.BOWSKILL.getName()));
   }
   
   @Override

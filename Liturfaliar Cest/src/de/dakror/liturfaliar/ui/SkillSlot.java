@@ -16,20 +16,22 @@ public class SkillSlot extends Component
 {
   public static final int HGAP = 100;
   public static final int VGAP = 130;
-  public static final int SIZE = 55;
+  public static final int SIZE = 67;
   
   SkillSlot[]             parents;
   private Item            item;
   public boolean          drawArrow;
+  public boolean          known;
   
   public SkillSlot(int x, int y, Item i)
   {
     super(x, y, SIZE, SIZE);
     item = i;
-    item.setWidth(SIZE);
-    item.setHeight(SIZE);
+    item.setWidth(SIZE - 12);
+    item.setHeight(SIZE - 12);
     item.init();
     drawArrow = true;
+    known = false;
   }
   
   public void setParents(SkillSlot... s)
@@ -41,24 +43,25 @@ public class SkillSlot extends Component
   public void update()
   {}
   
-  public void drawArrows(Graphics2D g, Viewport v){
+  public void drawArrows(Graphics2D g, Viewport v)
+  {
     if (parents != null && drawArrow)
     {
       for (SkillSlot parent : parents)
       {
-        Point a = new Point(parent.getX() + parent.getWidth() / 2 + 4, parent.getY() + SIZE);
-        Point b = new Point(x + width / 2 + 4, y - 2);
+        Point a = new Point(parent.getX() + parent.getWidth() / 2, parent.getY() + SIZE);
+        Point b = new Point(x + width / 2, y);
         
         double angle = Math.toDegrees(getAngle(a, b));
-        if (angle <= -45 && angle >= - 90)
+        if (angle <= -45 && angle >= -90)
         {
           a.translate(SIZE / 2, 0);
           b.translate(-SIZE / 2, 4);
         }
-        if (angle <= - 90)
+        if (angle <= -90)
         {
-          a.translate(-SIZE / 2, -SIZE / 2 +  4);
-          b.translate(SIZE / 2 + 5, SIZE / 2 + 7);
+          a.translate(-SIZE / 2, -SIZE / 2);
+          b.translate(SIZE / 2, SIZE / 2);
         }
         
         if (angle >= 45 && angle <= 90)
@@ -77,8 +80,11 @@ public class SkillSlot extends Component
   public void draw(Graphics2D g, Viewport v)
   {
     
-    g.drawImage(Viewport.loadImage("tileset/Wood.png"), x - 2, y - 2, SIZE + 12, SIZE + 12, null);
-    item.draw(x, y, g, v);    
+    g.drawImage(Viewport.loadImage("tileset/Wood.png"), x,y,SIZE,SIZE, null);
+    item.draw(x + 2, y + 2, g, v);
+    
+    if (!known)
+      Assistant.Shadow(item.getArea(), Colors.DGRAY, 0.6f, g);
   }
   
   public double getAngle(Point fromPt, Point toPt)

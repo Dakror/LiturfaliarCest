@@ -53,6 +53,8 @@ public class Flicker extends Component
   {
     super(x, y, w, h);
     objects = o;
+    if (objects.length % 2 == 0)
+      dragX = s / 2 + space / 2;
   }
   
   @Override
@@ -90,6 +92,9 @@ public class Flicker extends Component
       g.drawImage(objects[i].getIcon(), ix - (s - this.s) / 2, iy - (s - this.s) / 2, s, s, v.w);
     }
     g.setClip(oldClip);
+    
+    Assistant.stretchTileset(Viewport.loadImage("tileset/LFWood.png"), x, y, height, height, g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/RFWood.png"), x + width - height, y, height, height, g, v.w);
   }
   
   @Override

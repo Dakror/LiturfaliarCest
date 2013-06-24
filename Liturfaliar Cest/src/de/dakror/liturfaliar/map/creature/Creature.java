@@ -15,6 +15,7 @@ import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.settings.Attributes;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
@@ -22,7 +23,8 @@ import de.dakror.liturfaliar.util.Vector;
 
 public class Creature implements MapEventListener
 {
-  public static final int[] DIRS = { 3, 2, 0, 1 };
+  public static final int[] DIRS  = { 3, 2, 0, 1 };
+  public static final int   LEVEL = 25;
   
   private double            speed;
   
@@ -362,5 +364,17 @@ public class Creature implements MapEventListener
   public void setAttributes(Attributes a)
   {
     this.attr = a;
+  }
+  
+  public int getLevel()
+  {
+    if (attr.getAttribute(Attr.experience).isEmpty())
+      return 0;
+    return (int) Math.sqrt(attr.getAttribute(Attr.experience).getMaximum() / (double) LEVEL);
+  }
+
+  public int getXPforLevel(int rl)
+  {
+    return (int) Math.round(Math.pow(getLevel() + rl, 2) * LEVEL);
   }
 }

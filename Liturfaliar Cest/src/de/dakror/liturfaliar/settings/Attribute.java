@@ -35,6 +35,17 @@ public class Attribute
       value += v;
   }
   
+  public void increaseMaximum(double v)
+  {
+    maximum += v;
+  }
+  
+  public void increase(double v)
+  {
+    value += v;
+    maximum += v;
+  }
+  
   public boolean isEmpty()
   {
     return maximum == 0.0 || value == 0.0;

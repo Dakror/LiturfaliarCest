@@ -10,13 +10,15 @@ import de.dakror.liturfaliar.map.creature.Player;
 
 public class BottomSegment
 {
-  PlayerHealth  health;
-  PlayerStamina stamina;
-  PlayerHotbar  hotbar;
+  PlayerHealth     health;
+  PlayerExperience experience;
+  PlayerStamina    stamina;
+  PlayerHotbar     hotbar;
   
   public BottomSegment(Player p)
   {
     health = new PlayerHealth(p);
+    experience = new PlayerExperience(p);
     stamina = new PlayerStamina(p);
     hotbar = new PlayerHotbar(p);
   }
@@ -24,6 +26,7 @@ public class BottomSegment
   public void update(Map m)
   {
     health.update(m);
+    experience.update(m);
     stamina.update(m);
     hotbar.update(m);
   }
@@ -32,6 +35,7 @@ public class BottomSegment
   {
     if (m.talk == null)
     {
+      experience.draw(g, v, m);
       health.draw(g, v, m);
       stamina.draw(g, v, m);
       hotbar.draw(g, v, m);

@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +21,7 @@ import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Balance;
 import de.dakror.liturfaliar.settings.CFG;
+import de.dakror.liturfaliar.settings.Currencies;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
@@ -42,6 +44,9 @@ public class Player extends Creature
   boolean           sprint;
   long              time;
   
+  ArrayList<Item>   skills              = new ArrayList<Item>();
+  Currencies        curr;
+  
   public Player(JSONObject save, Window w)
   {
     super(CFG.MAPCENTER.x, CFG.MAPCENTER.y, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1]);
@@ -58,12 +63,23 @@ public class Player extends Creature
       
       relPos = goTo = new Vector(save.getJSONObject("mappack").getJSONObject("pos").getInt("x"), save.getJSONObject("mappack").getJSONObject("pos").getInt("y"));
       
+      curr = new Currencies(save.getJSONObject("char").getJSONObject("curr"));
+      
       attr.loadAttributes(save.getJSONObject("char").getJSONObject("attr"));
+      
+      JSONArray skills = save.getJSONObject("char").getJSONArray("skills");
+      
+      for (int i = 0; i < skills.length(); i++)
+      {
+        this.skills.add(new Item(skills.getJSONObject(i)));
+      }
     }
     catch (JSONException e)
     {
       e.printStackTrace();
     }
+    
+    
   }
   
   @Override
@@ -119,7 +135,6 @@ public class Player extends Creature
       init = false;
     }
     
-    
     if (!sprint)
     {
       if ((System.currentTimeMillis() - time) > Balance.Player.STAMINAREGEN && attr.getAttribute(Attr.stamina).getValue() < attr.getAttribute(Attr.stamina).getMaximum())
@@ -138,8 +153,6 @@ public class Player extends Creature
     {
       sprint = false;
     }
-    
-    
     
     setSpeed((sprint) ? Balance.Player.SPRINT : Balance.Player.WALK);
     
@@ -301,6 +314,7 @@ public class Player extends Creature
     try
     {
       data.getJSONObject("char").put("equip", equipment.serializeEquipment());
+      data.getJSONObject("char").put("skills", skills);
     }
     catch (JSONException e)
     {
@@ -398,5 +412,15 @@ public class Player extends Creature
       return equipment.getAttributes().add(attr);
     
     return attr;
+  }
+  
+  public boolean hasSkill(Item skill)
+  {
+    return skills.contains(skill);
+  }
+  
+  public void addSkill(Item skill)
+  {
+    skills.add(skill);
   }
 }

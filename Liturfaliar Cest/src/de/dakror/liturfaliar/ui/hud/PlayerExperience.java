@@ -9,12 +9,12 @@ import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.ProgressBar;
 
-public class PlayerHealth extends HUDComponent
+public class PlayerExperience extends HUDComponent
 {
   ProgressBar bar;
   Player      player;
   
-  public PlayerHealth(Player p)
+  public PlayerExperience(Player p)
   {
     super(0, 0, 1, 1, 10);
     player = p;
@@ -24,7 +24,7 @@ public class PlayerHealth extends HUDComponent
   public void update(Map m)
   {
     if (visible)
-      bar.value = (float) (player.getAttributes().getAttribute(Attr.health).getValue() / player.getAttributes().getAttribute(Attr.health).getMaximum());
+      bar.value = (float) ((player.getAttributes().getAttribute(Attr.experience).getMaximum() - player.getXPforLevel(0)) / (float) (player.getXPforLevel(1) - player.getXPforLevel(0)));
   }
   
   @Override
@@ -33,10 +33,10 @@ public class PlayerHealth extends HUDComponent
     if (!visible && bar == null)
     {
       setX(v.w.getWidth() / 2 - ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);
-      setHeight(32);
-      setY(v.w.getHeight() - height - ItemSlot.SIZE + 5 - 13);
-      setWidth(ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 + 10);
-      bar = new ProgressBar(x, y, width, 1, false, "ff3232", null, false);
+      setHeight(20);
+      setY(v.w.getHeight() - height - 12 - ItemSlot.SIZE + 5 + 11);
+      setWidth(ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT + 6);
+      bar = new ProgressBar(x, y, width, 0, false, "7dd33c", null, false);
       bar.setHeight(height);
       visible = true;
     }
