@@ -286,7 +286,8 @@ public class Scene_NewGame implements Scene
       v.playSound("002-System02");
     }
     
-    gender.keyPressed(e);
+    if (gender != null)
+      gender.keyPressed(e);
     name.keyPressed(e);
     
     for (Chooser c : parts)

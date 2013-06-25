@@ -25,7 +25,7 @@ public class Attributes
     accuracy("Genauigkeit", 0),
     experience("Erfahrung", 0),
     gold("Gold", 0),
-    skillpoint("Fähigkeitspunkte", 0),
+    skillpoint("Talentpunkt(e)", 0),
     
     ;
     

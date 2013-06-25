@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.event.dispatcher.PlayerEventDispatcher;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.map.Field;
@@ -24,6 +25,7 @@ import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
+import de.dakror.liturfaliar.util.Database;
 import de.dakror.liturfaliar.util.Vector;
 
 public class Player extends Creature
@@ -45,6 +47,8 @@ public class Player extends Creature
   
   ArrayList<Item>   skills              = new ArrayList<Item>();
   
+  Viewport          v;
+  
   public Player(JSONObject save, Window w)
   {
     super(CFG.MAPCENTER.x, CFG.MAPCENTER.y, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1]);
@@ -62,6 +66,9 @@ public class Player extends Creature
       relPos = goTo = new Vector(save.getJSONObject("mappack").getJSONObject("pos").getInt("x"), save.getJSONObject("mappack").getJSONObject("pos").getInt("y"));
       
       attr.loadAttributes(save.getJSONObject("char").getJSONObject("attr"));
+      
+      
+      Database.setStringVar("player_sp", "" + (int) attr.getAttribute(Attr.skillpoint).getValue());
       
       JSONArray skills = save.getJSONObject("char").getJSONArray("skills");
       
@@ -139,6 +146,10 @@ public class Player extends Creature
         time = System.currentTimeMillis();
       }
     }
+    else
+    {
+      addXP(2);
+    }
     
     if (sprint && (dirs[0] || dirs[1] || dirs[2] || dirs[3]) && (System.currentTimeMillis() - time) > Balance.Player.STAMINADECREASE && attr.getAttribute(Attr.stamina).getValue() > 0 && !m.isPeaceful())
     {
@@ -185,6 +196,8 @@ public class Player extends Creature
   public void draw(Graphics2D g, Viewport v, Map m)
   {
     super.draw(g, v, m);
+    
+    this.v = v;
     
     int frame = 0;
     
@@ -311,6 +324,7 @@ public class Player extends Creature
     {
       data.getJSONObject("char").put("equip", equipment.serializeEquipment());
       data.getJSONObject("char").put("skills", skills);
+      data.getJSONObject("char").put("attr", attr.serializeAttributes());
     }
     catch (JSONException e)
     {
@@ -419,4 +433,14 @@ public class Player extends Creature
   {
     skills.add(skill);
   }
+  
+  public void addXP(int amount)
+  {
+    int lvl = getLevel();
+    attr.getAttribute(Attr.experience).increase(amount);
+    
+    if (getLevel() > lvl)
+      PlayerEventDispatcher.dispatchLevelUp(lvl);
+  }
+  
 }

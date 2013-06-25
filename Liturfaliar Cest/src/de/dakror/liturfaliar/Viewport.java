@@ -801,9 +801,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
       }
     }
     catch (ConcurrentModificationException e1)
-    {
-      e1.printStackTrace();
-    }
+    {}
     
     if (scene != null && sceneEnabled && dialog == null)
       scene.keyReleased(e);

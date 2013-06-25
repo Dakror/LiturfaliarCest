@@ -172,12 +172,13 @@ public class Item extends Component
       }
     }
     
-    String raw = name + "[br]" + category + "[br]"+ weight + "[br]" + att + required + action + cooldown;
+    String raw = name + "[br]" + category + "[br]" + weight + "[br]" + att + required + action + cooldown;
     
     if (type.getCategory().equals(Categories.SKILL))
     {
-      SkillAction sa =(SkillAction) this. action;
-      raw = name + "[br]" + sa.getDescription();
+      SkillAction sa = (SkillAction) this.action;
+      int skillpoints = Integer.parseInt(Database.getStringVar("player_sp"));
+      raw = name + "[br]" + sa.getDescription() + "[br]" + c + " [br]<" + ((skillpoints >= requirements.getAttribute(Attr.skillpoint).getValue()) ? "#cccccc" : Colors.WORSE) + ";17;1>" +(int)requirements.getAttribute(Attr.skillpoint).getValue() + " " + Attr.skillpoint.getText();
     }
     
     
@@ -194,7 +195,7 @@ public class Item extends Component
   {
     try
     {
-      return Integer.parseInt(Database.filterString("%ov_inv_attr_" + key + "%"));
+      return Integer.parseInt(Database.getStringVar("%ov_inv_attr_" + key + "%"));
     }
     catch (Exception e)
     {

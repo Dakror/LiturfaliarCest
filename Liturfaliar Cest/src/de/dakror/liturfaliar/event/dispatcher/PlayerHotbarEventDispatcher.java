@@ -23,7 +23,8 @@ public class PlayerHotbarEventDispatcher
   {
     for (PlayerHotbarEventListener l : listeners)
     {
-      l.slotTriggered(index, slot);
+      if (l != null)
+        l.slotTriggered(index, slot);
     }
   }
 }

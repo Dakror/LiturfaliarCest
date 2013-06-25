@@ -1,6 +1,7 @@
 package de.dakror.liturfaliar.ovscenes;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -13,6 +14,7 @@ import de.dakror.liturfaliar.item.Items;
 import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.scenes.Scene_Game;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.Flicker;
 import de.dakror.liturfaliar.ui.Flicker.FlickObject;
@@ -90,6 +92,17 @@ public class OVScene_Skills extends OVScene implements Inventory
       ss.draw(g, v);
     }
     
+    // -- skillpoints -- //
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 + 400, 100, 192, 96, g, v.w);
+    String string = (int) sg.getPlayer().getAttributes().getAttribute(Attr.skillpoint).getValue() + " SP";
+    int size = 70;
+    Font oldFont = g.getFont();
+    g.setFont(new Font("Times New Roman",0,1));
+    if (g.getFontMetrics(g.getFont().deriveFont(size)).stringWidth(string) > 50)
+      size -= g.getFontMetrics(g.getFont().deriveFont(size)).stringWidth(string) - 50;
+    
+    Assistant.drawHorizontallyCenteredString(string, v.w.getWidth() / 2 + 410, 172, 174, g, size, Color.white);
+    g.setFont(oldFont);
     // -- type area -- //
     flicker.draw(g, v);
     

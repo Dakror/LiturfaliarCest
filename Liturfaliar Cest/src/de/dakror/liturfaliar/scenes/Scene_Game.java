@@ -13,8 +13,10 @@ import org.json.JSONObject;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.dispatcher.DatabaseEventDispatcher;
 import de.dakror.liturfaliar.event.dispatcher.MapPackEventDispatcher;
+import de.dakror.liturfaliar.event.dispatcher.PlayerEventDispatcher;
 import de.dakror.liturfaliar.event.dispatcher.PlayerHotbarEventDispatcher;
 import de.dakror.liturfaliar.event.listener.MapPackEventListener;
+import de.dakror.liturfaliar.event.listener.PlayerEventListener;
 import de.dakror.liturfaliar.event.listener.PlayerHotbarEventListener;
 import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Item;
@@ -25,6 +27,7 @@ import de.dakror.liturfaliar.map.creature.Player;
 import de.dakror.liturfaliar.ovscenes.OVScene_Inventory;
 import de.dakror.liturfaliar.ovscenes.OVScene_Pause;
 import de.dakror.liturfaliar.ovscenes.OVScene_Skills;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.CursorText;
 import de.dakror.liturfaliar.ui.ItemSlot;
@@ -32,7 +35,7 @@ import de.dakror.liturfaliar.ui.hud.BottomSegment;
 import de.dakror.liturfaliar.ui.hud.TargetLabel;
 import de.dakror.liturfaliar.util.Database;
 
-public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEventListener
+public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEventListener, PlayerEventListener
 {
   Viewport        v;
   private MapPack mappack;
@@ -50,6 +53,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   {
     this.v = v;
     PlayerHotbarEventDispatcher.addPlayerHotbarEventListener(this);
+    PlayerEventDispatcher.addPlayerEventListener(this);
     v.setFramesFrozen(false);
     CFG.MAPCENTER = new Point((v.w.getWidth() / 2 - CFG.FIELDSIZE / 2), (v.w.getHeight() / 2 - CFG.FIELDSIZE * 3 / 4));
     
@@ -266,5 +270,14 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   {
     MapPackEventDispatcher.removeMapPackEventListener(this);
     PlayerHotbarEventDispatcher.removePlayerHotbarEventListener(this);
+    PlayerEventDispatcher.removePlayerEventListener(this);
+  }
+  
+  @Override
+  public void levelUp(int oldLevel)
+  {
+    v.playSound("111-Heal07");
+    player.getAttributes().getAttribute(Attr.skillpoint).increase((int) Math.floor(player.getLevel() / 10.0) + 1);
+    Database.setStringVar("player_sp", "" + (int) player.getAttributes().getAttribute(Attr.skillpoint).getValue());
   }
 }

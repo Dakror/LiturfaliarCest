@@ -22,17 +22,47 @@ public class MapEventDispatcher
   }
   
   public static void dispatchFieldTouched(Creature c, Map m)
-  {}
+  {
+    for (MapEventListener l : listeners)
+    {
+      if (l != null)
+        l.fieldTouched(c, m);
+    }
+  }
   
   public static void dispatchFieldTriggered(Creature c, Map m)
-  {}
+  {
+    for (MapEventListener l : listeners)
+    {
+      if (l != null)
+        l.fieldTriggered(c, m);
+    }
+  }
   
   public static void dispatchTalkStarted(Talk t, Map m)
-  {}
+  {
+    for (MapEventListener l : listeners)
+    {
+      if (l != null)
+        l.talkStarted(t, m);
+    }
+  }
   
   public static void dispatchTalkEnded(Talk t, Map m)
-  {}
+  {
+    for (MapEventListener l : listeners)
+    {
+      if (l != null)
+        l.talkEnded(t, m);
+    }
+  }
   
   public static void dispatchTalkChanged(Talk old, Talk n, Map m)
-  {}
+  {
+    for (MapEventListener l : listeners)
+    {
+      if (l != null)
+        l.talkChanged(old, n, m);
+    }
+  }
 }
