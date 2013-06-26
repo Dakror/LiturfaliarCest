@@ -20,7 +20,7 @@ public class OVScene_Info extends OVScene
   Point mouse;
   
   @Override
-  public void init(Viewport v)
+  public void construct(Viewport v)
   {
     this.v = v;
     time = System.currentTimeMillis();
@@ -53,4 +53,8 @@ public class OVScene_Info extends OVScene
     // show updates
     Assistant.drawString(cacheUPS + " UPS", 0, 60, g, Color.white, g.getFont().deriveFont(30.0f));
   }
+  
+  @Override
+  public void destruct()
+  {}
 }

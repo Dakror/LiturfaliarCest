@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
@@ -15,7 +16,7 @@ import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
 
-public class SkillSlot extends Component
+public class SkillSlot extends ItemSlot
 {
   public static final int HGAP = 100;
   public static final int VGAP = 130;
@@ -30,7 +31,7 @@ public class SkillSlot extends Component
   
   public SkillSlot(int x, int y, Item i, Scene_Game sg)
   {
-    super(x, y, SIZE, SIZE);
+    super(x, y, SIZE);
     this.sg = sg;
     item = i;
     item.setWidth(SIZE - 12);
@@ -38,6 +39,17 @@ public class SkillSlot extends Component
     item.init();
     drawArrow = true;
     known = sg.getPlayer().hasSkill(item);
+    item.showSkillCosts = !known;
+    item.updateTooltip();
+  }
+  
+  public SkillSlot(SkillSlot o)
+  {
+    this(o.x, o.y, new Item(o.item), o.sg);
+    drawArrow = o.drawArrow;
+    known = o.known;
+    item.showSkillCosts = !known;
+    item.updateTooltip();
   }
   
   public void setParents(SkillSlot... s)
@@ -138,12 +150,21 @@ public class SkillSlot extends Component
   
   public void mousePressed(MouseEvent e)
   {
-    if (e.getClickCount() == 2 && getArea().contains(e.getLocationOnScreen()) && canLearn() && !known)
+    if (!getArea().contains(e.getLocationOnScreen()))
+      return;
+    
+    if (e.getButton() == 1 && e.getClickCount() == 2 && canLearn() && !known)
     {
       sg.getPlayer().getAttributes().getAttribute(Attr.skillpoint).increaseValue(-item.getRequirements().getAttribute(Attr.skillpoint).getValue());
       sg.getPlayer().addSkill(item);
       Database.setStringVar("player_sp", "" + (int) sg.getPlayer().getAttributes().getAttribute(Attr.skillpoint).getValue());
       known = true;
+      item.showSkillCosts = !known;
+      item.updateTooltip();
+    }
+    else if (e.getButton() == 1 && e.getClickCount() == 1 && known)
+    {
+      ItemSlotEventDispatcher.dispatchSlotPressed(e, this);
     }
   }
   

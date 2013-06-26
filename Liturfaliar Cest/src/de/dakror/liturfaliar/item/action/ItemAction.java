@@ -30,6 +30,8 @@ public abstract class ItemAction
       {
         case "PotionAction":
           return PotionAction.loadItemAction(o);
+        case "SkillAction":
+          return SkillAction.loadItemAction(o);
       }
     }
     catch (JSONException e)

@@ -324,7 +324,12 @@ public class Player extends Creature
     try
     {
       data.getJSONObject("char").put("equip", equipment.serializeEquipment());
-      data.getJSONObject("char").put("skills", skills);
+      JSONArray s = new JSONArray();
+      for (Item skill : skills)
+      {
+        s.put(skill.serializeItem());
+      }
+      data.getJSONObject("char").put("skills", s);
       data.getJSONObject("char").put("attr", attr.serializeAttributes());
     }
     catch (JSONException e)

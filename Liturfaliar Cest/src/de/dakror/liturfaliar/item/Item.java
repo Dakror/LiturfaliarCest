@@ -26,11 +26,11 @@ import de.dakror.liturfaliar.util.Database;
 
 public class Item extends Component
 {
-  public static final int SPACING = 4;
+  public static final int SPACING        = 4;
   
-  public Point            mouse   = new Point(0, 0);
+  public Point            mouse          = new Point(0, 0);
   
-  int                     stack   = 0;
+  int                     stack          = 0;
   
   int                     iconx, icony;
   
@@ -46,6 +46,8 @@ public class Item extends Component
   ItemAction              action;
   
   ItemSlot                itemSlot;
+  
+  public boolean          showSkillCosts = true;
   
   public Item(Types t, String path, int s)
   {
@@ -182,11 +184,16 @@ public class Item extends Component
       
       String skillpoints = "<" + ((sp >= requirements.getAttribute(Attr.skillpoint).getValue()) ? "#cccccc" : Colors.WORSE) + ";17;1>" + (int) requirements.getAttribute(Attr.skillpoint).getValue() + " " + Attr.skillpoint.getText();
       
-      String level = "";
+      String level = c + " [br]";
       if (!requirements.getAttribute(Attr.level).isEmpty())
-        level = "<" + ((lvl >= requirements.getAttribute(Attr.level).getValue()) ? "#cccccc" : Colors.WORSE) + ";17;1>" + Attr.level.getText() + ": " + (int) requirements.getAttribute(Attr.level).getValue() + "[br]";
+        level += "<" + ((lvl >= requirements.getAttribute(Attr.level).getValue()) ? "#cccccc" : Colors.WORSE) + ";17;1>" + Attr.level.getText() + ": " + (int) requirements.getAttribute(Attr.level).getValue() + "[br]";
       
-      raw = name + "[br]" + sa.getDescription() + "[br]" + c + " [br]" + level + skillpoints;
+      if(!showSkillCosts) {
+        level = "";
+        skillpoints = "";
+      }
+      
+      raw = name + "[br]" + sa.getDescription() + "[br]" + level + skillpoints;
     }
     
     if (tooltip == null)
@@ -355,7 +362,8 @@ public class Item extends Component
     return true;
   }
   
-  public String toString() {
+  public String toString()
+  {
     return serializeItem().toString();
   }
   

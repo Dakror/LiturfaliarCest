@@ -10,7 +10,7 @@ import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.FileManager;
 import de.dakror.universion.UniVersion;
- 
+
 public class LiturfaliarCest
 {
   public static void main(String[] args)

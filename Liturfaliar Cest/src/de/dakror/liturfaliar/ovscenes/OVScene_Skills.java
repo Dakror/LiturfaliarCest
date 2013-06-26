@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
 import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.Items;
@@ -36,6 +37,9 @@ public class OVScene_Skills extends OVScene implements Inventory
   int                  rX;
   int                  rY;
   
+  ItemSlot             pickedUp;
+  ItemSlot             pickUpSource;
+  
   public OVScene_Skills(Scene_Game sg)
   {
     sg.setPaused(true);
@@ -43,9 +47,10 @@ public class OVScene_Skills extends OVScene implements Inventory
   }
   
   @Override
-  public void init(Viewport v)
+  public void construct(Viewport v)
   {
     this.v = v;
+    ItemSlotEventDispatcher.addItemSlotEventListener(this);
     c1 = new Container(0, 0, v.w.getWidth(), 55);
     c1.tileset = null;
     
@@ -59,6 +64,12 @@ public class OVScene_Skills extends OVScene implements Inventory
     }
     int h = 96 - 36;
     flicker = new Flicker(v.w.getWidth() / 2 - 400, v.w.getHeight() - 200, 800, 96, new FlickObject(9, 8, h, Types.PERKSKILL.getName()), new FlickObject(1, 0, h, Types.SWORDSKILL.getName()), new FlickObject(0, 253, h, Types.BOWSKILL.getName()));
+  }
+  
+  @Override
+  public void destruct()
+  {
+    ItemSlotEventDispatcher.removeItemSlotEventListener(this);
   }
   
   @Override
@@ -122,6 +133,11 @@ public class OVScene_Skills extends OVScene implements Inventory
     {
       is.drawTooltip(g, v);
     }
+    
+    if (pickedUp != null && pickedUp instanceof SkillSlot)
+    {
+      ((SkillSlot) pickedUp).getItem().draw(g, v);
+    }
   }
   
   public void loadSkillTree()
@@ -157,7 +173,10 @@ public class OVScene_Skills extends OVScene implements Inventory
   
   @Override
   public void slotPressed(MouseEvent e, ItemSlot slot)
-  {}
+  {
+    if (slot instanceof SkillSlot)
+      pickedUp = new SkillSlot((SkillSlot) slot);
+  }
   
   @Override
   public void slotExited(MouseEvent e, ItemSlot slot)
@@ -174,12 +193,14 @@ public class OVScene_Skills extends OVScene implements Inventory
   @Override
   public ItemSlot getPickedUpItemSlot()
   {
-    return null;
+    return pickedUp;
   }
   
   @Override
   public void setPickedUpItemSlot(ItemSlot item)
-  {}
+  {
+    pickedUp = item;
+  }
   
   @Override
   public ItemSlot getFirstSlot(Item item)
@@ -224,6 +245,10 @@ public class OVScene_Skills extends OVScene implements Inventory
     for (SkillSlot slot : slots)
     {
       slot.mouseMoved(e);
+    }
+    
+    if(pickedUp != null && pickedUp instanceof SkillSlot) {
+      ((SkillSlot)pickedUp).getItem().mouseMoved(e);
     }
   }
   

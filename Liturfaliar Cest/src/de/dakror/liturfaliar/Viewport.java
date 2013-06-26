@@ -211,20 +211,21 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       if (ovscenes.get(keys.get(i)).consistent)
         newov.put(keys.get(i), ovscenes.get(keys.get(i)));
+      else ovscenes.get(keys.get(i)).destruct();
     }
     ovscenes = newov;
   }
   
   public void addOVScene(OVScene scene, String name)
   {
-    scene.init(this);
+    scene.construct(this);
     ovscenes.put(name, scene);
   }
   
   public void toggleOVScene(OVScene scene, String name)
   {
     if (ovscenes.containsKey(name))
-      ovscenes.remove(name);
+      removeOVScene(name);
     
     else addOVScene(scene, name);
   }
@@ -232,7 +233,10 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public void removeOVScene(String name)
   {
     if (ovscenes.containsKey(name))
+    {
+      ovscenes.get(name).destruct();
       ovscenes.remove(name);
+    }
     
   }
   

@@ -125,7 +125,7 @@ public class Scene_Credits implements Scene
   @Override
   public void mouseWheelMoved(MouseWheelEvent e)
   {}
-
+  
   @Override
   public void destruct()
   {}

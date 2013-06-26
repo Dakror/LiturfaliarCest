@@ -54,6 +54,15 @@ public class ItemSlot extends Component
     typesFilter = new ArrayList<Types>();
   }
   
+  public ItemSlot(int x, int y, int size)
+  {
+    super(x, y, size, size);
+    
+    hover = false;
+    
+    typesFilter = new ArrayList<Types>();
+  }
+  
   public ItemSlot(ItemSlot other)
   {
     super(other.x, other.y, SIZE, SIZE);
@@ -129,8 +138,8 @@ public class ItemSlot extends Component
         width = g.getFontMetrics().stringWidth(keyString);
       }
       
-      Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + SIZE - height, width, height, 5, 5), Colors.DGRAY, 0.8f, g);
-      Assistant.drawHorizontallyCenteredString(keyString, ax, width, ay + SIZE - 2, g, KEYFONT.getSize() - 2, Color.white);
+      Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + getWidth() - height, width, height, 5, 5), Colors.DGRAY, 0.8f, g);
+      Assistant.drawHorizontallyCenteredString(keyString, ax, width, ay + getWidth() - 2, g, KEYFONT.getSize() - 2, Color.white);
     }
     else if (item != null && item.getStack() > 1 && keyString == null)
     {
@@ -140,8 +149,8 @@ public class ItemSlot extends Component
       {
         width = g.getFontMetrics().stringWidth(item.getStack() + "");
       }
-      Assistant.Shadow(new RoundRectangle2D.Double(ax + SIZE - width, ay + SIZE - height, width, height, 5, 5), Colors.DGRAY, 0.5f, g);
-      Assistant.drawHorizontallyCenteredString(item.getStack() + "", ax + SIZE - width, width, ay + SIZE - 2, g, STACKFONT.getSize() - 2, Colors.GRAY);
+      Assistant.Shadow(new RoundRectangle2D.Double(ax + getWidth() - width, ay + getWidth() - height, width, height, 5, 5), Colors.DGRAY, 0.5f, g);
+      Assistant.drawHorizontallyCenteredString(item.getStack() + "", ax + getWidth() - width, width, ay + getWidth() - 2, g, STACKFONT.getSize() - 2, Colors.GRAY);
     }
   }
   
@@ -150,11 +159,11 @@ public class ItemSlot extends Component
     ax = this.x + x1;
     ay = this.y + y1;
     
-    g.drawImage(Viewport.loadImage("tileset/" + tileset), ax, ay, SIZE, SIZE, null);
+    g.drawImage(Viewport.loadImage("tileset/" + tileset), ax, ay, getWidth(), getWidth(), null);
     
     if (categoryFilter != null && item == null && showFilterImage)
     {
-      g.drawImage(Viewport.loadImage("system/" + categoryFilter.name().toLowerCase() + "ItemSlotFilter.png"), ax + 4, ay + 4, SIZE - 8, SIZE - 8, null);
+      g.drawImage(Viewport.loadImage("system/" + categoryFilter.name().toLowerCase() + "ItemSlotFilter.png"), ax + 4, ay + 4, getWidth() - 8, getWidth() - 8, null);
     }
     
     if (item != null)
@@ -169,8 +178,8 @@ public class ItemSlot extends Component
         width = g.getFontMetrics().stringWidth(keyString);
       }
       
-      Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + SIZE - height, width, height, 5, 5), Colors.DGRAY, 0.8f, g);
-      Assistant.drawHorizontallyCenteredString(keyString, ax, width, ay + SIZE - 2, g, KEYFONT.getSize() - 2, Color.WHITE);
+      Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + getWidth() - height, width, height, 5, 5), Colors.DGRAY, 0.8f, g);
+      Assistant.drawHorizontallyCenteredString(keyString, ax, width, ay + getWidth() - 2, g, KEYFONT.getSize() - 2, Color.WHITE);
     }
     
     if (item != null && item.getStack() > 1)
@@ -181,12 +190,12 @@ public class ItemSlot extends Component
       {
         width = g.getFontMetrics().stringWidth(item.getStack() + "");
       }
-      Assistant.Shadow(new RoundRectangle2D.Double(ax + SIZE - width, ay + SIZE - height, width, height, 5, 5), Colors.DGRAY, 0.5f, g);
-      Assistant.drawHorizontallyCenteredString(item.getStack() + "", ax + SIZE - width, width, ay + SIZE - 2, g, STACKFONT.getSize() - 2, Colors.GRAY);
+      Assistant.Shadow(new RoundRectangle2D.Double(ax + getWidth() - width, ay + getWidth() - height, width, height, 5, 5), Colors.DGRAY, 0.5f, g);
+      Assistant.drawHorizontallyCenteredString(item.getStack() + "", ax + getWidth() - width, width, ay + getWidth() - 2, g, STACKFONT.getSize() - 2, Colors.GRAY);
     }
     
     if (hover)
-      Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + SIZE - height, width, height, 5, 5), Color.WHITE, 0.2f, g);
+      Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + getWidth() - height, width, height, 5, 5), Color.WHITE, 0.2f, g);
   }
   
   public void drawTooltip(Graphics2D g, Viewport v)

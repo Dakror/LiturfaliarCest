@@ -68,7 +68,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
   }
   
   @Override
-  public void init(Viewport v)
+  public void construct(Viewport v)
   {
     this.v = v;
     ItemSlotEventDispatcher.addItemSlotEventListener(this);
@@ -164,6 +164,12 @@ public class OVScene_Inventory extends OVScene implements Inventory
     }
     
     updateStats(true);
+  }
+  
+  @Override
+  public void destruct()
+  {
+    ItemSlotEventDispatcher.removeItemSlotEventListener(this);
   }
   
   @Override
@@ -350,7 +356,6 @@ public class OVScene_Inventory extends OVScene implements Inventory
       
       sg.getPlayer().setInventory(ItemSlot.serializeItemSlots(inventory));
       
-      ItemSlotEventDispatcher.removeItemSlotEventListener(this);
       sg.setPaused(false);
       v.setFramesFrozen(false);
       v.removeOVScene("Inventory");
@@ -389,7 +394,6 @@ public class OVScene_Inventory extends OVScene implements Inventory
   @Override
   public void mousePressed(MouseEvent e)
   {
-    
     if (contextMenu != null && contextMenu.getArea().contains(e.getPoint()))
     {
       contextMenu.mousePressed(e);

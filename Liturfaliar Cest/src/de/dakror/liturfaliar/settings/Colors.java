@@ -16,6 +16,6 @@ public class Colors
   public static final String WORSE  = "#f00000";
   
   // -- skill tree arrow -- //
-  public static final Color ARROW = Color.decode("#ffdb00");
-  public static final Color DARROW = Color.decode("#666666");
+  public static final Color  ARROW  = Color.decode("#ffdb00");
+  public static final Color  DARROW = Color.decode("#666666");
 }

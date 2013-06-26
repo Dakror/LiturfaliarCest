@@ -39,7 +39,7 @@ public class OVScene_Pause extends OVScene
   }
   
   @Override
-  public void init(Viewport v)
+  public void construct(Viewport v)
   {
     this.v = v;
     ts = new TextSelect(v.w.getWidth() / 2 - 150, 350, 300, 28 * points.length + 18, (Object[]) points);
@@ -58,6 +58,10 @@ public class OVScene_Pause extends OVScene
     c1 = new Container(0, 0, v.w.getWidth(), 55);
     c1.tileset = null;
   }
+  
+  @Override
+  public void destruct()
+  {}
   
   @Override
   public void update(long timePassed)

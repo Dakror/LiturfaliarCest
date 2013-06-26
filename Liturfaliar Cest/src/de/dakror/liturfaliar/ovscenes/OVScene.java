@@ -12,7 +12,9 @@ public abstract class OVScene
   public boolean     consistent = false;
   protected Viewport v;
   
-  public abstract void init(Viewport v);
+  public abstract void construct(Viewport v);
+  
+  public abstract void destruct();
   
   public abstract void update(long timePassed);
   
