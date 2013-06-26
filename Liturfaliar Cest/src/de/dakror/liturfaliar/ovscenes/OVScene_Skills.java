@@ -97,7 +97,7 @@ public class OVScene_Skills extends OVScene implements Inventory
     String string = (int) sg.getPlayer().getAttributes().getAttribute(Attr.skillpoint).getValue() + " SP";
     int size = 70;
     Font oldFont = g.getFont();
-    g.setFont(new Font("Times New Roman",0,1));
+    g.setFont(new Font("Times New Roman", 0, 1));
     if (g.getFontMetrics(g.getFont().deriveFont(size)).stringWidth(string) > 50)
       size -= g.getFontMetrics(g.getFont().deriveFont(size)).stringWidth(string) - 50;
     
@@ -138,18 +138,18 @@ public class OVScene_Skills extends OVScene implements Inventory
     String key = flicker.getSelectedObject().getKey();
     if (key.equals(Types.SWORDSKILL.getName()))
     {
-      SkillSlot s = new SkillSlot(cx, y, new Item(Items.SWORD0, 1));
+      SkillSlot s = new SkillSlot(cx, y, new Item(Items.SWORD0, 1), sg);
       slots.add(s);
       
-      SkillSlot s1 = new SkillSlot(cx - SkillSlot.HGAP * 3, y, new Item(Items.SWORD1, 1));
+      SkillSlot s1 = new SkillSlot(cx - SkillSlot.HGAP * 3, y, new Item(Items.SWORD1, 1), sg);
       slots.add(s1);
       s1.setParents(s);
       
-      SkillSlot s2 = new SkillSlot(cx - SkillSlot.HGAP * 3, y + SkillSlot.VGAP, new Item(Items.SWORD2, 1));
+      SkillSlot s2 = new SkillSlot(cx - SkillSlot.HGAP * 3, y + SkillSlot.VGAP, new Item(Items.SWORD2, 1), sg);
       slots.add(s2);
       s2.setParents(s1);
       
-      SkillSlot s3 = new SkillSlot(cx - SkillSlot.HGAP * 3, y + SkillSlot.VGAP * 2, new Item(Items.SWORD3, 1));
+      SkillSlot s3 = new SkillSlot(cx - SkillSlot.HGAP * 3, y + SkillSlot.VGAP * 2, new Item(Items.SWORD3, 1), sg);
       slots.add(s3);
       s3.setParents(s2);
     }
@@ -234,7 +234,6 @@ public class OVScene_Skills extends OVScene implements Inventory
     {
       slot.mousePressed(e);
     }
-    
     
     for (SkillSlot slot : slots)
     {

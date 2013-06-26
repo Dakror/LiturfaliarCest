@@ -17,4 +17,5 @@ public class Colors
   
   // -- skill tree arrow -- //
   public static final Color ARROW = Color.decode("#ffdb00");
+  public static final Color DARROW = Color.decode("#666666");
 }

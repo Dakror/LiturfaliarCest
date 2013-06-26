@@ -69,6 +69,7 @@ public class Player extends Creature
       
       
       Database.setStringVar("player_sp", "" + (int) attr.getAttribute(Attr.skillpoint).getValue());
+      Database.setStringVar("player_level", "" + getLevel());
       
       JSONArray skills = save.getJSONObject("char").getJSONArray("skills");
       
@@ -426,7 +427,12 @@ public class Player extends Creature
   
   public boolean hasSkill(Item skill)
   {
-    return skills.contains(skill);
+    for (Item item : skills)
+    {
+      if (item.equals(skill))
+        return true;
+    }
+    return false;
   }
   
   public void addSkill(Item skill)
@@ -440,7 +446,9 @@ public class Player extends Creature
     attr.getAttribute(Attr.experience).increase(amount);
     
     if (getLevel() > lvl)
+    {
+      attr.getAttribute(Attr.level).increase(getLevel() - lvl);
       PlayerEventDispatcher.dispatchLevelUp(lvl);
+    }
   }
-  
 }

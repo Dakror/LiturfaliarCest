@@ -26,6 +26,7 @@ public class Attributes
     experience("Erfahrung", 0),
     gold("Gold", 0),
     skillpoint("Talentpunkt(e)", 0),
+    level("Stufe", 1), // fake attribute for player level comparison with items
     
     ;
     

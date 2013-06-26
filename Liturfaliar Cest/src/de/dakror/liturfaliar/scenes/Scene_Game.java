@@ -279,5 +279,6 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     v.playSound("111-Heal07");
     player.getAttributes().getAttribute(Attr.skillpoint).increase((int) Math.floor(player.getLevel() / 10.0) + 1);
     Database.setStringVar("player_sp", "" + (int) player.getAttributes().getAttribute(Attr.skillpoint).getValue());
+    Database.setStringVar("player_level", "" + player.getLevel());
   }
 }

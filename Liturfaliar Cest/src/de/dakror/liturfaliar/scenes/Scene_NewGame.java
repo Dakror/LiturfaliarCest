@@ -252,6 +252,9 @@ public class Scene_NewGame implements Scene
       attr.put("speed", 1);
       attr.put("maxspeed", 1);
       
+      attr.put("level", 1);
+      attr.put("maxlevel", 1);
+      
       cfg.put("attr", attr);
       
       save.put("char", cfg);

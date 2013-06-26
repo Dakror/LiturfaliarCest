@@ -57,7 +57,11 @@ public class SkillAction extends ItemAction
   @Override
   public boolean equals(ItemAction o)
   {
-    return false;
+    if (o instanceof SkillAction)
+    {
+      return description.equals(((SkillAction) o).description);
+    }
+    else return false;
   }
   
 }

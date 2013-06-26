@@ -9,8 +9,11 @@ import java.awt.geom.AffineTransform;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.scenes.Scene_Game;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
+import de.dakror.liturfaliar.util.Database;
 
 public class SkillSlot extends Component
 {
@@ -23,15 +26,18 @@ public class SkillSlot extends Component
   public boolean          drawArrow;
   public boolean          known;
   
-  public SkillSlot(int x, int y, Item i)
+  Scene_Game              sg;
+  
+  public SkillSlot(int x, int y, Item i, Scene_Game sg)
   {
     super(x, y, SIZE, SIZE);
+    this.sg = sg;
     item = i;
     item.setWidth(SIZE - 12);
     item.setHeight(SIZE - 12);
     item.init();
     drawArrow = true;
-    known = false;
+    known = sg.getPlayer().hasSkill(item);
   }
   
   public void setParents(SkillSlot... s)
@@ -71,7 +77,7 @@ public class SkillSlot extends Component
         }
         Shape arrow = createArrowShape(a, b);
         
-        Assistant.Shadow(arrow, Colors.ARROW, 1, g);
+        Assistant.Shadow(arrow, (parent.known) ? Colors.ARROW : Colors.DARROW, 1, g);
       }
     }
   }
@@ -79,8 +85,7 @@ public class SkillSlot extends Component
   @Override
   public void draw(Graphics2D g, Viewport v)
   {
-    
-    g.drawImage(Viewport.loadImage("tileset/Wood.png"), x,y,SIZE,SIZE, null);
+    g.drawImage(Viewport.loadImage("tileset/Wood.png"), x, y, SIZE, SIZE, null);
     item.draw(x + 2, y + 2, g, v);
     
     if (!known)
@@ -110,10 +115,36 @@ public class SkillSlot extends Component
     return transform.createTransformedShape(arrowPolygon);
   }
   
+  public boolean canLearn()
+  {
+    boolean can = item.areRequirementsSatisfied(sg.getPlayer().getAttributes());
+    
+    if (parents != null)
+    {
+      for (SkillSlot p : parents)
+      {
+        if (!p.canLearn() || !p.known)
+          can = false;
+      }
+    }
+    return can;
+  }
+  
   @Override
   public void mouseMoved(MouseEvent e)
   {
     item.mouseMoved(e);
+  }
+  
+  public void mousePressed(MouseEvent e)
+  {
+    if (e.getClickCount() == 2 && getArea().contains(e.getLocationOnScreen()) && canLearn() && !known)
+    {
+      sg.getPlayer().getAttributes().getAttribute(Attr.skillpoint).increaseValue(-item.getRequirements().getAttribute(Attr.skillpoint).getValue());
+      sg.getPlayer().addSkill(item);
+      Database.setStringVar("player_sp", "" + (int) sg.getPlayer().getAttributes().getAttribute(Attr.skillpoint).getValue());
+      known = true;
+    }
   }
   
   public Item getItem()

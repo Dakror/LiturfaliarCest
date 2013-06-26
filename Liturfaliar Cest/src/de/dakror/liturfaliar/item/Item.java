@@ -177,10 +177,17 @@ public class Item extends Component
     if (type.getCategory().equals(Categories.SKILL))
     {
       SkillAction sa = (SkillAction) this.action;
-      int skillpoints = Integer.parseInt(Database.getStringVar("player_sp"));
-      raw = name + "[br]" + sa.getDescription() + "[br]" + c + " [br]<" + ((skillpoints >= requirements.getAttribute(Attr.skillpoint).getValue()) ? "#cccccc" : Colors.WORSE) + ";17;1>" +(int)requirements.getAttribute(Attr.skillpoint).getValue() + " " + Attr.skillpoint.getText();
+      int sp = Integer.parseInt(Database.getStringVar("player_sp"));
+      int lvl = Integer.parseInt(Database.getStringVar("player_level"));
+      
+      String skillpoints = "<" + ((sp >= requirements.getAttribute(Attr.skillpoint).getValue()) ? "#cccccc" : Colors.WORSE) + ";17;1>" + (int) requirements.getAttribute(Attr.skillpoint).getValue() + " " + Attr.skillpoint.getText();
+      
+      String level = "";
+      if (!requirements.getAttribute(Attr.level).isEmpty())
+        level = "<" + ((lvl >= requirements.getAttribute(Attr.level).getValue()) ? "#cccccc" : Colors.WORSE) + ";17;1>" + Attr.level.getText() + ": " + (int) requirements.getAttribute(Attr.level).getValue() + "[br]";
+      
+      raw = name + "[br]" + sa.getDescription() + "[br]" + c + " [br]" + level + skillpoints;
     }
-    
     
     if (tooltip == null)
     {
@@ -346,6 +353,10 @@ public class Item extends Component
           return false;
     }
     return true;
+  }
+  
+  public String toString() {
+    return serializeItem().toString();
   }
   
   public void triggerAction(Map m, Viewport v)

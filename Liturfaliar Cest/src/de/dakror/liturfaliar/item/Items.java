@@ -23,9 +23,9 @@ public enum Items
   
   // -- swordskills -- //
   SWORD0(13, 508, "Schwert-Talent", "", Types.SWORDSKILL, new Attributes(), new Attributes(Attr.skillpoint, 1), new SkillAction("<#ffffff;15;2>Das Talent, mit schwert‰hnlichen Waffen umzu-[br]<#ffffff;15;2>gehen und einen einfachen Schlag auszuf¸hren.")),
-  SWORD1(14, 511, "Schwung", "", Types.SWORDSKILL, new Attributes(), new Attributes(Attr.skillpoint, 1), new SkillAction("<#ffffff;15;2>Ein Frontalangriff mit geringem Schaden auf[br]<#ffffff;15;2>mehrere Ziele vertielt und geringem Radius.")),
-  SWORD2(13, 511, "Weiter Schwung", "", Types.SWORDSKILL, new Attributes(), new Attributes(Attr.skillpoint, 2), new SkillAction("<#ffffff;15;2>Ein Frontalangriff mit mittlerem Schaden auf[br]<#ffffff;15;2>mehrere Ziele vertielt und weitem Radius.")),
-  SWORD3(10, 511, "Rundumschlag", "", Types.SWORDSKILL, new Attributes(), new Attributes(Attr.skillpoint, 3), new SkillAction("<#ffffff;15;2>Ein Rundumangriff mit groﬂem Schaden auf[br]<#ffffff;15;2>mehrere Ziele vertielt.")),
+  SWORD1(14, 511, "Schwung", "", Types.SWORDSKILL, new Attributes(), new Attributes(Attr.skillpoint, 1, Attr.level, 2), new SkillAction("<#ffffff;15;2>Ein Frontalangriff mit geringem Schaden auf[br]<#ffffff;15;2>mehrere Ziele vertielt und geringem Radius.")),
+  SWORD2(13, 511, "Weiter Schwung", "", Types.SWORDSKILL, new Attributes(), new Attributes(Attr.skillpoint, 2, Attr.level, 3), new SkillAction("<#ffffff;15;2>Ein Frontalangriff mit mittlerem Schaden auf[br]<#ffffff;15;2>mehrere Ziele vertielt und weitem Radius.")),
+  SWORD3(10, 511, "Rundumschlag", "", Types.SWORDSKILL, new Attributes(), new Attributes(Attr.skillpoint, 3, Attr.level, 5), new SkillAction("<#ffffff;15;2>Ein Rundumangriff mit groﬂem Schaden auf[br]<#ffffff;15;2>mehrere Ziele vertielt.")),
   SWORD4(12, 511, "‹berkopfschlag", "", Types.SWORDSKILL, new Attributes(), new Attributes(), new SkillAction("<#ffffff;15;2>Ein ‹berkopfangriff mit groﬂem Schaden[br]<#ffffff;15;2>auf ein Ziel.")),
   SWORD5(11, 511, "Stich", "", Types.SWORDSKILL, new Attributes(), new Attributes(), new SkillAction("<#ffffff;15;2>Ein Frontalangriff mit groﬂem Schaden auf ein[br]<#ffffff;15;2>Ziel.")),
   ;

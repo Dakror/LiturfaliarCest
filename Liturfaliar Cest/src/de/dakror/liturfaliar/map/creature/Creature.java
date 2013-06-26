@@ -369,8 +369,14 @@ public class Creature implements MapEventListener
   public int getLevel()
   {
     if (attr.getAttribute(Attr.experience).isEmpty())
-      return 0;
-    return (int) Math.sqrt(attr.getAttribute(Attr.experience).getValue() / (double) LEVEL);
+      return 1;
+    
+    int lvl = (int) Math.sqrt(attr.getAttribute(Attr.experience).getValue() / (double) LEVEL);
+    
+    if (lvl == 0)
+      return 1;
+    
+    return lvl;
   }
   
   public int getXPforLevel(int rl)
