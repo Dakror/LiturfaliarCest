@@ -26,21 +26,13 @@ public class PotionAction extends ItemAction
   @Override
   public void actionTriggered(Item item, Map m, Viewport v)
   {
-    CFG.p("i got called");
-    
     if (item.getItemSlot() == null)
-    {
-      CFG.p("no itemslot");
       return;
-    }
     
     Creature target = m.getCreatureByAccessKey(targetID);
     
     if (target == null)
-    {
-      CFG.p("no target");
       return;
-    }
     
     Attributes attributes = target.getAttributes();
     

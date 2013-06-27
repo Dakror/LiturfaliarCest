@@ -352,7 +352,11 @@ public class OVScene_Inventory extends OVScene implements Inventory
     if (e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_I)
     {
       if (pickedUp != null)
+      {
         pickUpSource.setItem(pickedUp.getItem());
+        if (pickUpSource.getCategoryFilter() == null && pickUpSource.hasHotKey())
+          sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(pickUpSource), pickedUp.getItem());
+      }
       
       sg.getPlayer().setInventory(ItemSlot.serializeItemSlots(inventory));
       
@@ -477,6 +481,12 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     else if (slot.hasHotKey()) // is from hotbar
       sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), null);
+    
+    if (slot.getItem().getType().getCategory().equals(Categories.SKILL))
+    {
+      slot.setItem(null);
+      return;
+    }
     
     pickedUp = new ItemSlot(slot);
     pickedUp.setHotKey(-1, true);
@@ -679,7 +689,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
   @Override
   public void showContextMenu(ItemSlot slot, int x, int y)
   {
-    if (slot.getItem() == null)
+    if (slot.getItem() == null || slot.getItem().getType().getCategory().equals(Categories.SKILL))
       return;
     
     contextItemSlot = slot;

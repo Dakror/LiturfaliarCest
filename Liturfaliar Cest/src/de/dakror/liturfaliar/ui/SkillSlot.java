@@ -148,6 +148,7 @@ public class SkillSlot extends ItemSlot
     item.mouseMoved(e);
   }
   
+  @Override
   public void mousePressed(MouseEvent e)
   {
     if (!getArea().contains(e.getLocationOnScreen()))
@@ -161,6 +162,7 @@ public class SkillSlot extends ItemSlot
       known = true;
       item.showSkillCosts = !known;
       item.updateTooltip();
+      ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
     }
     else if (e.getButton() == 1 && e.getClickCount() == 1 && known)
     {
@@ -168,6 +170,7 @@ public class SkillSlot extends ItemSlot
     }
   }
   
+  @Override
   public Item getItem()
   {
     return item;

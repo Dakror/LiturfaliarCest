@@ -91,6 +91,7 @@ public class Item extends Component
     requirements = other.getRequirements();
     action = other.getAction();
     stack = other.stack;
+    showSkillCosts = other.showSkillCosts;
     init();
   }
   
@@ -188,7 +189,8 @@ public class Item extends Component
       if (!requirements.getAttribute(Attr.level).isEmpty())
         level += "<" + ((lvl >= requirements.getAttribute(Attr.level).getValue()) ? "#cccccc" : Colors.WORSE) + ";17;1>" + Attr.level.getText() + ": " + (int) requirements.getAttribute(Attr.level).getValue() + "[br]";
       
-      if(!showSkillCosts) {
+      if (!showSkillCosts)
+      {
         level = "";
         skillpoints = "";
       }

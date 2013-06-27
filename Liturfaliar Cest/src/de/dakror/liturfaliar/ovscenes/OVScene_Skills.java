@@ -6,9 +6,11 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
+import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.Items;
@@ -134,9 +136,11 @@ public class OVScene_Skills extends OVScene implements Inventory
       is.drawTooltip(g, v);
     }
     
-    if (pickedUp != null && pickedUp instanceof SkillSlot)
+    if (pickedUp != null)
     {
-      ((SkillSlot) pickedUp).getItem().draw(g, v);
+      if (pickedUp instanceof SkillSlot)
+        ((SkillSlot) pickedUp).getItem().draw(g, v);
+      else pickedUp.drawLightWeight(g, v);
     }
   }
   
@@ -176,6 +180,15 @@ public class OVScene_Skills extends OVScene implements Inventory
   {
     if (slot instanceof SkillSlot)
       pickedUp = new SkillSlot((SkillSlot) slot);
+    
+    else
+    // hotbar
+    {
+      pickedUp = new ItemSlot(slot);
+      pickedUp.setHotKey(-1, false);
+      sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), null);
+      slot.setItem(null);
+    }
   }
   
   @Override
@@ -184,11 +197,22 @@ public class OVScene_Skills extends OVScene implements Inventory
   
   @Override
   public void slotHovered(MouseEvent e, ItemSlot slot)
-  {}
+  {
+    // fake usage: updating tooltips
+    for (SkillSlot s : slots)
+    {
+      s.getItem().updateTooltip();
+    }
+  }
   
   @Override
   public void slotReleased(MouseEvent e, ItemSlot slot)
-  {}
+  {
+    if (slot instanceof ItemSlot) // hotbar
+    {
+      sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), slot.getItem());
+    }
+  }
   
   @Override
   public ItemSlot getPickedUpItemSlot()
@@ -216,7 +240,10 @@ public class OVScene_Skills extends OVScene implements Inventory
   
   @Override
   public void showContextMenu(ItemSlot slot, int x, int y)
-  {}
+  {
+    if (slot.getItem().getType().getCategory().equals(Categories.SKILL))
+      slot.setItem(null);
+  }
   
   @Override
   public void hideContextMenu()
@@ -247,8 +274,9 @@ public class OVScene_Skills extends OVScene implements Inventory
       slot.mouseMoved(e);
     }
     
-    if(pickedUp != null && pickedUp instanceof SkillSlot) {
-      ((SkillSlot)pickedUp).getItem().mouseMoved(e);
+    if (pickedUp != null)
+    {
+      pickedUp.mouseMoved(e);
     }
   }
   

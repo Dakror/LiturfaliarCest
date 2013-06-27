@@ -289,7 +289,11 @@ public class ItemSlot extends Component
           return;
         else
         {
-          ItemSlot oldPickedUp = new ItemSlot(inventory.getPickedUpItemSlot());
+          ItemSlot oldPickedUp;
+          if (inventory.getPickedUpItemSlot() instanceof SkillSlot)
+            oldPickedUp = new SkillSlot((SkillSlot) inventory.getPickedUpItemSlot());
+          
+          else oldPickedUp = new ItemSlot(inventory.getPickedUpItemSlot());
           
           if (oldPickedUp.getItem().equals(item) && item.getStack() < item.getType().getStackSize())
           {
@@ -307,7 +311,11 @@ public class ItemSlot extends Component
           }
           else
           {
-            inventory.setPickedUpItemSlot(new ItemSlot(this));
+            if (!item.getType().getCategory().equals(Categories.SKILL))
+              ItemSlotEventDispatcher.dispatchSlotPressed(e, this);
+            
+            else inventory.setPickedUpItemSlot(null);
+            
             setItem(new Item(oldPickedUp.getItem()));
           }
           item.tooltip.visible = true;

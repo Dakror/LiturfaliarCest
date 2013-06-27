@@ -93,7 +93,8 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   @Override
   public void update(long timePassed)
   {
-    mappack.getActiveMap().update(timePassed, this);
+    if (!v.areFramesFrozen())
+      mappack.getActiveMap().update(timePassed, this);
     // -- HUD -- //
     targetLabel.update(mappack.getActiveMap());
     
