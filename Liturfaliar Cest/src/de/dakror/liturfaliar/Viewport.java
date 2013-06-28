@@ -72,7 +72,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public String                         MusicEffectID;
   public String                         MusicID;
   public String                         SoundID;
-  // public Window w;
+  
   public MapEditor                      mapeditor;
   public InputEvent                     skipEvent;
   public static boolean                 sceneEnabled;
@@ -122,15 +122,14 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
    */
   public void draw(Graphics2D g)
   {
-    if (!initialized)
-      return;
-    
     g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
     g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    if (scene != null)
+    
+    if (scene != null && initialized)
       scene.draw(g);
+    
     if (takeScreenshot)
     {
       try
@@ -183,7 +182,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
    * 
    * @param scene - The new {@link Scene} to be the active one.
    */
-  public void setScene(Scene s)
+  public void setScene(final Scene s)
   {
     Assistant.setCursor(Viewport.loadImage("system/loading.png"), w);
     initialized = false;
@@ -197,7 +196,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     
     HelpOverlay.clear();
     scene = s;
-    scene.construct(this);
+    scene.construct(Viewport.this);
     initialized = true;
     sceneEnabled = true;
     Assistant.setCursor(Viewport.loadImage("system/cursor.png"), w);

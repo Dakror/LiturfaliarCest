@@ -4,6 +4,8 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
@@ -108,5 +110,10 @@ public abstract class HUDComponent
   public void setLayer(int layer)
   {
     this.layer = layer;
+  }
+  
+  public Area getArea()
+  {
+    return new Area(new Rectangle2D.Double(x, y, width, height));
   }
 }

@@ -242,7 +242,10 @@ public class OVScene_Skills extends OVScene implements Inventory
   public void showContextMenu(ItemSlot slot, int x, int y)
   {
     if (slot.getItem().getType().getCategory().equals(Categories.SKILL))
+    {
       slot.setItem(null);
+      sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), null);
+    }
   }
   
   @Override
@@ -299,6 +302,12 @@ public class OVScene_Skills extends OVScene implements Inventory
   @Override
   public void mouseReleased(MouseEvent e)
   {
+    if (pickedUp != null && e.getButton() == 3)
+    {
+      pickedUp = null;
+      return;
+    }
+    
     for (ItemSlot slot : hotbar)
     {
       slot.mouseReleased(e);

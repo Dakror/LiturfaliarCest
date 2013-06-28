@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.dispatcher.DatabaseEventDispatcher;
+import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
 import de.dakror.liturfaliar.event.dispatcher.MapPackEventDispatcher;
 import de.dakror.liturfaliar.event.dispatcher.PlayerEventDispatcher;
 import de.dakror.liturfaliar.event.dispatcher.PlayerHotbarEventDispatcher;
@@ -82,6 +83,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     targetLabel = new TargetLabel();
     
     bottomSegment = new BottomSegment(player);
+    ItemSlotEventDispatcher.addItemSlotEventListener(bottomSegment.hotbar);
     // -- //
   }
   
@@ -207,7 +209,11 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   {
     if (mappack != null && mappack.getActiveMap() != null)
       mappack.getActiveMap().mouseMoved(e);
+    
     CursorText.mouseMoved(e);
+    
+    if (bottomSegment != null)
+      bottomSegment.mouseMoved(e, mappack.getActiveMap());
   }
   
   @Override
@@ -247,6 +253,9 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   {
     if (mappack != null && mappack.getActiveMap() != null)
       mappack.getActiveMap().mouseReleased(e);
+    
+    if (bottomSegment != null)
+      bottomSegment.mouseReleased(e, mappack.getActiveMap());
   }
   
   @Override
@@ -272,6 +281,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     MapPackEventDispatcher.removeMapPackEventListener(this);
     PlayerHotbarEventDispatcher.removePlayerHotbarEventListener(this);
     PlayerEventDispatcher.removePlayerEventListener(this);
+    ItemSlotEventDispatcher.removeItemSlotEventListener(bottomSegment.hotbar);
   }
   
   @Override

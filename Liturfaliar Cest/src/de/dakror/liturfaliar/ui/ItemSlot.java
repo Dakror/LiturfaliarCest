@@ -214,7 +214,10 @@ public class ItemSlot extends Component
     this.item = item;
     
     if (this.item != null)
+    {
       this.item.setItemSlot(this);
+      this.item.updateTooltip();
+    }
   }
   
   public void addItem()
@@ -225,6 +228,9 @@ public class ItemSlot extends Component
   
   public void subItem()
   {
+    if (item == null)
+      return;
+    
     item.setStack(item.getStack() - 1);
     
     if (item.getStack() > 0)
@@ -264,7 +270,6 @@ public class ItemSlot extends Component
         
         ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
         ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
-        
       }
       else if (e.getButton() == 3)
       {

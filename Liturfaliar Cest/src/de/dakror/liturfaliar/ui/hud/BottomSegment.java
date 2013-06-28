@@ -10,10 +10,10 @@ import de.dakror.liturfaliar.map.creature.Player;
 
 public class BottomSegment
 {
-  PlayerHealth     health;
-  PlayerExperience experience;
-  PlayerStamina    stamina;
-  PlayerHotbar     hotbar;
+  public PlayerHealth     health;
+  public PlayerExperience experience;
+  public PlayerStamina    stamina;
+  public PlayerHotbar     hotbar;
   
   public BottomSegment(Player p)
   {
@@ -45,6 +45,16 @@ public class BottomSegment
   public void mousePressed(MouseEvent e, Map m)
   {
     hotbar.mousePressed(e, m);
+  }
+  
+  public void mouseReleased(MouseEvent e, Map m)
+  {
+    hotbar.mouseReleased(e, m);
+  }
+  
+  public void mouseMoved(MouseEvent e, Map m)
+  {
+    hotbar.mouseMoved(e, m);
   }
   
   public void keyReleased(KeyEvent e, Map m)

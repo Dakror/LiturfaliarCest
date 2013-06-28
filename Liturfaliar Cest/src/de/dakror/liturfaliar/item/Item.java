@@ -47,7 +47,7 @@ public class Item extends Component
   
   ItemSlot                itemSlot;
   
-  public boolean          showSkillCosts = true;
+  public boolean          showSkillCosts = false;
   
   public Item(Types t, String path, int s)
   {
@@ -179,9 +179,17 @@ public class Item extends Component
     
     if (type.getCategory().equals(Categories.SKILL))
     {
+      
       SkillAction sa = (SkillAction) this.action;
-      int sp = Integer.parseInt(Database.getStringVar("player_sp"));
-      int lvl = Integer.parseInt(Database.getStringVar("player_level"));
+      int sp = 0;
+      int lvl = 0;
+      try
+      {
+        sp = Integer.parseInt(Database.getStringVar("player_sp"));
+        lvl = Integer.parseInt(Database.getStringVar("player_level"));
+      }
+      catch (Exception e)
+      {}
       
       String skillpoints = "<" + ((sp >= requirements.getAttribute(Attr.skillpoint).getValue()) ? "#cccccc" : Colors.WORSE) + ";17;1>" + (int) requirements.getAttribute(Attr.skillpoint).getValue() + " " + Attr.skillpoint.getText();
       

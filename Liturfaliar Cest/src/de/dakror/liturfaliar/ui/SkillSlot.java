@@ -40,6 +40,7 @@ public class SkillSlot extends ItemSlot
     drawArrow = true;
     known = sg.getPlayer().hasSkill(item);
     item.showSkillCosts = !known;
+    
     item.updateTooltip();
   }
   
