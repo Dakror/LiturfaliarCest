@@ -386,4 +386,9 @@ public class Item extends Component
   {
     return iconx == o.iconx && icony == o.icony && name.equals(o.name) && type.equals(o.type) && charPath.equals(o.charPath) && action.equals(o.action) && attributes.equals(o.attributes) && requirements.equals(o.requirements);
   }
+  
+  public Point getIconPoint()
+  {
+    return new Point(iconx, icony);
+  }
 }

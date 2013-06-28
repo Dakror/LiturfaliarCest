@@ -9,7 +9,6 @@ import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
-import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 
 public class PotionAction extends ItemAction
@@ -56,10 +55,7 @@ public class PotionAction extends ItemAction
     }
     
     if (!hasEffect)
-    {
-      CFG.p("has no effect");
       return;
-    }
     
     for (Attr attr : Attr.values())
     {

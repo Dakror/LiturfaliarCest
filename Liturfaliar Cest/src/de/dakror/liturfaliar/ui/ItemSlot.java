@@ -541,5 +541,5 @@ public class ItemSlot extends Component
   public void setOnlyLabel(boolean onlyLabel)
   {
     this.onlyLabel = onlyLabel;
-  }
+  }  
 }

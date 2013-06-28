@@ -226,7 +226,6 @@ public class Scene_NewGame implements Scene
       JSONArray inv = new JSONArray();
       
       inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.HEALTHPOTION, 2)));
-      inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.TOXICPOTION, 1)));
       inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.SCRAP, 8)));
       
       cfg.put("inventory", inv);
