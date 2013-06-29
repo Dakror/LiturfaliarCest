@@ -25,7 +25,7 @@ public abstract class HUDComponent
     this.layer = layer;
   }
   
-  public abstract void update(Map m);
+  public abstract void update(long timePassed, Map m);
   
   public abstract void draw(Graphics2D g, Viewport v, Map m);
   

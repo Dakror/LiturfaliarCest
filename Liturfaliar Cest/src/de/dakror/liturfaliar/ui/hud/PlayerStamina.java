@@ -30,7 +30,7 @@ public class PlayerStamina extends HUDComponent
   }
   
   @Override
-  public void update(Map m)
+  public void update(long timePassed, Map m)
   {
     visible = m.talk == null;
     

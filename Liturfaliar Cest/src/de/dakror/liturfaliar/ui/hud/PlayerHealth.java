@@ -21,7 +21,7 @@ public class PlayerHealth extends HUDComponent
   }
   
   @Override
-  public void update(Map m)
+  public void update(long timePassed, Map m)
   {
     if (visible)
       bar.value = (float) (player.getAttributes().getAttribute(Attr.health).getValue() / player.getAttributes().getAttribute(Attr.health).getMaximum());

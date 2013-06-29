@@ -36,7 +36,7 @@ public class PlayerHotbar extends HUDComponent implements Inventory
   }
   
   @Override
-  public void update(Map m)
+  public void update(long timePassed, Map m)
   {
     this.m = m;
     
@@ -45,6 +45,9 @@ public class PlayerHotbar extends HUDComponent implements Inventory
     for (int i = 0; i < SLOTCOUNT; i++)
     {
       ItemSlot slot = slots[i];
+      
+      slot.update(timePassed);
+      
       Item eItem = player.getEquipment().getHotbarItem(i);
       if (slot.getItem() == null && eItem == null)
         continue;

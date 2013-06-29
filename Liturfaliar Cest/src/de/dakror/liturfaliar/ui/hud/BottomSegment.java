@@ -23,12 +23,12 @@ public class BottomSegment
     hotbar = new PlayerHotbar(p);
   }
   
-  public void update(Map m)
+  public void update(long timePassed, Map m)
   {
-    health.update(m);
-    experience.update(m);
-    stamina.update(m);
-    hotbar.update(m);
+    health.update(timePassed, m);
+    experience.update(timePassed, m);
+    stamina.update(timePassed, m);
+    hotbar.update(timePassed, m);
   }
   
   public void draw(Graphics2D g, Viewport v, Map m)

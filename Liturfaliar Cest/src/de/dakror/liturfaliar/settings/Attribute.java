@@ -48,7 +48,7 @@ public class Attribute
   
   public boolean isEmpty()
   {
-    return maximum == 0.0 || value == 0.0;
+    return maximum == 0.0 && value == 0.0;
   }
   
   public void setMaximum(double maximum)

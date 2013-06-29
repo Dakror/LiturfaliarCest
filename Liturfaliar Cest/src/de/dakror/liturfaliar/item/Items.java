@@ -17,6 +17,7 @@ public enum Items
   BOYBOOTS(0, 3, "Schuhe", "1_black", Types.SHOES, new Attributes(Attr.protection, 1, Attr.weight, 0.5), new Attributes(), new EmptyAction()),
   GIRLBOOTS(0, 3, "Halbschuhe", "8_black", Types.SHOES, new Attributes(Attr.protection, 1, Attr.weight, 0.5), new Attributes(), new EmptyAction()),
   HEALTHPOTION(6, 132, "Heiltrank", "", Types.POTION, new Attributes(Attr.cooldown, 5, Attr.weight, 0.2), new Attributes(), new PotionAction("player", new Attributes(Attr.health, 10))),
+  TOXICPOTION(3, 132, "Gifttrank", "", Types.POTION, new Attributes(Attr.cooldown, 5, Attr.weight, 0.2), new Attributes(), new PotionAction("player", new Attributes(Attr.health, -10))),
   SCRAP(1, 91, "Beutel mit Schrott", "", Types.ITEM, new Attributes(Attr.weight, 0.25), new Attributes(), new EmptyAction()),
   // -- skills -- //
   

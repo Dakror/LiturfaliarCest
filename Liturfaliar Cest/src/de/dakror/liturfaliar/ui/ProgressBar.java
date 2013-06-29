@@ -66,7 +66,7 @@ public class ProgressBar extends Component
     }
   }
   
-  public void mouseReleased(MouseEvent e)
+  public void mousePressed(MouseEvent e)
   {
     if (!editable)
       return;

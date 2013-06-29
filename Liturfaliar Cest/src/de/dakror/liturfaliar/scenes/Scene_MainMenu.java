@@ -199,7 +199,15 @@ public class Scene_MainMenu implements Scene
   
   @Override
   public void mousePressed(MouseEvent e)
-  {}
+  {
+    if (optionsToggle && optionsToggleArea.state == 0)
+    {
+      for (int i = 0; i < optionsSliders.length; i++)
+      {
+        optionsSliders[i].mousePressed(e);
+      }
+    }
+  }
   
   @Override
   public void mouseMoved(MouseEvent e)
@@ -235,14 +243,6 @@ public class Scene_MainMenu implements Scene
     }
     optionsToggleArea.mouseReleased(e);
     credits.mouseReleased(e);
-    if (optionsToggle && optionsToggleArea.state == 0)
-    {
-      for (int i = 0; i < optionsSliders.length; i++)
-      {
-        optionsSliders[i].mouseReleased(e);
-      }
-    }
-    
     
     if (mapeditor != null)
     {

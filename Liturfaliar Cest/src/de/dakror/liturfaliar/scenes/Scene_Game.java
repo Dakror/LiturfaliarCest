@@ -98,9 +98,9 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     if (!v.areFramesFrozen())
       mappack.getActiveMap().update(timePassed, this);
     // -- HUD -- //
-    targetLabel.update(mappack.getActiveMap());
+    targetLabel.update(timePassed, mappack.getActiveMap());
     
-    bottomSegment.update(mappack.getActiveMap());
+    bottomSegment.update(timePassed, mappack.getActiveMap());
     // --------- //
   }
   
@@ -270,7 +270,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     
     if (slot.getItem().getType().getCategory().equals(Categories.CONSUMABLE))
     {
-      slot.getItem().triggerAction(mappack.getActiveMap(), v);
+      slot.triggerAction(mappack.getActiveMap(), v);
       player.getEquipment().setHotbarItem(index, slot.getItem());
     }
   }

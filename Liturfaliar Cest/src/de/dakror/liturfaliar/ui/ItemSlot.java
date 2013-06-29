@@ -4,8 +4,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
@@ -21,6 +23,8 @@ import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.Types;
+import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
@@ -44,6 +48,11 @@ public class ItemSlot extends Component
   private Categories       categoryFilter;
   private ArrayList<Types> typesFilter;
   private Inventory        inventory;
+  
+  private long             cooldown;
+  private boolean          cooldownFrozen;
+  
+  Viewport                 v;
   
   public ItemSlot(int x, int y)
   {
@@ -93,9 +102,14 @@ public class ItemSlot extends Component
     }
   }
   
-  @Override
-  public void update()
-  {}
+  public void update(long timePassed)
+  { // -- cooldown stuff -- //
+    if (!cooldownFrozen && item != null)
+    {
+      cooldown = (cooldown > 0) ? cooldown - timePassed : 0;
+      item.getAttributes().getAttribute(Attr.cooldown).setValue(cooldown / 1000.0);
+    }
+  }
   
   public void setHotKey(int key, boolean mouse)
   {
@@ -156,6 +170,8 @@ public class ItemSlot extends Component
   
   public void draw(int x1, int y1, Graphics2D g, Viewport v)
   {
+    this.v = v;
+    
     ax = this.x + x1;
     ay = this.y + y1;
     
@@ -192,6 +208,17 @@ public class ItemSlot extends Component
       }
       Assistant.Shadow(new RoundRectangle2D.Double(ax + getWidth() - width, ay + getWidth() - height, width, height, 5, 5), Colors.DGRAY, 0.5f, g);
       Assistant.drawHorizontallyCenteredString(item.getStack() + "", ax + getWidth() - width, width, ay + getWidth() - 2, g, STACKFONT.getSize() - 2, Colors.GRAY);
+    }
+    
+    if (item != null && cooldown > 0)
+    {
+      Shape oldClip = g.getClip();
+      g.setClip(new Rectangle(ax, ay, width, height));
+      double w = width * Math.sqrt(2);
+      double h = height * Math.sqrt(2);
+      double total = item.getAttributes().getAttribute(Attr.cooldown).getMaximum() * 1000;
+      Assistant.Shadow(new Arc2D.Double(ax - (w - width) / 2.0, ay - (h - height) / 2.0, w, h, 90, -360 * (cooldown / total), Arc2D.PIE), Colors.DGRAY, 0.9f, g);
+      g.setClip(oldClip);
     }
     
     if (hover)
@@ -541,5 +568,41 @@ public class ItemSlot extends Component
   public void setOnlyLabel(boolean onlyLabel)
   {
     this.onlyLabel = onlyLabel;
-  }  
+  }
+  
+  public boolean isCooldownFrozen()
+  {
+    return cooldownFrozen;
+  }
+  
+  public void setCooldownFrozen(boolean cooldownFrozen)
+  {
+    this.cooldownFrozen = cooldownFrozen;
+  }
+  
+  public void startCooldown()
+  {
+    if (item == null || item.getAttributes().getAttribute(Attr.cooldown).isEmpty())
+      return;
+    cooldown = (long) (item.getAttributes().getAttribute(Attr.cooldown).getMaximum() * 1000);
+    cooldownFrozen = false;
+  }
+  
+  public void triggerAction(Map m, Viewport v)
+  {
+    if (item == null)
+      return;
+    
+    if (cooldown > 0)
+    {
+      v.playSound("003-System03");
+      return;
+    }
+    
+    item.triggerAction(m, v);
+  }
+  
+  @Override
+  public void update()
+  {}
 }

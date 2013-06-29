@@ -70,6 +70,7 @@ public class PotionAction extends ItemAction
     target.setAttributes(attributes);
     v.playSound("184-DrinkPotion");
     item.getItemSlot().subItem();
+    item.getItemSlot().startCooldown();
   }
   
   @Override

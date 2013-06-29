@@ -160,7 +160,7 @@ public class Item extends Component
     String name = "<#999999;30;1>" + this.name;
     String category = "<#6666ff;19;1>" + type.getName();
     String weight = c + Attribute.FORMAT.format(attributes.getAttribute(Attr.weight).getValue() * stack) + " kg";
-    String cooldown = ((!attributes.getAttribute(Attr.cooldown).isEmpty()) ? b + Attribute.FORMAT.format(attributes.getAttribute(Attr.cooldown).getValue()) + "s " + Attr.cooldown.getText() : "");
+    String cooldown = ((!attributes.getAttribute(Attr.cooldown).isEmpty()) ? b + Attribute.FORMAT.format(attributes.getAttribute(Attr.cooldown).getMaximum()) + "s " + Attr.cooldown.getText() : "");
     String required = ((req.length() > 0) ? c + " [br]" + c + "Benötigt:[br]" + req : "");
     String action = "";
     

@@ -23,7 +23,7 @@ public class TargetLabel extends HUDComponent
   }
   
   @Override
-  public void update(Map m)
+  public void update(long timePassed, Map m)
   {
     for (Creature c : m.creatures)
     {
