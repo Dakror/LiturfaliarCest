@@ -542,7 +542,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   {
     
     if (scene instanceof Scene_Game && !((Scene_Game) scene).isPaused())
-      ;//((Scene_Game) scene).togglePaused();
+      ((Scene_Game) scene).togglePaused();
     
     pause();
   }

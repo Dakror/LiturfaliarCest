@@ -171,7 +171,12 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   public void setPaused(boolean pause)
   {
     this.pause = pause;
+    
+    if (bottomSegment != null)
+      bottomSegment.hotbar.frozen = pause;
+    
     Viewport.sceneEnabled = !pause;
+    
   }
   
   public MapPack getMapPack()

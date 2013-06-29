@@ -104,9 +104,9 @@ public class ItemSlot extends Component
   
   public void update(long timePassed)
   { // -- cooldown stuff -- //
-    if (!cooldownFrozen && item != null)
+    if (!cooldownFrozen && item != null && cooldown > 0)
     {
-      cooldown = (cooldown > 0) ? cooldown - timePassed : 0;
+      cooldown = (cooldown - timePassed >= 0) ? cooldown - timePassed : 0;
       item.getAttributes().getAttribute(Attr.cooldown).setValue(cooldown / 1000.0);
     }
   }
@@ -217,7 +217,30 @@ public class ItemSlot extends Component
       double w = width * Math.sqrt(2);
       double h = height * Math.sqrt(2);
       double total = item.getAttributes().getAttribute(Attr.cooldown).getMaximum() * 1000;
-      Assistant.Shadow(new Arc2D.Double(ax - (w - width) / 2.0, ay - (h - height) / 2.0, w, h, 90, -360 * (cooldown / total), Arc2D.PIE), Colors.DGRAY, 0.9f, g);
+      
+      Area area = new Area(new Arc2D.Double(ax - (w - width) / 2.0, ay - (h - height) / 2.0, w, h, 90, -360 * (cooldown / total), Arc2D.PIE));
+      
+      Font oldFont = g.getFont();
+      g.setFont(g.getFont().deriveFont(25f));
+      Color oldColor = g.getColor();
+      g.setColor(Colors.GRAY);
+      
+      String s = "" + (int) ((cooldown / 1000) + 1);
+      
+      int strWidth = g.getFontMetrics().stringWidth(s);
+      int strHeight = g.getFontMetrics().getHeight();
+      
+      int xt = ax + (width - strWidth) / 2;
+      int yt = ay + height / 2 + strHeight / 4;
+      
+      area.add(new Area(new RoundRectangle2D.Double(xt - 2, yt - strHeight * 0.625, strWidth + 4, strHeight * 0.75, 8, 8)));
+      
+      Assistant.Shadow(area, Colors.DGRAY, 0.9f, g);
+      g.drawString(s, xt, yt);
+      
+      g.setFont(oldFont);
+      g.setColor(oldColor);
+      
       g.setClip(oldClip);
     }
     
@@ -242,6 +265,9 @@ public class ItemSlot extends Component
     
     if (this.item != null)
     {
+      if (!item.getAttributes().getAttribute(Attr.cooldown).isEmpty() && item.getAttributes().getAttribute(Attr.cooldown).getValue() != item.getAttributes().getAttribute(Attr.cooldown).getMaximum())
+        cooldown = (long) (item.getAttributes().getAttribute(Attr.cooldown).getValue() * 1000);
+      
       this.item.setItemSlot(this);
       this.item.updateTooltip();
     }
@@ -261,7 +287,12 @@ public class ItemSlot extends Component
     item.setStack(item.getStack() - 1);
     
     if (item.getStack() > 0)
+    {
+      if (!item.getAttributes().getAttribute(Attr.cooldown).isEmpty())
+        item.getAttributes().getAttribute(Attr.cooldown).setValue(item.getAttributes().getAttribute(Attr.cooldown).getMaximum());
+      
       return;
+    }
     
     item = null;
   }

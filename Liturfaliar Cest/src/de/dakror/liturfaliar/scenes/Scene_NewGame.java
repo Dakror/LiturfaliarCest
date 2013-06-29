@@ -96,6 +96,7 @@ public class Scene_NewGame implements Scene
     gender.update();
     random.update();
     start.update();
+    name.update();
     
     if (name.value.length() == 0 || name.value.equals("Name"))
       start.disabled = true;
@@ -113,7 +114,7 @@ public class Scene_NewGame implements Scene
       {
         case 0:
         {
-          Viewport.notification = new Notification("Ein Spielstand mit diesem Namen existiert bereits. Bitte wähle einen Anderen.", Notification.ERROR);
+          Viewport.notification = new Notification("Ein Spielstand mit diesem Namen\n\nexistiert bereits. Bitte wähle einen anderen.", Notification.ERROR);
           break;
         }
         case 1:

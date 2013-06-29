@@ -69,7 +69,6 @@ public class InputBar extends Component
    */
   public void draw(Graphics2D g, Viewport v)
   {
-    this.blink += 0.25f;
     Font old = g.getFont();
     g.setFont(old.deriveFont(size));
     if (alternate)
@@ -110,7 +109,7 @@ public class InputBar extends Component
       if (this.focus && !this.maxCharsReached)
       {
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) (0.5f * Math.cos(this.blink + 0.5f * Math.PI) + 0.5f)));
-        Assistant.Rect(x, this.getY() + (int) this.size, g.getFontMetrics().stringWidth("_"), 3, this.c, this.c, g);
+        Assistant.Rect(x + g.getFontMetrics().stringWidth(this.value), this.getY() + (int) this.size, g.getFontMetrics().stringWidth("_"), 3, this.c, this.c, g);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
       }
     }
@@ -211,5 +210,7 @@ public class InputBar extends Component
   
   @Override
   public void update()
-  {}
+  {
+    this.blink += 0.25f;
+  }
 }

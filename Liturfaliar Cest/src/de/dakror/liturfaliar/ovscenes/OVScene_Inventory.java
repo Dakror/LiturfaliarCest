@@ -159,7 +159,13 @@ public class OVScene_Inventory extends OVScene implements Inventory
     for (int i = 0; i < hotbar.length; i++)
     {
       hotbar[i].setInventory(this);
-      hotbar[i].setItem(sg.getPlayer().getEquipment().getHotbarItem(i));
+      if (sg.getPlayer().getEquipment().getHotbarItem(i) != null)
+      {
+        hotbar[i].setItem(new Item(sg.getPlayer().getEquipment().getHotbarItem(i)));
+        hotbar[i].setCooldownFrozen(true);
+      }
+      else hotbar[i].setItem(sg.getPlayer().getEquipment().getHotbarItem(i));
+      
       hotbar[i].setHotKey((i < PlayerHotbar.KEYSLOTS.length) ? PlayerHotbar.KEYSLOTS[i] : PlayerHotbar.MOUSESLOTS[i - PlayerHotbar.KEYSLOTS.length], i > PlayerHotbar.KEYSLOTS.length - 1);
     }
     

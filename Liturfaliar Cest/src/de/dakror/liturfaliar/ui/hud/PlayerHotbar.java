@@ -29,10 +29,13 @@ public class PlayerHotbar extends HUDComponent implements Inventory
   
   Map                           m;
   
+  public boolean                frozen;
+  
   public PlayerHotbar(Player p)
   {
     super(0, 0, ItemSlot.SIZE * SLOTCOUNT, ItemSlot.SIZE, 10);
     player = p;
+    frozen = false;
   }
   
   @Override
@@ -46,7 +49,8 @@ public class PlayerHotbar extends HUDComponent implements Inventory
     {
       ItemSlot slot = slots[i];
       
-      slot.update(timePassed);
+      if (!frozen)
+        slot.update(timePassed);
       
       Item eItem = player.getEquipment().getHotbarItem(i);
       if (slot.getItem() == null && eItem == null)
