@@ -7,11 +7,13 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.listener.MapEventListener;
 import de.dakror.liturfaliar.fx.Emoticon;
 import de.dakror.liturfaliar.item.Equipment;
+import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.settings.Attributes;
@@ -23,24 +25,26 @@ import de.dakror.liturfaliar.util.Vector;
 
 public class Creature implements MapEventListener
 {
-  public static final int[] DIRS  = { 3, 2, 0, 1 };
-  public static final int   LEVEL = 25;
+  public static final int[]           DIRS  = { 3, 2, 0, 1 };
+  public static final int             LEVEL = 25;
   
-  private double            speed;
+  private double                      speed;
   
-  public int                bw, bh, bx, by;
-  public boolean            frozen;
+  public int                          bw, bh, bx, by;
+  public boolean                      frozen;
   
-  protected int             w, h;
-  protected int             dir;
-  protected boolean         massive;
-  protected double          layer;
+  protected int                       w, h;
+  protected int                       dir;
+  protected boolean                   massive;
+  protected double                    layer;
   
-  protected Vector          lastPos, pos, goTo;
-  protected Emoticon        emoticon;
+  protected Vector                    lastPos, pos, goTo;
+  protected Emoticon                  emoticon;
   
-  protected Attributes      attr;
-  protected Equipment       equipment;
+  protected Attributes                attr;
+  protected Equipment                 equipment;
+  
+  protected ArrayList<SkillAnimation> skills;
   
   public Creature(int x, int y, int w, int h)
   {
@@ -52,6 +56,8 @@ public class Creature implements MapEventListener
     bx = by = 0;
     
     attr = new Attributes();
+    
+    skills = new ArrayList<SkillAnimation>();
   }
   
   public void setHuman()
@@ -144,6 +150,12 @@ public class Creature implements MapEventListener
       {
         onIntersect(c, map);
       }
+    }
+    
+    for (SkillAnimation skill : skills)
+    {
+      if (skill.isDone())
+        skills.remove(skill);
     }
   }
   
@@ -382,5 +394,10 @@ public class Creature implements MapEventListener
   public int getXPforLevel(int rl)
   {
     return (int) Math.round(Math.pow(getLevel() + rl, 2) * LEVEL);
+  }
+  
+  public void playSkill(SkillAnimation s)
+  {
+    skills.add(s);
   }
 }

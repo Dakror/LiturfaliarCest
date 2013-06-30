@@ -15,6 +15,7 @@ import de.dakror.liturfaliar.item.action.ItemAction;
 import de.dakror.liturfaliar.item.action.PotionAction;
 import de.dakror.liturfaliar.item.action.SkillAction;
 import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
@@ -377,9 +378,9 @@ public class Item extends Component
     return serializeItem().toString();
   }
   
-  public void triggerAction(Map m, Viewport v)
+  public void triggerAction(Map m, Creature c, Viewport v)
   {
-    action.actionTriggered(this, m, v);
+    action.actionTriggered(this, c, m, v);
   }
   
   public boolean equals(Item o)
@@ -391,8 +392,9 @@ public class Item extends Component
   {
     return new Point(iconx, icony);
   }
-
-  public Image getIcon() {
+  
+  public Image getIcon()
+  {
     return icon;
   }
 }

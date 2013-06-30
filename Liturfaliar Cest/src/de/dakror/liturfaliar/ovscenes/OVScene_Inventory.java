@@ -204,7 +204,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
         {
           case USEITEM:
           {
-            contextItemSlot.triggerAction(getMap(), v);
+            contextItemSlot.triggerAction(getMap(), sg.getPlayer(), v);
             break;
           }
           case TRASHITEM:

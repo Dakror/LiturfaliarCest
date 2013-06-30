@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Equipment;
+import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.CFG;
@@ -89,6 +90,11 @@ public class NPC extends Creature
       catch (Exception e)
       {}
     }
+    
+    
+    for (SkillAnimation skill : skills)
+      skill.drawBelow(g, v, m);
+    
     if (character != null)
       Assistant.drawChar(getPos()[0] + m.getX(), getPos()[1] + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, "chars", character, g, v.w, true);
     else Assistant.drawChar(getPos()[0] + m.getX(), getPos()[1] + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, equipment, g, v.w, true);
@@ -99,6 +105,9 @@ public class NPC extends Creature
       if (emoticon.done && emoticon.getType() != 50)
         emoticon = null;
     }
+    
+    for (SkillAnimation skill : skills)
+      skill.drawAbove(g, v, m);
   }
   
   @Override

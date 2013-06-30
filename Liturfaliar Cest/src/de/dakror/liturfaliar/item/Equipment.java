@@ -77,6 +77,16 @@ public class Equipment
     weapon1 = item;
   }
   
+  public Item getFirstWeapon()
+  {
+    return weapon1;
+  }
+  
+  public Item getSecondWeapon()
+  {
+    return weapon2;
+  }
+  
   public void setSecondWeapon(Item item)
   {
     weapon1 = item;

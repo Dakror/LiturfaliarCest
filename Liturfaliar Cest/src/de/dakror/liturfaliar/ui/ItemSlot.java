@@ -24,6 +24,7 @@ import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
@@ -619,7 +620,7 @@ public class ItemSlot extends Component
     cooldownFrozen = false;
   }
   
-  public void triggerAction(Map m, Viewport v)
+  public void triggerAction(Map m, Creature c, Viewport v)
   {
     if (item == null)
       return;
@@ -630,7 +631,7 @@ public class ItemSlot extends Component
       return;
     }
     
-    item.triggerAction(m, v);
+    item.triggerAction(m, c, v);
   }
   
   @Override

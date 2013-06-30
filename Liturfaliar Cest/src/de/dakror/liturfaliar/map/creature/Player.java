@@ -16,6 +16,7 @@ import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.dispatcher.PlayerEventDispatcher;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.settings.Attributes;
@@ -225,7 +226,11 @@ public class Player extends Creature
     if (dirs[3] && !dirs[0])
       dir = 0;
     
+    for(SkillAnimation skill : super.skills) skill.drawBelow(g,v,m);
+    
     Assistant.drawChar(CFG.MAPCENTER.x, CFG.MAPCENTER.y, w, h, dir, frame, equipment, g, v.w, true);
+       
+    for(SkillAnimation skill : super.skills) skill.drawAbove(g,v,m);
   }
   
   @Override

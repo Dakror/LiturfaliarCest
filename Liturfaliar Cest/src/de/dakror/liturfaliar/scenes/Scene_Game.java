@@ -19,7 +19,6 @@ import de.dakror.liturfaliar.event.dispatcher.PlayerHotbarEventDispatcher;
 import de.dakror.liturfaliar.event.listener.MapPackEventListener;
 import de.dakror.liturfaliar.event.listener.PlayerEventListener;
 import de.dakror.liturfaliar.event.listener.PlayerHotbarEventListener;
-import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.ItemDrop;
 import de.dakror.liturfaliar.map.Map;
@@ -42,12 +41,10 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   private MapPack mappack;
   private Player  player;
   private boolean pause;
+  
   // -- HUD -- //
   TargetLabel     targetLabel;
-  
   BottomSegment   bottomSegment;
-  
-  // --------- //
   
   @Override
   public void construct(Viewport v)
@@ -273,11 +270,8 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     if (slot.getItem() == null)
       return;
     
-    if (slot.getItem().getType().getCategory().equals(Categories.CONSUMABLE))
-    {
-      slot.triggerAction(mappack.getActiveMap(), v);
-      player.getEquipment().setHotbarItem(index, slot.getItem());
-    }
+    slot.triggerAction(mappack.getActiveMap(), player, v);
+    player.getEquipment().setHotbarItem(index, slot.getItem());
   }
   
   @Override

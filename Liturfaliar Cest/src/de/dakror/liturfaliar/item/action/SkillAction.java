@@ -5,20 +5,27 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
 import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.map.creature.Creature;
 
 public class SkillAction extends ItemAction
 {
-  String description;
+  String         description;
+  SkillAnimation animation;
   
-  public SkillAction(String desc)
+  public SkillAction(String desc, SkillAnimation anim)
   {
     description = desc;
+    animation = anim;
   }
   
   @Override
-  public void actionTriggered(Item item, Map m, Viewport v)
-  {}
+  public void actionTriggered(Item item, Creature c, Map m, Viewport v)
+  {
+    c.playSkill(animation);
+    animation.playAnimation(item, c);
+  }
   
   public String getDescription()
   {
@@ -33,6 +40,7 @@ public class SkillAction extends ItemAction
     {
       o.put("type", getClass().getSimpleName());
       o.put("desc", description);
+      o.put("anim", animation.getClass().getName());
     }
     catch (JSONException e)
     {
@@ -45,9 +53,9 @@ public class SkillAction extends ItemAction
   {
     try
     {
-      return new SkillAction(o.getString("desc"));
+      return new SkillAction(o.getString("desc"), (SkillAnimation) Class.forName(o.getString("anim")).newInstance());
     }
-    catch (JSONException e)
+    catch (Exception e)
     {
       e.printStackTrace();
       return null;

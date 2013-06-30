@@ -23,7 +23,7 @@ public class PotionAction extends ItemAction
   }
   
   @Override
-  public void actionTriggered(Item item, Map m, Viewport v)
+  public void actionTriggered(Item item, Creature c, Map m, Viewport v)
   {
     if (item.getItemSlot() == null)
       return;
