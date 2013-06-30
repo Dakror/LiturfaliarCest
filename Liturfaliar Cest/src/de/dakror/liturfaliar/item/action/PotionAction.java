@@ -55,7 +55,10 @@ public class PotionAction extends ItemAction
     }
     
     if (!hasEffect)
+    {
+      v.playSound("003-System03");
       return;
+    }
     
     for (Attr attr : Attr.values())
     {

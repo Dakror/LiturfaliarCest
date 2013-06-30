@@ -353,6 +353,16 @@ public class OVScene_Inventory extends OVScene implements Inventory
   }
   
   @Override
+  public void keyPressed(KeyEvent e)
+  {
+    
+    for (ItemSlot slot : inventory)
+    {
+      slot.keyPressed(e);
+    }
+  }
+  
+  @Override
   public void keyReleased(KeyEvent e)
   {
     if (e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_I)

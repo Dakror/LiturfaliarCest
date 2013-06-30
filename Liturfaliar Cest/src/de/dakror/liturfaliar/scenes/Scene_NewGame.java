@@ -229,6 +229,7 @@ public class Scene_NewGame implements Scene
       inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.HEALTHPOTION, 10)));
       inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.TOXICPOTION, 10)));
       inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.SCRAP, 8)));
+      inv.put(ItemSlot.serializeFakeItemSlot(new Item(Items.POCKETKNIFE, 1)));
       
       cfg.put("inventory", inv);
       

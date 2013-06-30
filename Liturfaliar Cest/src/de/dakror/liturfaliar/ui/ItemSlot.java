@@ -26,6 +26,7 @@ import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
@@ -464,8 +465,34 @@ public class ItemSlot extends Component
   @Override
   public void keyPressed(KeyEvent e)
   {
-    if (item != null && !mouseKey && e.getKeyCode() == hotKey)
-      ;
+    if (item == null || !hover)
+      return;
+    
+    // TODO: remove - it's debug only
+    if (e.getKeyCode() == KeyEvent.VK_LEFT)
+    {
+      item.setCorrectionX(item.getCorrectionX() - 1);
+      item.init();
+      CFG.b("x", item.getCorrectionX(), "y", item.getCorrectionY());
+    }
+    if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+    {
+      item.setCorrectionX(item.getCorrectionX() + 1);
+      item.init();
+      CFG.b("x", item.getCorrectionX(), "y", item.getCorrectionY());
+    }
+    if (e.getKeyCode() == KeyEvent.VK_UP)
+    {
+      item.setCorrectionY(item.getCorrectionY() - 1);
+      item.init();
+      CFG.b("x", item.getCorrectionX(), "y", item.getCorrectionY());
+    }
+    if (e.getKeyCode() == KeyEvent.VK_DOWN)
+    {
+      item.setCorrectionY(item.getCorrectionY() + 1);
+      item.init();
+      CFG.b("x", item.getCorrectionX(), "y", item.getCorrectionY());
+    }
   }
   
   public static ItemSlot[] createSlotRow(int x, int y, int length)

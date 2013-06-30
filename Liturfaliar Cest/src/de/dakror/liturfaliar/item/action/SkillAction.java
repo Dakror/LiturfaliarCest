@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
@@ -23,6 +24,15 @@ public class SkillAction extends ItemAction
   @Override
   public void actionTriggered(Item item, Creature c, Map m, Viewport v)
   {
+    if (!item.getType().equals(Types.PERKSKILL)) // weapon involved
+    {
+      if (c.getEquipment().getFirstWeapon() == null && c.getEquipment().getSecondWeapon() == null)
+      {
+        v.playSound("003-System03");
+        return;
+      }
+    }
+    
     c.playSkill(animation);
     animation.playAnimation(item, c);
   }

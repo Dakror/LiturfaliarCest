@@ -33,7 +33,7 @@ public class Item extends Component
   
   int                     stack          = 0;
   
-  int                     iconx, icony;
+  int                     iconx, icony, corrx, corry;
   
   Image                   icon;
   String                  name;
@@ -57,6 +57,8 @@ public class Item extends Component
     charPath = path;
     iconx = 0;
     icony = 0;
+    corrx = 0;
+    corry = 0;
     name = "";
     stack = s;
     init();
@@ -70,6 +72,8 @@ public class Item extends Component
     name = i.getName();
     iconx = i.getIconX();
     icony = i.getIconY();
+    corrx = i.getCorrectionX();
+    corry = i.getCorrectionY();
     charPath = i.getCharPath();
     attributes = i.getAttributes();
     requirements = i.getRequirement();
@@ -86,6 +90,8 @@ public class Item extends Component
     name = other.name;
     iconx = other.iconx;
     icony = other.icony;
+    corrx = other.corrx;
+    corry = other.corry;
     charPath = other.getCharPath();
     mouse = other.mouse;
     attributes = other.getAttributes();
@@ -106,6 +112,8 @@ public class Item extends Component
       name = o.getString("name");
       iconx = o.getInt("iconx");
       icony = o.getInt("icony");
+      corrx = o.getInt("corrx");
+      corry = o.getInt("corry");
       charPath = o.getString("char");
       attributes = new Attributes(o.getJSONObject("attr"));
       requirements = new Attributes(o.getJSONObject("req"));
@@ -232,7 +240,7 @@ public class Item extends Component
   {
     setX(x1 + SPACING);
     setY(y1 + SPACING);
-    g.drawImage(icon, getX() + (getWidth() / 2 - icon.getWidth(null) / 2), getY() + (getHeight() / 2 - icon.getHeight(null) / 2), icon.getWidth(null), icon.getHeight(null), v.w);
+    g.drawImage(icon, getX() + (getWidth() / 2 - icon.getWidth(null) / 2) + corrx, getY() + (getHeight() / 2 - icon.getHeight(null) / 2) + corry, icon.getWidth(null), icon.getHeight(null), v.w);
     
     if (tooltip != null)
       tooltip.draw(g, v);
@@ -242,7 +250,7 @@ public class Item extends Component
   {
     setX(x1 + SPACING);
     setY(y1 + SPACING);
-    g.drawImage(icon, getX() + (getWidth() / 2 - icon.getWidth(null) / 2), getY() + (getHeight() / 2 - icon.getHeight(null) / 2), icon.getWidth(null), icon.getHeight(null), v.w);
+    g.drawImage(icon, getX() + (getWidth() / 2 - icon.getWidth(null) / 2) + corrx, getY() + (getHeight() / 2 - icon.getHeight(null) / 2) + corry, icon.getWidth(null), icon.getHeight(null), v.w);
   }
   
   @Override
@@ -272,6 +280,8 @@ public class Item extends Component
       o.put("name", name);
       o.put("iconx", iconx);
       o.put("icony", icony);
+      o.put("corrx", corrx);
+      o.put("corry", corry);
       o.put("char", charPath);
       o.put("attr", attributes.serializeAttributes());
       o.put("req", requirements.serializeAttributes());
@@ -396,5 +406,25 @@ public class Item extends Component
   public Image getIcon()
   {
     return icon;
+  }
+  
+  public int getCorrectionX()
+  {
+    return corrx;
+  }
+  
+  public void setCorrectionX(int corrx)
+  {
+    this.corrx = corrx;
+  }
+  
+  public int getCorrectionY()
+  {
+    return corry;
+  }
+  
+  public void setCorrectionY(int corry)
+  {
+    this.corry = corry;
   }
 }

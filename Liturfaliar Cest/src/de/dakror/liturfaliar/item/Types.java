@@ -2,7 +2,8 @@ package de.dakror.liturfaliar.item;
 
 public enum Types
 {
-  SWORD(Categories.WEAPON, "Schwert", 1),
+  MONOSWORD(Categories.WEAPON, "Einhand-Schwert", 1),
+  DUALSWORD(Categories.WEAPON, "Zweihand-Schwert", 1),
   SHIRT(Categories.SHIRT, "Oberteil", 1),
   SKIN(Categories.SKIN, "Haut", 1),
   CAPE(Categories.CAPE, "Umhang", 1),
