@@ -118,7 +118,7 @@ public class ItemDrop
   
   public void mousePressed(MouseEvent e, Map m, Viewport v)
   {
-    int[] p = m.getPlayer().getRelativePos(m);
+    int[] p = m.getPlayer().getRelativePos();
     if (new Point(p[0], p[1]).distance(x, y) < CFG.FIELDSIZE * 2)
     {
       m.getPlayer().putItemInFirstInventorySlot(item);

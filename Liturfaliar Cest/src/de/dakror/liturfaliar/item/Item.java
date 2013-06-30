@@ -391,4 +391,8 @@ public class Item extends Component
   {
     return new Point(iconx, icony);
   }
+
+  public Image getIcon() {
+    return icon;
+  }
 }

@@ -540,7 +540,6 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   @Override
   public void windowDeactivated(WindowEvent e)
   {
-    
     if (scene instanceof Scene_Game && !((Scene_Game) scene).isPaused())
       ((Scene_Game) scene).togglePaused();
     

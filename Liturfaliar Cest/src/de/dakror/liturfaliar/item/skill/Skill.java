@@ -21,4 +21,6 @@ public abstract class Skill
   public abstract boolean isInRange(Creature o);
   
   public abstract void draw(Graphics2D g, Viewport v, Map m);
+  
+  public abstract void drawBelow(Graphics2D g, Viewport v, Map m);
 }

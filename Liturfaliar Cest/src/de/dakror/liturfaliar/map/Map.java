@@ -274,7 +274,7 @@ public class Map implements DatabaseEventListener
     {
       public int compare(Creature o1, Creature o2)
       {
-        return o1.getRelativePos(Map.this)[1] - o2.getRelativePos(Map.this)[1];
+        return o1.getRelativePos()[1] - o2.getRelativePos()[1];
       }
     };
     Collections.sort(creatures, comp);
@@ -294,7 +294,7 @@ public class Map implements DatabaseEventListener
     {
       if (getPlayer() != null)
       {
-        int[] relpos = getPlayer().getRelativePos(this);
+        int[] relpos = getPlayer().getRelativePos();
         if (new Point(field.getX(), field.getY()).distance(new Point2D.Double(relpos[0], relpos[1])) < CFG.FIELDSIZE * 0.8)
           g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
       }

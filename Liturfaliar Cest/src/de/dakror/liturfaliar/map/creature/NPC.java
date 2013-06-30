@@ -110,9 +110,9 @@ public class NPC extends Creature
     {
       int rx = (int) Math.round(Math.random() * 2) - 1;
       int ry = (int) Math.round(Math.random() * 2) - 1;
-      if (m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + getRelativePos(m)[0] + rx * CFG.FIELDSIZE, m.getY() + getRelativePos(m)[1] + ry * CFG.FIELDSIZE, w, h)))
+      if (m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + getRelativePos()[0] + rx * CFG.FIELDSIZE, m.getY() + getRelativePos()[1] + ry * CFG.FIELDSIZE, w, h)))
       {
-        setTarget(getRelativePos(m)[0] + rx * CFG.FIELDSIZE, getRelativePos(m)[1] + ry * CFG.FIELDSIZE);
+        setTarget(getRelativePos()[0] + rx * CFG.FIELDSIZE, getRelativePos()[1] + ry * CFG.FIELDSIZE);
         time = System.currentTimeMillis();
       }
     }
@@ -123,7 +123,7 @@ public class NPC extends Creature
       time = System.currentTimeMillis();
     }
     
-    if (m.getPlayer().getField(m).distance(getField(m)) < 1.1 && m.getPlayer().isLookingAt(this, m))
+    if (m.getPlayer().getField().distance(getField()) < 1.1 && m.getPlayer().isLookingAt(this, m))
     {
       if (emoticon == null && !isTalking())
       {
@@ -141,7 +141,7 @@ public class NPC extends Creature
   @Override
   public void mousePressed(MouseEvent e, Map m)
   {
-    if (m.getPlayer().getField(m).distance(getField(m)) < 1.3 && m.getPlayer().isLookingAt(this, m) && e.getButton() == 1 && m.talk == null && getArea().contains(new Point(e.getX() - m.getX(), e.getY() - m.getY())))
+    if (m.getPlayer().getField().distance(getField()) < 1.3 && m.getPlayer().isLookingAt(this, m) && e.getButton() == 1 && m.talk == null && getArea().contains(new Point(e.getX() - m.getX(), e.getY() - m.getY())))
     {
       setTalking(true);
       m.talk = new Talk(this, m);

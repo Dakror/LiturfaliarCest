@@ -106,7 +106,7 @@ public class Player extends Creature
       {
         if (c instanceof Player || (c instanceof NPC && !((NPC) c).isHostile()))
           continue;
-        if (c.getBumpArea(map).intersects(new Rectangle2D.Double(relPos.sub(targetVector.setLength(distance)).coords[0] + bx, relPos.sub(targetVector.setLength(distance)).coords[1] + by, bw, bh)))
+        if (c.getBumpArea().intersects(new Rectangle2D.Double(relPos.sub(targetVector.setLength(distance)).coords[0] + bx, relPos.sub(targetVector.setLength(distance)).coords[1] + by, bw, bh)))
         {
           setTarget((int) relPos.coords[0], (int) relPos.coords[1]);
           return;
@@ -135,7 +135,7 @@ public class Player extends Creature
   {
     if (init)
     {
-      m.setPos(CFG.MAPCENTER.x - getRelativePos(m)[0], CFG.MAPCENTER.y - getRelativePos(m)[1]);
+      m.setPos(CFG.MAPCENTER.x - getRelativePos()[0], CFG.MAPCENTER.y - getRelativePos()[1]);
       init = false;
     }
     
@@ -176,17 +176,17 @@ public class Player extends Creature
     
     if (x != 0 || y != 0)
     {
-      goTo = new Vector(getRelativePos(m)[0] + x, getRelativePos(m)[1] + y);
-      m.setPos(CFG.MAPCENTER.x - getRelativePos(m)[0], CFG.MAPCENTER.y - getRelativePos(m)[1]);
+      goTo = new Vector(getRelativePos()[0] + x, getRelativePos()[1] + y);
+      m.setPos(CFG.MAPCENTER.x - getRelativePos()[0], CFG.MAPCENTER.y - getRelativePos()[1]);
       move(m);
     }
     for (Field f : m.fields)
     {
-      if (getBumpArea(m).contains(new Point2D.Double(f.getX() + CFG.FIELDSIZE * 0.5, f.getY() + CFG.FIELDSIZE * 0.5)))
+      if (getBumpArea().contains(new Point2D.Double(f.getX() + CFG.FIELDSIZE * 0.5, f.getY() + CFG.FIELDSIZE * 0.5)))
       {
         f.fieldTriggered(this, m);
       }
-      else if (getBumpArea(m).intersects(f.getX(), f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE))
+      else if (getBumpArea().intersects(f.getX(), f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE))
       {
         f.fieldTouched(this, m);
       }
@@ -303,9 +303,9 @@ public class Player extends Creature
   }
   
   @Override
-  public Area getBumpArea(Map map)
+  public Area getBumpArea()
   {
-    return new Area(new Rectangle2D.Double(getRelativePos(map)[0] + bx, getRelativePos(map)[1] + by, bw, bh));
+    return new Area(new Rectangle2D.Double(getRelativePos()[0] + bx, getRelativePos()[1] + by, bw, bh));
   }
   
   public void setRelativePos(double x, double y)
@@ -314,7 +314,7 @@ public class Player extends Creature
   }
   
   @Override
-  public int[] getRelativePos(Map m)
+  public int[] getRelativePos()
   {
     return new int[] { (int) relPos.coords[0], (int) relPos.coords[1] };
   }

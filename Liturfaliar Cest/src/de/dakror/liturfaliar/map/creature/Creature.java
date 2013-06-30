@@ -129,11 +129,11 @@ public class Creature implements MapEventListener
     move(map);
     for (Field f : map.fields)
     {
-      if (getBumpArea(map).contains(new Point2D.Double(f.getX() * CFG.FIELDSIZE + CFG.FIELDSIZE * 0.5, f.getY() * CFG.FIELDSIZE + CFG.FIELDSIZE * 0.5)))
+      if (getBumpArea().contains(new Point2D.Double(f.getX() * CFG.FIELDSIZE + CFG.FIELDSIZE * 0.5, f.getY() * CFG.FIELDSIZE + CFG.FIELDSIZE * 0.5)))
       {
         f.fieldTriggered(this, map);
       }
-      else if (getBumpArea(map).intersects(f.getX() * CFG.FIELDSIZE, f.getY() * CFG.FIELDSIZE, CFG.FIELDSIZE, CFG.FIELDSIZE))
+      else if (getBumpArea().intersects(f.getX() * CFG.FIELDSIZE, f.getY() * CFG.FIELDSIZE, CFG.FIELDSIZE, CFG.FIELDSIZE))
       {
         f.fieldTouched(this, map);
       }
@@ -156,8 +156,8 @@ public class Creature implements MapEventListener
     {
       Color color = g.getColor();
       g.setColor(Color.green);
-      g.draw(new Rectangle2D.Double(m.getX() + getRelativePos(m)[0], m.getY() + getRelativePos(m)[1], w, h));
-      Assistant.Shadow(new Rectangle2D.Double(m.getX() + getRelativePos(m)[0] + bx, m.getY() + getRelativePos(m)[1] + by, bw, bh), Color.orange, 1, g);
+      g.draw(new Rectangle2D.Double(m.getX() + getRelativePos()[0], m.getY() + getRelativePos()[1], w, h));
+      Assistant.Shadow(new Rectangle2D.Double(m.getX() + getRelativePos()[0] + bx, m.getY() + getRelativePos()[1] + by, bw, bh), Color.orange, 1, g);
       g.setColor(color);
     }
   }
@@ -171,8 +171,8 @@ public class Creature implements MapEventListener
   {
     if (other.layer != layer)
       return false;
-    Area copy = getBumpArea(map);
-    copy.intersect(other.getBumpArea(map));
+    Area copy = getBumpArea();
+    copy.intersect(other.getBumpArea());
     return !copy.isEmpty();
   }
   
@@ -183,14 +183,14 @@ public class Creature implements MapEventListener
     pos = lastPos;
   }
   
-  public Area getBumpArea(Map map)
+  public Area getBumpArea()
   {
-    return new Area(new Rectangle2D.Double(getRelativePos(map)[0] + bx, getRelativePos(map)[1] + by, bw, bh));
+    return new Area(new Rectangle2D.Double(getRelativePos()[0] + bx, getRelativePos()[1] + by, bw, bh));
   }
   
-  public Area getArea(Map map)
+  public Area getRelativeArea()
   {
-    return new Area(new Rectangle2D.Double(getRelativePos(map)[0], getRelativePos(map)[1], w, h));
+    return new Area(new Rectangle2D.Double(getRelativePos()[0], getRelativePos()[1], w, h));
   }
   
   public Area getArea()
@@ -198,7 +198,7 @@ public class Creature implements MapEventListener
     return new Area(new Rectangle2D.Double(pos.coords[0], pos.coords[1], w, h));
   }
   
-  public int[] getRelativePos(Map m)
+  public int[] getRelativePos()
   {
     return getPos();
   }
@@ -228,9 +228,9 @@ public class Creature implements MapEventListener
     return null;
   }
   
-  public Point2D getField(Map m)
+  public Point2D getField()
   {
-    return new Point2D.Double(Assistant.round(getRelativePos(m)[0] + bx + bw / 2, CFG.FIELDSIZE) / (double) CFG.FIELDSIZE, Assistant.round(getRelativePos(m)[1] + by + bh / 2, CFG.FIELDSIZE) / (double) CFG.FIELDSIZE);
+    return new Point2D.Double(Assistant.round(getRelativePos()[0] + bx + bw / 2, CFG.FIELDSIZE) / (double) CFG.FIELDSIZE, Assistant.round(getRelativePos()[1] + by + bh / 2, CFG.FIELDSIZE) / (double) CFG.FIELDSIZE);
   }
   
   public void setEmoticon(Emoticon e)
@@ -260,22 +260,22 @@ public class Creature implements MapEventListener
   
   public boolean isLookingAt(Creature c, Map m)
   {
-    double x = getRelativePos(m)[0] + getWidth() / 2.0;
-    double y = getRelativePos(m)[1] + getHeight() / 2.0;
+    double x = getRelativePos()[0] + getWidth() / 2.0;
+    double y = getRelativePos()[1] + getHeight() / 2.0;
     switch (dir)
     {
       case 0:
         // down
-        return c.getArea(m).intersects(new Rectangle2D.Double(x, y + getHeight() / 2.0, 1, m.getHeight() * CFG.FIELDSIZE));
+        return c.getRelativeArea().intersects(new Rectangle2D.Double(x, y + getHeight() / 2.0, 1, m.getHeight() * CFG.FIELDSIZE));
       case 1:
         // left
-        return c.getArea(m).intersects(new Rectangle2D.Double(0, y, x - getWidth() / 2.0, 1));
+        return c.getRelativeArea().intersects(new Rectangle2D.Double(0, y, x - getWidth() / 2.0, 1));
       case 2:
         // right
-        return c.getArea(m).intersects(new Rectangle2D.Double(x + getWidth() / 2, y, m.getWidth() * CFG.FIELDSIZE, 1));
+        return c.getRelativeArea().intersects(new Rectangle2D.Double(x + getWidth() / 2, y, m.getWidth() * CFG.FIELDSIZE, 1));
       case 3:
         // up
-        return c.getArea(m).intersects(new Rectangle2D.Double(x, 0, 1, y - getHeight() / 2));
+        return c.getRelativeArea().intersects(new Rectangle2D.Double(x, 0, 1, y - getHeight() / 2));
       default:
         return false;
     }
@@ -287,21 +287,21 @@ public class Creature implements MapEventListener
       return;
     for (int i = 0; i < 4; i++)
     {
-      double x = getRelativePos(m)[0] + getWidth() / 2.0;
-      double y = getRelativePos(m)[1] + getHeight() / 2.0;
-      if (c.getArea(m).intersects(new Rectangle2D.Double(x, y + getHeight() / 2.0, 1, m.getHeight() * CFG.FIELDSIZE)))
+      double x = getRelativePos()[0] + getWidth() / 2.0;
+      double y = getRelativePos()[1] + getHeight() / 2.0;
+      if (c.getRelativeArea().intersects(new Rectangle2D.Double(x, y + getHeight() / 2.0, 1, m.getHeight() * CFG.FIELDSIZE)))
       {
         dir = 0;
       }
-      else if (c.getArea(m).intersects(new Rectangle2D.Double(0, y, x - getWidth() / 2.0, 1)))
+      else if (c.getRelativeArea().intersects(new Rectangle2D.Double(0, y, x - getWidth() / 2.0, 1)))
       {
         dir = 1;
       }
-      else if (c.getArea(m).intersects(new Rectangle2D.Double(x + getWidth() / 2, y, m.getWidth() * CFG.FIELDSIZE, 1)))
+      else if (c.getRelativeArea().intersects(new Rectangle2D.Double(x + getWidth() / 2, y, m.getWidth() * CFG.FIELDSIZE, 1)))
       {
         dir = 2;
       }
-      else if (c.getArea(m).intersects(new Rectangle2D.Double(x, 0, 1, y - getHeight() / 2)))
+      else if (c.getRelativeArea().intersects(new Rectangle2D.Double(x, 0, 1, y - getHeight() / 2)))
       {
         dir = 3;
       }

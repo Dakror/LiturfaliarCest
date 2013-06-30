@@ -219,7 +219,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
           }
           case THROWITEM:
           {
-            int[] pos = sg.getPlayer().getRelativePos(sg.getMapPack().getActiveMap());
+            int[] pos = sg.getPlayer().getRelativePos();
             int ran = 16;
             while (contextItemSlot.getItem() != null)
             {

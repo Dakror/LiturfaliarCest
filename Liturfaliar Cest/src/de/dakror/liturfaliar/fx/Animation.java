@@ -27,7 +27,7 @@ public class Animation
     this.x = x;
     this.y = y;
     this.s = s;
-    this.file = Viewport.loadImage("Animations/" + this.file + ".png");
+    this.file = Viewport.loadImage("Animations/" + file + ".png");
     w = this.file.getWidth(null);
     h = this.file.getHeight(null);
     frames = (int) ((w * h) / Math.pow(cell, 2));
