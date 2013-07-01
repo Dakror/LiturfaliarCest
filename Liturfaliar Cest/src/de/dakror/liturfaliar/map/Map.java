@@ -245,14 +245,16 @@ public class Map implements DatabaseEventListener
   public void draw(Graphics2D g, Viewport v)
   {
     g.drawImage(lrender, getX(), getY(), v.w);
-    for (int i = 0; i < animations.size(); i++)
-    {
-      Animation j = animations.get(i);
-      if (!j.onTop)
-        j.draw(g, v, this);
-      if (j.done)
-        animations.remove(i);
-    }
+    
+    // for (int i = 0; i < animations.size(); i++)
+    // {
+    // Animation j = animations.get(i);
+    // if (!j.onTop)
+    // j.draw(g, v, this);
+    // if (j.done)
+    // animations.remove(i);
+    // }
+    
     // -- field data -- //
     for (Field f : this.fields)
     {
@@ -282,14 +284,16 @@ public class Map implements DatabaseEventListener
     {
       c.draw(g, v, this);
     }
-    for (int i = 0; i < animations.size(); i++)
-    {
-      Animation j = animations.get(i);
-      if (j.onTop)
-        j.draw(g, v, this);
-      if (j.done)
-        animations.remove(i);
-    }
+    
+    // for (int i = 0; i < animations.size(); i++)
+    // {
+    // Animation j = animations.get(i);
+    // if (j.onTop)
+    // j.draw(g, v, this);
+    // if (j.done)
+    // animations.remove(i);
+    // }
+    
     for (Field field : aboveFields)
     {
       if (getPlayer() != null)

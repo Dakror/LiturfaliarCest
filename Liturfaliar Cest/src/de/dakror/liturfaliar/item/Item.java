@@ -260,7 +260,7 @@ public class Item extends Component
   @Override
   public void draw(Graphics2D g, Viewport v)
   {
-    g.drawImage(icon, mouse.x - width / 2, mouse.y - height / 2, width, height, v.w);
+    g.drawImage(icon, mouse.x - width / 2 + corrx, mouse.y - height / 2 + corry, width, height, v.w);
   }
   
   @Override

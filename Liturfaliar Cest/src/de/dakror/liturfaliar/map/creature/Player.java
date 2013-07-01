@@ -7,6 +7,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -134,6 +135,17 @@ public class Player extends Creature
   @Override
   public void update(long timePassed, Map m)
   {
+    try
+    {
+      for (SkillAnimation skill : super.skills)
+      {
+        if (skill.isDone())
+          super.skills.remove(skill);
+      }
+    }
+    catch (ConcurrentModificationException e)
+    {}
+    
     if (init)
     {
       m.setPos(CFG.MAPCENTER.x - getRelativePos()[0], CFG.MAPCENTER.y - getRelativePos()[1]);
@@ -165,7 +177,7 @@ public class Player extends Creature
     
     setSpeed((sprint) ? Balance.Player.SPRINT : Balance.Player.WALK);
     
-    double x = 0, y = 0;
+    int x = 0, y = 0;
     if (dirs[0] && !dirs[3] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx, m.getY() + relPos.coords[1] + by - getSpeed() * 2, bw, bh)))
       y -= getSpeed();
     else if (dirs[3] && !dirs[0] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx, m.getY() + relPos.coords[1] + by + getSpeed() * 2, bw, bh)))
@@ -226,11 +238,13 @@ public class Player extends Creature
     if (dirs[3] && !dirs[0])
       dir = 0;
     
-    for(SkillAnimation skill : super.skills) skill.drawBelow(g,v,m);
+    for (SkillAnimation skill : super.skills)
+      skill.drawBelow(g, v, m);
     
     Assistant.drawChar(CFG.MAPCENTER.x, CFG.MAPCENTER.y, w, h, dir, frame, equipment, g, v.w, true);
-       
-    for(SkillAnimation skill : super.skills) skill.drawAbove(g,v,m);
+    
+    for (SkillAnimation skill : super.skills)
+      skill.drawAbove(g, v, m);
   }
   
   @Override
@@ -313,7 +327,7 @@ public class Player extends Creature
     return new Area(new Rectangle2D.Double(getRelativePos()[0] + bx, getRelativePos()[1] + by, bw, bh));
   }
   
-  public void setRelativePos(double x, double y)
+  public void setRelativePos(int x, int y)
   {
     relPos = new Vector(x, y);
   }

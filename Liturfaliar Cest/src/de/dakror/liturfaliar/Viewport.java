@@ -239,6 +239,11 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     
   }
   
+  public static void preloadImages()
+  { 
+    
+  }
+  
   public static Image loadImage(String path)
   {
     String capitals = "QWERTZUIOPASDFGHJKLYXCVBNM";
@@ -248,7 +253,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     }
     else
     {
-      BufferedImage i = null;
+      Image i = null;
       if (capitals.indexOf(path.charAt(0)) > -1)
       {
         try
@@ -256,9 +261,12 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
           i = ImageIO.read(FileManager.pullMediaFile(path.substring(0, path.indexOf("/")), path.replace(path.substring(0, path.indexOf("/") + 1), "")));
         }
         catch (IOException e)
-        {}
+        {
+          e.printStackTrace();
+        }
       }
-      else i = (BufferedImage) Assistant.loadImage(path);
+      
+      else i = Assistant.loadImage(path);
       if (i == null)
         System.err.println("Image is missing: " + path);
       cache.put(path, i);
@@ -832,7 +840,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
       }
       else
       {
-        cache.put(key, image.getScaledInstance(w, h, Image.SCALE_REPLICATE));
+        cache.put(key, image.getScaledInstance(w, h, Image.SCALE_FAST));
         return cache.get(key);
       }
     }

@@ -8,6 +8,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.listener.MapEventListener;
@@ -99,7 +100,7 @@ public class Creature implements MapEventListener
   
   public int[] getPos()
   {
-    return new int[] { (int) pos.coords[0], (int) pos.coords[1] };
+    return new int[] { (int) Math.round(pos.coords[0]), (int) Math.round(pos.coords[1]) };
   }
   
   public void setFrozen(boolean b)
@@ -107,7 +108,7 @@ public class Creature implements MapEventListener
     frozen = b;
   }
   
-  public void setTarget(double x, double y)
+  public void setTarget(int x, int y)
   {
     goTo = new Vector(x, y);
   }
@@ -152,11 +153,16 @@ public class Creature implements MapEventListener
       }
     }
     
-    for (SkillAnimation skill : skills)
+    try
     {
-      if (skill.isDone())
-        skills.remove(skill);
+      for (SkillAnimation skill : skills)
+      {
+        if (skill.isDone())
+          skills.remove(skill);
+      }
     }
+    catch (ConcurrentModificationException e)
+    {}
   }
   
   public void draw(Graphics2D g, Viewport v, Map m)

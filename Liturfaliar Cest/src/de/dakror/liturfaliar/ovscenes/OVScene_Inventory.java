@@ -124,11 +124,13 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     equipSlots[8] = new ItemSlot(75, 330); // left wpn
     equipSlots[8].setCategoryFilter(Categories.WEAPON);
+    equipSlots[8].setItem(sg.getPlayer().getEquipment().getFirstWeapon());
     
     // TODO: for weapon equipment special care is needed (2-hand weapons, etc.)
     
     equipSlots[9] = new ItemSlot(290, 330); // right wpn
     equipSlots[9].setCategoryFilter(Categories.WEAPON);
+    equipSlots[9].setItem(sg.getPlayer().getEquipment().getSecondWeapon());
     
     equipSlots[10] = new ItemSlot(183, 368); // pants
     equipSlots[10].setCategoryFilter(Categories.PANTS);
@@ -493,7 +495,20 @@ public class OVScene_Inventory extends OVScene implements Inventory
   public void slotPressed(MouseEvent e, ItemSlot slot)
   {
     if (slot.getCategoryFilter() != null && !slot.isOnlyLabel()) // is from equip menu
-      sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), null);
+    {
+      int index = Arrays.asList(equipSlots).indexOf(slot);
+      switch (index)
+      {
+        case 8: // left weapon
+          sg.getPlayer().getEquipment().setFirstWeapon(null);
+          break;
+        case 9: // right weapon
+          sg.getPlayer().getEquipment().setSecondWeapon(null);
+          break;
+        default:
+          sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), null);
+      }
+    }
     
     else if (slot.hasHotKey()) // is from hotbar
       sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), null);
@@ -569,7 +584,20 @@ public class OVScene_Inventory extends OVScene implements Inventory
   public void slotReleased(MouseEvent e, ItemSlot slot)
   {
     if (slot.getCategoryFilter() != null && !slot.isOnlyLabel()) // is from equip menu
-      sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), slot.getItem());
+    {
+      int index = Arrays.asList(equipSlots).indexOf(slot);
+      switch (index)
+      {
+        case 8: // left weapon
+          sg.getPlayer().getEquipment().setFirstWeapon(slot.getItem());
+          break;
+        case 9: // right weapon
+          sg.getPlayer().getEquipment().setSecondWeapon(slot.getItem());
+          break;
+        default:
+          sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), slot.getItem());
+      }
+    }
     
     else if (slot.hasHotKey()) // is from hotbar
       sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), slot.getItem());

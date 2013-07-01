@@ -12,7 +12,7 @@ import de.dakror.liturfaliar.settings.Attributes.Attr;
 
 public enum Items
 {
-  POCKETKNIFE(1, 274, -10, -9, "Taschenmesser", "", Types.MONOSWORD, new Attributes(), new Attributes(), new EmptyAction()),
+  POCKETKNIFE(10, 1, /*-10, -9*/0,0, "Taschenmesser", "", Types.MONOSWORD, new Attributes(), new Attributes(), new EmptyAction()),
   BOYSHIRT(12, 2, 0, 0, "Jungen-Oberteil", "1_gray", Types.SHIRT, new Attributes(Attr.protection, 1, Attr.weight, 0.6), new Attributes(), new EmptyAction()),
   GIRLSHIRT(12, 2, 0, 0, "Leichtes Kleid", "16_black", Types.SHIRT, new Attributes(Attr.protection, 1, Attr.weight, 0.4), new Attributes(), new EmptyAction()),
   BOYPANTS(7, 391, 0, 0, "Hose", "1_brown", Types.PANTS, new Attributes(Attr.protection, 1, Attr.weight, 1.1), new Attributes(), new EmptyAction()),

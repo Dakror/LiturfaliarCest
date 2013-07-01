@@ -68,9 +68,7 @@ public abstract class GameFrame
     while (this.running)
     {
       if (this.frozen)
-      {
         continue;
-      }
       
       long timePassed = System.currentTimeMillis() - tickTime;
       if (timePassed >= 20)
@@ -82,14 +80,12 @@ public abstract class GameFrame
       Graphics2D g = (Graphics2D) s.getDrawGraphics();
       g.translate(w.getInsets().left, w.getInsets().top);
       
-      
       g.clearRect(0, 0, w.getWidth(), w.getHeight());
       draw(g);
       g.dispose();
       
-      BufferStrategy strat = w.getBufferStrategy();
-      if (!strat.contentsLost())
-        strat.show();
+      if (!s.contentsLost())
+        s.show();
     }
   }
   

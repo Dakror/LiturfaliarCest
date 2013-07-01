@@ -297,9 +297,11 @@ public final class Assistant
   public static void drawChar(int x, int y, int w, int h, int dir, int frame, String type, String image, Graphics2D g, Window window, boolean ch)
   {
     Image i = Viewport.loadScaledImage("char/" + type + "/" + image + ".png", w * 4, h * 4);
+    int iw = i.getWidth(null) / 4;
+    int ih = i.getHeight(null) / 4;
     if (!ch)
-      g.drawImage(i, x, y, x + w, y + h, dir * w, (frame % 4) * h, dir * w + w, (frame % 4) * h + h, window);
-    else g.drawImage(i, x, y, x + w, y + h, (frame % 4) * w, dir * h, (frame % 4) * w + w, dir * h + h, window);
+      g.drawImage(i, x, y, x + w, y + h, dir * iw, (frame % 4) * ih, dir * iw + iw, (frame % 4) * ih + ih, window);
+    else g.drawImage(i, x, y, x + w, y + h, (frame % 4) * iw, dir * ih, (frame % 4) * iw + iw, dir * ih + ih, window);
   }
   
   public static int round(int i, int step)
