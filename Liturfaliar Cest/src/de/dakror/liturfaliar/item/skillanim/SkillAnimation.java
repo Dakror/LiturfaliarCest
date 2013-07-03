@@ -26,6 +26,8 @@ public abstract class SkillAnimation
   
   public abstract boolean isInRange(Creature o);
   
+  public abstract void update(long timePassed, Map m);
+  
   protected abstract void draw(Graphics2D g, Viewport v, Map m);
   
   public void drawBelow(Graphics2D g, Viewport v, Map m)

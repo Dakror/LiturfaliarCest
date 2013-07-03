@@ -21,4 +21,8 @@ public class EmptyAnimation extends SkillAnimation
   @Override
   protected void draw(Graphics2D g, Viewport v, Map m)
   {}
+
+  @Override
+  public void update(long timePassed, Map m)
+  {}
 }

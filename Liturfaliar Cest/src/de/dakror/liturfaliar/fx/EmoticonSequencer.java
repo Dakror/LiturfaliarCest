@@ -40,6 +40,7 @@ public class EmoticonSequencer
       Emoticon emoticon = null;
       
       Creature creature = map.getCreatureByAccessKey(parent);
+      
       if (!creatures.contains(creature))
       {
         creatures.add(creature);

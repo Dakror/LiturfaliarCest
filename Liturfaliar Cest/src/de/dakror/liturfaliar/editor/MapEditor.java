@@ -906,6 +906,8 @@ public class MapEditor
       map.mousePos = null;
       map.repaint();
       
+      NPClastID = 0;
+      
       w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + mappackdata.getString("name") + "/" + m);
       map.removeAll();
       msp.setViewportView(map);
@@ -1106,7 +1108,7 @@ public class MapEditor
     
     label = new JLabel("Bewegungsgeschwindigkeit: ", JLabel.TRAILING);
     p.add(label);
-    NPCspeed = new JSpinner(new SpinnerNumberModel(0.5, 0, 10, 0.1));
+    NPCspeed = new JSpinner(new SpinnerNumberModel(1.0, 0, 20, 1.0));
     if (exist != null)
     {
       NPCspeed.setValue(exist.speed);
@@ -1183,14 +1185,29 @@ public class MapEditor
       public void actionPerformed(ActionEvent e)
       {
         JSONArray talk = null;
+        Equipment equipment = null;
+        Attributes attributes = null;
         if (exist != null)
         {
           talk = exist.talk;
+          equipment = exist.equipment;
+          attributes = exist.attributes;
+          
+          if (NPClastID == exist.ID + 1)
+            NPClastID--;
+          
           map.remove(exist);
         }
         NPCButton b = addNPC(null);
         if (talk != null)
           b.talk = talk;
+        
+        if (equipment != null)
+          b.equipment = equipment;
+        
+        if (attributes != null)
+          b.attributes = attributes;
+        
         showNPCDialog(b);
       }
     });

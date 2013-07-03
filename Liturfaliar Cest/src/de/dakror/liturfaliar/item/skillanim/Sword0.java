@@ -26,6 +26,8 @@ public class Sword0 extends SkillAnimation
     left = -15;
     lastTick = 0;
     done = false;
+    rx = 0;
+    ry = 0;
   }
   
   @Override
@@ -37,12 +39,6 @@ public class Sword0 extends SkillAnimation
   @Override
   protected void draw(Graphics2D g, Viewport v, Map m)
   {
-    if (System.currentTimeMillis() - lastTick > 1)
-    {
-      left++;
-      lastTick = System.currentTimeMillis();
-    }
-    
     if (left >= 50)
     {
       done = true;
@@ -92,5 +88,15 @@ public class Sword0 extends SkillAnimation
     g.drawImage(image, caster.getRelativePos()[0] + rx + m.getX(), caster.getRelativePos()[1] + ry + m.getY(), v.w);
     
     g.setTransform(oldTransform);
+  }
+  
+  @Override
+  public void update(long timePassed, Map m)
+  {
+    if (System.currentTimeMillis() - lastTick > 0)
+    {
+      left += 5;
+      lastTick = System.currentTimeMillis();
+    }
   }
 }

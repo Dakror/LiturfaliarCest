@@ -8,13 +8,16 @@ import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.creature.Player;
+import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.ui.Icon;
+import de.dakror.liturfaliar.ui.ProgressBar;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class TargetLabel extends HUDComponent
 {
-  Creature target;
-  Icon     hostile;
+  Creature    target;
+  Icon        hostile;
+  ProgressBar health;
   
   public TargetLabel()
   {
@@ -54,8 +57,14 @@ public class TargetLabel extends HUDComponent
           this.target = null;
           return;
         }
-        setX(v.w.getWidth() / 2 - getWidth() / 2);
+        
+        if (getX() == 0)
+        {
+          setX(v.w.getWidth() / 2 - getWidth() / 2);
+          health = new ProgressBar(getX() + 10, getY() + 25, getWidth() - 20, 1, false, "ff3232", null, false);
+        }
         Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY() - 10, getWidth(), getHeight(), g, v.w);
+        health.value = (float) (target.getAttributes().getAttribute(Attr.health).getValue() / target.getAttributes().getAttribute(Attr.health).getMaximum());
         int ix = Assistant.drawHorizontallyCenteredString(name, getX(), getWidth(), getY() + getHeight() / 3, g, 22, Color.white);
         if (target instanceof NPC && ((NPC) target).isHostile())
         {
@@ -64,6 +73,7 @@ public class TargetLabel extends HUDComponent
           
           hostile.draw(g, v.w);
         }
+        health.draw(g, v);
       }
       catch (Exception e)
       {}

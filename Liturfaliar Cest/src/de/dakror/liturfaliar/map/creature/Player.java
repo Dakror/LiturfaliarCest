@@ -141,6 +141,8 @@ public class Player extends Creature
       {
         if (skill.isDone())
           super.skills.remove(skill);
+        
+        else skill.update(timePassed, m);
       }
     }
     catch (ConcurrentModificationException e)

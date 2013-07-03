@@ -233,7 +233,8 @@ public class Map implements DatabaseEventListener
     
     for (Creature c : creatures)
     {
-      c.update(timePassed, this);
+      if (c.isAlive())
+        c.update(timePassed, this);
     }
     
     if (talk != null)
@@ -282,7 +283,8 @@ public class Map implements DatabaseEventListener
     Collections.sort(creatures, comp);
     for (Creature c : creatures)
     {
-      c.draw(g, v, this);
+      if (c.isAlive())
+        c.draw(g, v, this);
     }
     
     // for (int i = 0; i < animations.size(); i++)
@@ -376,12 +378,12 @@ public class Map implements DatabaseEventListener
   
   public void setPlayer(Player p)
   {
+    
     try
     {
       JSONArray npc = p.getData().getJSONObject("mappack").getJSONArray("npc");
       for (int i = 0; i < creatures.size(); i++)
       {
-        
         if (creatures.get(i) instanceof NPC)
         {
           for (int j = 0; j < npc.length(); j++)
@@ -400,6 +402,7 @@ public class Map implements DatabaseEventListener
     {
       e.printStackTrace();
     }
+    
     
     creatures.add(p);
     
@@ -640,5 +643,12 @@ public class Map implements DatabaseEventListener
   {
     mappack.removeItemDrop(d);
     itemDrops.remove(d);
+  }
+  
+  public JSONArray getCustomNPCData()
+  {
+    JSONArray array = new JSONArray();
+    
+    return array;
   }
 }

@@ -147,7 +147,7 @@ public class Creature implements MapEventListener
     }
     for (Creature c : map.creatures)
     {
-      if (c != null && !c.equals(this))
+      if (c != null && !c.equals(this) && c.isAlive())
       {
         onIntersect(c, map);
       }
@@ -159,6 +159,8 @@ public class Creature implements MapEventListener
       {
         if (skill.isDone())
           skills.remove(skill);
+        
+        else skill.update(timePassed, map);
       }
     }
     catch (ConcurrentModificationException e)
@@ -405,5 +407,13 @@ public class Creature implements MapEventListener
   public void playSkill(SkillAnimation s)
   {
     skills.add(s);
+  }
+  
+  public boolean isAlive()
+  {
+    if (attr.getAttribute(Attr.health).isEmpty())
+      return true;
+    
+    else return attr.getAttribute(Attr.health).getValue() > 0;
   }
 }

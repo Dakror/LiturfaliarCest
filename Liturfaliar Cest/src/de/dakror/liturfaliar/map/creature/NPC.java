@@ -117,11 +117,16 @@ public class NPC extends Creature
     
     if (isRandomMoveEnabled() && getDistance() < getSpeed() && System.currentTimeMillis() - time > randomMoveT)
     {
-      int rx = (int) Math.round(Math.random() * 2) - 1;
-      int ry = (int) Math.round(Math.random() * 2) - 1;
-      if (m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + getRelativePos()[0] + rx * CFG.FIELDSIZE, m.getY() + getRelativePos()[1] + ry * CFG.FIELDSIZE, w, h)))
+      int direction = (int) Math.round(Math.random() * 4);
+      // 0 = left, 1 = right, 2 = up, 3 = down
+      int distance = (int) Math.round(Math.random() * CFG.FIELDSIZE * 2);
+      
+      int x = getRelativePos()[0] + bx + ((direction == 0) ? -distance : ((distance == 1) ? distance : 0));
+      int y = getRelativePos()[1] + by + ((direction == 2) ? -distance : ((distance == 3) ? distance : 0));
+      
+      if (m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + x, m.getY() + y, bw, bh)))
       {
-        setTarget(getRelativePos()[0] + rx * CFG.FIELDSIZE, getRelativePos()[1] + ry * CFG.FIELDSIZE);
+        setTarget(x - bx, y - by);
         time = System.currentTimeMillis();
       }
     }
