@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
+import de.dakror.liturfaliar.util.Assistant;
 
 public class Sword0 extends SkillAnimation
 {
@@ -23,6 +24,7 @@ public class Sword0 extends SkillAnimation
   public void init()
   {
     image = ((BufferedImage) Viewport.loadImage("system/icons.png")).getSubimage(caster.getEquipment().getFirstWeapon().getIconPoint().x * 24, caster.getEquipment().getFirstWeapon().getIconPoint().y * 24, 24, 24);
+    hitArea = Assistant.toArea(image);
     left = -15;
     lastTick = 0;
     done = false;
@@ -33,7 +35,10 @@ public class Sword0 extends SkillAnimation
   @Override
   public boolean isInRange(Creature o)
   {
-    return false;
+    Area intersection = o.getHitArea();
+    intersection.intersect(hitArea);
+    
+    return !intersection.isEmpty();
   }
   
   @Override

@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,9 +52,22 @@ public class NPC extends Creature
     
     attr = attributes;
     
+    BufferedImage chr = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g = (Graphics2D) chr.getGraphics();
+    
     if (equip.isProperlyFilled())
+    {
       equipment = equip;
-    else character = c;
+      Assistant.drawChar(0, 0, w, h, 0, 0, equipment, g, null, true);
+      
+    }
+    else
+    {
+      character = c;
+      Assistant.drawChar(0, 0, w, h, 0, 0, "chars", character, g, null, true);
+    }
+    
+    hitArea = Assistant.toArea(chr);
     
     layer = CFG.PLAYERLAYER;
     frozen = false;

@@ -47,6 +47,8 @@ public class Creature implements MapEventListener
   
   protected ArrayList<SkillAnimation> skills;
   
+  protected Area                      hitArea;
+  
   public Creature(int x, int y, int w, int h)
   {
     pos = lastPos = goTo = new Vector(x, y);
@@ -55,7 +57,7 @@ public class Creature implements MapEventListener
     this.w = bw = w;
     this.h = bh = h;
     bx = by = 0;
-    
+    hitArea = new Area(new Rectangle2D.Double(0, 0, w, h));
     attr = new Attributes();
     
     skills = new ArrayList<SkillAnimation>();
@@ -75,6 +77,11 @@ public class Creature implements MapEventListener
   public int getDir()
   {
     return dir;
+  }
+  
+  public Area getHitArea()
+  {
+    return hitArea;
   }
   
   public void setDir(int dir)
@@ -120,7 +127,6 @@ public class Creature implements MapEventListener
       Vector targetVector = pos.sub(goTo);
       if (targetVector.length >= getSpeed())
       {
-        CFG.p(getSpeed());
         lastPos = pos;
         pos = pos.sub(targetVector.setLength(getSpeed()));
       }
