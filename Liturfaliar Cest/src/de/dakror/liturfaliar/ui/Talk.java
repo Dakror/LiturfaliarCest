@@ -250,4 +250,9 @@ public class Talk extends Component
       cay++;
     }
   }
+  
+  public NPC getBy()
+  {
+    return by;
+  }
 }

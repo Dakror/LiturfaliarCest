@@ -1108,7 +1108,7 @@ public class MapEditor
     
     label = new JLabel("Bewegungsgeschwindigkeit: ", JLabel.TRAILING);
     p.add(label);
-    NPCspeed = new JSpinner(new SpinnerNumberModel(1.0, 0, 20, 1.0));
+    NPCspeed = new JSpinner(new SpinnerNumberModel(1.0, 0, 20, 0.1));
     if (exist != null)
     {
       NPCspeed.setValue(exist.speed);

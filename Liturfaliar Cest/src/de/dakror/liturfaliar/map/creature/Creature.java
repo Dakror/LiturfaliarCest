@@ -120,6 +120,7 @@ public class Creature implements MapEventListener
       Vector targetVector = pos.sub(goTo);
       if (targetVector.length >= getSpeed())
       {
+        CFG.p(getSpeed());
         lastPos = pos;
         pos = pos.sub(targetVector.setLength(getSpeed()));
       }
@@ -169,9 +170,6 @@ public class Creature implements MapEventListener
   
   public void draw(Graphics2D g, Viewport v, Map m)
   {
-    if (emoticon != null)
-      emoticon.draw(g, m, v);
-    
     if (CFG.UIDEBUG)
     {
       Color color = g.getColor();
@@ -180,6 +178,12 @@ public class Creature implements MapEventListener
       Assistant.Shadow(new Rectangle2D.Double(m.getX() + getRelativePos()[0] + bx, m.getY() + getRelativePos()[1] + by, bw, bh), Color.orange, 1, g);
       g.setColor(color);
     }
+  }
+  
+  public void drawEmoticon(Graphics2D g, Viewport v, Map m)
+  {
+    if (emoticon != null)
+      emoticon.draw(g, m, v);
   }
   
   public boolean isMassive()

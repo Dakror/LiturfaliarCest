@@ -6,11 +6,11 @@ import java.util.ArrayList;
 
 public class Vector
 {
-  public final int[]  coords;
-  private int         dimensions;
-  public final double length;
+  public final double[] coords;
+  private int           dimensions;
+  public final double   length;
   
-  public Vector(int... d)
+  public Vector(double... d)
   {
     this.coords = d;
     this.dimensions = d.length;
@@ -20,14 +20,14 @@ public class Vector
   public Vector add(Vector other)
   {
     assert (other.dimensions == this.dimensions);
-    ArrayList<Integer> resarray = new ArrayList<Integer>();
+    ArrayList<Double> resarray = new ArrayList<Double>();
     for (int index = 0; index < this.dimensions; index++)
     {
-      int a = this.coords[index];
-      int b = other.coords[index];
-      resarray.add(index, Integer.valueOf(a + b));
+      double a = this.coords[index];
+      double b = other.coords[index];
+      resarray.add(index, Double.valueOf(a + b));
     }
-    return new Vector(converttoint(resarray));
+    return new Vector(converttodouble(resarray));
   }
   
   public Vector sub(Vector other)
@@ -37,12 +37,12 @@ public class Vector
   
   public Vector mul(double skalar)
   {
-    ArrayList<Integer> resarray = new ArrayList<Integer>();
+    ArrayList<Double> resarray = new ArrayList<Double>();
     for (int index = 0; index < this.dimensions; index++)
     {
-      resarray.add(index, Integer.valueOf((int) (this.coords[index] * skalar)));
+      resarray.add(index, Double.valueOf(this.coords[index] * skalar));
     }
-    return new Vector(converttoint(resarray));
+    return new Vector(converttodouble(resarray));
   }
   
   public Vector neg()
@@ -62,7 +62,7 @@ public class Vector
     return Math.acos(ints / length);
   }
   
-  public static Vector createvec(int[] coords1, int[] coords2)
+  public static Vector createvec(double[] coords1, double[] coords2)
   {
     Vector a = new Vector(coords1);
     Vector b = new Vector(coords2);
@@ -81,20 +81,20 @@ public class Vector
   
   public Vector setLength(double i)
   {
-    ArrayList<Integer> resArray = new ArrayList<Integer>();
+    ArrayList<Double> resArray = new ArrayList<Double>();
     for (int index = 0; index < this.coords.length; index++)
     {
-      resArray.add(index, Integer.valueOf((int) (this.coords[index] * (i / this.length))));
+      resArray.add(index, Double.valueOf(this.coords[index] * (i / this.length)));
     }
-    return new Vector(converttoint(resArray));
+    return new Vector(converttodouble(resArray));
   }
   
-  private static int[] converttoint(ArrayList<Integer> ints)
+  private static double[] converttodouble(ArrayList<Double> ints)
   {
-    int[] result = new int[ints.toArray().length];
+    double[] result = new double[ints.toArray().length];
     for (int index = 0; index < ints.toArray().length; index++)
     {
-      result[index] = ((Integer) ints.get(index)).intValue();
+      result[index] = ((Double) ints.get(index)).doubleValue();
     }
     return result;
   }

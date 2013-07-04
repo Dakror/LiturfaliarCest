@@ -95,7 +95,7 @@ public class Sword0 extends SkillAnimation
   {
     if (System.currentTimeMillis() - lastTick > 0)
     {
-      left += 5;
+      left += 8;
       lastTick = System.currentTimeMillis();
     }
   }

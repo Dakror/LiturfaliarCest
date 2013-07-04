@@ -308,6 +308,13 @@ public class Map implements DatabaseEventListener
       
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
+    
+    for (Creature c : creatures)
+    {
+      if (c.isAlive())
+        c.drawEmoticon(g, v, this);
+    }
+    
     try
     {
       for (ItemDrop id : itemDrops)
@@ -318,6 +325,7 @@ public class Map implements DatabaseEventListener
     }
     catch (Exception e)
     {}
+    
     if (CFG.UIDEBUG)
     {
       Assistant.Shadow(v.w.getBounds(), Color.black, 0.4f, g);
@@ -331,9 +339,7 @@ public class Map implements DatabaseEventListener
     Assistant.Shadow(v.w.getBounds(), Color.black, 1 - alpha, g);
     
     if (talk != null)
-    {
       talk.draw(g, v);
-    }
   }
   
   public void setPos(int x, int y)

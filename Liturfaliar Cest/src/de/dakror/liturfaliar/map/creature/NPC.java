@@ -3,6 +3,8 @@ package de.dakror.liturfaliar.map.creature;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 
 import org.json.JSONArray;
@@ -76,6 +78,7 @@ public class NPC extends Creature
   public void draw(Graphics2D g, Viewport v, Map m)
   {
     super.draw(g, v, m);
+    
     boolean move = false;
     double angle = 0;
     if (getDistance() > getSpeed() && !frozen)
@@ -90,7 +93,6 @@ public class NPC extends Creature
       catch (Exception e)
       {}
     }
-    
     
     for (SkillAnimation skill : skills)
       skill.drawBelow(g, v, m);
@@ -117,16 +119,50 @@ public class NPC extends Creature
     
     if (isRandomMoveEnabled() && getDistance() < getSpeed() && System.currentTimeMillis() - time > randomMoveT)
     {
-      int direction = (int) Math.round(Math.random() * 4);
-      // 0 = left, 1 = right, 2 = up, 3 = down
-      int distance = (int) Math.round(Math.random() * CFG.FIELDSIZE * 2);
+      int direction = (int) Math.round(Math.random() * 3);
+      // 0 = left, 1 = up, 2 = right, 3 = down
+      int distance = (int) Math.round((Math.random() * CFG.FIELDSIZE));
       
-      int x = getRelativePos()[0] + bx + ((direction == 0) ? -distance : ((distance == 1) ? distance : 0));
-      int y = getRelativePos()[1] + by + ((direction == 2) ? -distance : ((distance == 3) ? distance : 0));
+      int x = getRelativePos()[0] + bx;
+      int y = getRelativePos()[1] + by;
+      int tx = 0;
+      int ty = 0;
       
-      if (m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + x, m.getY() + y, bw, bh)))
+      Area tr = null;
+      
+      switch (direction)
       {
-        setTarget(x - bx, y - by);
+        case 0:
+        {
+          tr = new Area(new Rectangle2D.Double(x - distance, y, distance + bw, bh));
+          tx = -distance;
+          break;
+        }
+        case 1:
+        {
+          tr = new Area(new Rectangle2D.Double(x, y - distance, bw, distance + bh));
+          ty = -distance;
+          break;
+        }
+        case 2:
+        {
+          tr = new Area(new Rectangle2D.Double(x, y, distance + bw, bh));
+          tx = distance;
+          break;
+        }
+        case 3:
+        {
+          tr = new Area(new Rectangle2D.Double(x, y, bw, distance + bh));
+          ty = distance;
+          break;
+        }
+      }
+      
+      tr.transform(AffineTransform.getTranslateInstance(m.getX(), m.getY()));
+      
+      if (m.getBumpMap().contains(tr.getBounds2D()))
+      {
+        setTarget(x + tx - bx, y + ty - by);
         time = System.currentTimeMillis();
       }
     }
@@ -155,12 +191,17 @@ public class NPC extends Creature
   @Override
   public void mousePressed(MouseEvent e, Map m)
   {
-    if (m.getPlayer().getField().distance(getField()) < 1.3 && m.getPlayer().isLookingAt(this, m) && e.getButton() == 1 && m.talk == null && getArea().contains(new Point(e.getX() - m.getX(), e.getY() - m.getY())))
+    if (m.getPlayer().getField().distance(getField()) < 1.3 && m.getPlayer().isLookingAt(this, m) && e.getButton() == 1 && getArea().contains(new Point(e.getX() - m.getX(), e.getY() - m.getY())))
     {
-      setTalking(true);
-      m.talk = new Talk(this, m);
-      emoticon = null;
-      lookAt(m.getPlayer(), m);
+      if (m.talk == null)
+      {
+        setTalking(true);
+        m.talk = new Talk(this, m);
+        emoticon = null;
+        lookAt(m.getPlayer(), m);
+      }
+      else if (m.talk.getBy().equals(this))
+        m.talk.triggerNext();
     }
   }
   
