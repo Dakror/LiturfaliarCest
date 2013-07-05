@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
+import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class Sword0 extends SkillAnimation
@@ -18,6 +19,7 @@ public class Sword0 extends SkillAnimation
   
   Image image;
   Area  hitArea;
+  Area  realHitArea;
   long  lastTick;
   
   @Override
@@ -33,10 +35,14 @@ public class Sword0 extends SkillAnimation
   }
   
   @Override
-  public boolean isInRange(Creature o)
+  public boolean isInRange(Creature o, Map m)
   {
-    Area intersection = o.getHitArea();
-    intersection.intersect(hitArea);
+    if (realHitArea == null)
+      return false;
+    
+    Area intersection = o.getHitArea(m);
+    
+    intersection.intersect(realHitArea);
     
     return !intersection.isEmpty();
   }
@@ -44,6 +50,9 @@ public class Sword0 extends SkillAnimation
   @Override
   protected void draw(Graphics2D g, Viewport v, Map m)
   {
+    if (this.hitArea == null)
+      return;
+    
     if (left >= 50)
     {
       done = true;
@@ -87,21 +96,33 @@ public class Sword0 extends SkillAnimation
       }
     }
     
+    AffineTransform tr = AffineTransform.getTranslateInstance(caster.getRelativePos()[0] + rx + m.getX(), caster.getRelativePos()[1] + ry + m.getY());
+    tr.rotate(Math.toRadians(theta), image.getWidth(null), image.getHeight(null));
+    realHitArea = this.hitArea.createTransformedArea(tr);
+    
     AffineTransform oldTransform = g.getTransform();
-    g.setTransform(AffineTransform.getRotateInstance(Math.toRadians(theta), caster.getRelativePos()[0] + rx + m.getX() + image.getWidth(null), caster.getRelativePos()[1] + ry + m.getY() + image.getHeight(null)));
+    AffineTransform t = AffineTransform.getRotateInstance(Math.toRadians(theta), caster.getRelativePos()[0] + rx + m.getX() + image.getWidth(null), caster.getRelativePos()[1] + ry + m.getY() + image.getHeight(null));
     
+    g.setTransform(t);
     g.drawImage(image, caster.getRelativePos()[0] + rx + m.getX(), caster.getRelativePos()[1] + ry + m.getY(), v.w);
-    
     g.setTransform(oldTransform);
   }
   
   @Override
   public void update(long timePassed, Map m)
   {
+    super.update(timePassed, m);
+    
     if (System.currentTimeMillis() - lastTick > 0)
     {
       left += 8;
       lastTick = System.currentTimeMillis();
     }
+  }
+  
+  @Override
+  public void dealEffect(Creature c)
+  {
+    c.setAttributes(Attributes.vsum(c.getAttributes(), item.getAttributes()));
   }
 }

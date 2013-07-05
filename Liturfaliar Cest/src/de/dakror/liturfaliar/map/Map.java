@@ -507,7 +507,8 @@ public class Map implements DatabaseEventListener
   {
     for (Creature c : creatures)
     {
-      c.mouseDragged(e, this);
+      if (c.isAlive())
+        c.mouseDragged(e, this);
     }
   }
   
@@ -516,7 +517,8 @@ public class Map implements DatabaseEventListener
     hoveredItemDrop = null;
     for (Creature c : creatures)
     {
-      c.mouseMoved(e, this);
+      if (c.isAlive())
+        c.mouseMoved(e, this);
     }
     
     for (ItemDrop id : itemDrops)
@@ -532,7 +534,8 @@ public class Map implements DatabaseEventListener
   {
     for (Creature c : creatures)
     {
-      c.mouseClicked(e, this);
+      if (c.isAlive())
+        c.mouseClicked(e, this);
     }
   }
   
@@ -540,7 +543,8 @@ public class Map implements DatabaseEventListener
   {
     for (Creature c : creatures)
     {
-      c.mousePressed(e, this);
+      if (c.isAlive())
+        c.mousePressed(e, this);
     }
     
     try
@@ -558,7 +562,8 @@ public class Map implements DatabaseEventListener
   {
     for (Creature c : creatures)
     {
-      c.mouseReleased(e, this);
+      if (c.isAlive())
+        c.mouseReleased(e, this);
     }
   }
   
@@ -566,7 +571,8 @@ public class Map implements DatabaseEventListener
   {
     for (Creature c : creatures)
     {
-      c.mouseEntered(e, this);
+      if (c.isAlive())
+        c.mouseEntered(e, this);
     }
   }
   
@@ -574,7 +580,8 @@ public class Map implements DatabaseEventListener
   {
     for (Creature c : creatures)
     {
-      c.mouseExited(e, this);
+      if (c.isAlive())
+        c.mouseExited(e, this);
     }
   }
   
@@ -585,7 +592,8 @@ public class Map implements DatabaseEventListener
   {
     for (Creature c : creatures)
     {
-      c.keyPressed(e, this);
+      if (c.isAlive())
+        c.keyPressed(e, this);
     }
     
     if (talk != null && e.getKeyCode() == KeyEvent.VK_SPACE)
@@ -596,7 +604,8 @@ public class Map implements DatabaseEventListener
   {
     for (Creature c : creatures)
     {
-      c.keyReleased(e, this);
+      if (c.isAlive())
+        c.keyReleased(e, this);
     }
   }
   

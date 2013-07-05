@@ -2,6 +2,7 @@ package de.dakror.liturfaliar.editor;
 
 import java.awt.Image;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -54,6 +55,7 @@ public class NPCButton extends JButton
     setFocusPainted(false);
     setContentAreaFilled(false);
     setBounds(x, y, w, h);
+    setBorder(BorderFactory.createEmptyBorder());
     
     addMouseListener(m.new SelectionListener(this));
     addMouseMotionListener(m.new SelectionListener(this));

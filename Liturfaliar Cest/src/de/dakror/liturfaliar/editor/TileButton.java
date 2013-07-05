@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -55,6 +56,7 @@ public class TileButton extends JButton
     setContentAreaFilled(false);
     setBounds(x, y, CFG.FIELDSIZE, CFG.FIELDSIZE);
     setToolTipText("Ebene: " + layer);
+    setBorder(BorderFactory.createEmptyBorder());
     
     addMouseListener(m.new SelectionListener(this));
     addMouseMotionListener(m.new SelectionListener(this));

@@ -13,7 +13,7 @@ public class EmptyAnimation extends SkillAnimation
   {}
   
   @Override
-  public boolean isInRange(Creature o)
+  public boolean isInRange(Creature o, Map m)
   {
     return false;
   }
@@ -21,8 +21,8 @@ public class EmptyAnimation extends SkillAnimation
   @Override
   protected void draw(Graphics2D g, Viewport v, Map m)
   {}
-
+  
   @Override
-  public void update(long timePassed, Map m)
+  public void dealEffect(Creature c)
   {}
 }

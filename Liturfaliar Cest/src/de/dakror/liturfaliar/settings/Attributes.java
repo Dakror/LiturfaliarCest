@@ -179,6 +179,25 @@ public class Attributes
     return sum;
   }
   
+  public static Attributes vsum(Attributes a, Attributes b)
+  {
+    Attributes sum = new Attributes();
+    for (Attr attr : Attr.values())
+    {
+      if (a.getAttribute(attr).isEmpty() && b.getAttribute(attr).isEmpty())
+        continue;
+      
+      double max = a.getAttribute(attr).getMaximum();
+      
+      sum.getAttribute(attr).setMaximum(max);
+      
+      double val = a.getAttribute(attr).getValue() + b.getAttribute(attr).getValue();
+      
+      sum.getAttribute(attr).setValue((val <= max) ? val : max);
+    }
+    return sum;
+  }
+  
   public static Attributes dif(Attributes a, Attributes b)
   {
     Attributes sum = new Attributes();

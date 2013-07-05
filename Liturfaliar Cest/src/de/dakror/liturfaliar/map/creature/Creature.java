@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -79,9 +80,9 @@ public class Creature implements MapEventListener
     return dir;
   }
   
-  public Area getHitArea()
+  public Area getHitArea(Map m)
   {
-    return hitArea;
+    return hitArea.createTransformedArea(AffineTransform.getTranslateInstance(pos.coords[0] + m.getX(), pos.coords[1] + m.getY()));
   }
   
   public void setDir(int dir)
@@ -167,7 +168,10 @@ public class Creature implements MapEventListener
         if (skill.isDone())
           skills.remove(skill);
         
-        else skill.update(timePassed, map);
+        else
+        {
+          skill.update(timePassed, map);
+        }
       }
     }
     catch (ConcurrentModificationException e)

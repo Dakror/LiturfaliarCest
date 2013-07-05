@@ -240,13 +240,18 @@ public class Player extends Creature
     if (dirs[3] && !dirs[0])
       dir = 0;
     
-    for (SkillAnimation skill : super.skills)
-      skill.drawBelow(g, v, m);
-    
-    Assistant.drawChar(CFG.MAPCENTER.x, CFG.MAPCENTER.y, w, h, dir, frame, equipment, g, v.w, true);
-    
-    for (SkillAnimation skill : super.skills)
-      skill.drawAbove(g, v, m);
+    try
+    {
+      for (SkillAnimation skill : super.skills)
+        skill.drawBelow(g, v, m);
+      
+      Assistant.drawChar(CFG.MAPCENTER.x, CFG.MAPCENTER.y, w, h, dir, frame, equipment, g, v.w, true);
+      
+      for (SkillAnimation skill : super.skills)
+        skill.drawAbove(g, v, m);
+    }
+    catch (Exception e)
+    {}
   }
   
   @Override
