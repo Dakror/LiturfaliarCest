@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.MapPack;
 import de.dakror.liturfaliar.settings.CFG;
+import de.dakror.liturfaliar.settings.Keys;
 
 /**
  * Manages SaveFiles, Creating needed directories, Saving and loading Options, etc.
@@ -168,13 +169,18 @@ public class FileManager
    */
   public static void saveOptions(Viewport v)
   {
-    JSONObject options = new JSONObject();
+    JSONObject o = new JSONObject();
     try
     {
-      options.put("sound", v.fSoundID);
-      options.put("music", v.fMusicID);
-      options.put("musiceffect", v.fMusicEffectID);
-      Assistant.setFileContent(new File(dir, "options.json"), options.toString(4));
+      JSONObject volume = new JSONObject();
+      volume.put("sound", v.fSoundID);
+      volume.put("music", v.fMusicID);
+      volume.put("musiceffect", v.fMusicEffectID);
+      
+      o.put("volume", volume);
+      o.put("keys", Keys.saveKeys());
+      
+      Assistant.setFileContent(new File(dir, "options.json"), o.toString(4));
     }
     catch (Exception e)
     {
@@ -192,10 +198,13 @@ public class FileManager
   {
     try
     {
-      JSONObject options = new JSONObject(Assistant.getFileContent(new File(dir, "options.json")));
-      v.fSoundID = (float) options.getDouble("sound");
-      v.fMusicID = (float) options.getDouble("music");
-      v.fMusicEffectID = (float) options.getDouble("musiceffect");
+      JSONObject o = new JSONObject(Assistant.getFileContent(new File(dir, "options.json")));
+      JSONObject volume = o.getJSONObject("volume");
+      v.fSoundID = (float) volume.getDouble("sound");
+      v.fMusicID = (float) volume.getDouble("music");
+      v.fMusicEffectID = (float) volume.getDouble("musiceffect");
+      
+      Keys.loadKeys(o.getJSONObject("keys"));
     }
     catch (Exception e)
     {

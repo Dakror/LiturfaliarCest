@@ -30,6 +30,7 @@ import de.dakror.liturfaliar.ovscenes.OVScene_Pause;
 import de.dakror.liturfaliar.ovscenes.OVScene_Skills;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.CFG;
+import de.dakror.liturfaliar.settings.Keys;
 import de.dakror.liturfaliar.ui.CursorText;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.hud.BottomSegment;
@@ -133,16 +134,17 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     
     if (mappack != null && mappack.getActiveMap() != null)
       mappack.getActiveMap().keyReleased(e);
-    if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+    
+    if (e.getKeyCode() == Keys.PAUSE)
       togglePaused();
     
-    else if (e.getKeyCode() == KeyEvent.VK_I)
+    else if (e.getKeyCode() == Keys.INVENTORY)
     {
       v.removeOVScene("Skills");
       v.toggleOVScene(new OVScene_Inventory(this), "Inventory");
     }
     
-    else if (e.getKeyCode() == KeyEvent.VK_J)
+    else if (e.getKeyCode() == Keys.SKILLS)
     {
       v.removeOVScene("Inventory");
       v.toggleOVScene(new OVScene_Skills(this), "Skills");

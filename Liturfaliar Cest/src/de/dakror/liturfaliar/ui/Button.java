@@ -262,9 +262,6 @@ public class Button extends Component
       tooltip.draw(g, v);
   }
   
-  public void drawAlternate(Graphics2D g)
-  {}
-  
   public Image getIcon()
   {
     return Viewport.loadImage("icon/black/" + icon + ".png");

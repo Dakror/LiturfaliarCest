@@ -42,7 +42,6 @@ public final class CFG
   public static final int      ANIMATIONS        = 59;
   public static final int      TILES             = 123;
   
-  
   public static final int      BOUNDMALUS        = 0;
   public static final int      BUMPMALUS         = 5;
   public static final int[]    HUMANBOUNDS       = { FIELDSIZE - BOUNDMALUS, FIELDSIZE * 3 / 2 - BOUNDMALUS };

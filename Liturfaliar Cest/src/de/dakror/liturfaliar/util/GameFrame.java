@@ -51,6 +51,7 @@ public abstract class GameFrame
       this.running = true;
       init();
       w.setVisible(true);
+      
       w.createBufferStrategy(2);
       mainloop();
       close();

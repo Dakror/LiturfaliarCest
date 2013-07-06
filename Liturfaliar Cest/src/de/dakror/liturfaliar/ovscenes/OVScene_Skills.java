@@ -17,6 +17,7 @@ import de.dakror.liturfaliar.item.Items;
 import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.scenes.Scene_Game;
+import de.dakror.liturfaliar.settings.Keys;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.Flicker;
@@ -276,7 +277,7 @@ public class OVScene_Skills extends OVScene implements Inventory
   @Override
   public void keyReleased(KeyEvent e)
   {
-    if (e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_J)
+    if (e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == Keys.SKILLS)
     {
       sg.setPaused(false);
       v.setFramesFrozen(false);

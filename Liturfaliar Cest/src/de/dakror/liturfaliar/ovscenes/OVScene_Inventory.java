@@ -19,6 +19,7 @@ import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Colors;
+import de.dakror.liturfaliar.settings.Keys;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.Dialog;
 import de.dakror.liturfaliar.ui.HTMLLabel;
@@ -367,7 +368,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
   @Override
   public void keyReleased(KeyEvent e)
   {
-    if (e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_I)
+    if (e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == Keys.INVENTORY)
     {
       if (pickedUp != null)
       {

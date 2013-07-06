@@ -24,6 +24,7 @@ import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Balance;
 import de.dakror.liturfaliar.settings.CFG;
+import de.dakror.liturfaliar.settings.Keys;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
@@ -259,72 +260,53 @@ public class Player extends Creature
   {
     if (frozen)
       return;
-    switch (e.getExtendedKeyCode())
+    
+    int c = e.getExtendedKeyCode();
+    
+    if (c == Keys.UP)
+      dirs[0] = true;
+    
+    else if (c == Keys.LEFT)
+      dirs[1] = true;
+    
+    else if (c == Keys.RIGHT)
+      dirs[2] = true;
+    
+    else if (c == Keys.DOWN)
+      dirs[3] = true;
+    
+    else if (c == Keys.SPRINT)
     {
-      case KeyEvent.VK_W:
-      {
-        dirs[0] = true;
-        break;
-      }
-      case KeyEvent.VK_A:
-      {
-        dirs[1] = true;
-        break;
-      }
-      case KeyEvent.VK_D:
-      {
-        dirs[2] = true;
-        break;
-      }
-      case KeyEvent.VK_S:
-      {
-        dirs[3] = true;
-        break;
-      }
-      case KeyEvent.VK_SHIFT:
-      {
-        if (!sprint)
-          time = System.currentTimeMillis();
-        
-        sprint = true;
-        break;
-      }
+      if (!sprint)
+        time = System.currentTimeMillis();
+      
+      sprint = true;
     }
   }
   
   @Override
   public void keyReleased(KeyEvent e, Map m)
   {
-    switch (e.getExtendedKeyCode())
+    int c = e.getExtendedKeyCode();
+    
+    if (c == Keys.UP)
+      dirs[0] = false;
+    
+    else if (c == Keys.LEFT)
+      dirs[1] = false;
+    
+    else if (c == Keys.RIGHT)
+      dirs[2] = false;
+    
+    else if (c == Keys.DOWN)
+      dirs[3] = false;
+    
+    else if (c == Keys.SPRINT)
     {
-      case KeyEvent.VK_W:
-      {
-        dirs[0] = false;
-        break;
-      }
-      case KeyEvent.VK_A:
-      {
-        dirs[1] = false;
-        break;
-      }
-      case KeyEvent.VK_D:
-      {
-        dirs[2] = false;
-        break;
-      }
-      case KeyEvent.VK_S:
-      {
-        dirs[3] = false;
-        break;
-      }
-      case KeyEvent.VK_SHIFT:
-      {
-        if (sprint)
-          time = System.currentTimeMillis();
-        
-        sprint = false;
-        break;
-      }
+      if (sprint)
+        time = System.currentTimeMillis();
+      
+      sprint = false;
     }
   }
   

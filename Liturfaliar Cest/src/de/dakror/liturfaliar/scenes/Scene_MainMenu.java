@@ -10,6 +10,7 @@ import java.math.RoundingMode;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.editor.MapEditor;
+import de.dakror.liturfaliar.ovscenes.OVScene_Controls;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Button;
 import de.dakror.liturfaliar.ui.HandleArea;
@@ -23,6 +24,7 @@ public class Scene_MainMenu implements Scene
 {
   boolean       optionsToggle;
   Button[]      buttons        = new Button[3];
+  Button        controls;
   HandleArea    credits;
   HandleArea    optionsToggleArea;
   Button        mapeditor;
@@ -33,8 +35,13 @@ public class Scene_MainMenu implements Scene
   public void construct(Viewport v)
   {
     this.v = v;
-    optionsSliders[0] = new ProgressBar(v.w.getWidth() / 2 - 100, v.w.getHeight() - 80, 200, (float) v.fSoundID, true, "ffc744", "Soundeffekte", true);
-    optionsSliders[1] = new ProgressBar(v.w.getWidth() / 2 - 100, v.w.getHeight() - 50, 200, (float) v.fMusicID, true, "ffc744", "Musik", true);
+    optionsSliders[0] = new ProgressBar(v.w.getWidth() / 2 - 100, v.w.getHeight() - 90, 200, (float) v.fSoundID, true, "ffc744", "Soundeffekte", true);
+    optionsSliders[1] = new ProgressBar(v.w.getWidth() / 2 - 100, v.w.getHeight() - 68, 200, (float) v.fMusicID, true, "ffc744", "Musik", true);
+    controls = new Button(v.w.getWidth() / 2 - 97, v.w.getHeight() - 43, 195, "Tastenbelegung", Color.white, 18f);
+    controls.tileset = null;
+    controls.hovermod = 0;
+    controls.clickmod = 0;
+    controls.soundMOVER = false;
     optionsToggle = false;
     optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 48, 192, 64);
     credits = new HandleArea(14, v.w.getHeight() - 28, 110, 24);
@@ -94,11 +101,6 @@ public class Scene_MainMenu implements Scene
       }
     }
     
-    if (credits == null)
-    {
-      return;
-    }
-    
     if (credits.state == 1)
     {
       v.setScene(new Scene_Credits());
@@ -107,15 +109,32 @@ public class Scene_MainMenu implements Scene
     
     if (optionsSliders[0] != null)
     {
-      v.fSoundID = new BigDecimal(optionsSliders[0].value).setScale(2, RoundingMode.HALF_EVEN).doubleValue();
-      FileManager.saveOptions(v);
+      double vol = new BigDecimal(optionsSliders[0].value).setScale(2, RoundingMode.HALF_EVEN).doubleValue();
+      if (vol != v.fSoundID)
+      {
+        v.fSoundID = vol;
+        FileManager.saveOptions(v);
+      }
+    }
+    
+    if (controls != null)
+    {
+      controls.update();
+      if(controls.getState() == 1) {
+        v.addOVScene(new OVScene_Controls(), "Controls");
+        controls.setState(0);
+      }
     }
     
     if (optionsSliders[1] != null)
     {
-      v.fMusicID = new BigDecimal(optionsSliders[1].value).setScale(2, RoundingMode.HALF_EVEN).doubleValue();
-      v.ss.setVolume(v.MusicID, (float) v.fMusicID);
-      FileManager.saveOptions(v);
+      double vol = new BigDecimal(optionsSliders[1].value).setScale(2, RoundingMode.HALF_EVEN).doubleValue();
+      if (v.fMusicID != vol)
+      {
+        v.fMusicID = vol;
+        v.ss.setVolume(v.MusicID, (float) v.fMusicID);
+        FileManager.saveOptions(v);
+      }
     }
     
     optionsToggleArea.update(v);
@@ -171,10 +190,10 @@ public class Scene_MainMenu implements Scene
       {
         optionsSliders[i].draw(g, v);
       }
+      controls.draw(g, v);
       if (optionsToggleArea == null)
-      {
         optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 150, 192, 64);
-      }
+      
     }
     else
     {
@@ -207,6 +226,10 @@ public class Scene_MainMenu implements Scene
         optionsSliders[i].mousePressed(e);
       }
     }
+    if (optionsToggle && optionsToggleArea.state == 0)
+    {
+      controls.mousePressed(e);
+    }
   }
   
   @Override
@@ -230,6 +253,10 @@ public class Scene_MainMenu implements Scene
     {
       mapeditor.mouseMoved(e);
     }
+    if (optionsToggle && optionsToggleArea.state == 0)
+    {
+      controls.mouseMoved(e);
+    }
   }
   
   @Override
@@ -248,14 +275,21 @@ public class Scene_MainMenu implements Scene
     {
       mapeditor.mouseReleased(e);
     }
+    if (optionsToggle && optionsToggleArea.state == 0)
+    {
+      controls.mouseReleased(e);
+    }
   }
   
   @Override
   public void mouseDragged(MouseEvent e)
   {
-    for (int i = 0; i < optionsSliders.length; i++)
+    if (optionsToggle && optionsToggleArea.state == 0)
     {
-      optionsSliders[i].mouseDragged(e);
+      for (int i = 0; i < optionsSliders.length; i++)
+      {
+        optionsSliders[i].mouseDragged(e);
+      }
     }
   }
   
