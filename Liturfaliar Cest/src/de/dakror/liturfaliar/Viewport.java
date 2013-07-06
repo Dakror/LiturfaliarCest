@@ -321,6 +321,13 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     return (int) ((System.currentTimeMillis() - time) / (250 * size));
   }
   
+  public int getFrame(long time, float size)
+  {
+    if (areFramesFrozen())
+      return 0;
+    return (int) ((System.currentTimeMillis() - time) / (250 * size));
+  }
+  
   /**
    * Initializes the game.
    */

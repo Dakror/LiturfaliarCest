@@ -220,11 +220,14 @@ public class OVScene_Skills extends OVScene implements Inventory
       {
         for (int i = 0; i < PlayerHotbar.SLOTCOUNT; i++)
         {
-          if (sg.getPlayer().getEquipment().getHotbarItem(i) == null)
+          if (sg.getPlayer().getEquipment().getHotbarItem(i) == null || Arrays.asList(hotbar).indexOf(slot) == i)
             continue;
           
           if (sg.getPlayer().getEquipment().getHotbarItem(i).equals(slot.getItem()))
+          {
             sg.getPlayer().getEquipment().setHotbarItem(i, null);
+            hotbar[i].setItem(null);
+          }
         }
       }
       

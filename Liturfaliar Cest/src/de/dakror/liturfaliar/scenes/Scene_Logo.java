@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.io.File;
 import java.util.ArrayList;
 
 import de.dakror.liturfaliar.Viewport;
@@ -48,6 +49,20 @@ public class Scene_Logo implements Scene
       downloader.add(FileManager.onMediaUpdate("Tiles"));
     }
     time = System.currentTimeMillis();
+    
+    new Thread()
+    {
+      public void run()
+      {
+        for (File f : new File(FileManager.dir, "Animations").listFiles())
+        {
+          if (!f.getName().endsWith(".png"))
+            continue;
+          
+          Viewport.loadImage("Animations/" + f.getName());
+        }
+      }
+    }.start();
   }
   
   @Override
@@ -86,7 +101,7 @@ public class Scene_Logo implements Scene
       }
       progress.value = prog / (float) fullsize;
       progress.title = Assistant.formatBinarySize(prog, 2) + " / " + Assistant.formatBinarySize(fullsize, 2) + " @ " + Assistant.formatBinarySize((long) ((prog / (float) ((System.currentTimeMillis() - time) / 1000))), 1) + "/s";
-
+      
       if (progress.value == 1 && (System.currentTimeMillis() - time) > 5000)
         v.setScene(new Scene_MainMenu());
     }

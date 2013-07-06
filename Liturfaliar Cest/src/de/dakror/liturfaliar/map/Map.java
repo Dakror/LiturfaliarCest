@@ -138,7 +138,6 @@ public class Map implements DatabaseEventListener
   public void init() throws Exception
   {
     DatabaseEventDispatcher.addDatabaseEventListener(this);
-    
     alpha = 1.0f;
     creatures = new ArrayList<Creature>();
     aboveFields = new ArrayList<Field>();
@@ -241,20 +240,30 @@ public class Map implements DatabaseEventListener
     {
       talk.update();
     }
+    
+    // -- animations -- //
+    try
+    {
+      for (Animation a : animations)
+      {
+        if (a.isDone())
+          animations.remove(a);
+      }
+    }
+    catch (Exception e)
+    {}
   }
   
   public void draw(Graphics2D g, Viewport v)
   {
     g.drawImage(lrender, getX(), getY(), v.w);
     
-    // for (int i = 0; i < animations.size(); i++)
-    // {
-    // Animation j = animations.get(i);
-    // if (!j.onTop)
-    // j.draw(g, v, this);
-    // if (j.done)
-    // animations.remove(i);
-    // }
+    // -- animations -- //
+    for (Animation a : animations)
+    {
+      if (a.isBelow())
+        a.draw(this, g, v);
+    }
     
     // -- field data -- //
     for (Field f : this.fields)
@@ -287,15 +296,6 @@ public class Map implements DatabaseEventListener
         c.draw(g, v, this);
     }
     
-    // for (int i = 0; i < animations.size(); i++)
-    // {
-    // Animation j = animations.get(i);
-    // if (j.onTop)
-    // j.draw(g, v, this);
-    // if (j.done)
-    // animations.remove(i);
-    // }
-    
     for (Field field : aboveFields)
     {
       if (getPlayer() != null)
@@ -307,6 +307,14 @@ public class Map implements DatabaseEventListener
       g.drawImage(field.getImage(), x + field.getX(), y + field.getY(), v.w);
       
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+    }
+    
+    
+    // -- animations -- //
+    for (Animation a : animations)
+    {
+      if (!a.isBelow())
+        a.draw(this, g, v);
     }
     
     for (Creature c : creatures)
@@ -384,34 +392,7 @@ public class Map implements DatabaseEventListener
   
   public void setPlayer(Player p)
   {
-    
-    try
-    {
-      JSONArray npc = p.getData().getJSONObject("mappack").getJSONArray("npc");
-      for (int i = 0; i < creatures.size(); i++)
-      {
-        if (creatures.get(i) instanceof NPC)
-        {
-          for (int j = 0; j < npc.length(); j++)
-          {
-            JSONObject o = npc.getJSONObject(i);
-            if (o.getInt("id") == ((NPC) creatures.get(i)).getID())
-            {
-              JSONObject random = o.getJSONObject("random");
-              creatures.set(i, new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getInt("dir"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), o.getInt("id"), new Attributes(o.getJSONObject("attr")), new Equipment(o.getJSONObject("equip")), o.getJSONArray("talk")));
-            }
-          }
-        }
-      }
-    }
-    catch (JSONException e)
-    {
-      e.printStackTrace();
-    }
-    
-    
     creatures.add(p);
-    
   }
   
   public int getX()
@@ -501,6 +482,7 @@ public class Map implements DatabaseEventListener
   public void playAnimation(Animation a)
   {
     animations.add(a);
+    a.playAnimation();
   }
   
   public void mouseDragged(MouseEvent e)
@@ -660,10 +642,60 @@ public class Map implements DatabaseEventListener
     itemDrops.remove(d);
   }
   
-  public JSONArray getCustomNPCData()
+  public JSONArray serializeCreatures()
   {
-    JSONArray array = new JSONArray();
+    JSONArray arr = new JSONArray();
     
-    return array;
+    for (Creature c : creatures)
+    {
+      if (c instanceof NPC)
+        arr.put(((NPC) c).serializeNPC());
+    }
+    
+    return arr;
+  }
+  
+  public void loadCreatures(JSONArray arr) throws JSONException
+  {
+    for (int i = 0; i < arr.length(); i++)
+    {
+      JSONObject o = arr.getJSONObject(i);
+      JSONObject random = o.getJSONObject("random");
+      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getInt("dir"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), o.getInt("id"), new Attributes(o.getJSONObject("attr")), new Equipment(o.getJSONObject("equip")), o.getJSONArray("talk"));
+      for (int j = 0; j < creatures.size(); j++)
+      {
+        if (creatures.get(j) instanceof NPC)
+        {
+          if (((NPC) creatures.get(j)).getID() == npc.getID())
+            creatures.set(j, npc);
+        }
+      }
+    }
+  }
+  
+  public JSONObject serializeMap()
+  {
+    JSONObject o = new JSONObject();
+    try
+    {
+      o.put("npc", serializeCreatures());
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+    }
+    return o;
+  }
+  
+  public void loadMap(JSONObject o)
+  {
+    try
+    {
+      loadCreatures(o.getJSONArray("npc"));
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+    }
   }
 }

@@ -19,6 +19,7 @@ import de.dakror.liturfaliar.event.dispatcher.PlayerHotbarEventDispatcher;
 import de.dakror.liturfaliar.event.listener.MapPackEventListener;
 import de.dakror.liturfaliar.event.listener.PlayerEventListener;
 import de.dakror.liturfaliar.event.listener.PlayerHotbarEventListener;
+import de.dakror.liturfaliar.fx.Animation;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.ItemDrop;
 import de.dakror.liturfaliar.map.Map;
@@ -61,6 +62,8 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     MapPackEventDispatcher.addMapPackEventListener(this);
     try
     {
+      mappack.setChangedMaps(v.savegame.getJSONObject("mappack").getJSONObject("cmaps"));
+      
       JSONArray itemDrops = v.savegame.getJSONObject("mappack").getJSONArray("drops");
       
       for (int i = 0; i < itemDrops.length(); i++)
@@ -286,7 +289,8 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   @Override
   public void levelUp(int oldLevel)
   {
-    v.playSound("111-Heal07");
+    v.playSound("105-Heal01");
+    mappack.getActiveMap().playAnimation(new Animation(-25, -30, 80, 0, 10, 0.35f, false, "Heal3.png", player));
     player.getAttributes().getAttribute(Attr.skillpoint).increase((int) Math.floor(player.getLevel() / 10.0) + 1);
     Database.setStringVar("player_sp", "" + (int) player.getAttributes().getAttribute(Attr.skillpoint).getValue());
     Database.setStringVar("player_level", "" + player.getLevel());

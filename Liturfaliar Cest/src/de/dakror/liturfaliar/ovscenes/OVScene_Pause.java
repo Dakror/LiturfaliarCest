@@ -11,8 +11,6 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.ItemDrop;
-import de.dakror.liturfaliar.map.creature.Creature;
-import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.scenes.Scene_LoadGame;
 import de.dakror.liturfaliar.scenes.Scene_MainMenu;
@@ -148,15 +146,7 @@ public class OVScene_Pause extends OVScene
       pos.put("y", (v.w.getHeight() / 2 - CFG.FIELDSIZE * 3 / 4) - sg.getMapPack().getActiveMap().getY());
       mappack.put("pos", pos);
       
-      JSONArray npc = new JSONArray();
-      for (Creature c : sg.getMapPack().getActiveMap().creatures)
-      {
-        if (c instanceof NPC)
-        {
-          npc.put(((NPC) c).serializeNPC());
-        }
-      }
-      mappack.put("npc", npc);
+      mappack.put("cmaps", sg.getMapPack().getChangedMaps());
       
       save.put("mappack", mappack);
     }

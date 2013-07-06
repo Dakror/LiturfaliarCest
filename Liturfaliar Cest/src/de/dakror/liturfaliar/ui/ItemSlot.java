@@ -240,12 +240,12 @@ public class ItemSlot extends Component
       int xt = ax + (width - strWidth) / 2;
       int yt = ay + height / 2 + strHeight / 4;
       
-      if (cooldown > 999) // longer than 0.999s
+      if (item.getAttributes().getAttribute(Attr.cooldown).getMaximum() >= 0.5) // longer than 0.5s
         area.add(new Area(new RoundRectangle2D.Double(xt - 2, yt - strHeight * 0.625, strWidth + 4, strHeight * 0.75, 8, 8)));
       
       Assistant.Shadow(area, Colors.DGRAY, 0.9f, g);
       
-      if (cooldown > 999) // longer than 0.999s
+      if (item.getAttributes().getAttribute(Attr.cooldown).getMaximum() >= 0.5) // longer than 0.5s
         g.drawString(s, xt, yt);
       
       g.setFont(oldFont);

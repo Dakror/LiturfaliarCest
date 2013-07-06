@@ -266,7 +266,7 @@ public class Scene_NewGame implements Scene
       JSONObject mappack = new JSONObject();
       mappack.put("name", mp.getName());
       mappack.put("pos", mp.getData().getJSONObject("init"));
-      mappack.put("npc", new JSONArray());
+      mappack.put("cmaps", new JSONObject());
       mappack.put("drops", new JSONArray());
       save.put("mappack", mappack);
       
