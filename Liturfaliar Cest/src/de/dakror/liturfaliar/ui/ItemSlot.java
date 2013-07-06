@@ -105,11 +105,16 @@ public class ItemSlot extends Component
   }
   
   public void update(long timePassed)
-  { // -- cooldown stuff -- //
+  {
+    // -- cooldown stuff -- //
     if (!cooldownFrozen && item != null && cooldown > 0)
     {
       cooldown = (cooldown - timePassed >= 0) ? cooldown - timePassed : 0;
-      item.getAttributes().getAttribute(Attr.cooldown).setValue(cooldown / 1000.0);
+      
+      if (cooldown == 0)
+        item.getAttributes().getAttribute(Attr.cooldown).setValue(item.getAttributes().getAttribute(Attr.cooldown).getMaximum());
+      
+      else item.getAttributes().getAttribute(Attr.cooldown).setValue(cooldown / 1000.0);
     }
   }
   
@@ -235,10 +240,13 @@ public class ItemSlot extends Component
       int xt = ax + (width - strWidth) / 2;
       int yt = ay + height / 2 + strHeight / 4;
       
-      area.add(new Area(new RoundRectangle2D.Double(xt - 2, yt - strHeight * 0.625, strWidth + 4, strHeight * 0.75, 8, 8)));
+      if (cooldown > 999) // longer than 0.999s
+        area.add(new Area(new RoundRectangle2D.Double(xt - 2, yt - strHeight * 0.625, strWidth + 4, strHeight * 0.75, 8, 8)));
       
       Assistant.Shadow(area, Colors.DGRAY, 0.9f, g);
-      g.drawString(s, xt, yt);
+      
+      if (cooldown > 999) // longer than 0.999s
+        g.drawString(s, xt, yt);
       
       g.setFont(oldFont);
       g.setColor(oldColor);
@@ -643,6 +651,7 @@ public class ItemSlot extends Component
   {
     if (item == null || item.getAttributes().getAttribute(Attr.cooldown).isEmpty())
       return;
+    
     cooldown = (long) (item.getAttributes().getAttribute(Attr.cooldown).getMaximum() * 1000);
     cooldownFrozen = false;
   }

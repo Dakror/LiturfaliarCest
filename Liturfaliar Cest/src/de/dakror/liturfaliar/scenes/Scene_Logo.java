@@ -69,7 +69,6 @@ public class Scene_Logo implements Scene
     {
       fullsize = 0;
       int prog = 0;
-      boolean finished = false;
       int done = 0;
       for (int i = 0; i < downloader.size(); i++)
       {
@@ -81,14 +80,14 @@ public class Scene_Logo implements Scene
             done++;
           if (done == downloader.size())
           {
-            finished = true;
             break;
           }
         }
       }
       progress.value = prog / (float) fullsize;
       progress.title = Assistant.formatBinarySize(prog, 2) + " / " + Assistant.formatBinarySize(fullsize, 2) + " @ " + Assistant.formatBinarySize((long) ((prog / (float) ((System.currentTimeMillis() - time) / 1000))), 1) + "/s";
-      if (finished && (System.currentTimeMillis() - time) > 5000)
+
+      if (progress.value == 1 && (System.currentTimeMillis() - time) > 5000)
         v.setScene(new Scene_MainMenu());
     }
     else

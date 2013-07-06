@@ -16,6 +16,8 @@ public abstract class SkillAnimation
   boolean             done;
   boolean             below;
   
+  long time;
+  
   ArrayList<Creature> affected;
   
   public void playAnimation(Item i, Creature c)
@@ -24,6 +26,7 @@ public abstract class SkillAnimation
     caster = c;
     affected = new ArrayList<Creature>();
     init();
+    time = System.currentTimeMillis();
   }
   
   public abstract void init();

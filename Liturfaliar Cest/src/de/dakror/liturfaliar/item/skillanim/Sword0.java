@@ -27,6 +27,7 @@ public class Sword0 extends SkillAnimation
   {
     image = ((BufferedImage) Viewport.loadImage("system/icons.png")).getSubimage(caster.getEquipment().getFirstWeapon().getIconPoint().x * 24, caster.getEquipment().getFirstWeapon().getIconPoint().y * 24, 24, 24);
     hitArea = Assistant.toArea(image);
+    
     left = -15;
     lastTick = 0;
     done = false;
@@ -55,6 +56,7 @@ public class Sword0 extends SkillAnimation
     
     if (left >= 50)
     {
+      //CFG.p(System.currentTimeMillis() - time);
       done = true;
       return;
     }

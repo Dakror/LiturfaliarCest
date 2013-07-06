@@ -77,6 +77,7 @@ public class Player extends Creature
       
       for (int i = 0; i < skills.length(); i++)
       {
+        CFG.p("loading skill " + new Item(skills.getJSONObject(i)).getName());
         this.skills.add(new Item(skills.getJSONObject(i)));
       }
     }

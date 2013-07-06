@@ -32,7 +32,8 @@ public class SkillAction extends ItemAction
         return;
       }
     }
-    
+
+    item.getItemSlot().startCooldown();
     c.playSkill(animation);
     animation.playAnimation(item, c);
   }

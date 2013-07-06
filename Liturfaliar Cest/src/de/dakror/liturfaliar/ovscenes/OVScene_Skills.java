@@ -157,7 +157,6 @@ public class OVScene_Skills extends OVScene implements Inventory
     
     int y = 100 + 50;
     int width = 800;
-    // int height = v.w.getHeight() - 300;
     int cx = x + width / 2 - SkillSlot.SIZE / 2;
     
     slots.clear();
@@ -217,6 +216,18 @@ public class OVScene_Skills extends OVScene implements Inventory
   {
     if (slot instanceof ItemSlot) // hotbar
     {
+      if (slot.getItem().getType().getCategory().equals(Categories.SKILL))
+      {
+        for (int i = 0; i < PlayerHotbar.SLOTCOUNT; i++)
+        {
+          if (sg.getPlayer().getEquipment().getHotbarItem(i) == null)
+            continue;
+          
+          if (sg.getPlayer().getEquipment().getHotbarItem(i).equals(slot.getItem()))
+            sg.getPlayer().getEquipment().setHotbarItem(i, null);
+        }
+      }
+      
       sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), slot.getItem());
     }
   }
