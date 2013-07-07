@@ -12,11 +12,14 @@ public abstract class SkillAnimation
 {
   Item                item;
   Creature            caster;
+  String              sound;
   
   boolean             done;
   boolean             below;
+  boolean             hit;
+  boolean             played;
   
-  long time;
+  long                time;
   
   ArrayList<Creature> affected;
   
@@ -25,6 +28,8 @@ public abstract class SkillAnimation
     item = i;
     caster = c;
     affected = new ArrayList<Creature>();
+    played = false;
+    hit = false;
     init();
     time = System.currentTimeMillis();
   }
@@ -54,6 +59,18 @@ public abstract class SkillAnimation
   
   public void drawBelow(Graphics2D g, Viewport v, Map m)
   {
+    if (!played)
+    {
+      v.playSound("064-Swing03");
+      played = true;
+    }
+    
+    if (hit)
+    {
+      v.playSound("185-Hit01");
+      hit = false;
+    }
+    
     if (!below)
       return;
     

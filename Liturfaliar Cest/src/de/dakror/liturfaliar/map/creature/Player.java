@@ -163,10 +163,6 @@ public class Player extends Creature
         time = System.currentTimeMillis();
       }
     }
-    else
-    {
-      addXP(2);
-    }
     
     if (sprint && (dirs[0] || dirs[1] || dirs[2] || dirs[3]) && (System.currentTimeMillis() - time) > Balance.Player.STAMINADECREASE && attr.getAttribute(Attr.stamina).getValue() > 0 && !m.isPeaceful())
     {

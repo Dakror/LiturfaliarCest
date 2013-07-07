@@ -224,7 +224,7 @@ public class Map implements DatabaseEventListener
   }
   
   public void update(long timePassed, Scene_Game sg)
-  {
+  {    
     for (Field f : fields)
     {
       f.update(this);
@@ -296,6 +296,13 @@ public class Map implements DatabaseEventListener
         c.draw(g, v, this);
     }
     
+    // -- animations -- //
+    for (Animation a : animations)
+    {
+      if (!a.isBelow())
+        a.draw(this, g, v);
+    }
+    
     for (Field field : aboveFields)
     {
       if (getPlayer() != null)
@@ -307,14 +314,6 @@ public class Map implements DatabaseEventListener
       g.drawImage(field.getImage(), x + field.getX(), y + field.getY(), v.w);
       
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-    }
-    
-    
-    // -- animations -- //
-    for (Animation a : animations)
-    {
-      if (!a.isBelow())
-        a.draw(this, g, v);
     }
     
     for (Creature c : creatures)
@@ -503,13 +502,18 @@ public class Map implements DatabaseEventListener
         c.mouseMoved(e, this);
     }
     
-    for (ItemDrop id : itemDrops)
+    try
     {
-      id.mouseMoved(e, this);
-      
-      if (hoveredItemDrop == null && id.getArea(this).contains(e.getPoint()))
-        hoveredItemDrop = id;
+      for (ItemDrop id : itemDrops)
+      {
+        id.mouseMoved(e, this);
+        
+        if (hoveredItemDrop == null && id.getArea(this).contains(e.getPoint()))
+          hoveredItemDrop = id;
+      }
     }
+    catch (Exception e1)
+    {}
   }
   
   public void mouseClicked(MouseEvent e)

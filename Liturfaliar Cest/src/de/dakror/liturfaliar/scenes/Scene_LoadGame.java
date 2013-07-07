@@ -70,7 +70,7 @@ public class Scene_LoadGame implements Scene
         saves[i].hovermod = 4;
         saves[i].clickmod = 16;
         saves[i].soundMOVER = false;
-        saves[i].tooltip = new Tooltip("<#999999;30;1>" + datas[i].getJSONObject("char").getString("name") + "[br]<#ffffff;17;1>Zuletzt gespielt: " + getRelativeDate(datas[i].getLong("lastplayed")) + "[br]<#ffffff;17;1>Ort: <#4444ff;17;1>" + datas[i].getJSONObject("mappack").getJSONObject("pos").getString("map"), saves[i]);
+        saves[i].tooltip = new Tooltip("<#999999;30;1>" + datas[i].getString("savename") + "[br]<#ffffff;17;1>Zuletzt gespielt: " + getRelativeDate(datas[i].getLong("lastplayed")) + "[br]<#ffffff;17;1>Ort: <#4444ff;17;1>" + datas[i].getJSONObject("mappack").getJSONObject("pos").getString("map"), saves[i]);
         saves[i].tooltip.follow = true;
       }
       catch (JSONException e)

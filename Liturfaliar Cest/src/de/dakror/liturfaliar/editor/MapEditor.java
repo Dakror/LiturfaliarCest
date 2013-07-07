@@ -2253,7 +2253,18 @@ public class MapEditor
       w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(getTileImage(), new Point(CFG.FIELDSIZE / 2, CFG.FIELDSIZE / 2), "tile"));
     
     if (NPCframe != null)
-      w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(((BufferedImage) ((ImageIcon) NPCpreview.getIcon()).getImage()).getSubimage(0, 16, 32, 32), new Point(0, 0), "npc"));
+    {
+      BufferedImage image = (BufferedImage) ((ImageIcon) NPCpreview.getIcon()).getImage();
+      int x = 0;
+      int y = 0;
+      int width = image.getWidth();
+      int height = image.getHeight();
+      x = (width > 32) ? width - 32 : x;
+      y = (height > 32) ? height - 32 : y;
+      width = (width > 32) ? 32 : width;
+      height = (height > 32) ? 32 : height;
+      w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(image.getSubimage(x, y, width, height), new Point(0, 0), "npc"));
+    }
   }
   
   public void undo()

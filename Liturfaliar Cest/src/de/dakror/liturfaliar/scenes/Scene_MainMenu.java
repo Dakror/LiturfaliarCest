@@ -120,7 +120,8 @@ public class Scene_MainMenu implements Scene
     if (controls != null)
     {
       controls.update();
-      if(controls.getState() == 1) {
+      if (controls.getState() == 1)
+      {
         v.addOVScene(new OVScene_Controls(), "Controls");
         controls.setState(0);
       }
@@ -186,10 +187,10 @@ public class Scene_MainMenu implements Scene
       Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 96, v.w.getHeight() - 150, 192, 64, g, v.w);
       Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 128, v.w.getHeight() - 102, 256, 96, g, v.w);
       Assistant.drawHorizontallyCenteredString("Optionen", v.w.getWidth() / 2 - 96, 192, v.w.getHeight() - 110, g, 26, Color.white);
+      
       for (int i = 0; i < optionsSliders.length; i++)
-      {
         optionsSliders[i].draw(g, v);
-      }
+      
       controls.draw(g, v);
       if (optionsToggleArea == null)
         optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 150, 192, 64);
@@ -199,10 +200,9 @@ public class Scene_MainMenu implements Scene
     {
       Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 96, v.w.getHeight() - 48, 192, 64, g, v.w);
       Assistant.drawHorizontallyCenteredString("Optionen", v.w.getWidth() / 2 - 96, 192, v.w.getHeight() - 8, g, 26, Color.white);
+      
       if (optionsToggleArea == null)
-      {
         optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 48, 192, 64);
-      }
     }
   }
   
@@ -220,16 +220,11 @@ public class Scene_MainMenu implements Scene
   public void mousePressed(MouseEvent e)
   {
     if (optionsToggle && optionsToggleArea.state == 0)
-    {
       for (int i = 0; i < optionsSliders.length; i++)
-      {
         optionsSliders[i].mousePressed(e);
-      }
-    }
+    
     if (optionsToggle && optionsToggleArea.state == 0)
-    {
       controls.mousePressed(e);
-    }
   }
   
   @Override
@@ -245,18 +240,13 @@ public class Scene_MainMenu implements Scene
       }
     }
     catch (Exception e2)
-    {
-      return;
-    }
+    {}
     
     if (mapeditor != null)
-    {
       mapeditor.mouseMoved(e);
-    }
+    
     if (optionsToggle && optionsToggleArea.state == 0)
-    {
       controls.mouseMoved(e);
-    }
   }
   
   @Override
@@ -272,25 +262,18 @@ public class Scene_MainMenu implements Scene
     credits.mouseReleased(e);
     
     if (mapeditor != null)
-    {
       mapeditor.mouseReleased(e);
-    }
+    
     if (optionsToggle && optionsToggleArea.state == 0)
-    {
       controls.mouseReleased(e);
-    }
   }
   
   @Override
   public void mouseDragged(MouseEvent e)
   {
     if (optionsToggle && optionsToggleArea.state == 0)
-    {
       for (int i = 0; i < optionsSliders.length; i++)
-      {
         optionsSliders[i].mouseDragged(e);
-      }
-    }
   }
   
   @Override

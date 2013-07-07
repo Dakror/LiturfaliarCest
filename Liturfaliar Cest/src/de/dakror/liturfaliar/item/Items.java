@@ -24,7 +24,7 @@ public enum Items
   // -- skills -- //
   
   // -- swordskills -- //
-  SWORD0(13, 508, 0, 0, "Schwert-Talent", "", Types.SWORDSKILL, new Attributes(Attr.cooldown, 0.18, Attr.health, -5), new Attributes(Attr.skillpoint, 1), new SkillAction("<#ffffff;15;2>Das Talent, mit schwertähnlichen Waffen umzu-[br]<#ffffff;15;2>gehen und einen einfachen Schlag auszuführen.", new Sword0())),
+  SWORD0(13, 508, 0, 0, "Schwert-Talent", "", Types.SWORDSKILL, new Attributes(Attr.health, -5), new Attributes(Attr.skillpoint, 1), new SkillAction("<#ffffff;15;2>Das Talent, mit schwertähnlichen Waffen umzu-[br]<#ffffff;15;2>gehen und einen einfachen Schlag auszuführen.", new Sword0())),
   SWORD1(14, 511, 0, 0, "Schwung", "", Types.SWORDSKILL, new Attributes(), new Attributes(Attr.skillpoint, 1, Attr.level, 2), new SkillAction("<#ffffff;15;2>Ein Frontalangriff mit geringem Schaden auf[br]<#ffffff;15;2>mehrere Ziele vertielt und geringem Radius.", new EmptyAnimation())),
   SWORD2(13, 511, 0, 0, "Weiter Schwung", "", Types.SWORDSKILL, new Attributes(), new Attributes(Attr.skillpoint, 2, Attr.level, 3), new SkillAction("<#ffffff;15;2>Ein Frontalangriff mit mittlerem Schaden auf[br]<#ffffff;15;2>mehrere Ziele vertielt und weitem Radius.", new EmptyAnimation())),
   SWORD3(10, 511, 0, 0, "Rundumschlag", "", Types.SWORDSKILL, new Attributes(), new Attributes(Attr.skillpoint, 3, Attr.level, 5), new SkillAction("<#ffffff;15;2>Ein Rundumangriff mit großem Schaden auf[br]<#ffffff;15;2>mehrere Ziele vertielt.", new EmptyAnimation())),

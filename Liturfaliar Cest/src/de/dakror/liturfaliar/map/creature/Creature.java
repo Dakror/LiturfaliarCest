@@ -175,7 +175,9 @@ public class Creature implements MapEventListener
       }
     }
     catch (ConcurrentModificationException e)
-    {}
+    {
+      e.printStackTrace();
+    }
   }
   
   public void draw(Graphics2D g, Viewport v, Map m)
@@ -214,6 +216,7 @@ public class Creature implements MapEventListener
   {
     if (!intersects(other, map))
       return;
+    
     pos = lastPos;
   }
   
@@ -421,6 +424,18 @@ public class Creature implements MapEventListener
   public void playSkill(SkillAnimation s)
   {
     skills.add(s);
+  }
+  
+  public boolean isPlayingSkill(SkillAnimation s)
+  {
+    for (SkillAnimation sa : skills)
+    {
+      if (sa.getClass().equals(s.getClass()))
+      {
+        return !sa.isDone();
+      }
+    }
+    return false;
   }
   
   public boolean isAlive()

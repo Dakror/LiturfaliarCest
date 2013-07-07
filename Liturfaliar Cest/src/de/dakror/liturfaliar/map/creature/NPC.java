@@ -63,6 +63,7 @@ public class NPC extends Creature
     }
     else
     {
+      equipment = new Equipment();
       character = c;
       Assistant.drawChar(0, 0, w, h, 0, 0, "chars", character, g, null, true);
     }
@@ -135,7 +136,7 @@ public class NPC extends Creature
     {
       int direction = (int) Math.round(Math.random() * 3);
       // 0 = left, 1 = up, 2 = right, 3 = down
-      int distance = (int) Math.round((Math.random() * CFG.FIELDSIZE));
+      int distance = (int) Math.round((Math.random() * CFG.FIELDSIZE * getSpeed()));
       
       int x = getRelativePos()[0] + bx;
       int y = getRelativePos()[1] + by;
@@ -187,7 +188,7 @@ public class NPC extends Creature
       time = System.currentTimeMillis();
     }
     
-    if (m.getPlayer().getField().distance(getField()) < 1.1 && m.getPlayer().isLookingAt(this, m))
+    if (m.getPlayer().getField().distance(getField()) < 1.1 && m.getPlayer().isLookingAt(this, m) && talkdata.length() > 0)
     {
       if (emoticon == null && !isTalking())
       {
@@ -205,7 +206,7 @@ public class NPC extends Creature
   @Override
   public void mousePressed(MouseEvent e, Map m)
   {
-    if (m.getPlayer().getField().distance(getField()) < 1.3 && m.getPlayer().isLookingAt(this, m) && e.getButton() == 1 && getArea().contains(new Point(e.getX() - m.getX(), e.getY() - m.getY())))
+    if (m.getPlayer().getField().distance(getField()) < 1.3 && m.getPlayer().isLookingAt(this, m) && e.getButton() == 1 && getArea().contains(new Point(e.getX() - m.getX(), e.getY() - m.getY())) && talkdata.length() > 0)
     {
       if (m.talk == null)
       {
@@ -326,5 +327,16 @@ public class NPC extends Creature
   public void setID(int iD)
   {
     ID = iD;
+  }
+
+  @Override
+  public void onIntersect(Creature other, Map map)
+  {
+    if (!intersects(other, map))
+      return;
+    
+    if(!isHostile() && other instanceof Player) return;
+    
+    pos = lastPos;
   }
 }

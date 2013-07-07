@@ -32,10 +32,12 @@ public class SkillAction extends ItemAction
         return;
       }
     }
-
-    item.getItemSlot().startCooldown();
-    c.playSkill(animation);
-    animation.playAnimation(item, c);
+    if (!c.isPlayingSkill(animation))
+    {
+      c.playSkill(animation);
+      animation.playAnimation(item, c);
+      item.getItemSlot().startCooldown();
+    }
   }
   
   public String getDescription()

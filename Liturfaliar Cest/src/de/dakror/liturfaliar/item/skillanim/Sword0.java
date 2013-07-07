@@ -44,7 +44,6 @@ public class Sword0 extends SkillAnimation
     Area intersection = o.getHitArea(m);
     
     intersection.intersect(realHitArea);
-    
     return !intersection.isEmpty();
   }
   
@@ -56,7 +55,6 @@ public class Sword0 extends SkillAnimation
     
     if (left >= 50)
     {
-      //CFG.p(System.currentTimeMillis() - time);
       done = true;
       return;
     }
@@ -117,7 +115,7 @@ public class Sword0 extends SkillAnimation
     
     if (System.currentTimeMillis() - lastTick > 0)
     {
-      left += 8;
+      left += 10;
       lastTick = System.currentTimeMillis();
     }
   }
@@ -125,6 +123,10 @@ public class Sword0 extends SkillAnimation
   @Override
   public void dealEffect(Creature c)
   {
-    c.setAttributes(Attributes.vsum(c.getAttributes(), item.getAttributes()));
+    if (!c.equals(caster))
+    {
+      c.setAttributes(Attributes.vsum(c.getAttributes(), item.getAttributes()));
+      hit = true;
+    }
   }
 }

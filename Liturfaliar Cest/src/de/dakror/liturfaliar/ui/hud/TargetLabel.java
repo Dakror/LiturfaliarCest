@@ -2,6 +2,9 @@ package de.dakror.liturfaliar.ui.hud;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
@@ -18,6 +21,7 @@ public class TargetLabel extends HUDComponent
   Creature    target;
   Icon        hostile;
   ProgressBar health;
+  Point       mouse = new Point(0, 0);
   
   public TargetLabel()
   {
@@ -28,18 +32,15 @@ public class TargetLabel extends HUDComponent
   @Override
   public void update(long timePassed, Map m)
   {
+    this.target = null;
     for (Creature c : m.creatures)
     {
       if (c != null && c.getClass() != Player.class)
       {
-        if (m.getPlayer().isLookingAt(c, m) && m.getPlayer().getField().distance(c.getField()) < 3.0 && c.isAlive())
-        {
+        if (c.isAlive() && ((m.getPlayer().isLookingAt(c, m) && m.getPlayer().getField().distance(c.getField()) < 3.0) || (new Rectangle(m.getX() + c.getRelativePos()[0], m.getY() + c.getRelativePos()[1], c.getWidth(), c.getHeight()).contains(mouse))))
           this.target = c;
-          return;
-        }
       }
     }
-    this.target = null;
   }
   
   @Override
@@ -78,5 +79,11 @@ public class TargetLabel extends HUDComponent
       catch (Exception e)
       {}
     }
+  }
+  
+  @Override
+  public void mouseMoved(MouseEvent e, Map m)
+  {
+    mouse = e.getLocationOnScreen();
   }
 }

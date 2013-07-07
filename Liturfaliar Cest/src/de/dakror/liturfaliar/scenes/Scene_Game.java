@@ -95,7 +95,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   
   @Override
   public void update(long timePassed)
-  {
+  {   
     if (!v.areFramesFrozen())
       mappack.getActiveMap().update(timePassed, this);
     // -- HUD -- //
@@ -218,6 +218,9 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
       mappack.getActiveMap().mouseMoved(e);
     
     CursorText.mouseMoved(e);
+    
+    if (targetLabel != null)
+      targetLabel.mouseMoved(e, mappack.getActiveMap());
     
     if (bottomSegment != null)
       bottomSegment.mouseMoved(e, mappack.getActiveMap());

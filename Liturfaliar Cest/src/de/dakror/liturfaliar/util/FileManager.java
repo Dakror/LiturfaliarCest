@@ -148,6 +148,7 @@ public class FileManager
       try
       {
         result[i].put("lastplayed", files[i].lastModified());
+        result[i].put("savename", files[i].getName().replace(".save", ""));
       }
       catch (JSONException e)
       {
