@@ -10,16 +10,19 @@ import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
+import de.dakror.liturfaliar.settings.DamageType;
 
 public class PotionAction extends ItemAction
 {
   Attributes changes;
   String     targetID;
+  DamageType dmgType;
   
-  public PotionAction(String t, Attributes c)
+  public PotionAction(String t, Attributes c, DamageType d)
   {
     changes = c;
     targetID = t;
+    dmgType = d;
   }
   
   @Override
@@ -60,17 +63,25 @@ public class PotionAction extends ItemAction
       return;
     }
     
-    for (Attr attr : Attr.values())
+    // for (Attr attr : Attr.values())
+    // {
+    // Attribute attribute = attributes.getAttribute(attr);
+    //
+    // if (!changes.getAttribute(attr).isEmpty())
+    // {
+    // double sum = changes.getAttribute(attr).getValue() + attribute.getValue();
+    //
+    // if (!attr.equals(Attr.health))
+    // attributes.getAttribute(attr).setValue((sum < attribute.getMaximum()) ? ((sum >= attr.getMinimum()) ? sum : attr.getMinimum()) : attribute.getMaximum());
+    // }
+    // }
+    // target.setAttributes(attributes);
+    
+    if (!changes.getAttribute(Attr.health).isEmpty())
     {
-      Attribute attribute = attributes.getAttribute(attr);
-      
-      if (!changes.getAttribute(attr).isEmpty())
-      {
-        double sum = changes.getAttribute(attr).getValue() + attribute.getValue();
-        attributes.getAttribute(attr).setValue((sum < attribute.getMaximum()) ? ((sum >= attr.getMinimum()) ? sum : attr.getMinimum()) : attribute.getMaximum());
-      }
+      target.dealDamage(dmgType, (int) changes.getAttribute(Attr.health).getValue());
     }
-    target.setAttributes(attributes);
+    
     v.playSound("184-DrinkPotion");
     item.getItemSlot().subItem();
     item.getItemSlot().startCooldown();
@@ -83,6 +94,7 @@ public class PotionAction extends ItemAction
     try
     {
       o.put("type", getClass().getSimpleName());
+      o.put("dmgtype", dmgType.name());
       o.put("target", targetID);
       o.put("attr", changes.serializeAttributes());
     }
@@ -102,7 +114,7 @@ public class PotionAction extends ItemAction
   {
     try
     {
-      return new PotionAction(o.getString("target"), new Attributes(o.getJSONObject("attr")));
+      return new PotionAction(o.getString("target"), new Attributes(o.getJSONObject("attr")), DamageType.valueOf(o.getString("dmgtype")));
     }
     catch (JSONException e)
     {

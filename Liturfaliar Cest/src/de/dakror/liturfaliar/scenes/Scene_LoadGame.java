@@ -289,6 +289,9 @@ public class Scene_LoadGame implements Scene
   @Override
   public void mouseReleased(MouseEvent e)
   {
+    if (saves == null)
+      return;
+    
     if (chooser != null)
     {
       for (int i = 5 * ((Integer) chooser.getSelected(false) - 1); i < ((5 * (Integer) chooser.getSelected(false) < saves.length) ? 5 * (Integer) chooser.getSelected(false) : saves.length); i++)

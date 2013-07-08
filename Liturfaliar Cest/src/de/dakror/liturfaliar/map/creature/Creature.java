@@ -18,37 +18,41 @@ import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.CFG;
+import de.dakror.liturfaliar.settings.DamageType;
+import de.dakror.liturfaliar.ui.DamageIndicator;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Vector;
 
 public class Creature implements MapEventListener
 {
-  public static final int[]           DIRS  = { 3, 2, 0, 1 };
-  public static final int             LEVEL = 25;
+  public static final int[]            DIRS  = { 3, 2, 0, 1 };
+  public static final int              LEVEL = 25;
   
-  private double                      speed;
+  private double                       speed;
   
-  public int                          bw, bh, bx, by;
-  public boolean                      frozen;
+  public int                           bw, bh, bx, by;
+  public boolean                       frozen;
   
-  protected int                       w, h;
-  protected int                       dir;
-  protected boolean                   massive;
-  protected double                    layer;
+  protected int                        w, h;
+  protected int                        dir;
+  protected boolean                    massive;
+  protected double                     layer;
   
-  protected Vector                    lastPos, pos, goTo;
-  protected Emoticon                  emoticon;
+  protected Vector                     lastPos, pos, goTo;
+  protected Emoticon                   emoticon;
   
-  protected Attributes                attr;
-  protected Equipment                 equipment;
+  protected Attributes                 attr;
+  protected Equipment                  equipment;
   
-  protected ArrayList<SkillAnimation> skills;
+  protected ArrayList<SkillAnimation>  skills;
+  protected ArrayList<DamageIndicator> dmgIndicators;
   
-  protected Area                      hitArea;
+  protected Area                       hitArea;
   
   public Creature(int x, int y, int w, int h)
   {
@@ -62,6 +66,7 @@ public class Creature implements MapEventListener
     attr = new Attributes();
     
     skills = new ArrayList<SkillAnimation>();
+    dmgIndicators = new ArrayList<DamageIndicator>();
   }
   
   public void setHuman()
@@ -175,13 +180,33 @@ public class Creature implements MapEventListener
       }
     }
     catch (ConcurrentModificationException e)
+    {}
+    
+    try
     {
-      e.printStackTrace();
+      for (DamageIndicator dmgi : dmgIndicators)
+      {
+        if (dmgi.isDone())
+          dmgIndicators.remove(dmgi);
+      }
     }
+    catch (ConcurrentModificationException e)
+    {}
   }
   
   public void draw(Graphics2D g, Viewport v, Map m)
   {
+    try
+    {
+      for (DamageIndicator dmgi : dmgIndicators)
+      {
+        if (!dmgi.isDone())
+          dmgi.draw(m, g, v);
+      }
+    }
+    catch (ConcurrentModificationException e)
+    {}
+    
     if (CFG.UIDEBUG)
     {
       Color color = g.getColor();
@@ -190,6 +215,8 @@ public class Creature implements MapEventListener
       Assistant.Shadow(new Rectangle2D.Double(m.getX() + getRelativePos()[0] + bx, m.getY() + getRelativePos()[1] + by, bw, bh), Color.orange, 1, g);
       g.setColor(color);
     }
+    
+    
   }
   
   public void drawEmoticon(Graphics2D g, Viewport v, Map m)
@@ -444,5 +471,28 @@ public class Creature implements MapEventListener
       return true;
     
     else return attr.getAttribute(Attr.health).getValue() > 0;
+  }
+  
+  public void dealDamage(DamageType type, Integer damage)
+  {
+    Attribute a = attr.getAttribute(Attr.health);
+    int val = (int) (damage + a.getValue());
+    
+    if (val > a.getMaximum())
+    {
+      int dif = (int) (a.getMaximum() - a.getValue());
+      if (dif == 0)
+        return;
+      
+      else val = (int) (dif + a.getValue());
+    }
+    
+    attr.getAttribute(Attr.health).setValue(val);
+    addDamageIndicator(new DamageIndicator(this, type, Math.abs(damage)));
+  }
+  
+  public void addDamageIndicator(DamageIndicator d)
+  {
+    dmgIndicators.add(d);
   }
 }

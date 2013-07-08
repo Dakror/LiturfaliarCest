@@ -8,6 +8,7 @@ import de.dakror.liturfaliar.item.skillanim.EmptyAnimation;
 import de.dakror.liturfaliar.item.skillanim.Sword0;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
+import de.dakror.liturfaliar.settings.DamageType;
 
 
 public enum Items
@@ -18,8 +19,8 @@ public enum Items
   BOYPANTS(7, 391, 0, 0, "Hose", "1_brown", Types.PANTS, new Attributes(Attr.protection, 1, Attr.weight, 1.1), new Attributes(), new EmptyAction()),
   BOYBOOTS(0, 3, 0, 0, "Schuhe", "1_black", Types.SHOES, new Attributes(Attr.protection, 1, Attr.weight, 0.5), new Attributes(), new EmptyAction()),
   GIRLBOOTS(0, 3, 0, 0, "Halbschuhe", "8_black", Types.SHOES, new Attributes(Attr.protection, 1, Attr.weight, 0.5), new Attributes(), new EmptyAction()),
-  HEALTHPOTION(6, 132, 0, -4, "Heiltrank", "", Types.POTION, new Attributes(Attr.cooldown, 5, Attr.weight, 0.2), new Attributes(), new PotionAction("player", new Attributes(Attr.health, 10))),
-  TOXICPOTION(3, 132, 0, -4, "Gifttrank", "", Types.POTION, new Attributes(Attr.cooldown, 5, Attr.weight, 0.2), new Attributes(), new PotionAction("player", new Attributes(Attr.health, -10))),
+  HEALTHPOTION(6, 132, 0, -4, "Heiltrank", "", Types.POTION, new Attributes(Attr.cooldown, 5, Attr.weight, 0.2), new Attributes(), new PotionAction("player", new Attributes(Attr.health, 10), DamageType.HEAL)),
+  TOXICPOTION(3, 132, 0, -4, "Gifttrank", "", Types.POTION, new Attributes(Attr.cooldown, 5, Attr.weight, 0.2), new Attributes(), new PotionAction("player", new Attributes(Attr.health, -10), DamageType.NEGATIVE)),
   SCRAP(1, 91, 0, -2, "Beutel mit Schrott", "", Types.ITEM, new Attributes(Attr.weight, 0.25), new Attributes(), new EmptyAction()),
   // -- skills -- //
   
