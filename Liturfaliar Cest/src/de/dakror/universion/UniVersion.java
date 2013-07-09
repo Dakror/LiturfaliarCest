@@ -53,10 +53,13 @@ public class UniVersion
       {
         try
         {
-          Desktop.getDesktop().browse(new URL("http://dakror.de/download?u=" + get.getString("PATH") + "/" + getSimpleName() + ".jar").toURI());
+          Desktop.getDesktop().browse(new URL(("http://dakror.de/download?u=" + get.getString("PATH") + "/" + getSimpleName() + ".jar").replace(" ", "%20")).toURI());
+          System.exit(0);
         }
         catch (Exception e)
-        {}
+        {
+          e.printStackTrace();
+        }
       }
     }
     else if (compare == 0)
