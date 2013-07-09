@@ -7,11 +7,11 @@ import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.item.action.WeaponAction;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
-import de.dakror.liturfaliar.map.creature.Player;
-import de.dakror.liturfaliar.settings.DamageType;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
+import de.dakror.liturfaliar.settings.DamageType;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class Sword0 extends SkillAnimation
@@ -127,8 +127,7 @@ public class Sword0 extends SkillAnimation
   {
     if (!c.equals(caster))
     {
-      // c.setAttributes(Attributes.vsum(c.getAttributes(), item.getAttributes()));
-      c.dealDamage(((c instanceof Player) ? DamageType.NEGATIVE : DamageType.POSITIVE), (int) item.getAttributes().getAttribute(Attr.health).getValue());
+      c.dealDamage(DamageType.NORMAL, (int) ((int) item.getAttributes().getAttribute(Attr.health).getValue() + ((WeaponAction) caster.getEquipment().getFirstWeapon().getAction()).getReandomValue(Attr.health)));
       hit = true;
     }
   }

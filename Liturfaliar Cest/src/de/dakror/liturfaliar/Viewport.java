@@ -31,8 +31,10 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.json.JSONObject;
 
+import paulscode.sound.FilenameURL;
 import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;
+import paulscode.sound.Source;
 import de.dakror.liturfaliar.editor.MapEditor;
 import de.dakror.liturfaliar.ovscenes.OVScene;
 import de.dakror.liturfaliar.ovscenes.OVScene_Info;
@@ -436,9 +438,9 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
       System.err.println("invalid sound: " + name);
       return;
     }
-    ss.loadSound(FileManager.pullMediaFile("Sound", name + ".wav"), name + "wav");
-    SoundID = ss.quickPlay(false, name + "wav", false, 0.0f, 0.0f, 0.0f, SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
-    ss.setVolume(SoundID, vol);
+    Source s = new Source(false, false, false, name + "wav", new FilenameURL(FileManager.pullMediaFile("Sound", name + ".wav"), name + ".wav"), null, 0, 0, 0, SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff(), true);
+    ss.setVolume(s.sourcename, vol);
+    ss.play(s.sourcename);
   }
   
   /**
@@ -469,7 +471,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     if (FileManager.pullMediaFile("Music", name + ".wav") == null)
       return;
     MusicID = name + ".wav";
-    ss.backgroundMusic(MusicID, FileManager.pullMediaFile("Music", name + ".wav"), MusicID, false);
+    ss.backgroundMusic(MusicID, FileManager.pullMediaFile("Music", name + ".wav"), MusicID, true);
     ss.setVolume(MusicID, (float) fMusicID);
   }
   
@@ -483,7 +485,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     if (FileManager.pullMediaFile("Music", name + ".wav") == null)
       return;
     MusicID = name + ".wav";
-    ss.backgroundMusic(MusicID, FileManager.pullMediaFile("Music", name + ".wav"), MusicID, false);
+    ss.backgroundMusic(MusicID, FileManager.pullMediaFile("Music", name + ".wav"), MusicID, true);
     ss.setVolume(MusicID, vol);
   }
   

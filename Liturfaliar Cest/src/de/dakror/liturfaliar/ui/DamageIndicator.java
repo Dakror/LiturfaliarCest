@@ -11,6 +11,7 @@ import java.awt.font.TextLayout;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
+import de.dakror.liturfaliar.map.creature.Player;
 import de.dakror.liturfaliar.settings.DamageType;
 
 public class DamageIndicator
@@ -36,8 +37,14 @@ public class DamageIndicator
     value = v;
     type = t;
     creature = c;
-    x = (int) Math.round(Math.random() * c.getWidth());
-    text = new HTMLString(v.toString(), t.getSize(), t.getColor(), Font.BOLD);
+    x = (int) Math.round(Math.random() * c.getWidth() / 2);
+    
+    Color color = t.getColor();
+    
+    if (t.equals(DamageType.NORMAL) && c instanceof Player)
+      color = Color.red;
+    
+    text = new HTMLString(v.toString(), t.getSize(), color, Font.BOLD);
   }
   
   public void draw(Map m, Graphics2D g, Viewport v)
@@ -59,7 +66,7 @@ public class DamageIndicator
     if (isDone())
       return;
     
-    int x = m.getX() + creature.getRelativePos()[0] + this.x - text.getWidth(g) / 2;
+    int x = m.getX() + creature.getRelativePos()[0] + this.x - text.getWidth(g) / 2 + creature.getWidth() / 4;
     int y = m.getY() + creature.getRelativePos()[1] - pos;
     
     Composite oldComposite = g.getComposite();

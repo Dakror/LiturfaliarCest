@@ -14,6 +14,7 @@ import de.dakror.liturfaliar.item.action.EmptyAction;
 import de.dakror.liturfaliar.item.action.ItemAction;
 import de.dakror.liturfaliar.item.action.PotionAction;
 import de.dakror.liturfaliar.item.action.SkillAction;
+import de.dakror.liturfaliar.item.action.WeaponAction;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.settings.Attribute;
@@ -176,11 +177,24 @@ public class Item extends Component
     if (type.equals(Types.POTION) && this.action instanceof PotionAction)
     {
       action = "[br]";
+      PotionAction potion = (PotionAction) this.action;
       for (Attr attr : Attr.values())
       {
-        PotionAction potion = (PotionAction) this.action;
         if (potion.getChanges().getAttribute(attr).getValue() != 0)
           action += g + ((potion.getChanges().getAttribute(attr).getValue() < 0.0) ? "" : "+") + Attribute.FORMAT.format(potion.getChanges().getAttribute(attr).getValue()) + " " + attr.getText() + "[br]";
+      }
+    }
+    
+    if (this.action instanceof WeaponAction)
+    {
+      WeaponAction weapon = (WeaponAction) this.action;
+      action = "[br]" + g + weapon.getDamageType().getDescription() + ":[br]";
+      for (Attr attr : Attr.values())
+      {
+        Attribute a = weapon.getEffect().getAttribute(attr);
+        
+        if (!a.isEmpty())
+          action += g + "  " + Attribute.FORMAT.format(Math.abs(a.getValue())) + " - " + Attribute.FORMAT.format(Math.abs(a.getMaximum())) + " " + attr.getText() + "[br]";
       }
     }
     
@@ -188,7 +202,6 @@ public class Item extends Component
     
     if (type.getCategory().equals(Categories.SKILL))
     {
-      
       SkillAction sa = (SkillAction) this.action;
       int sp = 0;
       int lvl = 0;

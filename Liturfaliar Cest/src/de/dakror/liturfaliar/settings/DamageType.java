@@ -4,39 +4,35 @@ import java.awt.Color;
 
 public enum DamageType
 {
-  POSITIVE(Color.white, 25), // from player to mobs
-  NEGATIVE(Color.red, 25), // from mobs to player
-  CRITICAL(Color.orange, 35),
-  HEAL(Color.green, 35),
-  SPECIAL(Colors.SPECIAL, 35),
-  FIRE(Color.red, 25);
+  NORMAL(Color.white, "Basisschaden", 25),
+  CRITICAL(Color.orange, "Kritischer Schaden", 35),
+  HEAL(Color.green, "Heilung", 35),
+  SPECIAL(Colors.SPECIAL, "Spezial", 35),
+  FIRE(Color.red, "Feuerschaden", 25);
   
-  private Color color;
-  private int   size;
+  private Color  color;
+  private int    size;
+  private String desc;
+  
+  private DamageType(Color c, String d, int s)
+  {
+    color = c;
+    size = s;
+    desc = d;
+  }
   
   public Color getColor()
   {
     return color;
   }
   
-  public void setColor(Color color)
+  public String getDescription()
   {
-    this.color = color;
+    return desc;
   }
   
   public int getSize()
   {
     return size;
-  }
-  
-  public void setSize(int size)
-  {
-    this.size = size;
-  }
-  
-  private DamageType(Color c, int s)
-  {
-    color = c;
-    size = s;
   }
 }

@@ -65,15 +65,13 @@ public class Attributes
   {
     this();
     
-    if (args.length % 2 != 0)
-      return;
-    
-    for (int i = 0; i < args.length; i += 2)
+    for (int i = 0; i < args.length; i++)
     {
       if (args[i] instanceof Attr)
       {
-        attributes.put((Attr) args[i], new Attribute(Double.parseDouble(args[i + 1].toString()), Double.parseDouble(args[i + 1].toString())));
+        attributes.put((Attr) args[i], new Attribute(Double.parseDouble(args[i + 1].toString()), (i + 2 < args.length && !(args[i + 2] instanceof Attr)) ? Double.parseDouble(args[i + 2].toString()) : Double.parseDouble(args[i + 1].toString())));
       }
+      else continue;
     }
   }
   

@@ -1,6 +1,5 @@
 package de.dakror.liturfaliar.item.action;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
@@ -25,17 +24,13 @@ public abstract class ItemAction
   {
     if (o.length() == 0)
       return new EmptyAction();
+    
     try
     {
-      switch (o.getString("type"))
-      {
-        case "PotionAction":
-          return PotionAction.loadItemAction(o);
-        case "SkillAction":
-          return SkillAction.loadItemAction(o);
-      }
+      Class<?> c = Class.forName(ItemAction.class.getPackage().getName() + "." + o.getString("type"));
+      return (ItemAction) c.getMethod("loadItemAction", JSONObject.class).invoke(null, o);
     }
-    catch (JSONException e)
+    catch (Exception e)
     {
       e.printStackTrace();
     }
