@@ -19,7 +19,7 @@ public class Keys
   public static int SPRINT    = KeyEvent.VK_SHIFT;
   
   public static void loadKeys(JSONObject o)
-  { 
+  {
     for (Field f : Keys.class.getFields())
     {
       try

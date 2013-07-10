@@ -3,6 +3,7 @@ package de.dakror.liturfaliar.util;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Vector
 {
@@ -123,5 +124,10 @@ public class Vector
   public String toString()
   {
     return this.getClass().toString() + "[x=" + this.coords[0] + ",y=" + this.coords[1] + "]";
+  }
+  
+  public boolean equals(Vector o)
+  {
+    return Arrays.asList(coords).equals(Arrays.asList(o.coords)) && length == o.length;
   }
 }

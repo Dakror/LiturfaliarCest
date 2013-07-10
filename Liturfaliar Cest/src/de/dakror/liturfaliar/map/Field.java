@@ -13,6 +13,7 @@ import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.map.data.FieldData;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;
+import de.dakror.liturfaliar.util.Vector;
 
 public class Field implements MapEventListener
 {
@@ -143,5 +144,10 @@ public class Field implements MapEventListener
   public String toString()
   {
     return getClass() + "[x=" + x + ", y=" + y + ", l=" + l + ", tileset=" + tileset + "]";
+  }
+  
+  public Vector getNode()
+  {
+    return new Vector(x + CFG.FIELDSIZE / 2, y + CFG.FIELDSIZE / 2);
   }
 }

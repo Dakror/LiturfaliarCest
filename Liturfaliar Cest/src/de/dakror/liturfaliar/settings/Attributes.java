@@ -22,11 +22,16 @@ public class Attributes
     cooldown("Abklingzeit", 0),
     
     strength("Stärke", 0),
+    evasion("Ausweichen", 0),
+    block("Blocken", 0),
     accuracy("Genauigkeit", 0),
     experience("Erfahrung", 0),
     gold("Gold", 0),
     skillpoint("Talentpunkt(e)", 0),
     level("Stufe", 1), // fake attribute for player level comparison with items
+    
+    trackradius("Sichtweite", 0),
+    trackangle("Sichtfeld", 0),
     
     ;
     

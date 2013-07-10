@@ -16,6 +16,7 @@ import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
 import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.map.creature.ai.CreatureAI;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Talk;
@@ -44,7 +45,7 @@ public class NPC extends Creature
   String                       character;
   Vector[]                     playerTalkTo;
   
-  public NPC(int x, int y, int w, int h, int d, String name, String c, double speed, boolean move, boolean look, int moveT, int lookT, int id, Attributes attributes, Equipment equip, JSONArray talkdata)
+  public NPC(int x, int y, int w, int h, int d, String name, String c, double speed, boolean move, boolean look, int moveT, int lookT, boolean hostile, int id, Attributes attributes, Equipment equip, JSONArray talkdata, String aiName)
   {
     super(x, y, w, h);
     
@@ -83,10 +84,20 @@ public class NPC extends Creature
     ID = id;
     emoticon = null;
     
+    try
+    {
+      AI = (CreatureAI) Class.forName("de.dakror.liturfaliar.map.creature.ai." + aiName).getDeclaredConstructors()[0].newInstance(this);
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+    
     setName(name);
     setSpeed(speed);
     setTalkData(talkdata);
-    setHostile(false);
+    setHostile(hostile);
+    
   }
   
   @Override
@@ -304,6 +315,7 @@ public class NPC extends Creature
       data.put("talk", talkdata);
       data.put("attr", attr.serializeAttributes());
       data.put("equip", equipment.serializeEquipment());
+      data.put("ai", AI.getClass().getSimpleName());
       
       JSONObject random = new JSONObject();
       random.put("move", randomMove);
@@ -328,14 +340,15 @@ public class NPC extends Creature
   {
     ID = iD;
   }
-
+  
   @Override
   public void onIntersect(Creature other, Map map)
   {
     if (!intersects(other, map))
       return;
     
-    if(!isHostile() && other instanceof Player) return;
+    if (!isHostile() && other instanceof Player)
+      return;
     
     pos = lastPos;
   }

@@ -18,10 +18,9 @@ public class NPCButton extends JButton
   private static final long serialVersionUID = 1L;
   
   public int                x, y, w, h, dir, ID, moveT, lookT;
-  public String             name, sprite;
+  public String             name, sprite, ai;
   public double             speed;
-  public boolean            move;
-  public boolean            look;
+  public boolean            move, look, hostile;
   
   public JSONArray          talk;
   
@@ -29,7 +28,7 @@ public class NPCButton extends JButton
   
   public Equipment          equipment;
   
-  public NPCButton(int x, int y, int w, int h, int dir, String name, String sprite, double speed, boolean move, boolean look, int moveT, int lookT, Image i, int ID, MapEditor m)
+  public NPCButton(int x, int y, int w, int h, int dir, String name, String sprite, double speed, boolean move, boolean look, int moveT, int lookT, Image i, boolean hostile, int ID, String ai, MapEditor m)
   {
     this.x = x;
     this.y = y;
@@ -43,7 +42,9 @@ public class NPCButton extends JButton
     this.name = name;
     this.sprite = sprite;
     this.speed = speed;
+    this.ai = ai;
     this.ID = ID;
+    this.hostile = hostile;
     
     this.attributes = new Attributes();
     this.equipment = new Equipment();
@@ -78,6 +79,8 @@ public class NPCButton extends JButton
       data.put("talk", talk);
       data.put("attr", attributes.serializeAttributes());
       data.put("equip", equipment.serializeEquipment());
+      data.put("ai", ai);
+      data.put("hostile", hostile);
       
       JSONObject random = new JSONObject();
       random.put("move", move);

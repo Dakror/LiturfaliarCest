@@ -218,13 +218,13 @@ public class Map implements DatabaseEventListener
     {
       JSONObject o = npcs.getJSONObject(i);
       JSONObject random = o.getJSONObject("random");
-      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getInt("dir"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), o.getInt("id"), new Attributes(o.getJSONObject("attr")), new Equipment(o.getJSONObject("equip")), o.getJSONArray("talk"));
+      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getInt("dir"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), o.getBoolean("hostile"), o.getInt("id"), new Attributes(o.getJSONObject("attr")), new Equipment(o.getJSONObject("equip")), o.getJSONArray("talk"), o.getString("ai"));
       creatures.add(npc);
     }
   }
   
   public void update(long timePassed, Scene_Game sg)
-  {    
+  {
     for (Field f : fields)
     {
       f.update(this);
@@ -665,7 +665,7 @@ public class Map implements DatabaseEventListener
     {
       JSONObject o = arr.getJSONObject(i);
       JSONObject random = o.getJSONObject("random");
-      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getInt("dir"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), o.getInt("id"), new Attributes(o.getJSONObject("attr")), new Equipment(o.getJSONObject("equip")), o.getJSONArray("talk"));
+      NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getInt("dir"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), o.getBoolean("hostile"), o.getInt("id"), new Attributes(o.getJSONObject("attr")), new Equipment(o.getJSONObject("equip")), o.getJSONArray("talk"), o.getString("ai"));
       for (int j = 0; j < creatures.size(); j++)
       {
         if (creatures.get(j) instanceof NPC)

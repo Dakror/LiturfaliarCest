@@ -18,6 +18,7 @@ import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.map.creature.ai.CreatureAI;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
@@ -53,6 +54,7 @@ public class Creature implements MapEventListener
   protected ArrayList<DamageIndicator> dmgIndicators;
   
   protected Area                       hitArea;
+  protected CreatureAI                 AI;
   
   public Creature(int x, int y, int w, int h)
   {
@@ -494,5 +496,10 @@ public class Creature implements MapEventListener
   public void addDamageIndicator(DamageIndicator d)
   {
     dmgIndicators.add(d);
+  }
+  
+  public Vector getTrackingNode()
+  {
+    return new Vector(pos.coords[0] + bx + bw / 2, pos.coords[2] + by + bh / 2);
   }
 }

@@ -99,10 +99,10 @@ public class MapEditor
   JTextField        FRoldLayer, FRnewLayer, FRoldTX, FRoldTY, FRnewTX, FRnewTY;
   
   // -- NPC dialog -- //
-  JComboBox<String> NPCsprite, NPCdir;
+  JComboBox<String> NPCsprite, NPCdir, NPCai;
   JDialog           NPCframe;
   JTextField        NPCx, NPCy, NPCname;
-  JCheckBox         NPCmove, NPClook;
+  JCheckBox         NPCmove, NPClook, NPChostile;
   JLabel            NPCpreview;
   JSpinner          NPCspeed, NPCmoveT, NPClookT;
   JButton           NPCok;
@@ -1176,6 +1176,17 @@ public class MapEditor
     label.setLabelFor(NPClookT);
     p.add(NPClookT);
     
+    label = new JLabel("Künstliche Intelligenz:", JLabel.TRAILING);
+    p.add(label);
+    NPCai = new JComboBox<String>(new String[] { "StraightLineAI" });
+    label.setLabelFor(NPCai);
+    p.add(NPCai);
+    
+    label = new JLabel("immer feindlich:", JLabel.TRAILING);
+    p.add(label);
+    NPChostile = new JCheckBox();
+    label.setLabelFor(NPChostile);
+    p.add(NPChostile);
     
     p.add(new JLabel());
     NPCok = new JButton("Platzieren");
@@ -1213,7 +1224,7 @@ public class MapEditor
     });
     p.add(NPCok);
     
-    SpringUtilities.makeCompactGrid(p, 12, 2, 6, 6, 6, 6);
+    SpringUtilities.makeCompactGrid(p, 14, 2, 6, 6, 6, 6);
     
     NPCframe.setContentPane(p);
     NPCframe.pack();
@@ -1633,12 +1644,12 @@ public class MapEditor
       NPCButton npc;
       if (data == null)
       {
-        npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getPreferredSize().width - CFG.BOUNDMALUS, NPCpreview.getPreferredSize().height - CFG.BOUNDMALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage(), NPClastID, this);
+        npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getPreferredSize().width - CFG.BOUNDMALUS, NPCpreview.getPreferredSize().height - CFG.BOUNDMALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage(), NPChostile.isSelected(), NPClastID, NPCai.getSelectedItem().toString(), this);
       }
       else
       {
         BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + data.getString("char") + ".png");
-        npc = new NPCButton(data.getInt("x"), data.getInt("y"), data.getInt("w"), data.getInt("h"), data.getInt("dir"), data.getString("name"), data.getString("char"), data.getDouble("speed"), data.getJSONObject("random").getBoolean("move"), data.getJSONObject("random").getBoolean("look"), data.getJSONObject("random").getInt("moveT"), data.getJSONObject("random").getInt("lookT"), image.getSubimage(0, data.getInt("dir") * image.getHeight() / 4, image.getWidth() / 4, image.getHeight() / 4), NPClastID, this);
+        npc = new NPCButton(data.getInt("x"), data.getInt("y"), data.getInt("w"), data.getInt("h"), data.getInt("dir"), data.getString("name"), data.getString("char"), data.getDouble("speed"), data.getJSONObject("random").getBoolean("move"), data.getJSONObject("random").getBoolean("look"), data.getJSONObject("random").getInt("moveT"), data.getJSONObject("random").getInt("lookT"), image.getSubimage(0, data.getInt("dir") * image.getHeight() / 4, image.getWidth() / 4, image.getHeight() / 4), data.getBoolean("hostile"), NPClastID, data.getString("ai"), this);
         npc.talk = data.getJSONArray("talk");
         npc.equipment = new Equipment(data.getJSONObject("equip"));
         npc.attributes = new Attributes(data.getJSONObject("attr"));
