@@ -1,8 +1,7 @@
 package de.dakror.liturfaliar.map.creature.ai;
 
+import java.awt.Shape;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Area;
-import java.awt.geom.Point2D;
 
 import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
@@ -23,12 +22,19 @@ public abstract class CreatureAI
   
   public abstract Path findPath(Vector target);
   
+  public boolean isInSight(Creature o)
+  {
+    Vector TN = creature.getTrackingNode();
+    int dir = creature.getDir();
+    int sAngle = (dir == 0) ? -90 : ((dir == 1) ? 180 : ((dir == 2) ? 0 : 90));
+    Shape s = new Arc2D.Double(TN.coords[0] - trackRadius, TN.coords[1] - trackRadius, trackRadius * 2, trackRadius * 2, sAngle - trackAngle / 2, trackAngle, Arc2D.PIE);
+    return s.intersects(o.getBumpArea().getBounds2D());
+  }
+  
   public boolean isTrackable(Creature o)
   {
     Vector TN = creature.getTrackingNode();
-    Area track = new Area(new Arc2D.Double(TN.coords[0], trackRadius * 2, trackRadius * 2, TN.coords[1], 0, 360, Arc2D.PIE)); // TODO: implement looking direction - for now it's all around
-    
-    Vector oTN = o.getTrackingNode();
-    return track.contains(new Point2D.Double(oTN.coords[0], oTN.coords[1]));
+    Shape s = new Arc2D.Double(TN.coords[0] - trackRadius, TN.coords[1] - trackRadius, trackRadius * 2, trackRadius * 2, 0, 360, Arc2D.PIE);
+    return s.intersects(o.getBumpArea().getBounds2D());
   }
 }

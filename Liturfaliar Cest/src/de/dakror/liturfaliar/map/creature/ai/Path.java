@@ -14,12 +14,20 @@ public class Path
   public Path(Vector... vectors)
   {
     nodes.addAll(Arrays.asList(vectors));
-    index = 0;
+    index = -1;
   }
   
   public Vector getNode(int index)
   {
     return nodes.get(index);
+  }
+  
+  public Vector getNextNode()
+  {
+    if (index + 1 < nodes.size())
+      return nodes.get(index + 1);
+    
+    return null;
   }
   
   public void setNodeReached(Vector v)

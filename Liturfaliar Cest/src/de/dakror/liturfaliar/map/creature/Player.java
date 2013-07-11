@@ -1,8 +1,10 @@
 package de.dakror.liturfaliar.map.creature;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -51,6 +53,8 @@ public class Player extends Creature
   ArrayList<Item>   skills              = new ArrayList<Item>();
   
   Viewport          v;
+  
+  Point             mouse               = new Point(0, 0);
   
   public Player(JSONObject save, Window w)
   {
@@ -228,14 +232,9 @@ public class Player extends Creature
     if ((x != 0 || y != 0) && !frozen)
       frame = v.getFrame((sprint) ? 0.3f : 0.5f);
     
-    if (dirs[0] && !dirs[3])
-      dir = 3;
-    if (dirs[1] && !dirs[2])
-      dir = 1;
-    if (dirs[2] && !dirs[1])
-      dir = 2;
-    if (dirs[3] && !dirs[0])
-      dir = 0;
+    int angle = (int) Math.round(Math.toDegrees(Math.atan2(mouse.y - pos.coords[1], mouse.x - pos.coords[0])) / 90.0) + 1;
+    if(angle > -1) dir = DIRS[angle];
+    else dir = 1;
     
     try
     {
@@ -249,6 +248,11 @@ public class Player extends Creature
     }
     catch (Exception e)
     {}
+  }
+  
+  public void mouseMoved(MouseEvent e, Map m)
+  {
+    mouse = e.getLocationOnScreen();
   }
   
   @Override
@@ -459,5 +463,11 @@ public class Player extends Creature
       attr.getAttribute(Attr.level).increase(getLevel() - lvl);
       PlayerEventDispatcher.dispatchLevelUp(lvl);
     }
+  }
+  
+  @Override
+  public Vector getTrackingNode()
+  {
+    return new Vector(relPos.coords[0] + bx + bw / 2, relPos.coords[1] + by + bh / 2);
   }
 }

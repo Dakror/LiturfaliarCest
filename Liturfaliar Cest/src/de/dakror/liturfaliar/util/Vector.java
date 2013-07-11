@@ -126,6 +126,11 @@ public class Vector
     return this.getClass().toString() + "[x=" + this.coords[0] + ",y=" + this.coords[1] + "]";
   }
   
+  public Vector translate(double x, double y)
+  {
+    return new Vector(coords[0] + x, coords[1] + y);
+  }
+  
   public boolean equals(Vector o)
   {
     return Arrays.asList(coords).equals(Arrays.asList(o.coords)) && length == o.length;

@@ -19,6 +19,7 @@ import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.ai.CreatureAI;
+import de.dakror.liturfaliar.map.creature.ai.Path;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
@@ -31,7 +32,7 @@ import de.dakror.liturfaliar.util.Vector;
 
 public class Creature implements MapEventListener
 {
-  public static final int[]            DIRS  = { 3, 2, 0, 1 };
+  public static final Integer[]        DIRS  = { 3, 2, 0, 1 };
   public static final int              LEVEL = 25;
   
   private double                       speed;
@@ -55,6 +56,7 @@ public class Creature implements MapEventListener
   
   protected Area                       hitArea;
   protected CreatureAI                 AI;
+  protected Path                       path;
   
   public Creature(int x, int y, int w, int h)
   {
@@ -217,8 +219,6 @@ public class Creature implements MapEventListener
       Assistant.Shadow(new Rectangle2D.Double(m.getX() + getRelativePos()[0] + bx, m.getY() + getRelativePos()[1] + by, bw, bh), Color.orange, 1, g);
       g.setColor(color);
     }
-    
-    
   }
   
   public void drawEmoticon(Graphics2D g, Viewport v, Map m)
@@ -475,7 +475,7 @@ public class Creature implements MapEventListener
     else return attr.getAttribute(Attr.health).getValue() > 0;
   }
   
-  public void dealDamage(DamageType type, Integer damage)
+  public void dealDamage(Creature causer, DamageType type, Integer damage)
   {
     Attribute a = attr.getAttribute(Attr.health);
     int val = (int) (damage + a.getValue());
@@ -500,6 +500,6 @@ public class Creature implements MapEventListener
   
   public Vector getTrackingNode()
   {
-    return new Vector(pos.coords[0] + bx + bw / 2, pos.coords[2] + by + bh / 2);
+    return new Vector(pos.coords[0] + bx + bw / 2, pos.coords[1] + by + bh / 2);
   }
 }

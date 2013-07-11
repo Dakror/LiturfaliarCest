@@ -127,7 +127,7 @@ public class Sword0 extends SkillAnimation
   {
     if (!c.equals(caster))
     {
-      c.dealDamage(DamageType.NORMAL, (int) ((int) item.getAttributes().getAttribute(Attr.health).getValue() + ((WeaponAction) caster.getEquipment().getFirstWeapon().getAction()).getReandomValue(Attr.health)));
+      c.dealDamage(caster, DamageType.NORMAL, (int) ((int) item.getAttributes().getAttribute(Attr.health).getValue() + ((WeaponAction) caster.getEquipment().getFirstWeapon().getAction()).getReandomValue(Attr.health)));
       hit = true;
     }
   }

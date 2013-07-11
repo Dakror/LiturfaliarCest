@@ -19,6 +19,7 @@ import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.ai.CreatureAI;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.CFG;
+import de.dakror.liturfaliar.settings.DamageType;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
@@ -105,6 +106,9 @@ public class NPC extends Creature
   {
     super.draw(g, v, m);
     
+    // if (path != null)
+    // path.getNode(0).translate(m.getX(), m.getY()).draw(g, Color.blue);
+    
     boolean move = false;
     double angle = 0;
     if (getDistance() > getSpeed() && !frozen)
@@ -114,10 +118,17 @@ public class NPC extends Creature
       dir = 0;
       try
       {
-        dir = DIRS[(int) Math.round((angle + 10) / 90.0) + 1];
+        int index = (int) Math.round(angle / 90.0) + 1;
+        if (index > -1)
+          dir = DIRS[index];
+        
+        else dir = 1;
+        
       }
       catch (Exception e)
-      {}
+      {
+        e.printStackTrace();
+      }
     }
     
     for (SkillAnimation skill : skills)
@@ -231,6 +242,27 @@ public class NPC extends Creature
     }
   }
   
+  @Override
+  public void move(Map map)
+  {
+    if (!frozen)
+    {
+      Vector targetVector = pos.sub(goTo);
+      if (targetVector.length >= getSpeed())
+      {
+        if (hostile && AI != null)
+        {
+          path = AI.findPath(map.getPlayer().relPos);
+          goTo = path.getNextNode();
+        }
+        
+        lastPos = pos;
+        
+        pos = pos.sub(targetVector.setLength(getSpeed()));
+      }
+    }
+  }
+  
   public boolean isRandomMoveEnabled()
   {
     return randomMove;
@@ -316,6 +348,7 @@ public class NPC extends Creature
       data.put("attr", attr.serializeAttributes());
       data.put("equip", equipment.serializeEquipment());
       data.put("ai", AI.getClass().getSimpleName());
+      data.put("hostile", hostile);
       
       JSONObject random = new JSONObject();
       random.put("move", randomMove);
@@ -351,5 +384,18 @@ public class NPC extends Creature
       return;
     
     pos = lastPos;
+  }
+  
+  @Override
+  public void dealDamage(Creature causer, DamageType type, Integer damage)
+  {
+    super.dealDamage(causer, type, damage);
+    if (causer instanceof Player)
+    {
+      setHostile(true);
+      frozen = false;
+      path = AI.findPath(causer.getTrackingNode());
+      goTo = path.getNextNode();
+    }
   }
 }

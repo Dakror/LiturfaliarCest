@@ -1,6 +1,8 @@
 package de.dakror.liturfaliar.editor;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -12,6 +14,7 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.settings.Attributes;
+import de.dakror.liturfaliar.util.Assistant;
 
 public class NPCButton extends JButton
 {
@@ -26,7 +29,7 @@ public class NPCButton extends JButton
   
   public Attributes         attributes;
   
-  public Equipment          equipment;
+  private Equipment         equipment;
   
   public NPCButton(int x, int y, int w, int h, int dir, String name, String sprite, double speed, boolean move, boolean look, int moveT, int lookT, Image i, boolean hostile, int ID, String ai, MapEditor m)
   {
@@ -60,6 +63,22 @@ public class NPCButton extends JButton
     
     addMouseListener(m.new SelectionListener(this));
     addMouseMotionListener(m.new SelectionListener(this));
+  }
+  
+  public void setEquipment(Equipment e)
+  {
+    equipment = e;
+    if (e != null)
+    {
+      BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+      Assistant.drawChar(0, 0, w, h, 0, 0, equipment, (Graphics2D) bi.getGraphics(), null, true);
+      setIcon(new ImageIcon(bi));
+    }
+  }
+  
+  public Equipment getEquipment()
+  {
+    return equipment;
   }
   
   public JSONObject getSave()

@@ -1201,7 +1201,7 @@ public class MapEditor
         if (exist != null)
         {
           talk = exist.talk;
-          equipment = exist.equipment;
+          equipment = exist.getEquipment();
           attributes = exist.attributes;
           
           if (NPClastID == exist.ID + 1)
@@ -1214,7 +1214,7 @@ public class MapEditor
           b.talk = talk;
         
         if (equipment != null)
-          b.equipment = equipment;
+          b.setEquipment(equipment);
         
         if (attributes != null)
           b.attributes = attributes;
@@ -1326,7 +1326,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        npc.equipment = EQ;
+        npc.setEquipment(EQ);
       }
     });
     p.add(ok, BorderLayout.LINE_END);
@@ -1337,7 +1337,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        npc.equipment = new Equipment();
+        npc.setEquipment(new Equipment());
         for (JSpinner s : EQspinners)
         {
           if (((SpinnerListModel) s.getModel()).getList().indexOf("none.png") > -1)
@@ -1358,7 +1358,7 @@ public class MapEditor
     
     EQspinners = new JSpinner[Categories.EQUIPS.length];
     EQmale = new JCheckBox();
-    EQmale.setSelected(npc.equipment.isMale());
+    EQmale.setSelected(npc.getEquipment().isMale());
     
     EQmale.addChangeListener(new ChangeListener()
     {
@@ -1399,9 +1399,9 @@ public class MapEditor
       if (Arrays.asList(chars).indexOf("none.png") > -1)
         EQspinners[i].setValue("none.png");
       
-      if (npc.equipment.hasEquipmentItem(Categories.EQUIPS[i]))
+      if (npc.getEquipment().hasEquipmentItem(Categories.EQUIPS[i]))
       {
-        String string = npc.equipment.getEquipmentItem(Categories.EQUIPS[i]).getCharPath();
+        String string = npc.getEquipment().getEquipmentItem(Categories.EQUIPS[i]).getCharPath();
         
         EQspinners[i].setValue(((Arrays.asList(chars).indexOf(string + ".png") > -1) ? string : string + "_f") + ".png");
       }
@@ -1651,7 +1651,7 @@ public class MapEditor
         BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + data.getString("char") + ".png");
         npc = new NPCButton(data.getInt("x"), data.getInt("y"), data.getInt("w"), data.getInt("h"), data.getInt("dir"), data.getString("name"), data.getString("char"), data.getDouble("speed"), data.getJSONObject("random").getBoolean("move"), data.getJSONObject("random").getBoolean("look"), data.getJSONObject("random").getInt("moveT"), data.getJSONObject("random").getInt("lookT"), image.getSubimage(0, data.getInt("dir") * image.getHeight() / 4, image.getWidth() / 4, image.getHeight() / 4), data.getBoolean("hostile"), NPClastID, data.getString("ai"), this);
         npc.talk = data.getJSONArray("talk");
-        npc.equipment = new Equipment(data.getJSONObject("equip"));
+        npc.setEquipment(new Equipment(data.getJSONObject("equip")));
         npc.attributes = new Attributes(data.getJSONObject("attr"));
       }
       

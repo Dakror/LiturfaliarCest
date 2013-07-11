@@ -79,7 +79,7 @@ public class PotionAction extends ItemAction
     
     if (!changes.getAttribute(Attr.health).isEmpty())
     {
-      target.dealDamage(dmgType, (int) changes.getAttribute(Attr.health).getValue());
+      target.dealDamage(c, dmgType, (int) changes.getAttribute(Attr.health).getValue());
     }
     
     v.playSound("184-DrinkPotion");
