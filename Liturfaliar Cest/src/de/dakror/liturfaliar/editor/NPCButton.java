@@ -26,7 +26,6 @@ public class NPCButton extends JButton
   public boolean            move, look, hostile;
   
   public JSONArray          talk;
-  
   public Attributes         attributes;
   
   private Equipment         equipment;
@@ -68,7 +67,7 @@ public class NPCButton extends JButton
   public void setEquipment(Equipment e)
   {
     equipment = e;
-    if (e != null)
+    if (e.isProperlyFilled())
     {
       BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
       Assistant.drawChar(0, 0, w, h, 0, 0, equipment, (Graphics2D) bi.getGraphics(), null, true);

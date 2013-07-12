@@ -20,8 +20,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Area;
@@ -58,7 +56,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
 import javax.swing.ToolTipManager;
@@ -74,11 +71,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.IconSelecter;
-import de.dakror.liturfaliar.item.Item;
-import de.dakror.liturfaliar.item.Types;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.data.Door;
@@ -106,6 +100,7 @@ public class MapEditor
   JLabel            NPCpreview;
   JSpinner          NPCspeed, NPCmoveT, NPClookT;
   JButton           NPCok;
+  Attributes        NPCattr;
   
   int               NPClastID           = 0;
   
@@ -123,6 +118,11 @@ public class MapEditor
   String[]          tilesets;
   final int         talkComponentWidth  = 585;
   final int         talkComponentHeight = 100;
+  
+  // -- item dialog -- //
+  
+  // -- attr dialog -- //
+  Attributes        tmpAttr;
   
   // -- global stuff -- //
   public JFrame     w;
@@ -950,6 +950,7 @@ public class MapEditor
       msp.setViewportView(map);
       fmenu.setEnabled(true);
       omenu.setEnabled(true);
+      
       return true;
     }
     catch (Exception e1)
@@ -1001,7 +1002,6 @@ public class MapEditor
   
   public void showNPCDialog(final NPCButton exist)
   {
-    
     if (NPCframe == null)
     {
       NPCframe = new JDialog(w);
@@ -1019,15 +1019,19 @@ public class MapEditor
       NPCframe.setAlwaysOnTop(true);
       NPCframe.setResizable(false);
     }
+    
+    if (exist != null)
+      NPCattr = exist.attributes;
+    else NPCattr = new Attributes();
+    
     JPanel p = new JPanel(new SpringLayout());
     
     JLabel label = new JLabel("X-Position: ", JLabel.TRAILING);
     p.add(label);
     NPCx = new JTextField(15);
     if (exist != null)
-    {
       NPCx.setText(exist.x + "");
-    }
+    
     label.setLabelFor(NPCx);
     p.add(NPCx);
     
@@ -1035,9 +1039,8 @@ public class MapEditor
     p.add(label);
     NPCy = new JTextField(15);
     if (exist != null)
-    {
       NPCy.setText(exist.y + "");
-    }
+    
     label.setLabelFor(NPCy);
     p.add(NPCy);
     
@@ -1045,9 +1048,8 @@ public class MapEditor
     p.add(label);
     NPCdir = new JComboBox<String>(new String[] { "Unten", "Links", "Rechts", "Oben" });
     if (exist != null)
-    {
       NPCdir.setSelectedIndex(exist.dir);
-    }
+    
     NPCdir.addItemListener(new ItemListener()
     {
       
@@ -1055,9 +1057,7 @@ public class MapEditor
       public void itemStateChanged(ItemEvent e)
       {
         if (e.getStateChange() == ItemEvent.SELECTED)
-        {
           updateNPCDialogPreview();
-        }
       }
     });
     label.setLabelFor(NPCdir);
@@ -1067,9 +1067,8 @@ public class MapEditor
     p.add(label);
     NPCname = new JTextField(15);
     if (exist != null)
-    {
       NPCname.setText(exist.name);
-    }
+    
     label.setLabelFor(NPCname);
     p.add(NPCname);
     
@@ -1077,22 +1076,17 @@ public class MapEditor
     p.add(label);
     NPCsprite = new JComboBox<String>(NPC.CHARS);
     if (exist != null)
-    {
       NPCsprite.setSelectedItem(exist.sprite);
-    }
-    else
-    {
-      NPCsprite.setSelectedIndex(0);
-    }
+    
+    else NPCsprite.setSelectedIndex(0);
+    
     NPCsprite.addItemListener(new ItemListener()
     {
       @Override
       public void itemStateChanged(ItemEvent e)
       {
         if (e.getStateChange() == ItemEvent.SELECTED)
-        {
           updateNPCDialogPreview();
-        }
       }
     });
     label.setLabelFor(NPCsprite);
@@ -1110,9 +1104,8 @@ public class MapEditor
     p.add(label);
     NPCspeed = new JSpinner(new SpinnerNumberModel(1.0, 0, 20, 0.1));
     if (exist != null)
-    {
       NPCspeed.setValue(exist.speed);
-    }
+    
     label.setLabelFor(NPCspeed);
     p.add(NPCspeed);
     
@@ -1120,12 +1113,10 @@ public class MapEditor
     p.add(label);
     NPCmove = new JCheckBox();
     if (exist != null)
-    {
       NPCmove.setSelected(exist.move);
-    }
+    
     NPCmove.addChangeListener(new ChangeListener()
     {
-      
       @Override
       public void stateChanged(ChangeEvent e)
       {
@@ -1139,9 +1130,8 @@ public class MapEditor
     p.add(label);
     NPCmoveT = new JSpinner(new SpinnerNumberModel(3000, 0, 1000000000, 100));
     if (exist != null)
-    {
       NPCmoveT.setValue(exist.moveT);
-    }
+    
     NPCmoveT.setEnabled(NPCmove.isSelected());
     label.setLabelFor(NPCmoveT);
     p.add(NPCmoveT);
@@ -1150,9 +1140,8 @@ public class MapEditor
     p.add(label);
     NPClook = new JCheckBox();
     if (exist != null)
-    {
       NPClook.setSelected(exist.look);
-    }
+    
     NPClook.addChangeListener(new ChangeListener()
     {
       
@@ -1169,9 +1158,8 @@ public class MapEditor
     p.add(label);
     NPClookT = new JSpinner(new SpinnerNumberModel(3000, 0, 1000000000, 100));
     if (exist != null)
-    {
       NPClookT.setValue(exist.lookT);
-    }
+    
     NPClookT.setEnabled(NPClook.isSelected());
     label.setLabelFor(NPClookT);
     p.add(NPClookT);
@@ -1185,8 +1173,25 @@ public class MapEditor
     label = new JLabel("immer feindlich:", JLabel.TRAILING);
     p.add(label);
     NPChostile = new JCheckBox();
+    if (exist != null)
+      NPChostile.setSelected(exist.hostile);
     label.setLabelFor(NPChostile);
     p.add(NPChostile);
+    
+    label = new JLabel("Attribute:", JLabel.TRAILING);
+    p.add(label);
+    JButton attr = new JButton("Bearbeiten");
+    attr.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        showAttributesDialog(NPCattr);
+        NPCattr = tmpAttr;
+      }
+    });
+    label.setLabelFor(attr);
+    p.add(attr);
     
     p.add(new JLabel());
     NPCok = new JButton("Platzieren");
@@ -1197,12 +1202,10 @@ public class MapEditor
       {
         JSONArray talk = null;
         Equipment equipment = null;
-        Attributes attributes = null;
         if (exist != null)
         {
           talk = exist.talk;
           equipment = exist.getEquipment();
-          attributes = exist.attributes;
           
           if (NPClastID == exist.ID + 1)
             NPClastID--;
@@ -1216,15 +1219,12 @@ public class MapEditor
         if (equipment != null)
           b.setEquipment(equipment);
         
-        if (attributes != null)
-          b.attributes = attributes;
-        
         showNPCDialog(b);
       }
     });
     p.add(NPCok);
     
-    SpringUtilities.makeCompactGrid(p, 14, 2, 6, 6, 6, 6);
+    SpringUtilities.makeCompactGrid(p, 15, 2, 6, 6, 6, 6);
     
     NPCframe.setContentPane(p);
     NPCframe.pack();
@@ -1232,12 +1232,13 @@ public class MapEditor
     NPCframe.setLocationRelativeTo(null);
   }
   
-  public void showAttributesDialog(final NPCButton npc)
+  public void showAttributesDialog(Attributes exist)
   {
-    JDialog attrFrame = new JDialog(w);
-    attrFrame.setTitle("Attributs-Bearbeitung - NPC #" + npc.ID);
+    final JDialog attrFrame = new JDialog(w);
+    attrFrame.setTitle("Attributs-Bearbeitung");
     attrFrame.setResizable(false);
     attrFrame.setAlwaysOnTop(true);
+    attrFrame.setModal(true);
     attrFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     
     final JSpinner[] spinners = new JSpinner[Attr.values().length];
@@ -1248,7 +1249,7 @@ public class MapEditor
     {
       JLabel label = new JLabel(Attr.values()[i].getText() + ":");
       panel.add(label);
-      JSpinner spinner = new JSpinner(new SpinnerNumberModel(npc.attributes.getAttribute(Attr.values()[i]).getValue(), -1000000000.0, 1000000000.0, 1.0));
+      JSpinner spinner = new JSpinner(new SpinnerNumberModel(exist.getAttribute(Attr.values()[i]).getValue(), -1000000000.0, 1000000000.0, 1.0));
       label.setLabelFor(spinner);
       spinners[i] = spinner;
       panel.add(spinner);
@@ -1256,17 +1257,19 @@ public class MapEditor
     
     panel.add(new JLabel());
     
-    final JButton attrOk = new JButton("Speichern");
+    final JButton attrOk = new JButton("OK");
     attrOk.addActionListener(new ActionListener()
     {
       @Override
       public void actionPerformed(ActionEvent e)
       {
+        tmpAttr = new Attributes();
         for (int i = 0; i < spinners.length; i++)
         {
-          npc.attributes.getAttribute(Attr.values()[i]).setValue(Double.valueOf(spinners[i].getValue().toString()));
-          npc.attributes.getAttribute(Attr.values()[i]).setMaximum(Double.valueOf(spinners[i].getValue().toString()));
+          tmpAttr.getAttribute(Attr.values()[i]).setValue(Double.valueOf(spinners[i].getValue().toString()));
+          tmpAttr.getAttribute(Attr.values()[i]).setMaximum(Double.valueOf(spinners[i].getValue().toString()));
         }
+        attrFrame.dispose();
       }
     });
     panel.add(attrOk);
@@ -1282,183 +1285,153 @@ public class MapEditor
   
   public void showEquipmentDialog(final NPCButton npc)
   {
-    final JDialog adjFrame = new JDialog(w);
-    
-    final JDialog viewFrame = new JDialog(w);
-    
-    adjFrame.setTitle("Ausrüstungs-Bearbeitung");
-    adjFrame.setResizable(false);
-    adjFrame.setAlwaysOnTop(true);
-    adjFrame.addWindowListener(new WindowAdapter()
-    {
-      @Override
-      public void windowClosed(WindowEvent e)
-      {
-        viewFrame.dispose();
-      }
-      
-    });
-    adjFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    
-    viewFrame.setTitle("Ausrüstungs-Bearbeitung");
-    viewFrame.setResizable(false);
-    viewFrame.setAlwaysOnTop(true);
-    viewFrame.addWindowListener(new WindowAdapter()
-    {
-      @Override
-      public void windowClosed(WindowEvent e)
-      {
-        adjFrame.dispose();
-      }
-      
-    });
-    viewFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    
-    JPanel p = new JPanel(new BorderLayout());
-    
-    EQpreview = new JLabel();
-    EQpreview.setPreferredSize(new Dimension(320, 480));
-    p.add(EQpreview, BorderLayout.NORTH);
-    
-    JButton ok = new JButton("Speichern");
-    ok.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        npc.setEquipment(EQ);
-      }
-    });
-    p.add(ok, BorderLayout.LINE_END);
-    
-    JButton noEquip = new JButton("Ausrüstung entfernen");
-    noEquip.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        npc.setEquipment(new Equipment());
-        for (JSpinner s : EQspinners)
-        {
-          if (((SpinnerListModel) s.getModel()).getList().indexOf("none.png") > -1)
-            s.setValue("none.png");
-        }
-        updateEquipDialogPreview();
-      }
-    });
-    p.add(noEquip, BorderLayout.LINE_START);
-    
-    
-    viewFrame.setContentPane(p);
-    viewFrame.pack();
-    viewFrame.setLocationRelativeTo(null);
-    viewFrame.setVisible(true);
-    
-    JPanel panel = new JPanel(new SpringLayout());
-    
-    EQspinners = new JSpinner[Categories.EQUIPS.length];
-    EQmale = new JCheckBox();
-    EQmale.setSelected(npc.getEquipment().isMale());
-    
-    EQmale.addChangeListener(new ChangeListener()
-    {
-      @Override
-      public void stateChanged(ChangeEvent e)
-      {
-        updateEquipDialogPreview();
-      }
-    });
-    
-    for (int i = 0; i < Categories.EQUIPS.length; i++)
-    {
-      JLabel l = new JLabel(Categories.EQUIPS[i].name());
-      panel.add(l);
-      
-      String[] chars = FileManager.getCharParts(Categories.EQUIPS[i].name().toLowerCase());
-      
-      EQspinners[i] = new JSpinner(new SpinnerListModel(chars));
-      EQspinners[i].setPreferredSize(new Dimension(150, 30));
-      
-      final JSpinner me = EQspinners[i];
-      
-      EQspinners[i].addMouseWheelListener(new MouseWheelListener()
-      {
-        
-        @Override
-        public void mouseWheelMoved(MouseWheelEvent e)
-        {
-          if (e.getWheelRotation() < 0)
-          {
-            if (me.getModel().getPreviousValue() != null)
-              me.getModel().setValue(me.getModel().getPreviousValue());
-          }
-          else if (me.getModel().getNextValue() != null)
-            me.getModel().setValue(me.getModel().getNextValue());
-        }
-      });
-      if (Arrays.asList(chars).indexOf("none.png") > -1)
-        EQspinners[i].setValue("none.png");
-      
-      if (npc.getEquipment().hasEquipmentItem(Categories.EQUIPS[i]))
-      {
-        String string = npc.getEquipment().getEquipmentItem(Categories.EQUIPS[i]).getCharPath();
-        
-        EQspinners[i].setValue(((Arrays.asList(chars).indexOf(string + ".png") > -1) ? string : string + "_f") + ".png");
-      }
-      EQspinners[i].addChangeListener(new ChangeListener()
-      {
-        @Override
-        public void stateChanged(ChangeEvent e)
-        {
-          updateEquipDialogPreview();
-        }
-      });
-      l.setLabelFor(EQspinners[i]);
-      panel.add(EQspinners[i]);
-    }
-    
-    JLabel l = new JLabel("MALE");
-    panel.add(l);
-    l.setLabelFor(EQmale);
-    panel.add(EQmale);
-    
-    updateEquipDialogPreview();
-    
-    SpringUtilities.makeCompactGrid(panel, EQspinners.length + 1, 2, 6, 6, 6, 6);
-    
-    adjFrame.setContentPane(panel);
-    adjFrame.pack();
-    adjFrame.setLocation(viewFrame.getX() + viewFrame.getWidth() + 10, viewFrame.getY());
-    adjFrame.setVisible(true);
-  }
-  
-  private void updateEquipDialogPreview()
-  {
-    new Thread()
-    {
-      public void run()
-      {
-        EQ = new Equipment();
-        EQ.setMale(EQmale.isSelected());
-        for (int i = 0; i < Categories.EQUIPS.length; i++)
-        {
-          try
-          {
-            if (EQspinners[i].getValue().toString().indexOf("none") > -1)
-              EQ.setEquipmentItem(Categories.EQUIPS[i], null);
-            
-            else EQ.setEquipmentItem(Categories.EQUIPS[i], new Item(Types.valueOf(Categories.EQUIPS[i].name().replace("BOOTS", "SHOES")), EQspinners[i].getValue().toString().replaceAll("(_.{1}\\.png)|(\\.png)", ""), 1));
-          }
-          catch (Exception e1)
-          {
-            EQ.setEquipmentItem(Categories.EQUIPS[i], null);
-          }
-        }
-        BufferedImage bi = new BufferedImage(320, 480, BufferedImage.TYPE_INT_ARGB);
-        Assistant.drawChar(0, 0, 320, 480, 0, 0, EQ, (Graphics2D) bi.getGraphics(), null, true);
-        EQpreview.setIcon(new ImageIcon(bi));
-      }
-    }.start();
+    // final JDialog adjFrame = new JDialog(w);
+    //
+    // final JDialog viewFrame = new JDialog(w);
+    //
+    // adjFrame.setTitle("Ausrüstungs-Bearbeitung");
+    // adjFrame.setResizable(false);
+    // adjFrame.setAlwaysOnTop(true);
+    // adjFrame.addWindowListener(new WindowAdapter()
+    // {
+    // @Override
+    // public void windowClosed(WindowEvent e)
+    // {
+    // viewFrame.dispose();
+    // }
+    //
+    // });
+    // adjFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    //
+    // viewFrame.setTitle("Ausrüstungs-Bearbeitung");
+    // viewFrame.setResizable(false);
+    // viewFrame.setAlwaysOnTop(true);
+    // viewFrame.addWindowListener(new WindowAdapter()
+    // {
+    // @Override
+    // public void windowClosed(WindowEvent e)
+    // {
+    // adjFrame.dispose();
+    // }
+    //
+    // });
+    // viewFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    //
+    // JPanel p = new JPanel(new BorderLayout());
+    //
+    // EQpreview = new JLabel();
+    // EQpreview.setPreferredSize(new Dimension(320, 480));
+    // p.add(EQpreview, BorderLayout.NORTH);
+    //
+    // JButton ok = new JButton("Speichern");
+    // ok.addActionListener(new ActionListener()
+    // {
+    // @Override
+    // public void actionPerformed(ActionEvent e)
+    // {
+    // npc.setEquipment(EQ);
+    // }
+    // });
+    // p.add(ok, BorderLayout.LINE_END);
+    //
+    // JButton noEquip = new JButton("Ausrüstung entfernen");
+    // noEquip.addActionListener(new ActionListener()
+    // {
+    // @Override
+    // public void actionPerformed(ActionEvent e)
+    // {
+    // npc.setEquipment(new Equipment());
+    // for (JSpinner s : EQspinners)
+    // {
+    // if (((SpinnerListModel) s.getModel()).getList().indexOf("none.png") > -1)
+    // s.setValue("none.png");
+    // }
+    // updateEquipDialogPreview();
+    // }
+    // });
+    // p.add(noEquip, BorderLayout.LINE_START);
+    //
+    // viewFrame.setContentPane(p);
+    // viewFrame.pack();
+    // viewFrame.setLocationRelativeTo(null);
+    // viewFrame.setVisible(true);
+    //
+    // JPanel panel = new JPanel(new SpringLayout());
+    //
+    // EQspinners = new JSpinner[Categories.EQUIPS.length];
+    // EQmale = new JCheckBox();
+    // EQmale.setSelected(npc.getEquipment().isMale());
+    //
+    // EQmale.addChangeListener(new ChangeListener()
+    // {
+    // @Override
+    // public void stateChanged(ChangeEvent e)
+    // {
+    // updateEquipDialogPreview();
+    // }
+    // });
+    //
+    // for (int i = 0; i < Categories.EQUIPS.length; i++)
+    // {
+    // JLabel l = new JLabel(Categories.EQUIPS[i].name());
+    // panel.add(l);
+    //
+    // String[] chars = FileManager.getCharParts(Categories.EQUIPS[i].name().toLowerCase());
+    //
+    // EQspinners[i] = new JSpinner(new SpinnerListModel(chars));
+    // EQspinners[i].setPreferredSize(new Dimension(150, 30));
+    //
+    // final JSpinner me = EQspinners[i];
+    //
+    // EQspinners[i].addMouseWheelListener(new MouseWheelListener()
+    // {
+    //
+    // @Override
+    // public void mouseWheelMoved(MouseWheelEvent e)
+    // {
+    // if (e.getWheelRotation() < 0)
+    // {
+    // if (me.getModel().getPreviousValue() != null)
+    // me.getModel().setValue(me.getModel().getPreviousValue());
+    // }
+    // else if (me.getModel().getNextValue() != null)
+    // me.getModel().setValue(me.getModel().getNextValue());
+    // }
+    // });
+    // if (Arrays.asList(chars).indexOf("none.png") > -1)
+    // EQspinners[i].setValue("none.png");
+    //
+    // if (npc.getEquipment().hasEquipmentItem(Categories.EQUIPS[i]))
+    // {
+    // String string = npc.getEquipment().getEquipmentItem(Categories.EQUIPS[i]).getCharPath();
+    //
+    // EQspinners[i].setValue(((Arrays.asList(chars).indexOf(string + ".png") > -1) ? string : string + "_f") + ".png");
+    // }
+    // EQspinners[i].addChangeListener(new ChangeListener()
+    // {
+    // @Override
+    // public void stateChanged(ChangeEvent e)
+    // {
+    // updateEquipDialogPreview();
+    // }
+    // });
+    // l.setLabelFor(EQspinners[i]);
+    // panel.add(EQspinners[i]);
+    // }
+    //
+    // JLabel l = new JLabel("MALE");
+    // panel.add(l);
+    // l.setLabelFor(EQmale);
+    // panel.add(EQmale);
+    //
+    // updateEquipDialogPreview();
+    //
+    // SpringUtilities.makeCompactGrid(panel, EQspinners.length + 1, 2, 6, 6, 6, 6);
+    //
+    // adjFrame.setContentPane(panel);
+    // adjFrame.pack();
+    // adjFrame.setLocation(viewFrame.getX() + viewFrame.getWidth() + 10, viewFrame.getY());
+    // adjFrame.setVisible(true);
   }
   
   public void showTalkDialog(final NPCButton npc)
@@ -1620,6 +1593,26 @@ public class MapEditor
     talkScrollPane.setViewportView(talkPanel);
   }
   
+  public void showItemDialog()
+  {
+    final JDialog itemFrame = new JDialog(w);
+    itemFrame.setTitle("Item-Bearbeitung");
+    itemFrame.setResizable(false);
+    itemFrame.setAlwaysOnTop(true);
+    itemFrame.setModal(true);
+    itemFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    
+    JPanel panel = new JPanel(new SpringLayout());
+    
+    SpringUtilities.makeCompactGrid(panel, 1, 2, 6, 6, 6, 6);
+    
+    itemFrame.setContentPane(panel);
+    
+    itemFrame.pack();
+    itemFrame.setLocationRelativeTo(null);
+    itemFrame.setVisible(true);
+  }
+  
   private void updateNPCDialogPreview()
   {
     String sprite = NPCsprite.getSelectedItem().toString();
@@ -1645,6 +1638,7 @@ public class MapEditor
       if (data == null)
       {
         npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getPreferredSize().width - CFG.BOUNDMALUS, NPCpreview.getPreferredSize().height - CFG.BOUNDMALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage(), NPChostile.isSelected(), NPClastID, NPCai.getSelectedItem().toString(), this);
+        npc.attributes = NPCattr;
       }
       else
       {
@@ -1682,18 +1676,6 @@ public class MapEditor
         }
       });
       jpm.add(eedit);
-      
-      JMenuItem aedit = new JMenuItem(new AbstractAction("Attribute bearbeiten")
-      {
-        private static final long serialVersionUID = 1L;
-        
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-          showAttributesDialog(fNPC);
-        }
-      });
-      jpm.add(aedit);
       
       JMenuItem tedit = new JMenuItem(new AbstractAction("Talk bearbeiten")
       {

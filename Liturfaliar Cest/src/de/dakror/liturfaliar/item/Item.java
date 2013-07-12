@@ -65,6 +65,23 @@ public class Item extends Component
     init();
   }
   
+  public Item(Types t, String n, int ix, int iy, int cx, int cy, String path, Attributes attr, Attributes req, ItemAction ia, int s)
+  {
+    super(0, 0, ItemSlot.SIZE - SPACING * 2, ItemSlot.SIZE - SPACING * 2);
+    type = t;
+    name = n;
+    iconx = ix;
+    icony = iy;
+    corrx = cx;
+    corry = cy;
+    charPath = path;
+    attributes = attr;
+    requirements = req;
+    action = ia;
+    stack = s;
+    init();
+  }
+  
   public Item(Items i, int s)
   {
     super(0, 0, ItemSlot.SIZE - SPACING * 2, ItemSlot.SIZE - SPACING * 2);
