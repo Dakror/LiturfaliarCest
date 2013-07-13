@@ -20,6 +20,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Area;
@@ -56,6 +58,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
 import javax.swing.ToolTipManager;
@@ -71,8 +74,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.IconSelecter;
+import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.data.Door;
@@ -105,8 +110,7 @@ public class MapEditor
   int               NPClastID           = 0;
   
   // -- equip dialog -- //
-  JSpinner[]        EQspinners;
-  JCheckBox         EQmale;
+  JSpinner          EQhair, EQskin, EQeyes;
   JLabel            EQpreview;
   Equipment         EQ;
   
@@ -120,6 +124,7 @@ public class MapEditor
   final int         talkComponentHeight = 100;
   
   // -- item dialog -- //
+  Item              tmpItem;
   
   // -- attr dialog -- //
   Attributes        tmpAttr;
@@ -1285,153 +1290,231 @@ public class MapEditor
   
   public void showEquipmentDialog(final NPCButton npc)
   {
-    // final JDialog adjFrame = new JDialog(w);
-    //
-    // final JDialog viewFrame = new JDialog(w);
-    //
-    // adjFrame.setTitle("Ausrüstungs-Bearbeitung");
-    // adjFrame.setResizable(false);
-    // adjFrame.setAlwaysOnTop(true);
-    // adjFrame.addWindowListener(new WindowAdapter()
-    // {
-    // @Override
-    // public void windowClosed(WindowEvent e)
-    // {
-    // viewFrame.dispose();
-    // }
-    //
-    // });
-    // adjFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    //
-    // viewFrame.setTitle("Ausrüstungs-Bearbeitung");
-    // viewFrame.setResizable(false);
-    // viewFrame.setAlwaysOnTop(true);
-    // viewFrame.addWindowListener(new WindowAdapter()
-    // {
-    // @Override
-    // public void windowClosed(WindowEvent e)
-    // {
-    // adjFrame.dispose();
-    // }
-    //
-    // });
-    // viewFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    //
-    // JPanel p = new JPanel(new BorderLayout());
-    //
-    // EQpreview = new JLabel();
-    // EQpreview.setPreferredSize(new Dimension(320, 480));
-    // p.add(EQpreview, BorderLayout.NORTH);
-    //
-    // JButton ok = new JButton("Speichern");
-    // ok.addActionListener(new ActionListener()
-    // {
-    // @Override
-    // public void actionPerformed(ActionEvent e)
-    // {
-    // npc.setEquipment(EQ);
-    // }
-    // });
-    // p.add(ok, BorderLayout.LINE_END);
-    //
-    // JButton noEquip = new JButton("Ausrüstung entfernen");
-    // noEquip.addActionListener(new ActionListener()
-    // {
-    // @Override
-    // public void actionPerformed(ActionEvent e)
-    // {
-    // npc.setEquipment(new Equipment());
-    // for (JSpinner s : EQspinners)
-    // {
-    // if (((SpinnerListModel) s.getModel()).getList().indexOf("none.png") > -1)
-    // s.setValue("none.png");
-    // }
-    // updateEquipDialogPreview();
-    // }
-    // });
-    // p.add(noEquip, BorderLayout.LINE_START);
-    //
-    // viewFrame.setContentPane(p);
-    // viewFrame.pack();
-    // viewFrame.setLocationRelativeTo(null);
-    // viewFrame.setVisible(true);
-    //
-    // JPanel panel = new JPanel(new SpringLayout());
-    //
-    // EQspinners = new JSpinner[Categories.EQUIPS.length];
-    // EQmale = new JCheckBox();
-    // EQmale.setSelected(npc.getEquipment().isMale());
-    //
-    // EQmale.addChangeListener(new ChangeListener()
-    // {
-    // @Override
-    // public void stateChanged(ChangeEvent e)
-    // {
-    // updateEquipDialogPreview();
-    // }
-    // });
-    //
-    // for (int i = 0; i < Categories.EQUIPS.length; i++)
-    // {
-    // JLabel l = new JLabel(Categories.EQUIPS[i].name());
-    // panel.add(l);
-    //
-    // String[] chars = FileManager.getCharParts(Categories.EQUIPS[i].name().toLowerCase());
-    //
-    // EQspinners[i] = new JSpinner(new SpinnerListModel(chars));
-    // EQspinners[i].setPreferredSize(new Dimension(150, 30));
-    //
-    // final JSpinner me = EQspinners[i];
-    //
-    // EQspinners[i].addMouseWheelListener(new MouseWheelListener()
-    // {
-    //
-    // @Override
-    // public void mouseWheelMoved(MouseWheelEvent e)
-    // {
-    // if (e.getWheelRotation() < 0)
-    // {
-    // if (me.getModel().getPreviousValue() != null)
-    // me.getModel().setValue(me.getModel().getPreviousValue());
-    // }
-    // else if (me.getModel().getNextValue() != null)
-    // me.getModel().setValue(me.getModel().getNextValue());
-    // }
-    // });
-    // if (Arrays.asList(chars).indexOf("none.png") > -1)
-    // EQspinners[i].setValue("none.png");
-    //
-    // if (npc.getEquipment().hasEquipmentItem(Categories.EQUIPS[i]))
-    // {
-    // String string = npc.getEquipment().getEquipmentItem(Categories.EQUIPS[i]).getCharPath();
-    //
-    // EQspinners[i].setValue(((Arrays.asList(chars).indexOf(string + ".png") > -1) ? string : string + "_f") + ".png");
-    // }
-    // EQspinners[i].addChangeListener(new ChangeListener()
-    // {
-    // @Override
-    // public void stateChanged(ChangeEvent e)
-    // {
-    // updateEquipDialogPreview();
-    // }
-    // });
-    // l.setLabelFor(EQspinners[i]);
-    // panel.add(EQspinners[i]);
-    // }
-    //
-    // JLabel l = new JLabel("MALE");
-    // panel.add(l);
-    // l.setLabelFor(EQmale);
-    // panel.add(EQmale);
-    //
-    // updateEquipDialogPreview();
-    //
-    // SpringUtilities.makeCompactGrid(panel, EQspinners.length + 1, 2, 6, 6, 6, 6);
-    //
-    // adjFrame.setContentPane(panel);
-    // adjFrame.pack();
-    // adjFrame.setLocation(viewFrame.getX() + viewFrame.getWidth() + 10, viewFrame.getY());
-    // adjFrame.setVisible(true);
+    if (npc != null)
+      EQ = npc.getEquipment();
+    
+    final JDialog adjFrame = new JDialog(w);
+    
+    final JDialog viewFrame = new JDialog(w);
+    
+    adjFrame.setTitle("Ausrüstungs-Bearbeitung");
+    adjFrame.setResizable(false);
+    adjFrame.setAlwaysOnTop(true);
+    adjFrame.addWindowListener(new WindowAdapter()
+    {
+      @Override
+      public void windowClosed(WindowEvent e)
+      {
+        viewFrame.dispose();
+      }
+      
+    });
+    adjFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    
+    viewFrame.setTitle("Ausrüstungs-Bearbeitung");
+    viewFrame.setResizable(false);
+    viewFrame.setAlwaysOnTop(true);
+    viewFrame.addWindowListener(new WindowAdapter()
+    {
+      @Override
+      public void windowClosed(WindowEvent e)
+      {
+        adjFrame.dispose();
+      }
+      
+    });
+    viewFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    
+    JPanel p = new JPanel(new BorderLayout());
+    
+    EQpreview = new JLabel();
+    EQpreview.setPreferredSize(new Dimension(320, 480));
+    p.add(EQpreview, BorderLayout.NORTH);
+    
+    JButton ok = new JButton("Speichern");
+    ok.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        npc.setEquipment(EQ);
+      }
+    });
+    p.add(ok, BorderLayout.LINE_END);
+    
+    JButton noEquip = new JButton("Ausrüstung entfernen");
+    noEquip.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        npc.setEquipment(new Equipment());
+        updateEquipDialogPreview();
+      }
+    });
+    p.add(noEquip, BorderLayout.LINE_START);
+    
+    viewFrame.setContentPane(p);
+    viewFrame.pack();
+    viewFrame.setLocationRelativeTo(null);
+    viewFrame.setVisible(true);
+    
+    JPanel panel = new JPanel(new SpringLayout());
+    
+    JLabel l = new JLabel(Categories.HAIR.name());
+    panel.add(l);
+    String[] chars = FileManager.getCharParts(Categories.HAIR.name().toLowerCase());
+    EQhair = new JSpinner(new SpinnerListModel(chars));
+    EQhair.setPreferredSize(new Dimension(150, 22));
+    if (Arrays.asList(chars).indexOf("none.png") > -1)
+      EQhair.setValue("none.png");
+    if (npc.getEquipment().hasEquipmentItem(Categories.HAIR))
+    {
+      String string = npc.getEquipment().getEquipmentItem(Categories.HAIR).getCharPath();
+      
+      EQhair.setValue(((Arrays.asList(chars).indexOf(string + ".png") > -1) ? string : string + "_f") + ".png");
+    }
+    EQhair.addChangeListener(new ChangeListener()
+    {
+      @Override
+      public void stateChanged(ChangeEvent e)
+      {
+        updateEquipDialogPreview();
+      }
+    });
+    
+    EQhair.addMouseWheelListener(new MouseWheelListener()
+    {
+      
+      @Override
+      public void mouseWheelMoved(MouseWheelEvent e)
+      {
+        if (e.getWheelRotation() < 0)
+        {
+          if (EQhair.getModel().getPreviousValue() != null)
+            EQhair.getModel().setValue(EQhair.getModel().getPreviousValue());
+        }
+        else if (EQhair.getModel().getNextValue() != null)
+          EQhair.getModel().setValue(EQhair.getModel().getNextValue());
+      }
+    });
+    l.setLabelFor(EQhair);
+    panel.add(EQhair);
+    
+    l = new JLabel(Categories.HAIR.name());
+    panel.add(l);
+    chars = FileManager.getCharParts(Categories.SKIN.name().toLowerCase());
+    EQskin = new JSpinner(new SpinnerListModel(chars));
+    EQskin.setPreferredSize(new Dimension(150, 22));
+    if (Arrays.asList(chars).indexOf("none.png") > -1)
+      EQskin.setValue("none.png");
+    if (npc.getEquipment().hasEquipmentItem(Categories.SKIN))
+    {
+      String string = npc.getEquipment().getEquipmentItem(Categories.SKIN).getCharPath();
+      
+      EQskin.setValue(((Arrays.asList(chars).indexOf(string + ".png") > -1) ? string : string + "_f") + ".png");
+    }
+    EQskin.addChangeListener(new ChangeListener()
+    {
+      @Override
+      public void stateChanged(ChangeEvent e)
+      {
+        updateEquipDialogPreview();
+      }
+    });
+    
+    EQskin.addMouseWheelListener(new MouseWheelListener()
+    {
+      
+      @Override
+      public void mouseWheelMoved(MouseWheelEvent e)
+      {
+        if (e.getWheelRotation() < 0)
+        {
+          if (EQskin.getModel().getPreviousValue() != null)
+            EQskin.getModel().setValue(EQskin.getModel().getPreviousValue());
+        }
+        else if (EQskin.getModel().getNextValue() != null)
+          EQskin.getModel().setValue(EQskin.getModel().getNextValue());
+      }
+    });
+    l.setLabelFor(EQskin);
+    panel.add(EQskin);
+    
+    l = new JLabel(Categories.EYES.name());
+    panel.add(l);
+    chars = FileManager.getCharParts(Categories.EYES.name().toLowerCase());
+    EQeyes = new JSpinner(new SpinnerListModel(chars));
+    EQeyes.setPreferredSize(new Dimension(150, 22));
+    if (Arrays.asList(chars).indexOf("none.png") > -1)
+      EQeyes.setValue("none.png");
+    if (npc.getEquipment().hasEquipmentItem(Categories.EYES))
+    {
+      String string = npc.getEquipment().getEquipmentItem(Categories.EYES).getCharPath();
+      
+      EQeyes.setValue(((Arrays.asList(chars).indexOf(string + ".png") > -1) ? string : string + "_f") + ".png");
+    }
+    EQeyes.addChangeListener(new ChangeListener()
+    {
+      @Override
+      public void stateChanged(ChangeEvent e)
+      {
+        updateEquipDialogPreview();
+      }
+    });
+    
+    EQeyes.addMouseWheelListener(new MouseWheelListener()
+    {
+      
+      @Override
+      public void mouseWheelMoved(MouseWheelEvent e)
+      {
+        if (e.getWheelRotation() < 0)
+        {
+          if (EQeyes.getModel().getPreviousValue() != null)
+            EQeyes.getModel().setValue(EQeyes.getModel().getPreviousValue());
+        }
+        else if (EQeyes.getModel().getNextValue() != null)
+          EQeyes.getModel().setValue(EQeyes.getModel().getNextValue());
+      }
+    });
+    l.setLabelFor(EQeyes);
+    panel.add(EQeyes);
+    
+    
+    for (final Categories c : Categories.EQUIPS)
+    {
+      if (Arrays.asList(Categories.NATIVES).contains(c))
+        continue;
+      
+      l = new JLabel(c.name());
+      panel.add(l);
+      JButton btn = new JButton("Bearbeiten");
+      btn.addActionListener(new ActionListener()
+      {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          showItemDialog(EQ.getEquipmentItem(c));
+        }
+      });
+      l.setLabelFor(btn);
+      panel.add(btn);
+    }
+    
+    updateEquipDialogPreview();
+    
+    SpringUtilities.makeCompactGrid(panel, Categories.EQUIPS.length, 2, 6, 6, 6, 6);
+    
+    adjFrame.setContentPane(panel);
+    adjFrame.pack();
+    adjFrame.setLocation(viewFrame.getX() + viewFrame.getWidth() + 10, viewFrame.getY());
+    adjFrame.setVisible(true);
+  }
+  
+  public void updateEquipDialogPreview()
+  { 
+    
   }
   
   public void showTalkDialog(final NPCButton npc)
@@ -1593,7 +1676,7 @@ public class MapEditor
     talkScrollPane.setViewportView(talkPanel);
   }
   
-  public void showItemDialog()
+  public void showItemDialog(Item exist)
   {
     final JDialog itemFrame = new JDialog(w);
     itemFrame.setTitle("Item-Bearbeitung");

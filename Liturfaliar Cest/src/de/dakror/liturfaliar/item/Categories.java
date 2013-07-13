@@ -21,6 +21,9 @@ public enum Categories
   CONSUMABLE,
   SKILL;
   
-  public static final Categories[] EQUIPS = { GLOVES, ARM, SHOULDER, HELMET, SHIRT, ARMOR, BELT, PANTS, BOOTS, CAPE, SKIN, HAIR, EYES };
+  
+  public static final Categories[] NATIVES = { HAIR, SKIN, EYES };
+  
+  public static final Categories[] EQUIPS  = { GLOVES, ARM, SHOULDER, HELMET, SHIRT, ARMOR, BELT, PANTS, BOOTS, CAPE, SKIN, HAIR, EYES };
   
 }
