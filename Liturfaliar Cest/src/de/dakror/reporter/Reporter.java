@@ -16,8 +16,9 @@ import de.dakror.universion.UniVersion;
 
 public class Reporter
 {
-  private static File   LOG = null;
-  private static String SESSION_START;
+  private static File     LOG       = null;
+  private static String   SESSION_START;
+  public static final int MAXLENGTH = 4096;
   
   public static void init(File log)
   {
@@ -27,7 +28,7 @@ public class Reporter
       System.exit(0);
     }
     LOG = log;
-    LOG.mkdir();
+    LOG.mkdirs();
     SESSION_START = new Date().toString().replace(":", "-");
     cleanupLogs();
     try
@@ -62,7 +63,11 @@ public class Reporter
       }
       try
       {
-        new URL("http://dakror.de/ajax/errorreport.php?r=" + URLEncoder.encode("App: " + UniVersion.getFullName() + "\nDate: " + (System.currentTimeMillis() / 1000) + "\nVersion: " + UniVersion.prettyVersion() + " \nError: " + getFileContents(f), "UTF-8")).openStream().close();
+        String stacktrace = getFileContents(f);
+        if (stacktrace.length() > MAXLENGTH)
+          stacktrace = stacktrace.substring(0, MAXLENGTH - 3) + "...";
+        
+        new URL("http://dakror.de/ajax/errorreport.php?r=" + URLEncoder.encode("App: " + UniVersion.getFullName() + "\nDate: " + (System.currentTimeMillis() / 1000) + "\nVersion: " + UniVersion.prettyVersion() + " \nError: " + stacktrace, "UTF-8")).openStream().close();
       }
       catch (Exception e)
       {
