@@ -34,6 +34,7 @@ import java.util.Comparator;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -1688,45 +1689,101 @@ public class MapEditor
     
     JLabel l = new JLabel("Icon-X:");
     p.add(l);
-    JSpinner ix = new JSpinner(new SpinnerNumberModel(0, 0, 16, 1));
+    final JSpinner ix = new JSpinner(new SpinnerNumberModel(0, 0, 16, 1));
     if (exist != null)
       ix.setValue(exist.getIconPoint().x);
     p.add(ix);
     
     l = new JLabel("Icon-Y:");
     p.add(l);
-    JSpinner iy = new JSpinner(new SpinnerNumberModel(0, 0, 629, 1));
+    final JSpinner iy = new JSpinner(new SpinnerNumberModel(0, 0, 629, 1));
     if (exist != null)
       iy.setValue(exist.getIconPoint().y);
     p.add(iy);
     
     l = new JLabel("Korrektur-X:");
     p.add(l);
-    JSpinner cx = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+    final JSpinner cx = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
     if (exist != null)
       cx.setValue(exist.getCorrectionX());
     p.add(cx);
     
     l = new JLabel("Korrektur-Y:");
     p.add(l);
-    JSpinner cy = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+    final JSpinner cy = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
     if (exist != null)
       cy.setValue(exist.getCorrectionY());
     p.add(cy);
     
     l = new JLabel("Name:");
     p.add(l);
-    JTextField name = new JTextField(15);
+    final JTextField name = new JTextField(15);
     if (exist != null)
       name.setText(exist.getName());
     p.add(name);
     
+    final JLabel preview = new JLabel();
+    Image body1 = Viewport.loadImage("char/skin/man_f.png");
+    Image body2 = Viewport.loadImage("char/skin/man_b.png");
+    BufferedImage bi = new BufferedImage(body1.getWidth(null), body1.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+    Graphics g = bi.getGraphics();
+    g.drawImage(body2, 0, 0, null);
+    g.drawImage(body1, 0, 0, null);
+    preview.setIcon(new ImageIcon(bi));
+    preview.setPreferredSize(new Dimension(body1.getWidth(null), body1.getHeight(null)));
+    
+    l = new JLabel("Char-Pfad:");
+    p.add(l);
+    final JComboBox<String> path = new JComboBox<String>();
+    if (exist != null && exist.getCharPath() != null)
+      path.setSelectedItem(exist.getCharPath());
+    p.add(path);
+    
+    p.add(new JLabel());
+    p.add(preview);
+    
     l = new JLabel("Typ:");
     p.add(l);
-    JComboBox<Types> type = new JComboBox<Types>(Types.values());
+    final JComboBox<Types> type = new JComboBox<Types>(Types.values());
+    type.addItemListener(new ItemListener()
+    {
+      @Override
+      public void itemStateChanged(ItemEvent e)
+      {
+        Types i = (Types) e.getItem();
+        if (Arrays.asList(Categories.EQUIPS).contains(i.getCategory()))
+          path.setModel(new DefaultComboBoxModel<String>(FileManager.getCharParts(i.name().toLowerCase())));
+        
+        else path.removeAllItems();
+      }
+    });
     if (exist != null)
       type.setSelectedItem(exist.getType());
     p.add(type);
+    
+    
+    path.addItemListener(new ItemListener()
+    {
+      @Override
+      public void itemStateChanged(ItemEvent e)
+      {
+        if (e.getStateChange() != ItemEvent.SELECTED)
+          return;
+        
+        Image body1 = Viewport.loadImage("char/skin/man_f.png");
+        Image body2 = Viewport.loadImage("char/skin/man_b.png");
+        Image part = Viewport.loadImage("char/" + type.getSelectedItem().toString().toLowerCase() + "/" + path.getSelectedItem().toString());
+        BufferedImage bi = new BufferedImage(body1.getWidth(null), body1.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = bi.getGraphics();
+        if (!((Types) type.getSelectedItem()).equals(Types.SKIN))
+          g.drawImage(body2, 0, 0, null);
+        if (!((Types) type.getSelectedItem()).equals(Types.SKIN))
+          g.drawImage(body1, 0, 0, null);
+        g.drawImage(part, 0, 0, null);
+        preview.setIcon(new ImageIcon(bi));
+      }
+    });
+    
     
     l = new JLabel("Attribute:");
     p.add(l);
@@ -1761,7 +1818,7 @@ public class MapEditor
     final String[] actions = new String[] { "EmptyAction", "PotionAction", "WeaponAction" }; // TODO: Keep in sync with available item actions SkillAction is excluded, it's only for native purpose
     l = new JLabel("Action:");
     p.add(l);
-    JComboBox<String> action = new JComboBox<String>(actions);
+    final JComboBox<String> action = new JComboBox<String>(actions);
     action.addItemListener(new ItemListener()
     {
       @Override
@@ -1770,19 +1827,20 @@ public class MapEditor
         if (e.getStateChange() != ItemEvent.SELECTED)
           return;
         
+        JPanel labels = new JPanel(new SpringLayout());
         JPanel panel = new JPanel(new SpringLayout());
         
         switch (e.getItem().toString())
         {
           case "PotionAction":
           {
-            panel.add(new JLabel("Target:"));
+            labels.add(new JLabel("Target:"));
             potionTarget = new JTextField(15);
             if (exist != null)
               potionTarget.setText(((PotionAction) exist.getAction()).getTarget());
             panel.add(potionTarget);
             
-            panel.add(new JLabel("Attribute:"));
+            labels.add(new JLabel("Attribute:"));
             JButton btn = new JButton("Bearbeiten");
             btn.addActionListener(new ActionListener()
             {
@@ -1798,16 +1856,18 @@ public class MapEditor
             });
             panel.add(btn);
             
-            panel.add(new JLabel("Schadens-Typ:"));
+            labels.add(new JLabel("Schadens-Typ:"));
             potionDamageType = new JComboBox<DamageType>(DamageType.values());
             panel.add(potionDamageType);
             
-            SpringUtilities.makeCompactGrid(panel, 3, 2, 6, 6, 6, 6);
+            
+            SpringUtilities.makeCompactGrid(labels, 3, 1, 6, 12, 6, 12);
+            SpringUtilities.makeCompactGrid(panel, 3, 1, 6, 6, 6, 6);
             break;
           }
           case "WeaponAction":
           {
-            panel.add(new JLabel("Attribute:"));
+            labels.add(new JLabel("Attribute:"));
             JButton btn = new JButton("Bearbeiten");
             btn.addActionListener(new ActionListener()
             {
@@ -1823,21 +1883,22 @@ public class MapEditor
             });
             panel.add(btn);
             
-            panel.add(new JLabel("Schadens-Typ:"));
+            labels.add(new JLabel("Schadens-Typ:"));
             weaponDamageType = new JComboBox<DamageType>(DamageType.values());
             panel.add(weaponDamageType);
             
-            SpringUtilities.makeCompactGrid(panel, 2, 2, 6, 6, 6, 6);
+            SpringUtilities.makeCompactGrid(labels, 2, 1, 6, 6, 6, 6);
+            SpringUtilities.makeCompactGrid(panel, 2, 1, 6, 6, 6, 6);
             break;
           }
         }
-        p.remove(18);
+        p.remove(22);
         p.remove(actionSettings);
-        SpringUtilities.makeCompactGrid(p, 9, 2, 6, 6, 6, 6);
-        p.add(new JLabel(), 18);
-        p.add(panel, 19);
+        SpringUtilities.makeCompactGrid(p, 11, 2, 6, 6, 6, 6);
+        p.add(labels, 22);
+        p.add(panel, 23);
         actionSettings = panel;
-        SpringUtilities.makeCompactGrid(p, 10, 2, 6, 6, 6, 6);
+        SpringUtilities.makeCompactGrid(p, 13, 2, 6, 6, 6, 6);
         itemFrame.pack();
       }
     });
@@ -1849,7 +1910,19 @@ public class MapEditor
     p.add(new JLabel());
     p.add(actionSettings);
     
-    SpringUtilities.makeCompactGrid(p, 10, 2, 6, 6, 6, 6);
+    p.add(new JLabel());
+    JButton ok = new JButton("OK");
+    ok.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {// tmpItem = new Item(type.getSelectedItem(), name.getText(), ix.getValue(), iy.getValue(), cx.getValue(), cy.getValue(), );
+      
+      }
+    });
+    p.add(ok);
+    
+    SpringUtilities.makeCompactGrid(p, 13, 2, 6, 6, 6, 6);
     
     itemFrame.setContentPane(p);
     
