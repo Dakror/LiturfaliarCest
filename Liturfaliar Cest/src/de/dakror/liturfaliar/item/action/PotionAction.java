@@ -123,6 +123,14 @@ public class PotionAction extends ItemAction
     }
   }
   
+  public String getTarget() {
+    return targetID;
+  }
+  
+  public DamageType getDamageType() {
+    return dmgType;
+  }
+  
   @Override
   public boolean equals(ItemAction o)
   {

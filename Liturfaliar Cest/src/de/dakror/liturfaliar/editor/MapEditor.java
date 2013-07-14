@@ -78,6 +78,9 @@ import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.IconSelecter;
 import de.dakror.liturfaliar.item.Item;
+import de.dakror.liturfaliar.item.Types;
+import de.dakror.liturfaliar.item.action.PotionAction;
+import de.dakror.liturfaliar.item.action.WeaponAction;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.data.Door;
@@ -85,6 +88,7 @@ import de.dakror.liturfaliar.map.data.FieldData;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.CFG;
+import de.dakror.liturfaliar.settings.DamageType;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Compressor;
 import de.dakror.liturfaliar.util.FileManager;
@@ -94,71 +98,83 @@ public class MapEditor
 {
   
   // -- filterReplace dialog -- //
-  JComboBox<String> FRoldTileset, FRnewTileset;
-  JTextField        FRoldLayer, FRnewLayer, FRoldTX, FRoldTY, FRnewTX, FRnewTY;
+  JComboBox<String>     FRoldTileset, FRnewTileset;
+  JTextField            FRoldLayer, FRnewLayer, FRoldTX, FRoldTY, FRnewTX, FRnewTY;
   
   // -- NPC dialog -- //
-  JComboBox<String> NPCsprite, NPCdir, NPCai;
-  JDialog           NPCframe;
-  JTextField        NPCx, NPCy, NPCname;
-  JCheckBox         NPCmove, NPClook, NPChostile;
-  JLabel            NPCpreview;
-  JSpinner          NPCspeed, NPCmoveT, NPClookT;
-  JButton           NPCok;
-  Attributes        NPCattr;
+  JComboBox<String>     NPCsprite, NPCdir, NPCai;
+  JDialog               NPCframe;
+  JTextField            NPCx, NPCy, NPCname;
+  JCheckBox             NPCmove, NPClook, NPChostile;
+  JLabel                NPCpreview;
+  JSpinner              NPCspeed, NPCmoveT, NPClookT;
+  JButton               NPCok;
+  Attributes            NPCattr;
   
-  int               NPClastID           = 0;
+  int                   NPClastID           = 0;
   
   // -- equip dialog -- //
-  JSpinner          EQhair, EQskin, EQeyes;
-  JLabel            EQpreview;
-  Equipment         EQ;
+  JSpinner              EQhair, EQskin, EQeyes;
+  JLabel                EQpreview;
+  Equipment             EQ;
   
   // -- talk dialog -- //
-  JColorSlider      talkColorSlider;
-  JScrollPane       talkScrollPane;
-  JPanel            talkPanel;
-  JButton           talkAdd, talkOk;
-  String[]          tilesets;
-  final int         talkComponentWidth  = 585;
-  final int         talkComponentHeight = 100;
+  JColorSlider          talkColorSlider;
+  JScrollPane           talkScrollPane;
+  JPanel                talkPanel;
+  JButton               talkAdd, talkOk;
+  String[]              tilesets;
+  final int             talkComponentWidth  = 585;
+  final int             talkComponentHeight = 100;
   
   // -- item dialog -- //
-  Item              tmpItem;
+  Item                  tmpItem;
+  Attributes            tmpAttributes;
+  Attributes            tmpRequires;
+  
+  // -- item dialog actions -- //
+  JPanel                actionSettings;
+  
+  JTextField            potionTarget;
+  Attributes            potionAttributes;
+  JComboBox<DamageType> potionDamageType;
+  
+  Attributes            weaponAttributes;
+  JComboBox<DamageType> weaponDamageType;
   
   // -- attr dialog -- //
-  Attributes        tmpAttr;
+  Attributes            tmpAttr;
   
   // -- global stuff -- //
-  public JFrame     w;
+  public JFrame         w;
   
-  JMenuBar          menu;
-  JMenu             mpmenu, mmenu, fmenu, omenu;
-  JMenuItem         mUndo;
-  JCheckBoxMenuItem mDrag;
-  Viewport          v;
-  JSONObject        mappackdata, mapdata;
+  JMenuBar              menu;
+  JMenu                 mpmenu, mmenu, fmenu, omenu;
+  JMenuItem             mUndo;
+  JCheckBoxMenuItem     mDrag;
+  Viewport              v;
+  JSONObject            mappackdata, mapdata;
   // JList<String> tilefiles;
-  JPanel            tiles;
-  MapPanel          map;
-  JScrollPane       msp;
-  String            tileset;
-  JButton           selectedtile;
-  BufferedImage[][] autotiles;
-  JDialog           bumpPreview;
+  JPanel                tiles;
+  MapPanel              map;
+  JScrollPane           msp;
+  String                tileset;
+  JButton               selectedtile;
+  BufferedImage[][]     autotiles;
+  JDialog               bumpPreview;
   
   // -- modes -- //
-  boolean           gridmode;
-  boolean           rasterview;
-  boolean           deletemode;
-  boolean           autotilemode;
-  boolean           dragmode;
+  boolean               gridmode;
+  boolean               rasterview;
+  boolean               deletemode;
+  boolean               autotilemode;
+  boolean               dragmode;
   
-  double            cachelayer;
+  double                cachelayer;
   
   // -- UNDO -- //
-  TileButton[]      lastChangedTiles;
-  boolean           tilesWereDeleted;
+  TileButton[]          lastChangedTiles;
+  boolean               tilesWereDeleted;
   
   public MapEditor(Viewport viewport)
   {
@@ -360,7 +376,8 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        new IconSelecter();
+        IconSelecter is = new IconSelecter();
+        is.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
       }
     });
     fmenu.add(fis);
@@ -1037,7 +1054,6 @@ public class MapEditor
     if (exist != null)
       NPCx.setText(exist.x + "");
     
-    label.setLabelFor(NPCx);
     p.add(NPCx);
     
     label = new JLabel("Y-Position: ", JLabel.TRAILING);
@@ -1046,7 +1062,6 @@ public class MapEditor
     if (exist != null)
       NPCy.setText(exist.y + "");
     
-    label.setLabelFor(NPCy);
     p.add(NPCy);
     
     label = new JLabel("Blickrichtung: ", JLabel.TRAILING);
@@ -1065,7 +1080,6 @@ public class MapEditor
           updateNPCDialogPreview();
       }
     });
-    label.setLabelFor(NPCdir);
     p.add(NPCdir);
     
     label = new JLabel("Name: ", JLabel.TRAILING);
@@ -1074,7 +1088,6 @@ public class MapEditor
     if (exist != null)
       NPCname.setText(exist.name);
     
-    label.setLabelFor(NPCname);
     p.add(NPCname);
     
     label = new JLabel("Sprite: ", JLabel.TRAILING);
@@ -1094,7 +1107,7 @@ public class MapEditor
           updateNPCDialogPreview();
       }
     });
-    label.setLabelFor(NPCsprite);
+    
     p.add(NPCsprite);
     
     label = new JLabel("Vorschau: ", JLabel.TRAILING);
@@ -1102,7 +1115,6 @@ public class MapEditor
     NPCpreview = new JLabel();
     NPCpreview.setPreferredSize(new Dimension(32, 48));
     updateNPCDialogPreview();
-    label.setLabelFor(NPCpreview);
     p.add(NPCpreview);
     
     label = new JLabel("Bewegungsgeschwindigkeit: ", JLabel.TRAILING);
@@ -1111,7 +1123,6 @@ public class MapEditor
     if (exist != null)
       NPCspeed.setValue(exist.speed);
     
-    label.setLabelFor(NPCspeed);
     p.add(NPCspeed);
     
     label = new JLabel("zufällige Bewegung:", JLabel.TRAILING);
@@ -1128,7 +1139,6 @@ public class MapEditor
         NPCmoveT.setEnabled(((JCheckBox) e.getSource()).isSelected());
       }
     });
-    label.setLabelFor(NPCmove);
     p.add(NPCmove);
     
     label = new JLabel("Zufallsbewegung-Interval. (ms):", JLabel.TRAILING);
@@ -1138,7 +1148,6 @@ public class MapEditor
       NPCmoveT.setValue(exist.moveT);
     
     NPCmoveT.setEnabled(NPCmove.isSelected());
-    label.setLabelFor(NPCmoveT);
     p.add(NPCmoveT);
     
     label = new JLabel("zufälliges Blicken:", JLabel.TRAILING);
@@ -1156,7 +1165,6 @@ public class MapEditor
         NPClookT.setEnabled(((JCheckBox) e.getSource()).isSelected());
       }
     });
-    label.setLabelFor(NPClook);
     p.add(NPClook);
     
     label = new JLabel("Zufallsblicken-Interval. (ms):", JLabel.TRAILING);
@@ -1166,13 +1174,11 @@ public class MapEditor
       NPClookT.setValue(exist.lookT);
     
     NPClookT.setEnabled(NPClook.isSelected());
-    label.setLabelFor(NPClookT);
     p.add(NPClookT);
     
     label = new JLabel("Künstliche Intelligenz:", JLabel.TRAILING);
     p.add(label);
     NPCai = new JComboBox<String>(new String[] { "StraightLineAI" });
-    label.setLabelFor(NPCai);
     p.add(NPCai);
     
     label = new JLabel("immer feindlich:", JLabel.TRAILING);
@@ -1180,7 +1186,6 @@ public class MapEditor
     NPChostile = new JCheckBox();
     if (exist != null)
       NPChostile.setSelected(exist.hostile);
-    label.setLabelFor(NPChostile);
     p.add(NPChostile);
     
     label = new JLabel("Attribute:", JLabel.TRAILING);
@@ -1195,7 +1200,6 @@ public class MapEditor
         NPCattr = tmpAttr;
       }
     });
-    label.setLabelFor(attr);
     p.add(attr);
     
     p.add(new JLabel());
@@ -1255,7 +1259,6 @@ public class MapEditor
       JLabel label = new JLabel(Attr.values()[i].getText() + ":");
       panel.add(label);
       JSpinner spinner = new JSpinner(new SpinnerNumberModel(exist.getAttribute(Attr.values()[i]).getValue(), -1000000000.0, 1000000000.0, 1.0));
-      label.setLabelFor(spinner);
       spinners[i] = spinner;
       panel.add(spinner);
     }
@@ -1299,7 +1302,6 @@ public class MapEditor
     
     adjFrame.setTitle("Ausrüstungs-Bearbeitung");
     adjFrame.setResizable(false);
-    adjFrame.setAlwaysOnTop(true);
     adjFrame.addWindowListener(new WindowAdapter()
     {
       @Override
@@ -1313,7 +1315,6 @@ public class MapEditor
     
     viewFrame.setTitle("Ausrüstungs-Bearbeitung");
     viewFrame.setResizable(false);
-    viewFrame.setAlwaysOnTop(true);
     viewFrame.addWindowListener(new WindowAdapter()
     {
       @Override
@@ -1398,7 +1399,6 @@ public class MapEditor
           EQhair.getModel().setValue(EQhair.getModel().getNextValue());
       }
     });
-    l.setLabelFor(EQhair);
     panel.add(EQhair);
     
     l = new JLabel(Categories.HAIR.name());
@@ -1438,7 +1438,6 @@ public class MapEditor
           EQskin.getModel().setValue(EQskin.getModel().getNextValue());
       }
     });
-    l.setLabelFor(EQskin);
     panel.add(EQskin);
     
     l = new JLabel(Categories.EYES.name());
@@ -1478,7 +1477,6 @@ public class MapEditor
           EQeyes.getModel().setValue(EQeyes.getModel().getNextValue());
       }
     });
-    l.setLabelFor(EQeyes);
     panel.add(EQeyes);
     
     
@@ -1498,7 +1496,6 @@ public class MapEditor
           showItemDialog(EQ.getEquipmentItem(c));
         }
       });
-      l.setLabelFor(btn);
       panel.add(btn);
     }
     
@@ -1641,7 +1638,6 @@ public class MapEditor
         e.printStackTrace();
       }
     }
-    label.setLabelFor(talkCond);
     p.add(talkCond);
     
     label = new JLabel("Text: ", JLabel.TRAILING);
@@ -1664,7 +1660,6 @@ public class MapEditor
     
     JScrollPane pane = new JScrollPane(talkText, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     
-    label.setLabelFor(pane);
     p.add(pane);
     
     p.setBounds(0, talkPanel.getComponentCount() * talkComponentHeight, talkComponentWidth, talkComponentHeight);
@@ -1676,20 +1671,187 @@ public class MapEditor
     talkScrollPane.setViewportView(talkPanel);
   }
   
-  public void showItemDialog(Item exist)
+  public void showItemDialog(final Item exist)
   {
+    if (exist != null)
+    {
+      tmpAttributes = exist.getAttributes();
+      tmpRequires = exist.getRequirements();
+    }
+    
     final JDialog itemFrame = new JDialog(w);
     itemFrame.setTitle("Item-Bearbeitung");
     itemFrame.setResizable(false);
-    itemFrame.setAlwaysOnTop(true);
-    itemFrame.setModal(true);
     itemFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     
-    JPanel panel = new JPanel(new SpringLayout());
+    final JPanel p = new JPanel(new SpringLayout());
     
-    SpringUtilities.makeCompactGrid(panel, 1, 2, 6, 6, 6, 6);
+    JLabel l = new JLabel("Icon-X:");
+    p.add(l);
+    JSpinner ix = new JSpinner(new SpinnerNumberModel(0, 0, 16, 1));
+    if (exist != null)
+      ix.setValue(exist.getIconPoint().x);
+    p.add(ix);
     
-    itemFrame.setContentPane(panel);
+    l = new JLabel("Icon-Y:");
+    p.add(l);
+    JSpinner iy = new JSpinner(new SpinnerNumberModel(0, 0, 629, 1));
+    if (exist != null)
+      iy.setValue(exist.getIconPoint().y);
+    p.add(iy);
+    
+    l = new JLabel("Korrektur-X:");
+    p.add(l);
+    JSpinner cx = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+    if (exist != null)
+      cx.setValue(exist.getCorrectionX());
+    p.add(cx);
+    
+    l = new JLabel("Korrektur-Y:");
+    p.add(l);
+    JSpinner cy = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+    if (exist != null)
+      cy.setValue(exist.getCorrectionY());
+    p.add(cy);
+    
+    l = new JLabel("Name:");
+    p.add(l);
+    JTextField name = new JTextField(15);
+    if (exist != null)
+      name.setText(exist.getName());
+    p.add(name);
+    
+    l = new JLabel("Typ:");
+    p.add(l);
+    JComboBox<Types> type = new JComboBox<Types>(Types.values());
+    if (exist != null)
+      type.setSelectedItem(exist.getType());
+    p.add(type);
+    
+    l = new JLabel("Attribute:");
+    p.add(l);
+    JButton btn = new JButton("Bearbeiten");
+    btn.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        showAttributesDialog((tmpAttributes != null) ? tmpAttributes : new Attributes());
+        tmpAttributes = tmpAttr;
+      }
+    });
+    p.add(btn);
+    
+    l = new JLabel("Requirements:");
+    p.add(l);
+    btn = new JButton("Bearbeiten");
+    btn.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        showAttributesDialog((tmpRequires != null) ? tmpRequires : new Attributes());
+        tmpRequires = tmpAttr;
+      }
+    });
+    p.add(btn);
+    
+    actionSettings = new JPanel(new SpringLayout());
+    
+    final String[] actions = new String[] { "EmptyAction", "PotionAction", "WeaponAction" }; // TODO: Keep in sync with available item actions SkillAction is excluded, it's only for native purpose
+    l = new JLabel("Action:");
+    p.add(l);
+    JComboBox<String> action = new JComboBox<String>(actions);
+    action.addItemListener(new ItemListener()
+    {
+      @Override
+      public void itemStateChanged(ItemEvent e)
+      {
+        if (e.getStateChange() != ItemEvent.SELECTED)
+          return;
+        
+        JPanel panel = new JPanel(new SpringLayout());
+        
+        switch (e.getItem().toString())
+        {
+          case "PotionAction":
+          {
+            panel.add(new JLabel("Target:"));
+            potionTarget = new JTextField(15);
+            if (exist != null)
+              potionTarget.setText(((PotionAction) exist.getAction()).getTarget());
+            panel.add(potionTarget);
+            
+            panel.add(new JLabel("Attribute:"));
+            JButton btn = new JButton("Bearbeiten");
+            btn.addActionListener(new ActionListener()
+            {
+              @Override
+              public void actionPerformed(ActionEvent e)
+              {
+                if (potionAttributes == null && exist != null)
+                  potionAttributes = ((PotionAction) exist.getAction()).getChanges();
+                
+                showAttributesDialog((potionAttributes != null) ? potionAttributes : new Attributes());
+                potionAttributes = tmpAttr;
+              }
+            });
+            panel.add(btn);
+            
+            panel.add(new JLabel("Schadens-Typ:"));
+            potionDamageType = new JComboBox<DamageType>(DamageType.values());
+            panel.add(potionDamageType);
+            
+            SpringUtilities.makeCompactGrid(panel, 3, 2, 6, 6, 6, 6);
+            break;
+          }
+          case "WeaponAction":
+          {
+            panel.add(new JLabel("Attribute:"));
+            JButton btn = new JButton("Bearbeiten");
+            btn.addActionListener(new ActionListener()
+            {
+              @Override
+              public void actionPerformed(ActionEvent e)
+              {
+                if (weaponAttributes == null && exist != null)
+                  weaponAttributes = ((WeaponAction) exist.getAction()).getEffect();
+                
+                showAttributesDialog((weaponAttributes != null) ? weaponAttributes : new Attributes());
+                weaponAttributes = tmpAttr;
+              }
+            });
+            panel.add(btn);
+            
+            panel.add(new JLabel("Schadens-Typ:"));
+            weaponDamageType = new JComboBox<DamageType>(DamageType.values());
+            panel.add(weaponDamageType);
+            
+            SpringUtilities.makeCompactGrid(panel, 2, 2, 6, 6, 6, 6);
+            break;
+          }
+        }
+        p.remove(18);
+        p.remove(actionSettings);
+        SpringUtilities.makeCompactGrid(p, 9, 2, 6, 6, 6, 6);
+        p.add(new JLabel(), 18);
+        p.add(panel, 19);
+        actionSettings = panel;
+        SpringUtilities.makeCompactGrid(p, 10, 2, 6, 6, 6, 6);
+        itemFrame.pack();
+      }
+    });
+    if (exist != null)
+      action.setSelectedItem(exist.getAction().getClass().getName());
+    
+    p.add(action);
+    
+    p.add(new JLabel());
+    p.add(actionSettings);
+    
+    SpringUtilities.makeCompactGrid(p, 10, 2, 6, 6, 6, 6);
+    
+    itemFrame.setContentPane(p);
     
     itemFrame.pack();
     itemFrame.setLocationRelativeTo(null);
@@ -2408,25 +2570,21 @@ public class MapEditor
     oldPanel.add(label);
     FRoldTileset = new JComboBox<String>(Assistant.concat(new String[] { "Ignorieren" }, tilesets));
     FRoldTileset.setSelectedIndex(0);
-    label.setLabelFor(FRoldTileset);
     oldPanel.add(FRoldTileset);
     
     label = new JLabel("Layer:");
     oldPanel.add(label);
     FRoldLayer = new JTextField();
-    label.setLabelFor(FRoldLayer);
     oldPanel.add(FRoldLayer);
     
     label = new JLabel("Tileset-X:");
     oldPanel.add(label);
     FRoldTX = new JTextField();
-    label.setLabelFor(FRoldTX);
     oldPanel.add(FRoldTX);
     
     label = new JLabel("Tileset-Y:");
     oldPanel.add(label);
     FRoldTY = new JTextField();
-    label.setLabelFor(FRoldTY);
     oldPanel.add(FRoldTY);
     
     SpringUtilities.makeCompactGrid(oldPanel, 4, 2, 6, 6, 6, 6);
@@ -2440,25 +2598,21 @@ public class MapEditor
     newPanel.add(label);
     FRnewTileset = new JComboBox<String>(Assistant.concat(new String[] { "Ignorieren" }, tilesets));
     FRnewTileset.setSelectedIndex(0);
-    label.setLabelFor(FRnewTileset);
     newPanel.add(FRnewTileset);
     
     label = new JLabel("Layer:");
     newPanel.add(label);
     FRnewLayer = new JTextField();
-    label.setLabelFor(FRnewLayer);
     newPanel.add(FRnewLayer);
     
     label = new JLabel("Tileset-X:");
     newPanel.add(label);
     FRnewTX = new JTextField();
-    label.setLabelFor(FRnewTX);
     newPanel.add(FRnewTX);
     
     label = new JLabel("Tileset-Y:");
     newPanel.add(label);
     FRnewTY = new JTextField();
-    label.setLabelFor(FRnewTY);
     newPanel.add(FRnewTY);
     
     SpringUtilities.makeCompactGrid(newPanel, 4, 2, 6, 6, 6, 6);
