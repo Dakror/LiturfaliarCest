@@ -1334,7 +1334,7 @@ public class MapEditor
     EQpreview.setPreferredSize(new Dimension(320, 480));
     p.add(EQpreview, BorderLayout.NORTH);
     
-    JPanel buttons = new JPanel(new GridLayout(1,2));
+    JPanel buttons = new JPanel(new GridLayout(1, 2));
     JButton ok = new JButton("Speichern");
     ok.addActionListener(new ActionListener()
     {
@@ -1511,7 +1511,6 @@ public class MapEditor
     });
     panel.add(EQeyes);
     
-    
     for (final Categories c : Categories.EQUIPS)
     {
       if (Arrays.asList(Categories.NATIVES).contains(c))
@@ -1548,9 +1547,71 @@ public class MapEditor
       panel.add(pnl);
     }
     
+    // -- weapon1 -- //
+    l = new JLabel("WEAPON 1");
+    panel.add(l);
+    JPanel pnl = new JPanel();
+    JButton btn = new JButton("X");
+    btn.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        EQ.setFirstWeapon(null);
+        updateEquipDialogPreview();
+      }
+    });
+    pnl.add(btn);
+    
+    btn = new JButton("Bearbeiten");
+    btn.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        showItemDialog(EQ.getFirstWeapon());
+        if (tmpItem != null)
+          EQ.setFirstWeapon(tmpItem);
+        updateEquipDialogPreview();
+      }
+    });
+    pnl.add(btn);
+    panel.add(pnl);
+    
+    // -- weapon2 -- //
+    l = new JLabel("WEAPON 2");
+    panel.add(l);
+    pnl = new JPanel();
+    btn = new JButton("X");
+    btn.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        EQ.setSecondWeapon(null);
+        updateEquipDialogPreview();
+      }
+    });
+    pnl.add(btn);
+    
+    btn = new JButton("Bearbeiten");
+    btn.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        showItemDialog(EQ.getSecondWeapon());
+        if (tmpItem != null)
+          EQ.setSecondWeapon(tmpItem);
+        updateEquipDialogPreview();
+      }
+    });
+    pnl.add(btn);
+    panel.add(pnl);
+    
     updateEquipDialogPreview();
     
-    SpringUtilities.makeCompactGrid(panel, Categories.EQUIPS.length, 2, 6, 6, 6, 6);
+    SpringUtilities.makeCompactGrid(panel, Categories.EQUIPS.length + 2, 2, 6, 6, 6, 6);
     
     adjFrame.setContentPane(panel);
     adjFrame.pack();
