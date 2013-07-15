@@ -15,7 +15,7 @@ public abstract class ItemAction
   
   public abstract boolean equals(ItemAction o);
   
-  public static ItemAction loadItemAction(JSONObject o)
+  static ItemAction loadItemAction(JSONObject o)
   {
     return new EmptyAction();
   }

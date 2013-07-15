@@ -14,9 +14,22 @@ import de.dakror.liturfaliar.settings.DamageType;
 
 public class PotionAction extends ItemAction
 {
-  Attributes changes;
-  String     targetID;
-  DamageType dmgType;
+  public static final String CASTER  = "CASTER";
+  public static final String HOSTILE = "HOSTILE";
+  public static final String ALLY    = "ALLY";
+  
+  Attributes                 changes;
+  
+  /**
+   * Defines who gets the potion effect<br>
+   * default = {@link PotionAction.CASTER}<br>
+   * can be absolute or relative<br>
+   * absolute: "npc_0"<br>
+   * relative: "{@link PotionAction.HOSTILE}"
+   */
+  String                     targetID;
+  
+  DamageType                 dmgType;
   
   public PotionAction(String t, Attributes c, DamageType d)
   {
@@ -31,7 +44,10 @@ public class PotionAction extends ItemAction
     if (item.getItemSlot() == null)
       return;
     
-    Creature target = m.getCreatureByAccessKey(targetID);
+    Creature target = c;
+    
+    if(targetID.indexOf("_") > -1) target = m.getCreatureByAccessKey(targetID);
+    //else if(targetID.equals(CASTER)) // TODO: add relative target mechanic 
     
     if (target == null)
       return;
@@ -123,11 +139,13 @@ public class PotionAction extends ItemAction
     }
   }
   
-  public String getTarget() {
+  public String getTarget()
+  {
     return targetID;
   }
   
-  public DamageType getDamageType() {
+  public DamageType getDamageType()
+  {
     return dmgType;
   }
   

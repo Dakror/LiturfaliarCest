@@ -34,7 +34,6 @@ import java.util.Comparator;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -80,6 +79,8 @@ import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.IconSelecter;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.Types;
+import de.dakror.liturfaliar.item.action.EmptyAction;
+import de.dakror.liturfaliar.item.action.ItemAction;
 import de.dakror.liturfaliar.item.action.PotionAction;
 import de.dakror.liturfaliar.item.action.WeaponAction;
 import de.dakror.liturfaliar.map.Map;
@@ -1333,6 +1334,7 @@ public class MapEditor
     EQpreview.setPreferredSize(new Dimension(320, 480));
     p.add(EQpreview, BorderLayout.NORTH);
     
+    JPanel buttons = new JPanel(new GridLayout(1,2));
     JButton ok = new JButton("Speichern");
     ok.addActionListener(new ActionListener()
     {
@@ -1342,7 +1344,7 @@ public class MapEditor
         npc.setEquipment(EQ);
       }
     });
-    p.add(ok, BorderLayout.LINE_END);
+    buttons.add(ok);
     
     JButton noEquip = new JButton("Ausrüstung entfernen");
     noEquip.addActionListener(new ActionListener()
@@ -1350,11 +1352,13 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        npc.setEquipment(new Equipment());
+        EQ = new Equipment();
         updateEquipDialogPreview();
       }
     });
-    p.add(noEquip, BorderLayout.LINE_START);
+    buttons.add(noEquip);
+    
+    p.add(buttons, BorderLayout.SOUTH);
     
     viewFrame.setContentPane(p);
     viewFrame.pack();
@@ -1366,21 +1370,30 @@ public class MapEditor
     JLabel l = new JLabel(Categories.HAIR.name());
     panel.add(l);
     String[] chars = FileManager.getCharParts(Categories.HAIR.name().toLowerCase());
-    EQhair = new JSpinner(new SpinnerListModel(chars));
+    EQhair = new JSpinner();
+    
+    ArrayList<String> list = new ArrayList<String>();
+    for (String part : chars)
+    {
+      if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1)
+        continue;
+      list.add(part.replace("_f.png", "").replace(".png", ""));
+    }
+    EQhair.setModel(new SpinnerListModel(list));
+    
     EQhair.setPreferredSize(new Dimension(150, 22));
     if (Arrays.asList(chars).indexOf("none.png") > -1)
-      EQhair.setValue("none.png");
+      EQhair.setValue("none");
+    
     if (npc.getEquipment().hasEquipmentItem(Categories.HAIR))
-    {
-      String string = npc.getEquipment().getEquipmentItem(Categories.HAIR).getCharPath();
-      
-      EQhair.setValue(((Arrays.asList(chars).indexOf(string + ".png") > -1) ? string : string + "_f") + ".png");
-    }
+      EQhair.setValue(npc.getEquipment().getEquipmentItem(Categories.HAIR).getCharPath());
+    
     EQhair.addChangeListener(new ChangeListener()
     {
       @Override
       public void stateChanged(ChangeEvent e)
       {
+        EQ.setEquipmentItem(Categories.HAIR, new Item(Types.HAIR, EQhair.getValue().toString().replace("_f.png", "").replace(".png", ""), 1));
         updateEquipDialogPreview();
       }
     });
@@ -1402,24 +1415,33 @@ public class MapEditor
     });
     panel.add(EQhair);
     
-    l = new JLabel(Categories.HAIR.name());
+    l = new JLabel(Categories.SKIN.name());
     panel.add(l);
     chars = FileManager.getCharParts(Categories.SKIN.name().toLowerCase());
-    EQskin = new JSpinner(new SpinnerListModel(chars));
+    EQskin = new JSpinner();
+    
+    list = new ArrayList<String>();
+    for (String part : chars)
+    {
+      if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1)
+        continue;
+      list.add(part.replace("_f.png", "").replace(".png", ""));
+    }
+    EQskin.setModel(new SpinnerListModel(list));
+    
     EQskin.setPreferredSize(new Dimension(150, 22));
     if (Arrays.asList(chars).indexOf("none.png") > -1)
-      EQskin.setValue("none.png");
+      EQskin.setValue("none");
+    
     if (npc.getEquipment().hasEquipmentItem(Categories.SKIN))
-    {
-      String string = npc.getEquipment().getEquipmentItem(Categories.SKIN).getCharPath();
-      
-      EQskin.setValue(((Arrays.asList(chars).indexOf(string + ".png") > -1) ? string : string + "_f") + ".png");
-    }
+      EQskin.setValue(npc.getEquipment().getEquipmentItem(Categories.SKIN).getCharPath());
+    
     EQskin.addChangeListener(new ChangeListener()
     {
       @Override
       public void stateChanged(ChangeEvent e)
       {
+        EQ.setEquipmentItem(Categories.SKIN, new Item(Types.SKIN, EQskin.getValue().toString().replace("_f.png", "").replace(".png", ""), 1));
         updateEquipDialogPreview();
       }
     });
@@ -1444,21 +1466,30 @@ public class MapEditor
     l = new JLabel(Categories.EYES.name());
     panel.add(l);
     chars = FileManager.getCharParts(Categories.EYES.name().toLowerCase());
-    EQeyes = new JSpinner(new SpinnerListModel(chars));
+    EQeyes = new JSpinner();
+    
+    list = new ArrayList<String>();
+    for (String part : chars)
+    {
+      if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1)
+        continue;
+      list.add(part.replace("_f.png", "").replace(".png", ""));
+    }
+    EQeyes.setModel(new SpinnerListModel(list));
+    
     EQeyes.setPreferredSize(new Dimension(150, 22));
     if (Arrays.asList(chars).indexOf("none.png") > -1)
-      EQeyes.setValue("none.png");
+      EQeyes.setValue("none");
+    
     if (npc.getEquipment().hasEquipmentItem(Categories.EYES))
-    {
-      String string = npc.getEquipment().getEquipmentItem(Categories.EYES).getCharPath();
-      
-      EQeyes.setValue(((Arrays.asList(chars).indexOf(string + ".png") > -1) ? string : string + "_f") + ".png");
-    }
+      EQeyes.setValue(npc.getEquipment().getEquipmentItem(Categories.EYES).getCharPath());
+    
     EQeyes.addChangeListener(new ChangeListener()
     {
       @Override
       public void stateChanged(ChangeEvent e)
       {
+        EQ.setEquipmentItem(Categories.EYES, new Item(Types.EYES, EQeyes.getValue().toString().replace("_f.png", "").replace(".png", ""), 1));
         updateEquipDialogPreview();
       }
     });
@@ -1488,16 +1519,33 @@ public class MapEditor
       
       l = new JLabel(c.name());
       panel.add(l);
-      JButton btn = new JButton("Bearbeiten");
+      JPanel pnl = new JPanel();
+      JButton btn = new JButton("X");
+      btn.addActionListener(new ActionListener()
+      {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          EQ.setEquipmentItem(c, null);
+          updateEquipDialogPreview();
+        }
+      });
+      pnl.add(btn);
+      
+      btn = new JButton("Bearbeiten");
       btn.addActionListener(new ActionListener()
       {
         @Override
         public void actionPerformed(ActionEvent e)
         {
           showItemDialog(EQ.getEquipmentItem(c));
+          if (tmpItem != null)
+            EQ.setEquipmentItem(c, tmpItem);
+          updateEquipDialogPreview();
         }
       });
-      panel.add(btn);
+      pnl.add(btn);
+      panel.add(pnl);
     }
     
     updateEquipDialogPreview();
@@ -1511,8 +1559,20 @@ public class MapEditor
   }
   
   public void updateEquipDialogPreview()
-  { 
+  {
+    int w = EQpreview.getPreferredSize().width;
+    int h = EQpreview.getPreferredSize().height;
+    BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g = (Graphics2D) bi.getGraphics();
     
+    for (int i = 0; i < 4; i++)
+    {
+      for (int j = 0; j < 4; j++)
+      {
+        Assistant.drawChar(i * w / 4, j * h / 4, w / 4, h / 4, j, i, EQ, g, null, true);
+      }
+    }
+    EQpreview.setIcon(new ImageIcon(bi));
   }
   
   public void showTalkDialog(final NPCButton npc)
@@ -1680,7 +1740,7 @@ public class MapEditor
       tmpRequires = exist.getRequirements();
     }
     
-    final JDialog itemFrame = new JDialog(w);
+    final JDialog itemFrame = new JDialog(w, true);
     itemFrame.setTitle("Item-Bearbeitung");
     itemFrame.setResizable(false);
     itemFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -1735,8 +1795,6 @@ public class MapEditor
     l = new JLabel("Char-Pfad:");
     p.add(l);
     final JComboBox<String> path = new JComboBox<String>();
-    if (exist != null && exist.getCharPath() != null)
-      path.setSelectedItem(exist.getCharPath());
     p.add(path);
     
     p.add(new JLabel());
@@ -1745,22 +1803,6 @@ public class MapEditor
     l = new JLabel("Typ:");
     p.add(l);
     final JComboBox<Types> type = new JComboBox<Types>(Types.values());
-    type.addItemListener(new ItemListener()
-    {
-      @Override
-      public void itemStateChanged(ItemEvent e)
-      {
-        Types i = (Types) e.getItem();
-        if (Arrays.asList(Categories.EQUIPS).contains(i.getCategory()))
-          path.setModel(new DefaultComboBoxModel<String>(FileManager.getCharParts(i.name().toLowerCase())));
-        
-        else path.removeAllItems();
-      }
-    });
-    if (exist != null)
-      type.setSelectedItem(exist.getType());
-    p.add(type);
-    
     
     path.addItemListener(new ItemListener()
     {
@@ -1772,7 +1814,10 @@ public class MapEditor
         
         Image body1 = Viewport.loadImage("char/skin/man_f.png");
         Image body2 = Viewport.loadImage("char/skin/man_b.png");
-        Image part = Viewport.loadImage("char/" + type.getSelectedItem().toString().toLowerCase() + "/" + path.getSelectedItem().toString());
+        Image part = Viewport.loadImage("char/" + type.getSelectedItem().toString().toLowerCase() + "/" + path.getSelectedItem().toString() + ".png");
+        if (part == null)
+          part = Viewport.loadImage("char/" + type.getSelectedItem().toString().toLowerCase() + "/" + path.getSelectedItem().toString() + "_f.png");
+        
         BufferedImage bi = new BufferedImage(body1.getWidth(null), body1.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics g = bi.getGraphics();
         if (!((Types) type.getSelectedItem()).equals(Types.SKIN))
@@ -1784,6 +1829,31 @@ public class MapEditor
       }
     });
     
+    
+    type.addItemListener(new ItemListener()
+    {
+      @Override
+      public void itemStateChanged(ItemEvent e)
+      {
+        Types i = (Types) e.getItem();
+        path.removeAllItems();
+        if (Arrays.asList(Categories.EQUIPS).contains(i.getCategory()))
+        {
+          String[] parts = FileManager.getCharParts(i.name().toLowerCase());
+          for (String part : parts)
+          {
+            if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1)
+              continue;
+            path.addItem(part.replace("_f.png", "").replace(".png", ""));
+          }
+          if (exist != null && exist.getCharPath() != null && exist.getType().equals(i))
+            path.setSelectedItem(exist.getCharPath());
+        }
+      }
+    });
+    if (exist != null)
+      type.setSelectedItem(exist.getType());
+    p.add(type);
     
     l = new JLabel("Attribute:");
     p.add(l);
@@ -1815,7 +1885,7 @@ public class MapEditor
     
     actionSettings = new JPanel(new SpringLayout());
     
-    final String[] actions = new String[] { "EmptyAction", "PotionAction", "WeaponAction" }; // TODO: Keep in sync with available item actions SkillAction is excluded, it's only for native purpose
+    final String[] actions = new String[] { "EmptyAction", "PotionAction", "WeaponAction" }; // TODO: Keep in sync with available item actions. SkillAction is excluded, it's only for native purpose
     l = new JLabel("Action:");
     p.add(l);
     final JComboBox<String> action = new JComboBox<String>(actions);
@@ -1835,8 +1905,9 @@ public class MapEditor
           case "PotionAction":
           {
             labels.add(new JLabel("Target:"));
-            potionTarget = new JTextField(15);
-            if (exist != null)
+            potionTarget = new JTextField("CASTER");
+            potionTarget.setColumns(15);
+            if (exist != null && exist.getAction() instanceof PotionAction)
               potionTarget.setText(((PotionAction) exist.getAction()).getTarget());
             panel.add(potionTarget);
             
@@ -1847,7 +1918,7 @@ public class MapEditor
               @Override
               public void actionPerformed(ActionEvent e)
               {
-                if (potionAttributes == null && exist != null)
+                if (potionAttributes == null && exist != null && exist.getAction() instanceof PotionAction)
                   potionAttributes = ((PotionAction) exist.getAction()).getChanges();
                 
                 showAttributesDialog((potionAttributes != null) ? potionAttributes : new Attributes());
@@ -1859,7 +1930,6 @@ public class MapEditor
             labels.add(new JLabel("Schadens-Typ:"));
             potionDamageType = new JComboBox<DamageType>(DamageType.values());
             panel.add(potionDamageType);
-            
             
             SpringUtilities.makeCompactGrid(labels, 3, 1, 6, 12, 6, 12);
             SpringUtilities.makeCompactGrid(panel, 3, 1, 6, 6, 6, 6);
@@ -1874,7 +1944,7 @@ public class MapEditor
               @Override
               public void actionPerformed(ActionEvent e)
               {
-                if (weaponAttributes == null && exist != null)
+                if (weaponAttributes == null && exist != null && exist.getAction() instanceof WeaponAction)
                   weaponAttributes = ((WeaponAction) exist.getAction()).getEffect();
                 
                 showAttributesDialog((weaponAttributes != null) ? weaponAttributes : new Attributes());
@@ -1885,6 +1955,8 @@ public class MapEditor
             
             labels.add(new JLabel("Schadens-Typ:"));
             weaponDamageType = new JComboBox<DamageType>(DamageType.values());
+            if (exist != null && exist.getAction() instanceof WeaponAction)
+              weaponDamageType.setSelectedItem(((WeaponAction) exist.getAction()).getDamageType());
             panel.add(weaponDamageType);
             
             SpringUtilities.makeCompactGrid(labels, 2, 1, 6, 6, 6, 6);
@@ -1902,8 +1974,6 @@ public class MapEditor
         itemFrame.pack();
       }
     });
-    if (exist != null)
-      action.setSelectedItem(exist.getAction().getClass().getName());
     
     p.add(action);
     
@@ -1916,11 +1986,28 @@ public class MapEditor
     {
       @Override
       public void actionPerformed(ActionEvent e)
-      {// tmpItem = new Item(type.getSelectedItem(), name.getText(), ix.getValue(), iy.getValue(), cx.getValue(), cy.getValue(), );
-      
+      {
+        ItemAction ia = new EmptyAction();
+        
+        if (action.getSelectedItem().equals("PotionAction"))
+          ia = new PotionAction(potionTarget.getText(), potionAttributes, (DamageType) potionDamageType.getSelectedItem());
+        
+        else if (action.getSelectedItem().equals("WeaponAction"))
+          ia = new WeaponAction(weaponAttributes, (DamageType) weaponDamageType.getSelectedItem());
+        
+        String charPath = "";
+        if (path.getSelectedItem() != null)
+          charPath = path.getSelectedItem().toString().replace("_f.png", "").replace("_b.png", "").replace("_m.png", "").replace(".png", "");
+        
+        tmpItem = new Item((Types) type.getSelectedItem(), name.getText(), (int) ix.getValue(), (int) iy.getValue(), (int) cx.getValue(), (int) cy.getValue(), charPath, tmpAttributes, tmpRequires, ia, 1);
+        
+        itemFrame.dispose();
       }
     });
     p.add(ok);
+    
+    if (exist != null)
+      action.setSelectedItem(exist.getAction().getClass().getSimpleName());
     
     SpringUtilities.makeCompactGrid(p, 13, 2, 6, 6, 6, 6);
     

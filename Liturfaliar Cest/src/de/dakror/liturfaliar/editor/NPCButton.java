@@ -70,7 +70,13 @@ public class NPCButton extends JButton
     if (e.isProperlyFilled())
     {
       BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-      Assistant.drawChar(0, 0, w, h, 0, 0, equipment, (Graphics2D) bi.getGraphics(), null, true);
+      Assistant.drawChar(0, 0, w, h, dir, 0, equipment, (Graphics2D) bi.getGraphics(), null, true);
+      setIcon(new ImageIcon(bi));
+    }
+    else
+    {
+      BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+      Assistant.drawChar(0, 0, w, h, dir, 0, "chars", sprite, (Graphics2D) bi.getGraphics(), null, true);
       setIcon(new ImageIcon(bi));
     }
   }
