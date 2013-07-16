@@ -69,10 +69,8 @@ public class Compressor
   {
     try
     {
-      if (!f.exists())
-      {
-        f.createNewFile();
-      }
+      f.createNewFile();
+      
       
       FileOutputStream fos = new FileOutputStream(f);
       fos.write(b);
