@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -111,7 +112,7 @@ public class Player extends Creature
       }
       for (Creature c : map.creatures)
       {
-        if (c instanceof Player || (c instanceof NPC && !((NPC) c).isHostile()))
+        if (c instanceof Player)
           continue;
         if (c.getBumpArea().intersects(new Rectangle2D.Double(relPos.sub(targetVector.setLength(distance)).x + bx, relPos.sub(targetVector.setLength(distance)).y + by, bw, bh)))
         {
@@ -470,5 +471,15 @@ public class Player extends Creature
   public Vector getTrackingNode()
   {
     return new Vector(relPos.x + bx + bw / 2, relPos.y + by + bh / 2);
+  }
+  
+  public Area getHitArea(Map m)
+  {
+    return hitArea.createTransformedArea(AffineTransform.getTranslateInstance(relPos.x + m.getX(), relPos.y + m.getY()));
+  }
+  
+  public void disableDirs()
+  {
+    dirs = new boolean[] { false, false, false, false };
   }
 }

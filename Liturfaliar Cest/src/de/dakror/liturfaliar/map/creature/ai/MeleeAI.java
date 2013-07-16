@@ -28,6 +28,6 @@ public class MeleeAI extends CreatureAI
     animation.playAnimation(creature.getEquipment().getFirstWeapon(), creature);
     int l = animation.getMaximumRange();
     
-    return creature.getRelativePos().distance(o.getRelativePos()) <= l + o.getWidth() / 2 + creature.getWidth() / 2;
+    return creature.getRelativePos().distance(o.getRelativePos()) <= l;
   }
 }

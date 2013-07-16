@@ -52,7 +52,15 @@ public abstract class GameFrame
       init();
       w.setVisible(true);
       
-      w.createBufferStrategy(2);
+      try
+      {
+        w.createBufferStrategy(2);
+      }
+      catch (Exception e)
+      {
+        run();
+      }
+      
       mainloop();
       close();
     }

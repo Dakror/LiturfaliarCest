@@ -137,11 +137,28 @@ public class Creature implements MapEventListener
     if (!frozen)
     {
       Vector targetVector = pos.sub(goTo);
+      double distance = targetVector.length;
       if (targetVector.length >= getSpeed())
       {
-        lastPos = pos;
-        pos = pos.sub(targetVector.setLength(getSpeed()));
+        distance = getSpeed();
       }
+      if (!map.getBumpMap().contains(new Rectangle2D.Double(map.getX() + pos.sub(targetVector.setLength(distance)).x + bx, map.getY() + pos.sub(targetVector.setLength(distance)).y + by, bw, bh)))
+      {
+        setTarget((int) pos.x, (int) pos.y);
+        return;
+      }
+      for (Creature c : map.creatures)
+      {
+        if (c instanceof Player)
+          continue;
+        if (c.getBumpArea().intersects(new Rectangle2D.Double(map.getX() + pos.sub(targetVector.setLength(distance)).x + bx, map.getY() + pos.sub(targetVector.setLength(distance)).y + by, bw, bh)))
+        {
+          setTarget((int) pos.x, (int) pos.y);
+          return;
+        }
+      }
+      lastPos = pos;
+      pos = pos.sub(targetVector.setLength(distance));
     }
   }
   

@@ -22,26 +22,31 @@ import de.dakror.liturfaliar.util.Assistant;
  */
 public class Button extends Component
 {
-  boolean              Bicon;
   public boolean       centered;
   public boolean       disabled;
   public boolean       round      = true;
   public boolean       soundCLICK = true;
   public boolean       soundMOVER = true;
   public boolean       imagelower = false;
+  
   public int           iw;
   public int           ih;
-  public BufferedImage image;
-  public Color         c;
-  public float         size;
-  protected float      alpha      = 0.6f;
-  HandleArea           handle;
   public int           clickmod   = 16;
   public int           hovermod   = 16;
-  String               icon;
+  public float         size;
+  
+  public Color         c;
+  public BufferedImage image;
   public String        tileset;
   public String        title;
   public Tooltip       tooltip;
+  
+  protected float      alpha      = 0.6f;
+  
+  boolean              Bicon;
+  
+  HandleArea           handle;
+  String               icon;
   
   public Button(int x, int y, int w, String title, Color c, float size)
   {
@@ -110,6 +115,13 @@ public class Button extends Component
   {
     handle.soundMOVER = soundMOVER;
     handle.soundCLICK = soundCLICK;
+  }
+  
+  @Override
+  public void draw(Graphics2D g, Viewport v)
+  {
+    handle.update(v);
+    
     if (getHeight() == 1)
     {
       setHeight((int) (size * 1.3f + ((tileset != null) ? 32 : 0)));
@@ -119,12 +131,7 @@ public class Button extends Component
     handle.setY(getY());
     if (disabled)
       handle.state = 0;
-  }
-  
-  @Override
-  public void draw(Graphics2D g, Viewport v)
-  {
-    handle.update(v);
+    
     Font oldFont = g.getFont();
     Color oldColor = g.getColor();
     int x = getX();

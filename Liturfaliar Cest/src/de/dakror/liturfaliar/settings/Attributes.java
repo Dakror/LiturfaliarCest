@@ -18,7 +18,6 @@ public class Attributes
     speed("Lauftempo", Double.MIN_VALUE),
     attackspeed("Angriffstempo", Double.MIN_VALUE),
     weight("Gewicht", 0),
-    damage("Schaden", 0),
     cooldown("Abklingzeit", 0),
     
     strength("Stärke", 0),

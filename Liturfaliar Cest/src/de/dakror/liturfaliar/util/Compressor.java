@@ -71,7 +71,6 @@ public class Compressor
     {
       f.createNewFile();
       
-      
       FileOutputStream fos = new FileOutputStream(f);
       fos.write(b);
       fos.close();

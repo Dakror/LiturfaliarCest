@@ -62,29 +62,6 @@ public class Sword0 extends SkillAnimation
     if (this.hitArea == null)
       return;
     
-    AffineTransform tr = AffineTransform.getTranslateInstance(caster.getRelativePos().x + rx + m.getX(), caster.getRelativePos().y + ry + m.getY());
-    tr.rotate(Math.toRadians(theta), image.getWidth(null), image.getHeight(null));
-    realHitArea = this.hitArea.createTransformedArea(tr);
-    
-    AffineTransform oldTransform = g.getTransform();
-    AffineTransform t = AffineTransform.getRotateInstance(Math.toRadians(theta), caster.getRelativePos().x + rx + m.getX() + image.getWidth(null), caster.getRelativePos().y + ry + m.getY() + image.getHeight(null));
-    
-    g.setTransform(t);
-    g.drawImage(image, caster.getRelativePos().x + rx + m.getX(), caster.getRelativePos().y + ry + m.getY(), v.w);
-    g.setTransform(oldTransform);
-  }
-  
-  @Override
-  public void update(long timePassed, Map m)
-  {
-    super.update(timePassed, m);
-    
-    if (System.currentTimeMillis() - lastTick > 0)
-    {
-      left += 10;
-      lastTick = System.currentTimeMillis();
-    }
-    
     if (left >= 50)
     {
       done = true;
@@ -126,6 +103,29 @@ public class Sword0 extends SkillAnimation
         theta -= left;
         break;
       }
+    }
+    
+    AffineTransform tr = AffineTransform.getTranslateInstance(caster.getRelativePos().x + rx + m.getX(), caster.getRelativePos().y + ry + m.getY());
+    tr.rotate(Math.toRadians(theta), image.getWidth(null), image.getHeight(null));
+    realHitArea = this.hitArea.createTransformedArea(tr);
+    
+    AffineTransform oldTransform = g.getTransform();
+    AffineTransform t = AffineTransform.getRotateInstance(Math.toRadians(theta), caster.getRelativePos().x + rx + m.getX() + image.getWidth(null), caster.getRelativePos().y + ry + m.getY() + image.getHeight(null));
+    
+    g.setTransform(t);
+    g.drawImage(image, caster.getRelativePos().x + rx + m.getX(), caster.getRelativePos().y + ry + m.getY(), v.w);
+    g.setTransform(oldTransform);
+  }
+  
+  @Override
+  public void update(long timePassed, Map m)
+  {
+    super.update(timePassed, m);
+    
+    if (System.currentTimeMillis() - lastTick > 0)
+    {
+      left += 10;
+      lastTick = System.currentTimeMillis();
     }
   }
   

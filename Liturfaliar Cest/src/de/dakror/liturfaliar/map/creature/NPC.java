@@ -43,6 +43,7 @@ public class NPC extends Creature
   
   int                          ID;
   long                         time;
+  long                         time2;
   
   String                       character;
   Vector[]                     playerTalkTo;
@@ -224,6 +225,18 @@ public class NPC extends Creature
       frozen = false;
       emoticon = null;
     }
+    
+    if (hostile && AI != null)
+    {
+      path = AI.findPath(m.getPlayer().relPos);
+      goTo = path.getNextNode();
+      
+      if (AI.canAttack(m.getPlayer()) && !isPlayingSkill(new Sword0()) && System.currentTimeMillis() - time2 > 500)
+      {
+        playSkill(equipment.getFirstWeapon(), new Sword0());
+        time2 = System.currentTimeMillis();
+      }
+    }
   }
   
   @Override
@@ -240,32 +253,6 @@ public class NPC extends Creature
       }
       else if (m.talk.getBy().equals(this))
         m.talk.triggerNext();
-    }
-  }
-  
-  @Override
-  public void move(Map map)
-  {
-    if (!frozen)
-    {
-      Vector targetVector = pos.sub(goTo);
-      if (targetVector.length >= getSpeed())
-      {
-        if (hostile && AI != null)
-        {
-          path = AI.findPath(map.getPlayer().relPos);
-          goTo = path.getNextNode();
-          
-          if (AI.canAttack(map.getPlayer()) && !isPlayingSkill(new Sword0()))
-          {
-            playSkill(equipment.getFirstWeapon(), new Sword0());
-          }
-        }
-        
-        lastPos = pos;
-        
-        pos = pos.sub(targetVector.setLength(getSpeed()));
-      }
     }
   }
   

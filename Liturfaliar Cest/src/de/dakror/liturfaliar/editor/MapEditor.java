@@ -1223,7 +1223,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        showAttributesDialog(NPCattr);
+        showAttributesDialog(NPCattr, false);
         NPCattr = tmpAttr;
       }
     });
@@ -1268,7 +1268,7 @@ public class MapEditor
     NPCframe.setLocationRelativeTo(null);
   }
   
-  public void showAttributesDialog(Attributes exist)
+  public void showAttributesDialog(Attributes exist, final boolean range)
   {
     final JDialog attrFrame = new JDialog(w);
     attrFrame.setTitle("Attributs-Bearbeitung");
@@ -1277,19 +1277,28 @@ public class MapEditor
     attrFrame.setModal(true);
     attrFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     
-    final JSpinner[] spinners = new JSpinner[Attr.values().length];
+    final JSpinner[] spinners = new JSpinner[Attr.values().length * ((range) ? 2 : 1)];
     
     JPanel panel = new JPanel(new SpringLayout());
     
-    for (int i = 0; i < spinners.length; i++)
+    for (int i = 0; i < Attr.values().length; i++)
     {
       JLabel label = new JLabel(Attr.values()[i].getText() + ":");
       panel.add(label);
-      JSpinner spinner = new JSpinner(new SpinnerNumberModel(exist.getAttribute(Attr.values()[i]).getValue(), -1000000000.0, 1000000000.0, 1.0));
-      spinners[i] = spinner;
+      
+      JSpinner spinner = new JSpinner(new SpinnerNumberModel(exist.getAttribute(Attr.values()[i]).getValue(), -1000.0, 1000.0, 1.0));
+      spinners[i * ((range) ? 2 : 1)] = spinner;
+      CFG.p(i * ((range) ? 2 : 1));
       panel.add(spinner);
+      
+      if(range) {
+        spinner = new JSpinner(new SpinnerNumberModel(exist.getAttribute(Attr.values()[i]).getMaximum(), -1000.0, 1000.0, 1.0));
+        spinners[i * ((range) ? 2 : 1) + 1] = spinner;
+        panel.add(spinner);
+      }
     }
     
+    panel.add(new JLabel());
     panel.add(new JLabel());
     
     final JButton attrOk = new JButton("OK");
@@ -1299,17 +1308,19 @@ public class MapEditor
       public void actionPerformed(ActionEvent e)
       {
         tmpAttr = new Attributes();
-        for (int i = 0; i < spinners.length; i++)
+        for (int i = 0; i < Attr.values().length; i++)
         {
-          tmpAttr.getAttribute(Attr.values()[i]).setValue(Double.valueOf(spinners[i].getValue().toString()));
-          tmpAttr.getAttribute(Attr.values()[i]).setMaximum(Double.valueOf(spinners[i].getValue().toString()));
+          tmpAttr.getAttribute(Attr.values()[i]).setValue(Double.valueOf(spinners[i * ((range) ? 2 : 1)].getValue().toString()));
+          if (!range)
+            tmpAttr.getAttribute(Attr.values()[i]).setMaximum(Double.valueOf(spinners[i * ((range) ? 2 : 1)].getValue().toString()));
+          else tmpAttr.getAttribute(Attr.values()[i]).setMaximum(Double.valueOf(spinners[i * ((range) ? 2 : 1) + 1].getValue().toString()));
         }
         attrFrame.dispose();
       }
     });
     panel.add(attrOk);
     
-    SpringUtilities.makeCompactGrid(panel, spinners.length + 1, 2, 6, 6, 6, 6);
+    SpringUtilities.makeCompactGrid(panel, Attr.values().length + 1, (range) ? 3 : 2, 6, 6, 6, 6);
     
     attrFrame.setContentPane(panel);
     
@@ -1949,7 +1960,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        showAttributesDialog((tmpAttributes != null) ? tmpAttributes : new Attributes());
+        showAttributesDialog((tmpAttributes != null) ? tmpAttributes : new Attributes(), false);
         tmpAttributes = tmpAttr;
       }
     });
@@ -1963,7 +1974,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        showAttributesDialog((tmpRequires != null) ? tmpRequires : new Attributes());
+        showAttributesDialog((tmpRequires != null) ? tmpRequires : new Attributes(), false);
         tmpRequires = tmpAttr;
       }
     });
@@ -1999,15 +2010,14 @@ public class MapEditor
             
             labels.add(new JLabel("Attribute:"));
             JButton btn = new JButton("Bearbeiten");
+            if (potionAttributes == null && exist != null && exist.getAction() instanceof PotionAction)
+              potionAttributes = ((PotionAction) exist.getAction()).getChanges();
             btn.addActionListener(new ActionListener()
             {
               @Override
               public void actionPerformed(ActionEvent e)
               {
-                if (potionAttributes == null && exist != null && exist.getAction() instanceof PotionAction)
-                  potionAttributes = ((PotionAction) exist.getAction()).getChanges();
-                
-                showAttributesDialog((potionAttributes != null) ? potionAttributes : new Attributes());
+                showAttributesDialog((potionAttributes != null) ? potionAttributes : new Attributes(), false);
                 potionAttributes = tmpAttr;
               }
             });
@@ -2025,15 +2035,14 @@ public class MapEditor
           {
             labels.add(new JLabel("Attribute:"));
             JButton btn = new JButton("Bearbeiten");
+            if (weaponAttributes == null && exist != null && exist.getAction() instanceof WeaponAction)
+              weaponAttributes = ((WeaponAction) exist.getAction()).getEffect();
             btn.addActionListener(new ActionListener()
             {
               @Override
               public void actionPerformed(ActionEvent e)
               {
-                if (weaponAttributes == null && exist != null && exist.getAction() instanceof WeaponAction)
-                  weaponAttributes = ((WeaponAction) exist.getAction()).getEffect();
-                
-                showAttributesDialog((weaponAttributes != null) ? weaponAttributes : new Attributes());
+                showAttributesDialog((weaponAttributes != null) ? weaponAttributes : new Attributes(), true);
                 weaponAttributes = tmpAttr;
               }
             });

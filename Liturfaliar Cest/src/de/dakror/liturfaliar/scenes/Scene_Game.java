@@ -25,6 +25,7 @@ import de.dakror.liturfaliar.item.ItemDrop;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.MapPack;
 import de.dakror.liturfaliar.map.creature.Player;
+import de.dakror.liturfaliar.ovscenes.OVScene_Death;
 import de.dakror.liturfaliar.ovscenes.OVScene_Inventory;
 import de.dakror.liturfaliar.ovscenes.OVScene_Pause;
 import de.dakror.liturfaliar.ovscenes.OVScene_Skills;
@@ -96,13 +97,21 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   @Override
   public void update(long timePassed)
   {
+    if (!player.isAlive() && !isPaused())
+    {
+      v.addOVScene(new OVScene_Death(this), "Death");
+      setPaused(true);
+      v.stopMusic();
+      v.playSound("186-Death");
+      Viewport.sceneEnabled = false;
+    }
+    
     if (!v.areFramesFrozen())
       mappack.getActiveMap().update(timePassed, this);
     // -- HUD -- //
     targetLabel.update(timePassed, mappack.getActiveMap());
     
     bottomSegment.update(timePassed, mappack.getActiveMap());
-    // --------- //
   }
   
   @Override
@@ -173,12 +182,14 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   public void setPaused(boolean pause)
   {
     this.pause = pause;
+    if (pause)
+      player.disableDirs();
     
     if (bottomSegment != null)
       bottomSegment.hotbar.frozen = pause;
     
     Viewport.sceneEnabled = !pause;
-    
+    v.setFramesFrozen(pause);
   }
   
   public MapPack getMapPack()

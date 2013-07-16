@@ -29,7 +29,7 @@ import de.dakror.liturfaliar.util.FileManager;
 
 public class OVScene_Pause extends OVScene
 {
-  final String[] points         = { "Weiter", "Speichern", "Sichern", "Laden", /* "Tastenbelegung", */"Beenden" };
+  final String[] points         = { "Weiter", "Speichern", "Sichern", "Laden", "Beenden" };
   
   boolean        optionsToggle;
   
