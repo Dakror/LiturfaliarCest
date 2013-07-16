@@ -66,8 +66,8 @@ public class DamageIndicator
     if (isDone())
       return;
     
-    int x = m.getX() + creature.getRelativePos()[0] + this.x - text.getWidth(g) / 2 + creature.getWidth() / 4;
-    int y = m.getY() + creature.getRelativePos()[1] - pos;
+    int x = m.getX() + creature.getRelativePos().x + this.x - text.getWidth(g) / 2 + creature.getWidth() / 4;
+    int y = m.getY() + creature.getRelativePos().y - pos;
     
     Composite oldComposite = g.getComposite();
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1 - (pos / (float) SPEED)));

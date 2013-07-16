@@ -34,7 +34,7 @@ public class Emoticon
     
     int size = 32;
     
-    g.drawImage(allemoticons, m.getX() + parent.getRelativePos()[0] + (int) (parent.getWidth() * 0.3), m.getY() + parent.getRelativePos()[1] - size, m.getX() + parent.getRelativePos()[0] + size + (int) (parent.getWidth() * 0.3), m.getY() + parent.getRelativePos()[1], frame, getType() * 32, frame + 32, getType() * 32 + 32, v.w);
+    g.drawImage(allemoticons, m.getX() + parent.getRelativePos().x + (int) (parent.getWidth() * 0.3), m.getY() + parent.getRelativePos().y - size, m.getX() + parent.getRelativePos().x + size + (int) (parent.getWidth() * 0.3), m.getY() + parent.getRelativePos().y, frame, getType() * 32, frame + 32, getType() * 32 + 32, v.w);
     if (System.currentTimeMillis() - time > length && length > -1)
       done = true;
   }

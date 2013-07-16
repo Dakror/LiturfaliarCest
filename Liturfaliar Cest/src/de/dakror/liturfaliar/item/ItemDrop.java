@@ -1,7 +1,6 @@
 package de.dakror.liturfaliar.item;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
@@ -118,8 +117,7 @@ public class ItemDrop
   
   public void mousePressed(MouseEvent e, Map m, Viewport v)
   {
-    int[] p = m.getPlayer().getRelativePos();
-    if (new Point(p[0], p[1]).distance(x, y) < CFG.FIELDSIZE * 2)
+    if (m.getPlayer().getRelativePos().distance(x, y) < CFG.FIELDSIZE * 2)
     {
       m.getPlayer().putItemInFirstInventorySlot(item);
       m.removeItemDrop(this);

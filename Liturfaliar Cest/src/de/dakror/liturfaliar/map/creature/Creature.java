@@ -2,6 +2,7 @@ package de.dakror.liturfaliar.map.creature;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -91,7 +92,7 @@ public class Creature implements MapEventListener
   
   public Area getHitArea(Map m)
   {
-    return hitArea.createTransformedArea(AffineTransform.getTranslateInstance(pos.coords[0] + m.getX(), pos.coords[1] + m.getY()));
+    return hitArea.createTransformedArea(AffineTransform.getTranslateInstance(pos.x + m.getX(), pos.y + m.getY()));
   }
   
   public void setDir(int dir)
@@ -115,9 +116,9 @@ public class Creature implements MapEventListener
     return goTo;
   }
   
-  public int[] getPos()
+  public Point getPos()
   {
-    return new int[] { (int) Math.round(pos.coords[0]), (int) Math.round(pos.coords[1]) };
+    return new Point((int) Math.round(pos.x), (int) Math.round(pos.y));
   }
   
   public void setFrozen(boolean b)
@@ -215,8 +216,8 @@ public class Creature implements MapEventListener
     {
       Color color = g.getColor();
       g.setColor(Color.green);
-      g.draw(new Rectangle2D.Double(m.getX() + getRelativePos()[0], m.getY() + getRelativePos()[1], w, h));
-      Assistant.Shadow(new Rectangle2D.Double(m.getX() + getRelativePos()[0] + bx, m.getY() + getRelativePos()[1] + by, bw, bh), Color.orange, 1, g);
+      g.draw(new Rectangle2D.Double(m.getX() + getRelativePos().x, m.getY() + getRelativePos().y, w, h));
+      Assistant.Shadow(new Rectangle2D.Double(m.getX() + getRelativePos().x + bx, m.getY() + getRelativePos().y + by, bw, bh), Color.orange, 1, g);
       g.setColor(color);
     }
   }
@@ -251,20 +252,20 @@ public class Creature implements MapEventListener
   
   public Area getBumpArea()
   {
-    return new Area(new Rectangle2D.Double(getRelativePos()[0] + bx, getRelativePos()[1] + by, bw, bh));
+    return new Area(new Rectangle2D.Double(getRelativePos().x + bx, getRelativePos().y + by, bw, bh));
   }
   
   public Area getRelativeArea()
   {
-    return new Area(new Rectangle2D.Double(getRelativePos()[0], getRelativePos()[1], w, h));
+    return new Area(new Rectangle2D.Double(getRelativePos().x, getRelativePos().y, w, h));
   }
   
   public Area getArea()
   {
-    return new Area(new Rectangle2D.Double(pos.coords[0], pos.coords[1], w, h));
+    return new Area(new Rectangle2D.Double(pos.x, pos.y, w, h));
   }
   
-  public int[] getRelativePos()
+  public Point getRelativePos()
   {
     return getPos();
   }
@@ -296,7 +297,7 @@ public class Creature implements MapEventListener
   
   public Point2D getField()
   {
-    return new Point2D.Double(Assistant.round(getRelativePos()[0] + bx + bw / 2, CFG.FIELDSIZE) / (double) CFG.FIELDSIZE, Assistant.round(getRelativePos()[1] + by + bh / 2, CFG.FIELDSIZE) / (double) CFG.FIELDSIZE);
+    return new Point2D.Double(Assistant.round(getRelativePos().x + bx + bw / 2, CFG.FIELDSIZE) / (double) CFG.FIELDSIZE, Assistant.round(getRelativePos().y + by + bh / 2, CFG.FIELDSIZE) / (double) CFG.FIELDSIZE);
   }
   
   public void setEmoticon(Emoticon e)
@@ -326,8 +327,8 @@ public class Creature implements MapEventListener
   
   public boolean isLookingAt(Creature c, Map m)
   {
-    double x = getRelativePos()[0] + getWidth() / 2.0;
-    double y = getRelativePos()[1] + getHeight() / 2.0;
+    double x = getRelativePos().x + getWidth() / 2.0;
+    double y = getRelativePos().y + getHeight() / 2.0;
     switch (dir)
     {
       case 0:
@@ -353,8 +354,8 @@ public class Creature implements MapEventListener
       return;
     for (int i = 0; i < 4; i++)
     {
-      double x = getRelativePos()[0] + getWidth() / 2.0;
-      double y = getRelativePos()[1] + getHeight() / 2.0;
+      double x = getRelativePos().x + getWidth() / 2.0;
+      double y = getRelativePos().y + getHeight() / 2.0;
       if (c.getRelativeArea().intersects(new Rectangle2D.Double(x, y + getHeight() / 2.0, 1, m.getHeight() * CFG.FIELDSIZE)))
       {
         dir = 0;
@@ -500,6 +501,6 @@ public class Creature implements MapEventListener
   
   public Vector getTrackingNode()
   {
-    return new Vector(pos.coords[0] + bx + bw / 2, pos.coords[1] + by + bh / 2);
+    return new Vector(pos.x + bx + bw / 2, pos.y + by + bh / 2);
   }
 }

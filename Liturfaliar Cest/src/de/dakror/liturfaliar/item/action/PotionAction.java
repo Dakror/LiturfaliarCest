@@ -46,8 +46,9 @@ public class PotionAction extends ItemAction
     
     Creature target = c;
     
-    if(targetID.indexOf("_") > -1) target = m.getCreatureByAccessKey(targetID);
-    //else if(targetID.equals(CASTER)) // TODO: add relative target mechanic 
+    if (targetID.indexOf("_") > -1)
+      target = m.getCreatureByAccessKey(targetID);
+    // else if(targetID.equals(CASTER)) // TODO: add relative target mechanic
     
     if (target == null)
       return;

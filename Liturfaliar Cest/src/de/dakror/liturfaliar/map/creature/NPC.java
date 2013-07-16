@@ -114,7 +114,7 @@ public class NPC extends Creature
     if (getDistance() > getSpeed() && !frozen)
     {
       move = true;
-      angle = Math.toDegrees(Math.atan2(goTo.coords[1] - getPos()[1], goTo.coords[0] - getPos()[0]));
+      angle = Math.toDegrees(Math.atan2(goTo.y - getPos().y, goTo.x - getPos().x));
       dir = 0;
       try
       {
@@ -135,8 +135,8 @@ public class NPC extends Creature
       skill.drawBelow(g, v, m);
     
     if (character != null)
-      Assistant.drawChar(getPos()[0] + m.getX(), getPos()[1] + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, "chars", character, g, v.w, true);
-    else Assistant.drawChar(getPos()[0] + m.getX(), getPos()[1] + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, equipment, g, v.w, true);
+      Assistant.drawChar(getPos().x + m.getX(), getPos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, "chars", character, g, v.w, true);
+    else Assistant.drawChar(getPos().x + m.getX(), getPos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, equipment, g, v.w, true);
     
     if (emoticon != null)
     {
@@ -160,8 +160,8 @@ public class NPC extends Creature
       // 0 = left, 1 = up, 2 = right, 3 = down
       int distance = (int) Math.round((Math.random() * CFG.FIELDSIZE * getSpeed()));
       
-      int x = getRelativePos()[0] + bx;
-      int y = getRelativePos()[1] + by;
+      int x = getRelativePos().x + bx;
+      int y = getRelativePos().y + by;
       int tx = 0;
       int ty = 0;
       
@@ -335,8 +335,8 @@ public class NPC extends Creature
     JSONObject data = new JSONObject();
     try
     {
-      data.put("x", getPos()[0]);
-      data.put("y", getPos()[1]);
+      data.put("x", getPos().x);
+      data.put("y", getPos().y);
       data.put("w", w);
       data.put("h", h);
       data.put("id", ID);

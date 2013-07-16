@@ -27,14 +27,16 @@ public abstract class CreatureAI
     Vector TN = creature.getTrackingNode();
     int dir = creature.getDir();
     int sAngle = (dir == 0) ? -90 : ((dir == 1) ? 180 : ((dir == 2) ? 0 : 90));
-    Shape s = new Arc2D.Double(TN.coords[0] - trackRadius, TN.coords[1] - trackRadius, trackRadius * 2, trackRadius * 2, sAngle - trackAngle / 2, trackAngle, Arc2D.PIE);
+    Shape s = new Arc2D.Double(TN.x - trackRadius, TN.y - trackRadius, trackRadius * 2, trackRadius * 2, sAngle - trackAngle / 2, trackAngle, Arc2D.PIE);
     return s.intersects(o.getBumpArea().getBounds2D());
   }
   
   public boolean isTrackable(Creature o)
   {
     Vector TN = creature.getTrackingNode();
-    Shape s = new Arc2D.Double(TN.coords[0] - trackRadius, TN.coords[1] - trackRadius, trackRadius * 2, trackRadius * 2, 0, 360, Arc2D.PIE);
+    Shape s = new Arc2D.Double(TN.x - trackRadius, TN.y - trackRadius, trackRadius * 2, trackRadius * 2, 0, 360, Arc2D.PIE);
     return s.intersects(o.getBumpArea().getBounds2D());
   }
+  
+  public abstract boolean canAttack(Creature o);
 }

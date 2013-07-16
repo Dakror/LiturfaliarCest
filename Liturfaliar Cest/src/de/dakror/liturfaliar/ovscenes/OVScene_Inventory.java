@@ -222,7 +222,6 @@ public class OVScene_Inventory extends OVScene implements Inventory
           }
           case THROWITEM:
           {
-            int[] pos = sg.getPlayer().getRelativePos();
             int ran = 16;
             while (contextItemSlot.getItem() != null)
             {
@@ -232,7 +231,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
               Item item = new Item(contextItemSlot.getItem());
               item.setStack(1);
               
-              sg.getMapPack().getActiveMap().addItemDrop(item, pos[0] + rx, pos[1] + ry);
+              sg.getMapPack().getActiveMap().addItemDrop(item, sg.getPlayer().getRelativePos().x + rx, sg.getPlayer().getRelativePos().y + ry);
               contextItemSlot.subItem();
             }
             break;

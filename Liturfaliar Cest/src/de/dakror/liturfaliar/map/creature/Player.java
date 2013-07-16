@@ -104,18 +104,18 @@ public class Player extends Creature
       {
         distance = getSpeed();
       }
-      if (!map.getBumpMap().contains(new Rectangle2D.Double(pos.sub(targetVector.setLength(distance)).coords[0] + bx, pos.sub(targetVector.setLength(distance)).coords[1] + by, bw, bh)))
+      if (!map.getBumpMap().contains(new Rectangle2D.Double(pos.sub(targetVector.setLength(distance)).x + bx, pos.sub(targetVector.setLength(distance)).y + by, bw, bh)))
       {
-        setTarget((int) relPos.coords[0], (int) relPos.coords[1]);
+        setTarget((int) relPos.x, (int) relPos.y);
         return;
       }
       for (Creature c : map.creatures)
       {
         if (c instanceof Player || (c instanceof NPC && !((NPC) c).isHostile()))
           continue;
-        if (c.getBumpArea().intersects(new Rectangle2D.Double(relPos.sub(targetVector.setLength(distance)).coords[0] + bx, relPos.sub(targetVector.setLength(distance)).coords[1] + by, bw, bh)))
+        if (c.getBumpArea().intersects(new Rectangle2D.Double(relPos.sub(targetVector.setLength(distance)).x + bx, relPos.sub(targetVector.setLength(distance)).y + by, bw, bh)))
         {
-          setTarget((int) relPos.coords[0], (int) relPos.coords[1]);
+          setTarget((int) relPos.x, (int) relPos.y);
           return;
         }
       }
@@ -155,7 +155,7 @@ public class Player extends Creature
     
     if (init)
     {
-      m.setPos(CFG.MAPCENTER.x - getRelativePos()[0], CFG.MAPCENTER.y - getRelativePos()[1]);
+      m.setPos(CFG.MAPCENTER.x - getRelativePos().x, CFG.MAPCENTER.y - getRelativePos().x);
       init = false;
     }
     
@@ -181,19 +181,19 @@ public class Player extends Creature
     setSpeed((sprint) ? Balance.Player.SPRINT : Balance.Player.WALK);
     
     int x = 0, y = 0;
-    if (dirs[0] && !dirs[3] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx, m.getY() + relPos.coords[1] + by - getSpeed() * 2, bw, bh)))
+    if (dirs[0] && !dirs[3] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.x + bx, m.getY() + relPos.y + by - getSpeed() * 2, bw, bh)))
       y -= getSpeed();
-    else if (dirs[3] && !dirs[0] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx, m.getY() + relPos.coords[1] + by + getSpeed() * 2, bw, bh)))
+    else if (dirs[3] && !dirs[0] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.x + bx, m.getY() + relPos.y + by + getSpeed() * 2, bw, bh)))
       y += getSpeed();
-    if (dirs[1] && !dirs[2] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx - getSpeed() * 2, m.getY() + relPos.coords[1] + by, bw, bh)))
+    if (dirs[1] && !dirs[2] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.x + bx - getSpeed() * 2, m.getY() + relPos.y + by, bw, bh)))
       x -= getSpeed();
-    else if (dirs[2] && !dirs[1] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.coords[0] + bx + getSpeed() * 2, m.getY() + relPos.coords[1] + by, bw, bh)))
+    else if (dirs[2] && !dirs[1] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.x + bx + getSpeed() * 2, m.getY() + relPos.y + by, bw, bh)))
       x += getSpeed();
     
     if (x != 0 || y != 0)
     {
-      goTo = new Vector(getRelativePos()[0] + x, getRelativePos()[1] + y);
-      m.setPos(CFG.MAPCENTER.x - getRelativePos()[0], CFG.MAPCENTER.y - getRelativePos()[1]);
+      goTo = new Vector(getRelativePos().x + x, getRelativePos().y + y);
+      m.setPos(CFG.MAPCENTER.x - getRelativePos().x, CFG.MAPCENTER.y - getRelativePos().y);
       move(m);
     }
     for (Field f : m.fields)
@@ -232,8 +232,9 @@ public class Player extends Creature
     if ((x != 0 || y != 0) && !frozen)
       frame = v.getFrame((sprint) ? 0.3f : 0.5f);
     
-    int angle = (int) Math.round(Math.toDegrees(Math.atan2(mouse.y - pos.coords[1], mouse.x - pos.coords[0])) / 90.0) + 1;
-    if(angle > -1) dir = DIRS[angle];
+    int angle = (int) Math.round(Math.toDegrees(Math.atan2(mouse.y - pos.y, mouse.x - pos.x)) / 90.0) + 1;
+    if (angle > -1)
+      dir = DIRS[angle];
     else dir = 1;
     
     try
@@ -313,7 +314,7 @@ public class Player extends Creature
   @Override
   public Area getBumpArea()
   {
-    return new Area(new Rectangle2D.Double(getRelativePos()[0] + bx, getRelativePos()[1] + by, bw, bh));
+    return new Area(new Rectangle2D.Double(getRelativePos().x + bx, getRelativePos().y + by, bw, bh));
   }
   
   public void setRelativePos(int x, int y)
@@ -322,9 +323,9 @@ public class Player extends Creature
   }
   
   @Override
-  public int[] getRelativePos()
+  public Point getRelativePos()
   {
-    return new int[] { (int) relPos.coords[0], (int) relPos.coords[1] };
+    return new Point((int) relPos.x, (int) relPos.y);
   }
   
   public JSONObject getData()
@@ -468,6 +469,6 @@ public class Player extends Creature
   @Override
   public Vector getTrackingNode()
   {
-    return new Vector(relPos.coords[0] + bx + bw / 2, relPos.coords[1] + by + bh / 2);
+    return new Vector(relPos.x + bx + bw / 2, relPos.y + by + bh / 2);
   }
 }

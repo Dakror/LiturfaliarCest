@@ -2,6 +2,7 @@ package de.dakror.liturfaliar.item.skillanim;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
@@ -18,6 +19,7 @@ public class Sword0 extends SkillAnimation
 {
   int   rx, ry;
   int   left;
+  int   theta;
   
   Image image;
   Area  hitArea;
@@ -35,6 +37,11 @@ public class Sword0 extends SkillAnimation
     done = false;
     rx = 0;
     ry = 0;
+  }
+  
+  public int getMaximumRange()
+  { // diagonal of square
+    return (int) (image.getWidth(null) * Math.sqrt(2));
   }
   
   @Override
@@ -55,13 +62,36 @@ public class Sword0 extends SkillAnimation
     if (this.hitArea == null)
       return;
     
+    AffineTransform tr = AffineTransform.getTranslateInstance(caster.getRelativePos().x + rx + m.getX(), caster.getRelativePos().y + ry + m.getY());
+    tr.rotate(Math.toRadians(theta), image.getWidth(null), image.getHeight(null));
+    realHitArea = this.hitArea.createTransformedArea(tr);
+    
+    AffineTransform oldTransform = g.getTransform();
+    AffineTransform t = AffineTransform.getRotateInstance(Math.toRadians(theta), caster.getRelativePos().x + rx + m.getX() + image.getWidth(null), caster.getRelativePos().y + ry + m.getY() + image.getHeight(null));
+    
+    g.setTransform(t);
+    g.drawImage(image, caster.getRelativePos().x + rx + m.getX(), caster.getRelativePos().y + ry + m.getY(), v.w);
+    g.setTransform(oldTransform);
+  }
+  
+  @Override
+  public void update(long timePassed, Map m)
+  {
+    super.update(timePassed, m);
+    
+    if (System.currentTimeMillis() - lastTick > 0)
+    {
+      left += 10;
+      lastTick = System.currentTimeMillis();
+    }
+    
     if (left >= 50)
     {
       done = true;
       return;
     }
     
-    int theta = 45; // presuming weapon handle in lower right corner -> rotate 45°
+    theta = 45; // presuming weapon handle in lower right corner -> rotate 45°
     switch (caster.getDir())
     {
       case 0: // down
@@ -97,29 +127,6 @@ public class Sword0 extends SkillAnimation
         break;
       }
     }
-    
-    AffineTransform tr = AffineTransform.getTranslateInstance(caster.getRelativePos()[0] + rx + m.getX(), caster.getRelativePos()[1] + ry + m.getY());
-    tr.rotate(Math.toRadians(theta), image.getWidth(null), image.getHeight(null));
-    realHitArea = this.hitArea.createTransformedArea(tr);
-    
-    AffineTransform oldTransform = g.getTransform();
-    AffineTransform t = AffineTransform.getRotateInstance(Math.toRadians(theta), caster.getRelativePos()[0] + rx + m.getX() + image.getWidth(null), caster.getRelativePos()[1] + ry + m.getY() + image.getHeight(null));
-    
-    g.setTransform(t);
-    g.drawImage(image, caster.getRelativePos()[0] + rx + m.getX(), caster.getRelativePos()[1] + ry + m.getY(), v.w);
-    g.setTransform(oldTransform);
-  }
-  
-  @Override
-  public void update(long timePassed, Map m)
-  {
-    super.update(timePassed, m);
-    
-    if (System.currentTimeMillis() - lastTick > 0)
-    {
-      left += 10;
-      lastTick = System.currentTimeMillis();
-    }
   }
   
   @Override
@@ -130,5 +137,10 @@ public class Sword0 extends SkillAnimation
       c.dealDamage(caster, DamageType.NORMAL, (int) ((int) item.getAttributes().getAttribute(Attr.health).getValue() + ((WeaponAction) caster.getEquipment().getFirstWeapon().getAction()).getReandomValue(Attr.health)));
       hit = true;
     }
+  }
+  
+  public Point getRelativePoint()
+  {
+    return new Point(rx, ry);
   }
 }

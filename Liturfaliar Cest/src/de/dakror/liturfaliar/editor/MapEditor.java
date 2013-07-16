@@ -156,7 +156,6 @@ public class MapEditor
   JCheckBoxMenuItem     mDrag;
   Viewport              v;
   JSONObject            mappackdata, mapdata;
-  // JList<String> tilefiles;
   JPanel                tiles;
   MapPanel              map;
   JScrollPane           msp;

@@ -7,13 +7,18 @@ import java.util.Arrays;
 
 public class Vector
 {
-  public final double[] coords;
-  private int           dimensions;
-  public final double   length;
+  public final double    x;
+  public final double    y;
+  
+  public final double    length;
+  private final double[] coords;
+  private int            dimensions;
   
   public Vector(double... d)
   {
     this.coords = d;
+    this.x = coords[0];
+    this.y = coords[1];
     this.dimensions = d.length;
     this.length = getLength();
   }
@@ -128,7 +133,7 @@ public class Vector
   
   public Vector translate(double x, double y)
   {
-    return new Vector(coords[0] + x, coords[1] + y);
+    return new Vector(this.x + x, this.y + y);
   }
   
   public boolean equals(Vector o)

@@ -25,4 +25,10 @@ public class EmptyAnimation extends SkillAnimation
   @Override
   public void dealEffect(Creature c)
   {}
+  
+  @Override
+  public int getMaximumRange()
+  {
+    return 0;
+  }
 }

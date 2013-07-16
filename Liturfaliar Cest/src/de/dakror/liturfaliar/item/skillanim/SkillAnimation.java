@@ -38,8 +38,13 @@ public abstract class SkillAnimation
   
   public abstract boolean isInRange(Creature o, Map m);
   
+  public abstract int getMaximumRange();
+  
   public void update(long timePassed, Map m)
   {
+    if (m == null)
+      return;
+    
     for (Creature c : m.creatures)
     {
       if (c != null && c.isAlive() && !affected.contains(c))

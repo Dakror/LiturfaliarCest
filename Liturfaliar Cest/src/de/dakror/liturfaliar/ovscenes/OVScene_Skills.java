@@ -15,10 +15,11 @@ import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.Items;
 import de.dakror.liturfaliar.item.Types;
+import de.dakror.liturfaliar.item.action.SkillAction;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.scenes.Scene_Game;
-import de.dakror.liturfaliar.settings.Keys;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
+import de.dakror.liturfaliar.settings.Keys;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.Flicker;
 import de.dakror.liturfaliar.ui.Flicker.FlickObject;
@@ -170,15 +171,34 @@ public class OVScene_Skills extends OVScene implements Inventory
       
       SkillSlot s1 = new SkillSlot(cx - SkillSlot.HGAP * 3, y, new Item(Items.SWORD1, 1), sg);
       slots.add(s1);
-      s1.setParents(s);
       
       SkillSlot s2 = new SkillSlot(cx - SkillSlot.HGAP * 3, y + SkillSlot.VGAP, new Item(Items.SWORD2, 1), sg);
       slots.add(s2);
-      s2.setParents(s1);
       
       SkillSlot s3 = new SkillSlot(cx - SkillSlot.HGAP * 3, y + SkillSlot.VGAP * 2, new Item(Items.SWORD3, 1), sg);
       slots.add(s3);
-      s3.setParents(s2);
+      
+      for (SkillSlot slot : slots)
+      {
+        SkillAction sa = (SkillAction) slot.getItem().getAction();
+        if (sa.getParents().length == 0)
+          continue;
+        
+        ArrayList<SkillSlot> parents = new ArrayList<SkillSlot>();
+        
+        for (SkillSlot slot1 : slots)
+        {
+          if (slot1.equals(slot))
+            continue;
+          
+          for (Items parent : sa.getParents())
+          {
+            if (slot1.getItem().equals(new Item(parent, 1)))
+              parents.add(slot1);
+          }
+        }
+        slot.setParents(parents.toArray(new SkillSlot[] {}));
+      }
     }
   }
   
