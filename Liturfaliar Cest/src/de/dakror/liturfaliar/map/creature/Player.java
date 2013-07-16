@@ -155,7 +155,7 @@ public class Player extends Creature
     
     if (init)
     {
-      m.setPos(CFG.MAPCENTER.x - getRelativePos().x, CFG.MAPCENTER.y - getRelativePos().x);
+      m.setPos(CFG.MAPCENTER.x - getRelativePos().x, CFG.MAPCENTER.y - getRelativePos().y);
       init = false;
     }
     

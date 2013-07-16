@@ -16,6 +16,7 @@ import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.listener.MapEventListener;
 import de.dakror.liturfaliar.fx.Emoticon;
 import de.dakror.liturfaliar.item.Equipment;
+import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
@@ -451,8 +452,9 @@ public class Creature implements MapEventListener
     return (int) Math.round(Math.pow(getLevel() + rl, 2) * LEVEL);
   }
   
-  public void playSkill(SkillAnimation s)
+  public void playSkill(Item i, SkillAnimation s)
   {
+    s.playAnimation(i, this);
     skills.add(s);
   }
   

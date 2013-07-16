@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
+import de.dakror.liturfaliar.item.skillanim.Sword0;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.ai.CreatureAI;
 import de.dakror.liturfaliar.settings.Attributes;
@@ -61,11 +62,11 @@ public class NPC extends Creature
     {
       equipment = equip;
       Assistant.drawChar(0, 0, w, h, 0, 0, equipment, g, null, true);
-      
     }
     else
     {
-      equipment = new Equipment();
+      // still setting equipment, may contain weapons
+      equipment = equip;
       character = c;
       Assistant.drawChar(0, 0, w, h, 0, 0, "chars", character, g, null, true);
     }
@@ -254,6 +255,11 @@ public class NPC extends Creature
         {
           path = AI.findPath(map.getPlayer().relPos);
           goTo = path.getNextNode();
+          
+          if (AI.canAttack(map.getPlayer()) && !isPlayingSkill(new Sword0()))
+          {
+            playSkill(equipment.getFirstWeapon(), new Sword0());
+          }
         }
         
         lastPos = pos;

@@ -94,6 +94,7 @@ import de.dakror.liturfaliar.settings.DamageType;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Compressor;
 import de.dakror.liturfaliar.util.FileManager;
+import de.dakror.liturfaliar.util.Vector;
 import de.dakror.universion.UniVersion;
 
 public class MapEditor
@@ -877,12 +878,18 @@ public class MapEditor
     list.addListSelectionListener(new ListSelectionListener()
     {
       @Override
-      public void valueChanged(ListSelectionEvent e)
+      public void valueChanged(final ListSelectionEvent e)
       {
         if (e.getValueIsAdjusting())
           return;
-        if (openMap((String) ((JList<?>) e.getSource()).getSelectedValue()))
-          d2.dispose();
+        new Thread()
+        {
+          public void run()
+          {
+            if (openMap((String) ((JList<?>) e.getSource()).getSelectedValue()))
+              d2.dispose();
+          }
+        }.start();
       }
     });
     dialog.setContentPane(new JScrollPane(list));
@@ -937,6 +944,23 @@ public class MapEditor
       selectedtile = null;
       mapdata = Compressor.openMap(new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + mappackdata.getString("name") + "/maps/" + m + ".map"));
       ArrayList<JSONObject> tiles = Assistant.JSONArrayToArray(mapdata.getJSONArray("tile"));
+      Collections.sort(tiles, new Comparator<JSONObject>()
+      {
+        @Override
+        public int compare(JSONObject o1, JSONObject o2)
+        {
+          try
+          {
+            return (int) (new Vector(o1.getInt("x"), o1.getInt("y")).length - new Vector(o2.getInt("x"), o2.getInt("y")).length);
+          }
+          catch (JSONException e)
+          {
+            e.printStackTrace();
+            return 0;
+          }
+        }
+      });
+      
       Collections.sort(tiles, new Comparator<JSONObject>()
       {
         @Override
@@ -1179,7 +1203,9 @@ public class MapEditor
     
     label = new JLabel("Künstliche Intelligenz:", JLabel.TRAILING);
     p.add(label);
-    NPCai = new JComboBox<String>(new String[] { "StraightLineAI" });
+    NPCai = new JComboBox<String>(new String[] { "MeleeAI" }); // TODO: Keep in sync
+    if (exist != null)
+      NPCai.setSelectedItem(exist.ai);
     p.add(NPCai);
     
     label = new JLabel("immer feindlich:", JLabel.TRAILING);

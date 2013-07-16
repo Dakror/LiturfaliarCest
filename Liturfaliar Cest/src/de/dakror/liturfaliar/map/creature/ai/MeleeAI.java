@@ -23,13 +23,11 @@ public class MeleeAI extends CreatureAI
   @Override
   public boolean canAttack(Creature o)
   {
-    
     // attacks with SKILL: Items.SWORD0
     SkillAnimation animation = ((SkillAction) Items.SWORD0.getItemAction()).getAnimation();
     animation.playAnimation(creature.getEquipment().getFirstWeapon(), creature);
     int l = animation.getMaximumRange();
     
-    return creature.getRelativePos().distance(o.getRelativePos()) <= l;
-    
+    return creature.getRelativePos().distance(o.getRelativePos()) <= l + o.getWidth() / 2 + creature.getWidth() / 2;
   }
 }
