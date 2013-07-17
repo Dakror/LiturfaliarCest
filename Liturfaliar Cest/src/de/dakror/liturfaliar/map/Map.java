@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -38,6 +39,7 @@ import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Compressor;
 import de.dakror.liturfaliar.util.FileManager;
+import de.dakror.liturfaliar.util.Vector;
 
 public class Map implements DatabaseEventListener
 {
@@ -727,8 +729,56 @@ public class Map implements DatabaseEventListener
       if (new Area(new Rectangle2D.Double(f.getX(), f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE)).contains(x, y))
         return f;
     }
-    
-    CFG.p("null");
     return null;
+  }
+  
+  public boolean isLineAccessible(Vector from, Vector to, int width, int height)
+  {
+    // double ankat = to.x - from.x;
+    // double hyp = to.getDistance(from);
+    //
+    // int faktor = (to.y < from.y) ? -1 : 1;
+    //
+    // double angle = Math.acos(ankat / hyp) * faktor;
+    //
+    // Area line = new Area(new Rectangle2D.Double(getX() + from.x, getY() + from.y, hyp, 4));
+    // line.transform(AffineTransform.getRotateInstance(angle, getX() + from.x, getY() + from.y));
+    
+    Area line = new Area();
+    
+    Polygon polygon = new Polygon();
+    polygon.addPoint((int) from.x, (int) from.y);
+    polygon.addPoint((int) to.x, (int) to.y);
+    polygon.addPoint((int) to.x, (int) to.y + height);
+    polygon.addPoint((int) from.x, (int) from.y + height);  
+    line.add(new Area(polygon));
+    
+    polygon = new Polygon();
+    polygon.addPoint((int) from.x + width, (int) from.y);
+    polygon.addPoint((int) to.x + width, (int) to.y);
+    polygon.addPoint((int) to.x + width, (int) to.y + height);
+    polygon.addPoint((int) from.x + width, (int) from.y + height);
+    line.add(new Area(polygon));
+    
+    polygon = new Polygon();
+    polygon.addPoint((int) from.x, (int) from.y + height);
+    polygon.addPoint((int) to.x, (int) to.y + height);
+    polygon.addPoint((int) to.x + width, (int) to.y + height);
+    polygon.addPoint((int) from.x + width, (int) from.y + height);
+    line.add(new Area(polygon));
+    
+    polygon = new Polygon();
+    polygon.addPoint((int) from.x, (int) from.y);
+    polygon.addPoint((int) to.x, (int) to.y);
+    polygon.addPoint((int) to.x + width, (int) to.y);
+    polygon.addPoint((int) from.x + width, (int) from.y);
+    line.add(new Area(polygon));
+    
+    line.transform(AffineTransform.getTranslateInstance(getX(), getY()));
+    
+    Area copy = (Area) getBumpMap().clone();
+    copy.intersect(line);
+    
+    return copy.equals(line);
   }
 }

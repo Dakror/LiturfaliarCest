@@ -122,7 +122,6 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     targetLabel.draw(g, v, mappack.getActiveMap());
     
     bottomSegment.draw(g, v, mappack.getActiveMap());
-    // --------- //
   }
   
   @Override

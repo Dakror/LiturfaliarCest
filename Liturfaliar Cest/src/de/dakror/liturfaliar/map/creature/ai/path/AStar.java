@@ -16,8 +16,13 @@ public class AStar
   ArrayList<Node>  closedList;
   Field            target;
   
-  public Path getPath(Field start, Field t, Map m)
+  int              cW, cH;
+  
+  public Path getPath(Field start, Field t, Map m, int w, int h)
   {
+    cW = w;
+    cH = h;
+    
     comparator = new Comparator<Node>()
     {
       @Override
@@ -57,7 +62,7 @@ public class AStar
       }
       openList.remove(0);
       closedList.add(N);
-      handleNeighbors(N);
+      handleNeighbors(N, m);
       
       loops++;
       if (loops % 500 == 0)
@@ -91,7 +96,7 @@ public class AStar
     return null;
   }
   
-  private void handleNeighbors(Node n)
+  private void handleNeighbors(Node n, Map m)
   {
     for (Field neighbor : n.field.neighbors)
     {
@@ -108,6 +113,11 @@ public class AStar
           openList.add(node);
         }
       }
+    }
+    if (m.isLineAccessible(n.field.getNode(), target.getNode(), cW, cH))
+    {
+      Node node = new Node(target, n, n.G + 1, 0);
+      openList.add(node);
     }
   }
   
