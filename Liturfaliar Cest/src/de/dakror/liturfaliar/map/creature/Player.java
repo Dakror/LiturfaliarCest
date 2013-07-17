@@ -265,6 +265,8 @@ public class Player extends Creature
     }
     catch (Exception e)
     {}
+    
+    
   }
   
   public void mouseMoved(MouseEvent e, Map m)
@@ -280,11 +282,17 @@ public class Player extends Creature
   
   public void mouseDragged(MouseEvent e, Map m)
   {
-    setAStarPath(e, m);
+    goTo = new Vector(e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY());
+    path = null;
+    // setAStarPath(e, m);
   }
   
   private void setAStarPath(MouseEvent e, Map m)
   {
+    
+    double angle = Math.toDegrees(Math.acos(Math.abs((e.getXOnScreen() - m.getX()) - relPos.x)) / Math.abs(Point.distance(relPos.x, relPos.y, e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY())));
+    CFG.p(angle);
+    
     if (m.getBumpMap().contains(e.getLocationOnScreen()))
       path = new AStar().getPath(getField(m), m.findField(e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY()), m);
   }

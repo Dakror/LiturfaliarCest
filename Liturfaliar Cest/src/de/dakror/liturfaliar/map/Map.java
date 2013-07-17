@@ -226,7 +226,7 @@ public class Map implements DatabaseEventListener
       {
         if (field.equals(field1))
           continue;
-        if (field.getNode().getDistance(field1.getNode()) <= CFG.FIELDSIZE + 1 && field1.getLayer() < CFG.PLAYERLAYER  && bump.contains(field1.getX(), field1.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE))
+        if (field.getNode().getDistance(field1.getNode()) <= CFG.FIELDSIZE + 1 && field1.getLayer() < CFG.PLAYERLAYER && bump.contains(field1.getX(), field1.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE))
           field.neighbors.add(field1);
       }
     }
