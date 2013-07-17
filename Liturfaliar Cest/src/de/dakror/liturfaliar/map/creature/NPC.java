@@ -212,7 +212,9 @@ public class NPC extends Creature
       time = System.currentTimeMillis();
     }
     
-    if (m.getPlayer().getField().distance(getField()) < 1.1 && m.getPlayer().isLookingAt(this, m) && talkdata.length() > 0)
+    if(m.getPlayer().getField(m) == null) return;
+    
+    if (m.getPlayer().getField(m).getNode().getDistance(getField(m).getNode()) < 1.1 && m.getPlayer().isLookingAt(this, m) && talkdata.length() > 0)
     {
       if (emoticon == null && !isTalking())
       {
@@ -229,7 +231,10 @@ public class NPC extends Creature
     if (hostile && AI != null)
     {
       path = AI.findPath(m.getPlayer().relPos);
-      goTo = path.getNextNode();
+      if (pos.equals(path.getNode()))
+        path.setNodeReached();
+      
+      goTo = path.getNode();
       
       if (AI.canAttack(m.getPlayer()) && !isPlayingSkill(new Sword0()) && System.currentTimeMillis() - time2 > 500)
       {
@@ -242,7 +247,7 @@ public class NPC extends Creature
   @Override
   public void mousePressed(MouseEvent e, Map m)
   {
-    if (m.getPlayer().getField().distance(getField()) < 1.3 && m.getPlayer().isLookingAt(this, m) && e.getButton() == 1 && getArea().contains(new Point(e.getX() - m.getX(), e.getY() - m.getY())) && talkdata.length() > 0)
+    if (m.getPlayer().getField(m).getNode().getDistance(getField(m).getNode()) < 1.3 && m.getPlayer().isLookingAt(this, m) && e.getButton() == 1 && getArea().contains(new Point(e.getX() - m.getX(), e.getY() - m.getY())) && talkdata.length() > 0)
     {
       if (m.talk == null)
       {
@@ -388,7 +393,7 @@ public class NPC extends Creature
       setHostile(true);
       frozen = false;
       path = AI.findPath(causer.getTrackingNode());
-      goTo = path.getNextNode();
+      goTo = path.getNode();
     }
   }
 }

@@ -21,7 +21,7 @@ import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.ai.CreatureAI;
-import de.dakror.liturfaliar.map.creature.ai.Path;
+import de.dakror.liturfaliar.map.creature.ai.path.Path;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
@@ -109,7 +109,7 @@ public class Creature implements MapEventListener
   
   public double getDistance()
   {
-    return Vector.get_distance(pos, goTo);
+    return Vector.getDistance(pos, goTo);
   }
   
   public Vector getTargetVector()
@@ -170,6 +170,7 @@ public class Creature implements MapEventListener
   public void update(long timePassed, Map map)
   {
     move(map);
+    
     for (Field f : map.fields)
     {
       if (getBumpArea().contains(new Point2D.Double(f.getX() * CFG.FIELDSIZE + CFG.FIELDSIZE * 0.5, f.getY() * CFG.FIELDSIZE + CFG.FIELDSIZE * 0.5)))
@@ -237,6 +238,11 @@ public class Creature implements MapEventListener
       g.draw(new Rectangle2D.Double(m.getX() + getRelativePos().x, m.getY() + getRelativePos().y, w, h));
       Assistant.Shadow(new Rectangle2D.Double(m.getX() + getRelativePos().x + bx, m.getY() + getRelativePos().y + by, bw, bh), Color.orange, 1, g);
       g.setColor(color);
+      
+      Field f = getField(m);
+      Assistant.Rect(m.getX() + f.getX(), m.getY() + f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE, Color.gray, null, g);
+      
+      if(path != null) path.draw(g, m);
     }
   }
   
@@ -313,9 +319,9 @@ public class Creature implements MapEventListener
     return null;
   }
   
-  public Point2D getField()
+  public Field getField(Map m)
   {
-    return new Point2D.Double(Assistant.round(getRelativePos().x + bx + bw / 2, CFG.FIELDSIZE) / (double) CFG.FIELDSIZE, Assistant.round(getRelativePos().y + by + bh / 2, CFG.FIELDSIZE) / (double) CFG.FIELDSIZE);
+    return m.findField(pos.x + bx + bw / 2, pos.y + by + bh);
   }
   
   public void setEmoticon(Emoticon e)
@@ -521,5 +527,9 @@ public class Creature implements MapEventListener
   public Vector getTrackingNode()
   {
     return new Vector(pos.x + bx + bw / 2, pos.y + by + bh / 2);
+  }
+
+  public Path getPath() {
+    return path;
   }
 }

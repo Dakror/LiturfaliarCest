@@ -4,6 +4,7 @@ import de.dakror.liturfaliar.item.Items;
 import de.dakror.liturfaliar.item.action.SkillAction;
 import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
 import de.dakror.liturfaliar.map.creature.Creature;
+import de.dakror.liturfaliar.map.creature.ai.path.Path;
 import de.dakror.liturfaliar.util.Vector;
 
 public class MeleeAI extends CreatureAI

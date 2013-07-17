@@ -4,6 +4,7 @@ import java.awt.Shape;
 import java.awt.geom.Arc2D;
 
 import de.dakror.liturfaliar.map.creature.Creature;
+import de.dakror.liturfaliar.map.creature.ai.path.Path;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.util.Vector;
 

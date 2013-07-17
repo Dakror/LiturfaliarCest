@@ -44,7 +44,7 @@ public class Scene_LoadGame implements Scene
   public void construct(Viewport v)
   {
     this.v = v;
-
+    
     v.playMusic("013-Theme02", false);
     c1 = new Container(0, 0, v.w.getWidth(), 55);
     c1.tileset = null;

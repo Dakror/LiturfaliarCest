@@ -37,7 +37,7 @@ public class TargetLabel extends HUDComponent
     {
       if (c != null && c.getClass() != Player.class)
       {
-        if (c.isAlive() && ((m.getPlayer().isLookingAt(c, m) && m.getPlayer().getField().distance(c.getField()) < 3.0) || (new Rectangle(m.getX() + c.getRelativePos().x, m.getY() + c.getRelativePos().y, c.getWidth(), c.getHeight()).contains(mouse))))
+        if (c.isAlive() && ((m.getPlayer().isLookingAt(c, m) && m.getPlayer().getField(m).getNode().getDistance(c.getField(m).getNode()) < 3.0) || (new Rectangle(m.getX() + c.getRelativePos().x, m.getY() + c.getRelativePos().y, c.getWidth(), c.getHeight()).contains(mouse))))
           this.target = c;
       }
     }

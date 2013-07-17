@@ -80,9 +80,14 @@ public class Vector
     return v1.sub(v2);
   }
   
-  public static double get_distance(Vector pos1, Vector pos2)
+  public static double getDistance(Vector pos1, Vector pos2)
   {
     return createvec(pos1, pos2).length;
+  }
+  
+  public double getDistance(Vector pos2)
+  {
+    return createvec(this, pos2).length;
   }
   
   public Vector setLength(double i)
@@ -138,6 +143,6 @@ public class Vector
   
   public boolean equals(Vector o)
   {
-    return Arrays.asList(coords).equals(Arrays.asList(o.coords)) && length == o.length;
+    return Arrays.equals(coords,o.coords);
   }
 }

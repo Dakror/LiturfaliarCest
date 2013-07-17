@@ -10,6 +10,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 
 import org.json.JSONArray;
@@ -23,6 +24,7 @@ import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.map.creature.ai.path.AStar;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Balance;
@@ -125,6 +127,12 @@ public class Player extends Creature
     }
   }
   
+  @Override
+  public Field getField(Map m)
+  {
+    return m.findField(relPos.x + bx + bw / 2, relPos.y + by + bh);
+  }
+  
   public String getName()
   {
     try
@@ -194,8 +202,22 @@ public class Player extends Creature
     if (x != 0 || y != 0)
     {
       goTo = new Vector(getRelativePos().x + x, getRelativePos().y + y);
-      m.setPos(CFG.MAPCENTER.x - getRelativePos().x, CFG.MAPCENTER.y - getRelativePos().y);
-      move(m);
+      path = null;
+    }
+    else
+    {
+      
+      if (path != null)
+      {
+        
+        if (relPos.translate(bx + bw / 2, bh + by).equals(path.getNode()))
+          path.setNodeReached();
+        
+        goTo = path.getNode().translate(-bx - bw / 2, -bh - by);
+        
+        if (path.isPathComplete())
+          path = null;
+      }
     }
     for (Field f : m.fields)
     {
@@ -208,6 +230,10 @@ public class Player extends Creature
         f.fieldTouched(this, m);
       }
     }
+    
+    
+    m.setPos(CFG.MAPCENTER.x - getRelativePos().x, CFG.MAPCENTER.y - getRelativePos().y);
+    move(m);
   }
   
   @Override
@@ -219,18 +245,7 @@ public class Player extends Creature
     
     int frame = 0;
     
-    int x = 0, y = 0;
-    
-    if (dirs[0])
-      y--;
-    if (dirs[3])
-      y++;
-    if (dirs[1])
-      x--;
-    if (dirs[2])
-      x++;
-    
-    if ((x != 0 || y != 0) && !frozen)
+    if ((!relPos.equals(goTo) || !Arrays.equals(dirs, new boolean[] { false, false, false, false })) && !frozen)
       frame = v.getFrame((sprint) ? 0.3f : 0.5f);
     
     int angle = (int) Math.round(Math.toDegrees(Math.atan2(mouse.y - pos.y, mouse.x - pos.x)) / 90.0) + 1;
@@ -255,6 +270,23 @@ public class Player extends Creature
   public void mouseMoved(MouseEvent e, Map m)
   {
     mouse = e.getLocationOnScreen();
+  }
+  
+  public void mousePressed(MouseEvent e, Map m)
+  {
+    if (e.getButton() == 1)
+      setAStarPath(e, m);
+  }
+  
+  public void mouseDragged(MouseEvent e, Map m)
+  {
+    setAStarPath(e, m);
+  }
+  
+  private void setAStarPath(MouseEvent e, Map m)
+  {
+    if (m.getBumpMap().contains(e.getLocationOnScreen()))
+      path = new AStar().getPath(getField(m), m.findField(e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY()), m);
   }
   
   @Override

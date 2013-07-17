@@ -55,6 +55,7 @@ public class Map implements DatabaseEventListener
   
   public float                 alpha;
   
+  public ArrayList<Field>      belowFields;
   public ArrayList<Field>      aboveFields;
   public ArrayList<Field>      fields;
   public ArrayList<Creature>   creatures;
@@ -140,6 +141,7 @@ public class Map implements DatabaseEventListener
     alpha = 1.0f;
     creatures = new ArrayList<Creature>();
     aboveFields = new ArrayList<Field>();
+    belowFields = new ArrayList<Field>();
     fields = new ArrayList<Field>();
     int w = 0, h = 0;
     for (int i = 0; i < data.getJSONArray("tile").length(); i++)
@@ -151,6 +153,7 @@ public class Map implements DatabaseEventListener
       if (o.getInt("y") + CFG.FIELDSIZE > h)
         h = o.getInt("y") + CFG.FIELDSIZE;
     }
+    
     setPeaceful(data.getBoolean("peaceful"));
     setWidth(w);
     setHeight(h);
@@ -169,7 +172,11 @@ public class Map implements DatabaseEventListener
     for (Field f : cpy)
     {
       if (f.getLayer() <= CFG.PLAYERLAYER && f.getLayer() > CFG.SUPERDELLAYER)
+      {
         lrender.getGraphics().drawImage(f.getImage(), f.getX(), f.getY(), null);
+        if (f.getLayer() < CFG.PLAYERLAYER)
+          belowFields.add(f);
+      }
       else if (f.getLayer() > CFG.PLAYERLAYER && f.getLayer() < CFG.SUPERADDLAYER)
       {
         hrender.getGraphics().drawImage(f.getImage(), f.getX(), f.getY(), null);
@@ -212,6 +219,18 @@ public class Map implements DatabaseEventListener
         bump.subtract(new Area(new Rectangle2D.Double(f.getX(), f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE)));
       }
     }
+    
+    for (Field field : fields)
+    {
+      for (Field field1 : fields)
+      {
+        if (field.equals(field1))
+          continue;
+        if (field.getNode().getDistance(field1.getNode()) <= CFG.FIELDSIZE + 1 && field1.getLayer() < CFG.PLAYERLAYER  && bump.contains(field1.getX(), field1.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE))
+          field.neighbors.add(field1);
+      }
+    }
+    
     JSONArray npcs = data.getJSONArray("npc");
     for (int i = 0; i < npcs.length(); i++)
     {
@@ -699,5 +718,17 @@ public class Map implements DatabaseEventListener
     {
       e.printStackTrace();
     }
+  }
+  
+  public Field findField(double x, double y)
+  {
+    for (Field f : belowFields)
+    {
+      if (new Area(new Rectangle2D.Double(f.getX(), f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE)).contains(x, y))
+        return f;
+    }
+    
+    CFG.p("null");
+    return null;
   }
 }
