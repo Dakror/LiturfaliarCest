@@ -59,6 +59,8 @@ public class Player extends Creature
   
   Point             mouse               = new Point(0, 0);
   
+  public AStar      aStar;
+  
   public Player(JSONObject save, Window w)
   {
     super(CFG.MAPCENTER.x, CFG.MAPCENTER.y, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1]);
@@ -101,15 +103,20 @@ public class Player extends Creature
     {
       Vector targetVector = relPos.sub(goTo);
       double distance = targetVector.length;
+      
       if (targetVector.length >= getSpeed())
       {
         distance = getSpeed();
       }
+      
+      if (distance == 0)
+        return;
+      
       if (!map.getBumpMap().contains(new Rectangle2D.Double(pos.sub(targetVector.setLength(distance)).x + bx, pos.sub(targetVector.setLength(distance)).y + by, bw, bh)))
       {
-        setTarget((int) relPos.x, (int) relPos.y);
-        return;
+        setTarget((int) relPos.x + (int) Math.round(Math.random() * 3 - 2), (int) relPos.y + (int) Math.round(Math.random() * 3 - 2));
       }
+      
       for (Creature c : map.creatures)
       {
         if (c instanceof Player)
@@ -282,10 +289,21 @@ public class Player extends Creature
     path = null;
   }
   
+  public void mouseReleased(MouseEvent e, Map m)
+  {
+    if (path == null)
+    {
+      goTo = relPos;
+    }
+  }
+  
   private void setAStarPath(MouseEvent e, Map m)
   {
     if (m.getBumpMap().contains(e.getLocationOnScreen()))
-      path = new AStar().getPath(getField(m), m.findField(e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY()), m, bw, bh);
+    {
+      aStar = new AStar();
+      path = aStar.getPath(getField(m), m.findField(e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY()), m, bx, by, bw, bh);
+    }
   }
   
   @Override

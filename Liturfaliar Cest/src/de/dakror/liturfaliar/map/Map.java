@@ -365,7 +365,7 @@ public class Map implements DatabaseEventListener
     Assistant.Shadow(v.w.getBounds(), Color.black, 1 - alpha, g);
     
     if (talk != null)
-      talk.draw(g, v);
+      talk.draw(g, v); 
   }
   
   public void setPos(int x, int y)
@@ -732,7 +732,7 @@ public class Map implements DatabaseEventListener
     return null;
   }
   
-  public boolean isLineAccessible(Vector from, Vector to, int width, int height)
+  public boolean isLineAccessible(Vector from, Vector to, int offsetX, int offsetY, int width, int height)
   {
     // double ankat = to.x - from.x;
     // double hyp = to.getDistance(from);
@@ -750,7 +750,7 @@ public class Map implements DatabaseEventListener
     polygon.addPoint((int) from.x, (int) from.y);
     polygon.addPoint((int) to.x, (int) to.y);
     polygon.addPoint((int) to.x, (int) to.y + height);
-    polygon.addPoint((int) from.x, (int) from.y + height);  
+    polygon.addPoint((int) from.x, (int) from.y + height);
     line.add(new Area(polygon));
     
     polygon = new Polygon();
@@ -774,11 +774,11 @@ public class Map implements DatabaseEventListener
     polygon.addPoint((int) from.x + width, (int) from.y);
     line.add(new Area(polygon));
     
-    line.transform(AffineTransform.getTranslateInstance(getX(), getY()));
+    line.transform(AffineTransform.getTranslateInstance(getX() + offsetX, getY() + offsetY));
     
     Area copy = (Area) getBumpMap().clone();
-    copy.intersect(line);
+    copy.add(line);
     
-    return copy.equals(line);
+    return copy.equals(getBumpMap());
   }
 }

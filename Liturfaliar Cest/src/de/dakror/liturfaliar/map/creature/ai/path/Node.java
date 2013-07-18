@@ -20,9 +20,11 @@ public class Node
     F = G + H;
   }
   
-  public boolean equals(Node o)
+  public boolean equals(Object o)
   {
-    return field.equals(o.field);
+    if (!(o instanceof Node))
+      return false;
+    return field.equals(((Node) o).field);
   }
   
   public String toString()
