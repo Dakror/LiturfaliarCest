@@ -1,5 +1,8 @@
 package de.dakror.liturfaliar;
 
+import java.io.File;
+
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import paulscode.sound.SoundSystem;
@@ -15,6 +18,15 @@ public class LiturfaliarCest
 {
   public static void main(String[] args)
   {
+    if (args.length > 0)
+    {
+      CFG.HARDDRIVE = args[0];
+      if (!new File(CFG.HARDDRIVE + ":/").exists())
+      {
+        JOptionPane.showMessageDialog(null, "Die Alternativ-Festplatte \"" + args[0] + "\" existiert nicht!", "Fehler!", JOptionPane.ERROR_MESSAGE);
+      }
+    }
+    
     CFG.INTERNET = Assistant.isInternetReachable();
     
     UniVersion.offline = !CFG.INTERNET;
