@@ -24,6 +24,7 @@ public class LiturfaliarCest
       if (!new File(CFG.HARDDRIVE + ":/").exists())
       {
         JOptionPane.showMessageDialog(null, "Die Alternativ-Festplatte \"" + args[0] + "\" existiert nicht!", "Fehler!", JOptionPane.ERROR_MESSAGE);
+        System.exit(0);
       }
     }
     

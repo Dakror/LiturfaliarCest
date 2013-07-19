@@ -107,7 +107,7 @@ public class NPC extends Creature
   public void draw(Graphics2D g, Viewport v, Map m)
   {
     super.draw(g, v, m);
-
+    
     boolean move = false;
     double angle = 0;
     if (getDistance() > getSpeed() && !frozen)
@@ -209,7 +209,8 @@ public class NPC extends Creature
       time = System.currentTimeMillis();
     }
     
-    if(m.getPlayer().getField(m) == null) return;
+    if (m.getPlayer().getField(m) == null)
+      return;
     
     if (m.getPlayer().getField(m).getNode().getDistance(getField(m).getNode()) < 1.1 && m.getPlayer().isLookingAt(this, m) && talkdata.length() > 0)
     {

@@ -240,7 +240,8 @@ public class Creature implements MapEventListener
       Field f = getField(m);
       Assistant.Rect(m.getX() + f.getX(), m.getY() + f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE, Color.gray, null, g);
       
-      if(path != null) path.draw(g, m);
+      if (path != null)
+        path.draw(g, m);
     }
   }
   
@@ -526,8 +527,9 @@ public class Creature implements MapEventListener
   {
     return new Vector(pos.x + bx + bw / 2, pos.y + by + bh / 2);
   }
-
-  public Path getPath() {
+  
+  public Path getPath()
+  {
     return path;
   }
 }

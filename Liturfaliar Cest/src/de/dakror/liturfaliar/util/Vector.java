@@ -156,13 +156,23 @@ public class Vector
     return setLength(1);
   }
   
-  public Vector[] norm()
+  public Vector normL()
   {
-    return new Vector[] { new Vector(y, -x), new Vector(-y, x) };
+    return new Vector(-y, x);
   }
   
-  public Vector project(Vector b)
+  public Vector normR()
   {
-    return new Vector((skalar(b) / Math.pow(b.getLength(), 2)) * b.x, (skalar(b) / Math.pow(b.getLength(), 2)) * b.y);
+    return new Vector(y, -x);
+  }
+  
+  public double dot(Vector o)
+  {
+    double result = 0;
+    for (int i = 0; i < dimensions; i++)
+    {
+      result += coords[i] * o.coords[i];
+    }
+    return result;
   }
 }

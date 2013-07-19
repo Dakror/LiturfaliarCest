@@ -335,12 +335,6 @@ public class Map implements DatabaseEventListener
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
     
-    for (Creature c : creatures)
-    {
-      if (c.isAlive())
-        c.drawEmoticon(g, v, this);
-    }
-    
     try
     {
       for (ItemDrop id : itemDrops)
@@ -365,7 +359,7 @@ public class Map implements DatabaseEventListener
     Assistant.Shadow(v.w.getBounds(), Color.black, 1 - alpha, g);
     
     if (talk != null)
-      talk.draw(g, v); 
+      talk.draw(g, v);
   }
   
   public void setPos(int x, int y)
@@ -382,10 +376,16 @@ public class Map implements DatabaseEventListener
   
   public Area getBumpMap()
   {
+    Area bump = getAbsoluteBumpMap();
     AffineTransform at = new AffineTransform();
     at.setToTranslation(getX() - bump.getBounds2D().getX(), getY() - bump.getBounds2D().getY());
     bump.transform(at);
     return bump;
+  }
+  
+  public Area getAbsoluteBumpMap()
+  {
+    return (Area) this.bump.clone();
   }
   
   public BufferedImage getRendered(int size, Viewport v)
