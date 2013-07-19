@@ -51,6 +51,16 @@ public class Vector
     return new Vector(converttodouble(resarray));
   }
   
+  public double skalar(Vector o)
+  {
+    double skalar = 0;
+    for (int i = 0; i < dimensions; i++)
+    {
+      skalar += coords[i] * o.coords[i];
+    }
+    return skalar;
+  }
+  
   public Vector neg()
   {
     return mul(-1.0D);
@@ -120,11 +130,6 @@ public class Vector
     return Math.sqrt(result);
   }
   
-  public static ArrayList<Vector> astar()
-  {
-    return null;
-  }
-  
   public void draw(Graphics2D g, Color c)
   {
     Assistant.Rect((int) this.coords[0], (int) this.coords[1], 1, 1, c, c, g);
@@ -133,7 +138,7 @@ public class Vector
   @Override
   public String toString()
   {
-    return this.getClass().toString() + "[x=" + this.coords[0] + ",y=" + this.coords[1] + "]";
+    return this.getClass().toString() + "[x=" + this.coords[0] + ",y=" + this.coords[1] + ", length=" + length + "]";
   }
   
   public Vector translate(double x, double y)
@@ -143,6 +148,21 @@ public class Vector
   
   public boolean equals(Vector o)
   {
-    return Arrays.equals(coords,o.coords);
+    return Arrays.equals(coords, o.coords);
+  }
+  
+  public Vector normalize()
+  {
+    return setLength(1);
+  }
+  
+  public Vector[] norm()
+  {
+    return new Vector[] { new Vector(y, -x), new Vector(-y, x) };
+  }
+  
+  public Vector project(Vector b)
+  {
+    return new Vector((skalar(b) / Math.pow(b.getLength(), 2)) * b.x, (skalar(b) / Math.pow(b.getLength(), 2)) * b.y);
   }
 }

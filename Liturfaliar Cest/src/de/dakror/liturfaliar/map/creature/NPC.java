@@ -107,10 +107,7 @@ public class NPC extends Creature
   public void draw(Graphics2D g, Viewport v, Map m)
   {
     super.draw(g, v, m);
-    
-    // if (path != null)
-    // path.getNode(0).translate(m.getX(), m.getY()).draw(g, Color.blue);
-    
+
     boolean move = false;
     double angle = 0;
     if (getDistance() > getSpeed() && !frozen)

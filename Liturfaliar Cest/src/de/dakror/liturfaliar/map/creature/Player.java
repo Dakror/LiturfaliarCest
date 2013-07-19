@@ -59,8 +59,6 @@ public class Player extends Creature
   
   Point             mouse               = new Point(0, 0);
   
-  public AStar      aStar;
-  
   public Player(JSONObject save, Window w)
   {
     super(CFG.MAPCENTER.x, CFG.MAPCENTER.y, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1]);
@@ -285,8 +283,8 @@ public class Player extends Creature
   
   public void mouseDragged(MouseEvent e, Map m)
   {
-    goTo = new Vector(e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY());
-    path = null;
+    // goTo = new Vector(e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY());
+    // path = null;
   }
   
   public void mouseReleased(MouseEvent e, Map m)
@@ -301,8 +299,7 @@ public class Player extends Creature
   {
     if (m.getBumpMap().contains(e.getLocationOnScreen()))
     {
-      aStar = new AStar();
-      path = aStar.getPath(getField(m), m.findField(e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY()), m, bx, by, bw, bh);
+      path = new AStar().getPath(getField(m), m.findField(e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY()), m, bx, by, bw, bh);
     }
   }
   

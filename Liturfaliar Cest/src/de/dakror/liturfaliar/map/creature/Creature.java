@@ -149,8 +149,6 @@ public class Creature implements MapEventListener
       }
       for (Creature c : map.creatures)
       {
-        if (c instanceof Player)
-          continue;
         if (c.getBumpArea().intersects(new Rectangle2D.Double(map.getX() + pos.sub(targetVector.setLength(distance)).x + bx, map.getY() + pos.sub(targetVector.setLength(distance)).y + by, bw, bh)))
         {
           setTarget((int) pos.x, (int) pos.y);
