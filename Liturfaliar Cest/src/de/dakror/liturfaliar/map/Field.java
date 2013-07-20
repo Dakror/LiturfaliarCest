@@ -17,18 +17,16 @@ import de.dakror.liturfaliar.util.Vector;
 
 public class Field implements MapEventListener
 {
-  int                     x;
-  int                     y;
-  double                  l;
+  int           x;
+  int           y;
+  double        l;
   
-  String                  tileset;
-  BufferedImage           i;
-  FieldData[]             datas;
-  public ArrayList<Field> neighbors;
+  String        tileset;
+  BufferedImage i;
+  FieldData[]   datas;
   
   public Field(int dx, int dy, int tx, int ty, double layer, String t, FieldData... data)
   {
-    neighbors = new ArrayList<>();
     this.x = dx;
     this.y = dy;
     this.l = layer;

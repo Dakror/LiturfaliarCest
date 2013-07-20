@@ -86,4 +86,8 @@ public class TargetLabel extends HUDComponent
   {
     mouse = e.getLocationOnScreen();
   }
+  
+  public Creature getTarget() {
+    return target;
+  }
 }

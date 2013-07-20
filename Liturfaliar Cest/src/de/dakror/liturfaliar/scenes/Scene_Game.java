@@ -24,6 +24,7 @@ import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.ItemDrop;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.MapPack;
+import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.creature.Player;
 import de.dakror.liturfaliar.ovscenes.OVScene_Death;
 import de.dakror.liturfaliar.ovscenes.OVScene_Inventory;
@@ -35,6 +36,7 @@ import de.dakror.liturfaliar.settings.Keys;
 import de.dakror.liturfaliar.ui.CursorText;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.hud.BottomSegment;
+import de.dakror.liturfaliar.ui.hud.PlayerHotbar;
 import de.dakror.liturfaliar.ui.hud.TargetLabel;
 import de.dakror.liturfaliar.util.Database;
 
@@ -48,6 +50,8 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   // -- HUD -- //
   TargetLabel     targetLabel;
   BottomSegment   bottomSegment;
+  
+  boolean         ctrlDown;
   
   @Override
   public void construct(Viewport v)
@@ -129,6 +133,9 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   {
     if (mappack != null && mappack.getActiveMap() != null)
       mappack.getActiveMap().keyPressed(e);
+    
+    if (e.getKeyCode() == KeyEvent.VK_CONTROL)
+      ctrlDown = true;
   }
   
   @Override
@@ -160,6 +167,9 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     
     if (bottomSegment != null)
       bottomSegment.keyReleased(e, mappack.getActiveMap());
+    
+    if (e.getKeyCode() == KeyEvent.VK_CONTROL)
+      ctrlDown = false;
   }
   
   public boolean isPaused()
@@ -286,6 +296,17 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   {
     if (slot.getItem() == null)
       return;
+    
+    // -- is LMB -- //
+    if (index == PlayerHotbar.KEYSLOTS.length)
+    {
+      if (targetLabel.getTarget() == null || !((NPC) targetLabel.getTarget()).isHostile())
+        if (!ctrlDown)
+        {
+          player.setTarget((int) player.getRelativePos().x, (int) player.getRelativePos().y);
+          return;
+        }
+    }
     
     slot.triggerAction(mappack.getActiveMap(), player, v);
     player.getEquipment().setHotbarItem(index, slot.getItem());

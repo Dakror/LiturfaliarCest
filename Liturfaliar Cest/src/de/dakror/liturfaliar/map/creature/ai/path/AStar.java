@@ -129,7 +129,7 @@ public class AStar
   
   private void handleNeighbors(Node n, Map m)
   {
-    for (Field neighbor : n.field.neighbors)
+    for (Field neighbor : m.getNeighbors(n.field))
     {
       Node node = new Node(neighbor, n, n.G + 1, neighbor.getNode().getDistance(target.getNode()));
       if (neighbor.getLayer() < CFG.PLAYERLAYER && !closedList.contains(node))

@@ -206,7 +206,7 @@ public class Player extends Creature
     if ((!relPos.equals(goTo) || !Arrays.equals(dirs, new boolean[] { false, false, false, false })) && !frozen)
       frame = v.getFrame((sprint) ? 0.3f : 0.5f);
     
-    int angle = (int) Math.round(Math.toDegrees(Math.atan2(mouse.y - relPos.y, mouse.x - relPos.x)) / 90.0) + 1;
+    int angle = (int) Math.round(Math.toDegrees(Math.atan2(mouse.y - (relPos.y + m.getY() + h / 2), mouse.x - (relPos.x + m.getX() + w / 2))) / 90.0) + 1;
     if (angle > -1)
       dir = DIRS[angle];
     else dir = 1;

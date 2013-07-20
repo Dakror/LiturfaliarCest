@@ -221,17 +221,6 @@ public class Map implements DatabaseEventListener
       }
     }
     
-    for (Field field : fields)
-    {
-      for (Field field1 : fields)
-      {
-        if (field.equals(field1))
-          continue;
-        if (field.getNode().getDistance(field1.getNode()) <= CFG.FIELDSIZE + 1 && field1.getLayer() < CFG.PLAYERLAYER && bump.contains(field1.getX(), field1.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE))
-          field.neighbors.add(field1);
-      }
-    }
-    
     JSONArray npcs = data.getJSONArray("npc");
     for (int i = 0; i < npcs.length(); i++)
     {
@@ -733,16 +722,6 @@ public class Map implements DatabaseEventListener
   
   public boolean isLineAccessible(Vector from, Vector to, int offsetX, int offsetY, int width, int height)
   {
-    // double ankat = to.x - from.x;
-    // double hyp = to.getDistance(from);
-    //
-    // int faktor = (to.y < from.y) ? -1 : 1;
-    //
-    // double angle = Math.acos(ankat / hyp) * faktor;
-    //
-    // Area line = new Area(new Rectangle2D.Double(getX() + from.x, getY() + from.y, hyp, 4));
-    // line.transform(AffineTransform.getRotateInstance(angle, getX() + from.x, getY() + from.y));
-    
     Area line = new Area();
     
     Polygon polygon = new Polygon();
@@ -779,5 +758,17 @@ public class Map implements DatabaseEventListener
     copy.add(line);
     
     return copy.equals(getBumpMap());
+  }
+  
+  public Field[] getNeighbors(Field f)
+  {
+    ArrayList<Field> neighbors = new ArrayList<>();
+    for (Field field : fields)
+    {
+      if (f.getNode().getDistance(field.getNode()) <= CFG.FIELDSIZE + 1 && field.getLayer() < CFG.PLAYERLAYER && bump.contains(field.getX(), field.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE))
+        neighbors.add(field);
+    }
+    
+    return neighbors.toArray(new Field[] {});
   }
 }
