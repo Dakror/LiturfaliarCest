@@ -57,8 +57,8 @@ public class Animation
     if (!frozen && v.getFrame(time, speed) != 0)
       frame = v.getFrame(time, speed) % (endFrame - startFrame) + 1;
     
-    int x = this.x + ((m == null) ? 0 : m.getX()) + ((c == null) ? 0 : c.getRelativePos().x);
-    int y = this.y + ((m == null) ? 0 : m.getY()) + ((c == null) ? 0 : c.getRelativePos().y);
+    int x = this.x + ((m == null) ? 0 : m.getX()) + ((c == null) ? 0 : (int) c.getRelativePos().x);
+    int y = this.y + ((m == null) ? 0 : m.getY()) + ((c == null) ? 0 : (int) c.getRelativePos().y);
     
     g.drawImage(image, x, y, x + size, y + size, SIZE * (frame % w), SIZE * (int) Math.floor((frame / (double) w)), SIZE * (frame % w) + SIZE, SIZE * (int) Math.floor((frame / (double) w)) + SIZE, v.w);
   }

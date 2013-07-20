@@ -3,7 +3,6 @@ package de.dakror.liturfaliar.map;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -306,7 +305,7 @@ public class Map implements DatabaseEventListener
     {
       public int compare(Creature o1, Creature o2)
       {
-        return o1.getRelativePos().y - o2.getRelativePos().y;
+        return (int) o1.getRelativePos().y - (int) o2.getRelativePos().y;
       }
     };
     Collections.sort(creatures, comp);
@@ -327,7 +326,7 @@ public class Map implements DatabaseEventListener
     {
       if (getPlayer() != null)
       {
-        if (new Point(field.getX(), field.getY()).distance(getPlayer().getRelativePos()) < CFG.FIELDSIZE * 0.8)
+        if (new Vector(field.getX(), field.getY()).getDistance(getPlayer().getRelativePos()) < CFG.FIELDSIZE * 0.8)
           g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
       }
       g.drawImage(field.getImage(), x + field.getX(), y + field.getY(), v.w);

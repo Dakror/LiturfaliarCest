@@ -3,8 +3,8 @@ package de.dakror.liturfaliar.ui.hud;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
@@ -37,7 +37,7 @@ public class TargetLabel extends HUDComponent
     {
       if (c != null && c.getClass() != Player.class)
       {
-        if (c.isAlive() && ((m.getPlayer().isLookingAt(c, m) && m.getPlayer().getField(m).getNode().getDistance(c.getField(m).getNode()) < 3.0) || (new Rectangle(m.getX() + c.getRelativePos().x, m.getY() + c.getRelativePos().y, c.getWidth(), c.getHeight()).contains(mouse))))
+        if (c.isAlive() && ((m.getPlayer().isLookingAt(c, m) && m.getPlayer().getField(m).getNode().getDistance(c.getField(m).getNode()) < 3.0) || (new Rectangle2D.Double(m.getX() + c.getRelativePos().x, m.getY() + c.getRelativePos().y, c.getWidth(), c.getHeight()).contains(mouse))))
           this.target = c;
       }
     }

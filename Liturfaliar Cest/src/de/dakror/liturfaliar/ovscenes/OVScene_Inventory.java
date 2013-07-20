@@ -231,7 +231,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
               Item item = new Item(contextItemSlot.getItem());
               item.setStack(1);
               
-              sg.getMapPack().getActiveMap().addItemDrop(item, sg.getPlayer().getRelativePos().x + rx, sg.getPlayer().getRelativePos().y + ry);
+              sg.getMapPack().getActiveMap().addItemDrop(item, (int) sg.getPlayer().getRelativePos().x + rx, (int) sg.getPlayer().getRelativePos().y + ry);
               contextItemSlot.subItem();
             }
             break;

@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.settings.CFG;
+import de.dakror.liturfaliar.util.Vector;
 
 public class ItemDrop
 {
@@ -117,7 +118,7 @@ public class ItemDrop
   
   public void mousePressed(MouseEvent e, Map m, Viewport v)
   {
-    if (m.getPlayer().getRelativePos().distance(x, y) < CFG.FIELDSIZE * 2)
+    if (m.getPlayer().getRelativePos().getDistance(new Vector(x, y)) < CFG.FIELDSIZE * 2)
     {
       m.getPlayer().putItemInFirstInventorySlot(item);
       m.removeItemDrop(this);

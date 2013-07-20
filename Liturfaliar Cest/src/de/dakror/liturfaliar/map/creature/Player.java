@@ -5,7 +5,6 @@ import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -44,8 +43,6 @@ public class Player extends Creature
   
   // -- up -- left -- right -- down -- //
   boolean[]         dirs                = { false, false, false, false };
-  Vector            lastPos;
-  Vector            relPos;
   
   public boolean    preventTargetChoose = false;
   public int        dirAfterReachedGoal = -1;
@@ -94,48 +91,6 @@ public class Player extends Creature
     }
   }
   
-  @Override
-  public void move(Map map)
-  {
-    if (!frozen)
-    {
-      Vector targetVector = relPos.sub(goTo);
-      double distance = targetVector.length;
-      
-      if (targetVector.length >= getSpeed())
-      {
-        distance = getSpeed();
-      }
-      
-      if (distance == 0)
-        return;
-      
-      if (!map.getBumpMap().contains(new Rectangle2D.Double(pos.sub(targetVector.setLength(distance)).x + bx, pos.sub(targetVector.setLength(distance)).y + by, bw, bh)))
-      {
-        setTarget((int) relPos.x + (int) Math.round(Math.random() * 3 - 2), (int) relPos.y + (int) Math.round(Math.random() * 3 - 2));
-      }
-      
-      for (Creature c : map.creatures)
-      {
-        if (c instanceof Player)
-          continue;
-        if (c.getBumpArea().intersects(new Rectangle2D.Double(relPos.sub(targetVector.setLength(distance)).x + bx, relPos.sub(targetVector.setLength(distance)).y + by, bw, bh)))
-        {
-          setTarget((int) relPos.x, (int) relPos.y);
-          return;
-        }
-      }
-      lastPos = relPos;
-      relPos = relPos.sub(targetVector.setLength(distance));
-    }
-  }
-  
-  @Override
-  public Field getField(Map m)
-  {
-    return m.findField(relPos.x + bx + bw / 2, relPos.y + by + bh);
-  }
-  
   public String getName()
   {
     try
@@ -167,7 +122,7 @@ public class Player extends Creature
     
     if (init)
     {
-      m.setPos(CFG.MAPCENTER.x - getRelativePos().x, CFG.MAPCENTER.y - getRelativePos().y);
+      m.setPos(CFG.MAPCENTER.x - (int) getRelativePos().x, CFG.MAPCENTER.y - (int) getRelativePos().y);
       init = false;
     }
     
@@ -192,7 +147,7 @@ public class Player extends Creature
     
     setSpeed((sprint) ? Balance.Player.SPRINT : Balance.Player.WALK);
     
-    int x = 0, y = 0;
+    double x = 0, y = 0;
     if (dirs[0] && !dirs[3] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.x + bx, m.getY() + relPos.y + by - getSpeed() * 2, bw, bh)))
       y -= getSpeed();
     else if (dirs[3] && !dirs[0] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.x + bx, m.getY() + relPos.y + by + getSpeed() * 2, bw, bh)))
@@ -235,7 +190,7 @@ public class Player extends Creature
     }
     
     
-    m.setPos(CFG.MAPCENTER.x - getRelativePos().x, CFG.MAPCENTER.y - getRelativePos().y);
+    m.setPos(CFG.MAPCENTER.x - (int) getRelativePos().x, CFG.MAPCENTER.y - (int) getRelativePos().y);
     move(m);
   }
   
@@ -251,7 +206,7 @@ public class Player extends Creature
     if ((!relPos.equals(goTo) || !Arrays.equals(dirs, new boolean[] { false, false, false, false })) && !frozen)
       frame = v.getFrame((sprint) ? 0.3f : 0.5f);
     
-    int angle = (int) Math.round(Math.toDegrees(Math.atan2(mouse.y - pos.y, mouse.x - pos.x)) / 90.0) + 1;
+    int angle = (int) Math.round(Math.toDegrees(Math.atan2(mouse.y - relPos.y, mouse.x - relPos.x)) / 90.0) + 1;
     if (angle > -1)
       dir = DIRS[angle];
     else dir = 1;
@@ -362,17 +317,6 @@ public class Player extends Creature
   public Area getBumpArea()
   {
     return new Area(new Rectangle2D.Double(getRelativePos().x + bx, getRelativePos().y + by, bw, bh));
-  }
-  
-  public void setRelativePos(int x, int y)
-  {
-    relPos = new Vector(x, y);
-  }
-  
-  @Override
-  public Point getRelativePos()
-  {
-    return new Point((int) relPos.x, (int) relPos.y);
   }
   
   public JSONObject getData()
@@ -511,17 +455,6 @@ public class Player extends Creature
       attr.getAttribute(Attr.level).increase(getLevel() - lvl);
       PlayerEventDispatcher.dispatchLevelUp(lvl);
     }
-  }
-  
-  @Override
-  public Vector getTrackingNode()
-  {
-    return new Vector(relPos.x + bx + bw / 2, relPos.y + by + bh / 2);
-  }
-  
-  public Area getHitArea(Map m)
-  {
-    return hitArea.createTransformedArea(AffineTransform.getTranslateInstance(relPos.x + m.getX(), relPos.y + m.getY()));
   }
   
   public void disableDirs()

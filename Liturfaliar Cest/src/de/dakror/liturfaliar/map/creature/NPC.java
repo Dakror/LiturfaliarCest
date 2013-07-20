@@ -113,7 +113,7 @@ public class NPC extends Creature
     if (getDistance() > getSpeed() && !frozen)
     {
       move = true;
-      angle = Math.toDegrees(Math.atan2(goTo.y - getPos().y, goTo.x - getPos().x));
+      angle = Math.toDegrees(Math.atan2(goTo.y - getRelativePos().y, goTo.x - getRelativePos().x));
       dir = 0;
       try
       {
@@ -134,8 +134,8 @@ public class NPC extends Creature
       skill.drawBelow(g, v, m);
     
     if (character != null)
-      Assistant.drawChar(getPos().x + m.getX(), getPos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, "chars", character, g, v.w, true);
-    else Assistant.drawChar(getPos().x + m.getX(), getPos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, equipment, g, v.w, true);
+      Assistant.drawChar((int) getRelativePos().x + m.getX(), (int) getRelativePos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, "chars", character, g, v.w, true);
+    else Assistant.drawChar((int) getRelativePos().x + m.getX(), (int) getRelativePos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, equipment, g, v.w, true);
     
     if (emoticon != null)
     {
@@ -159,8 +159,8 @@ public class NPC extends Creature
       // 0 = left, 1 = up, 2 = right, 3 = down
       int distance = (int) Math.round((Math.random() * CFG.FIELDSIZE * getSpeed()));
       
-      int x = getRelativePos().x + bx;
-      int y = getRelativePos().y + by;
+      int x = (int) getRelativePos().x + bx;
+      int y = (int) getRelativePos().y + by;
       int tx = 0;
       int ty = 0;
       
@@ -228,8 +228,8 @@ public class NPC extends Creature
     
     if (hostile && AI != null)
     {
-      path = AI.findPath(m.getPlayer().relPos);
-      if (pos.equals(path.getNode()))
+      path = AI.findPath(m.getPlayer().getRelativePos());
+      if (relPos.equals(path.getNode()))
         path.setNodeReached();
       
       goTo = path.getNode();
@@ -331,8 +331,8 @@ public class NPC extends Creature
     JSONObject data = new JSONObject();
     try
     {
-      data.put("x", getPos().x);
-      data.put("y", getPos().y);
+      data.put("x", getRelativePos().x);
+      data.put("y", getRelativePos().y);
       data.put("w", w);
       data.put("h", h);
       data.put("id", ID);
@@ -368,18 +368,6 @@ public class NPC extends Creature
   public void setID(int iD)
   {
     ID = iD;
-  }
-  
-  @Override
-  public void onIntersect(Creature other, Map map)
-  {
-    if (!intersects(other, map))
-      return;
-    
-    if (!isHostile() && other instanceof Player)
-      return;
-    
-    pos = lastPos;
   }
   
   @Override

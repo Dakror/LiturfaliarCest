@@ -138,7 +138,7 @@ public class Vector
   @Override
   public String toString()
   {
-    return this.getClass().toString() + "[x=" + this.coords[0] + ",y=" + this.coords[1] + ", length=" + length + "]";
+    return this.getClass().getSimpleName() + "[x=" + this.coords[0] + ",y=" + this.coords[1] + ", length=" + length + "]";
   }
   
   public Vector translate(double x, double y)
@@ -173,6 +173,17 @@ public class Vector
     {
       result += coords[i] * o.coords[i];
     }
+    return result;
+  }
+  
+  public static Vector[] translateGroup(Vector[] v, double x, double y)
+  {
+    Vector[] result = new Vector[v.length];
+    for (int i = 0; i < v.length; i++)
+    {
+      result[i] = v[i].translate(x, y);
+    }
+    
     return result;
   }
 }

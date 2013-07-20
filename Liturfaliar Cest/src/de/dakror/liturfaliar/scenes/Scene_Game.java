@@ -205,7 +205,6 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   public void mapChanged(Map oldmap, Map newmap)
   {
     DatabaseEventDispatcher.removeDatabaseEventListener(oldmap);
-    
     newmap.setPlayer(player);
     if (!(newmap.getMusic() + ".wav").equals(v.MusicID) && newmap.getMusic().length() > 0)
       v.playMusic(newmap.getMusic(), true);
