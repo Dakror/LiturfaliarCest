@@ -12,6 +12,8 @@ import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.map.creature.Player;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
+import de.dakror.liturfaliar.ui.CursorText;
+import de.dakror.liturfaliar.ui.HTMLString;
 import de.dakror.liturfaliar.ui.Icon;
 import de.dakror.liturfaliar.ui.ProgressBar;
 import de.dakror.liturfaliar.util.Assistant;
@@ -32,13 +34,21 @@ public class TargetLabel extends HUDComponent
   @Override
   public void update(long timePassed, Map m)
   {
+    CursorText.removeCursorText("TargetLabel");
+    
     this.target = null;
     for (Creature c : m.creatures)
     {
       if (c != null && c.getClass() != Player.class)
       {
-        if (c.isAlive() && ((m.getPlayer().isLookingAt(c, m) && m.getPlayer().getField(m).getNode().getDistance(c.getField(m).getNode()) < 3.0) || (new Rectangle2D.Double(m.getX() + c.getRelativePos().x, m.getY() + c.getRelativePos().y, c.getWidth(), c.getHeight()).contains(mouse))))
+        if (c.isAlive() && ((m.getPlayer().isLookingAt(c, m) && m.getPlayer().getField(m).getNode().getDistance(c.getField(m).getNode()) < 3.0) || (new Rectangle2D.Double(m.getX() + c.getPos().x, m.getY() + c.getPos().y, c.getWidth(), c.getHeight()).contains(mouse))))
+        {
           this.target = c;
+          if (((NPC) c).getTalkData().length() > 0 && !((NPC) c).isHostile())
+          {
+            CursorText.setCursorText(new HTMLString(CursorText.cfg, "Reden"), "TargetLabel");
+          }
+        }
       }
     }
   }
@@ -87,7 +97,8 @@ public class TargetLabel extends HUDComponent
     mouse = e.getLocationOnScreen();
   }
   
-  public Creature getTarget() {
+  public Creature getTarget()
+  {
     return target;
   }
 }

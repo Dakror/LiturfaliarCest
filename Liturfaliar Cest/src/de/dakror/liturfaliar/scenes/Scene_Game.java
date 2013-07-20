@@ -303,7 +303,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
       if (targetLabel.getTarget() == null || !((NPC) targetLabel.getTarget()).isHostile())
         if (!ctrlDown)
         {
-          player.setTarget((int) player.getRelativePos().x, (int) player.getRelativePos().y);
+          player.resetTarget();
           return;
         }
     }

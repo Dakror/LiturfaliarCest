@@ -38,6 +38,7 @@ public class Creature implements MapEventListener
   public static final int              LEVEL = 25;
   
   private double                       speed;
+  private boolean                      didntMove;
   
   public int                           bw, bh, bx, by;
   public boolean                       frozen;
@@ -47,7 +48,7 @@ public class Creature implements MapEventListener
   protected boolean                    massive;
   protected double                     layer;
   
-  protected Vector                     lastPos, pos, relPos, goTo;
+  protected Vector                     lastPos, relPos, goTo;
   protected Emoticon                   emoticon;
   
   protected Attributes                 attr;
@@ -58,7 +59,7 @@ public class Creature implements MapEventListener
   
   protected Area                       hitArea;
   protected CreatureAI                 AI;
-  protected Path                       path;
+  private Path                         path;
   
   public Creature(int x, int y, int w, int h)
   {
@@ -101,15 +102,10 @@ public class Creature implements MapEventListener
     this.dir = dir;
   }
   
-  public void setRelativePos(int x, int y)
+  public void setPos(int x, int y)
   {
     lastPos = relPos;
     relPos = new Vector(x, y);
-  }
-  
-  public void setPos(int x, int y)
-  {
-    pos = new Vector(x, y);
   }
   
   public double getDistance()
@@ -127,7 +123,7 @@ public class Creature implements MapEventListener
     frozen = b;
   }
   
-  public void setTarget(int x, int y)
+  public void setTarget(double x, double y)
   {
     goTo = new Vector(x, y);
   }
@@ -148,7 +144,7 @@ public class Creature implements MapEventListener
       
       if (!map.getBumpMap().contains(new Rectangle2D.Double(map.getX() + newPos.x + bx, map.getY() + newPos.y + by, bw, bh)))
       {
-        setTarget((int) relPos.x, (int) relPos.y);
+        resetTarget();
         return;
       }
       
@@ -168,6 +164,19 @@ public class Creature implements MapEventListener
       }
       
       lastPos = relPos;
+      
+      if (newPos.equals(relPos))
+      {
+        if (!didntMove)
+          didntMove = true;
+        else
+        {
+          setPath(null);
+          resetTarget();
+          didntMove = false;
+        }
+      }
+      
       relPos = newPos;
     }
   }
@@ -238,8 +247,8 @@ public class Creature implements MapEventListener
     {
       Color color = g.getColor();
       g.setColor(Color.green);
-      g.draw(new Rectangle2D.Double(m.getX() + getRelativePos().x, m.getY() + getRelativePos().y, w, h));
-      Assistant.Shadow(new Rectangle2D.Double(m.getX() + getRelativePos().x + bx, m.getY() + getRelativePos().y + by, bw, bh), Color.orange, 1, g);
+      g.draw(new Rectangle2D.Double(m.getX() + getPos().x, m.getY() + getPos().y, w, h));
+      Assistant.Shadow(new Rectangle2D.Double(m.getX() + getPos().x + bx, m.getY() + getPos().y + by, bw, bh), Color.orange, 1, g);
       g.setColor(color);
       
       Field f = getField(m);
@@ -264,7 +273,7 @@ public class Creature implements MapEventListener
   public Vector getIntersection(Vector newPos, Creature other, Map m)
   {
     Vector[] v = Vector.translateGroup(getBumpVertices(), newPos.x, newPos.y);
-    Vector[] ov = Vector.translateGroup(other.getBumpVertices(), other.getRelativePos().x, other.getRelativePos().y);
+    Vector[] ov = Vector.translateGroup(other.getBumpVertices(), other.getPos().x, other.getPos().y);
     
     // -- x Axis -- //
     Projection myX = new Projection(v[4].x, v[1].x);
@@ -290,20 +299,15 @@ public class Creature implements MapEventListener
   
   public Area getBumpArea()
   {
-    return new Area(new Rectangle2D.Double(getRelativePos().x + bx, getRelativePos().y + by, bw, bh));
-  }
-  
-  public Area getRelativeArea()
-  {
-    return new Area(new Rectangle2D.Double(getRelativePos().x, getRelativePos().y, w, h));
+    return new Area(new Rectangle2D.Double(getPos().x + bx, getPos().y + by, bw, bh));
   }
   
   public Area getArea()
   {
-    return new Area(new Rectangle2D.Double(relPos.x, relPos.y, w, h));
+    return new Area(new Rectangle2D.Double(getPos().x, getPos().y, w, h));
   }
   
-  public Vector getRelativePos()
+  public Vector getPos()
   {
     return relPos;
   }
@@ -365,22 +369,22 @@ public class Creature implements MapEventListener
   
   public boolean isLookingAt(Creature c, Map m)
   {
-    double x = getRelativePos().x + getWidth() / 2.0;
-    double y = getRelativePos().y + getHeight() / 2.0;
+    double x = getPos().x + getWidth() / 2.0;
+    double y = getPos().y + getHeight() / 2.0;
     switch (dir)
     {
       case 0:
         // down
-        return c.getRelativeArea().intersects(new Rectangle2D.Double(x, y + getHeight() / 2.0, 1, m.getHeight() * CFG.FIELDSIZE));
+        return c.getArea().intersects(new Rectangle2D.Double(x, y + getHeight() / 2.0, 1, m.getHeight() * CFG.FIELDSIZE));
       case 1:
         // left
-        return c.getRelativeArea().intersects(new Rectangle2D.Double(0, y, x - getWidth() / 2.0, 1));
+        return c.getArea().intersects(new Rectangle2D.Double(0, y, x - getWidth() / 2.0, 1));
       case 2:
         // right
-        return c.getRelativeArea().intersects(new Rectangle2D.Double(x + getWidth() / 2, y, m.getWidth() * CFG.FIELDSIZE, 1));
+        return c.getArea().intersects(new Rectangle2D.Double(x + getWidth() / 2, y, m.getWidth() * CFG.FIELDSIZE, 1));
       case 3:
         // up
-        return c.getRelativeArea().intersects(new Rectangle2D.Double(x, 0, 1, y - getHeight() / 2));
+        return c.getArea().intersects(new Rectangle2D.Double(x, 0, 1, y - getHeight() / 2));
       default:
         return false;
     }
@@ -392,21 +396,21 @@ public class Creature implements MapEventListener
       return;
     for (int i = 0; i < 4; i++)
     {
-      double x = getRelativePos().x + getWidth() / 2.0;
-      double y = getRelativePos().y + getHeight() / 2.0;
-      if (c.getRelativeArea().intersects(new Rectangle2D.Double(x, y + getHeight() / 2.0, 1, m.getHeight() * CFG.FIELDSIZE)))
+      double x = getPos().x + getWidth() / 2.0;
+      double y = getPos().y + getHeight() / 2.0;
+      if (c.getArea().intersects(new Rectangle2D.Double(x, y + getHeight() / 2.0, 1, m.getHeight() * CFG.FIELDSIZE)))
       {
         dir = 0;
       }
-      else if (c.getRelativeArea().intersects(new Rectangle2D.Double(0, y, x - getWidth() / 2.0, 1)))
+      else if (c.getArea().intersects(new Rectangle2D.Double(0, y, x - getWidth() / 2.0, 1)))
       {
         dir = 1;
       }
-      else if (c.getRelativeArea().intersects(new Rectangle2D.Double(x + getWidth() / 2, y, m.getWidth() * CFG.FIELDSIZE, 1)))
+      else if (c.getArea().intersects(new Rectangle2D.Double(x + getWidth() / 2, y, m.getWidth() * CFG.FIELDSIZE, 1)))
       {
         dir = 2;
       }
-      else if (c.getRelativeArea().intersects(new Rectangle2D.Double(x, 0, 1, y - getHeight() / 2)))
+      else if (c.getArea().intersects(new Rectangle2D.Double(x, 0, 1, y - getHeight() / 2)))
       {
         dir = 3;
       }
@@ -548,6 +552,12 @@ public class Creature implements MapEventListener
     return path;
   }
   
+  public void setPath(Path p)
+  {
+    didntMove = false;
+    path = p;
+  }
+  
   /**
    * Get the to pos relative vectors of the vertices of the bump area.<br>
    * Indices:<br>
@@ -560,5 +570,10 @@ public class Creature implements MapEventListener
   public Vector[] getBumpVertices()
   {
     return new Vector[] { new Vector(bx + bw / 2, by + bh / 2), new Vector(bx + bw, by), new Vector(bx + bw, by + bh), new Vector(bx, by + bh), new Vector(bx, by) };
+  }
+  
+  public void resetTarget()
+  {
+    goTo = relPos;
   }
 }

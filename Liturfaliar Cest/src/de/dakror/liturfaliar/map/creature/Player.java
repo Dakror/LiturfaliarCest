@@ -122,7 +122,7 @@ public class Player extends Creature
     
     if (init)
     {
-      m.setPos(CFG.MAPCENTER.x - (int) getRelativePos().x, CFG.MAPCENTER.y - (int) getRelativePos().y);
+      m.setPos(CFG.MAPCENTER.x - (int) getPos().x, CFG.MAPCENTER.y - (int) getPos().y);
       init = false;
     }
     
@@ -159,22 +159,22 @@ public class Player extends Creature
     
     if (x != 0 || y != 0)
     {
-      goTo = new Vector(getRelativePos().x + x, getRelativePos().y + y);
-      path = null;
+      goTo = new Vector(getPos().x + x, getPos().y + y);
+      setPath(null);
     }
     else
     {
       
-      if (path != null)
+      if (getPath() != null)
       {
         
-        if (relPos.translate(bx + bw / 2, bh + by).equals(path.getNode()))
-          path.setNodeReached();
+        if (relPos.translate(bx + bw / 2, bh + by).equals(getPath().getNode()))
+          getPath().setNodeReached();
         
-        goTo = path.getNode().translate(-bx - bw / 2, -bh - by);
+        goTo = getPath().getNode().translate(-bx - bw / 2, -bh - by);
         
-        if (path.isPathComplete())
-          path = null;
+        if (getPath().isPathComplete())
+          setPath(null);
       }
     }
     for (Field f : m.fields)
@@ -190,7 +190,7 @@ public class Player extends Creature
     }
     
     
-    m.setPos(CFG.MAPCENTER.x - (int) getRelativePos().x, CFG.MAPCENTER.y - (int) getRelativePos().y);
+    m.setPos(CFG.MAPCENTER.x - (int) getPos().x, CFG.MAPCENTER.y - (int) getPos().y);
     move(m);
   }
   
@@ -244,7 +244,7 @@ public class Player extends Creature
   
   public void mouseReleased(MouseEvent e, Map m)
   {
-    if (path == null)
+    if (getPath() == null)
     {
       goTo = relPos;
     }
@@ -254,7 +254,7 @@ public class Player extends Creature
   {
     if (m.getBumpMap().contains(e.getLocationOnScreen()))
     {
-      path = new AStar().getPath(getField(m), m.findField(e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY()), m, bx, by, bw, bh);
+      setPath(new AStar().getPath(getField(m), m.findField(e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY()), m, bx, by, bw, bh));
     }
   }
   
@@ -316,7 +316,7 @@ public class Player extends Creature
   @Override
   public Area getBumpArea()
   {
-    return new Area(new Rectangle2D.Double(getRelativePos().x + bx, getRelativePos().y + by, bw, bh));
+    return new Area(new Rectangle2D.Double(getPos().x + bx, getPos().y + by, bw, bh));
   }
   
   public JSONObject getData()

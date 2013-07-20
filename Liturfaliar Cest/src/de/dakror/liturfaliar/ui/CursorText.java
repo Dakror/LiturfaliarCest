@@ -45,8 +45,8 @@ public class CursorText
   {
     try
     {
-      Assistant.Shadow(new RoundRectangle2D.Double(mouse.x + 16, mouse.y - 8, text.getWidth(g) + 16, text.getHeight(g), 8, 8), Color.black, 0.3f, g);
-      text.drawString(mouse.x + 24, mouse.y + 16, g);
+      Assistant.Shadow(new RoundRectangle2D.Double(mouse.x + 14, mouse.y + 18, text.getWidth(g) + 16, text.getHeight(g), 8, 8), Color.black, 0.3f, g);
+      text.drawString(mouse.x + 26, mouse.y + 40, g);
     }
     catch (NullPointerException e)
     {}

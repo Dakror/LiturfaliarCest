@@ -18,6 +18,7 @@ import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
 import de.dakror.liturfaliar.item.skillanim.Sword0;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.ai.CreatureAI;
+import de.dakror.liturfaliar.map.creature.ai.path.AStar;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.DamageType;
@@ -113,7 +114,7 @@ public class NPC extends Creature
     if (getDistance() > getSpeed() && !frozen)
     {
       move = true;
-      angle = Math.toDegrees(Math.atan2(goTo.y - getRelativePos().y, goTo.x - getRelativePos().x));
+      angle = Math.toDegrees(Math.atan2(goTo.y - getPos().y, goTo.x - getPos().x));
       dir = 0;
       try
       {
@@ -134,8 +135,8 @@ public class NPC extends Creature
       skill.drawBelow(g, v, m);
     
     if (character != null)
-      Assistant.drawChar((int) getRelativePos().x + m.getX(), (int) getRelativePos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, "chars", character, g, v.w, true);
-    else Assistant.drawChar((int) getRelativePos().x + m.getX(), (int) getRelativePos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, equipment, g, v.w, true);
+      Assistant.drawChar((int) getPos().x + m.getX(), (int) getPos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, "chars", character, g, v.w, true);
+    else Assistant.drawChar((int) getPos().x + m.getX(), (int) getPos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, equipment, g, v.w, true);
     
     if (emoticon != null)
     {
@@ -159,8 +160,8 @@ public class NPC extends Creature
       // 0 = left, 1 = up, 2 = right, 3 = down
       int distance = (int) Math.round((Math.random() * CFG.FIELDSIZE * getSpeed()));
       
-      int x = (int) getRelativePos().x + bx;
-      int y = (int) getRelativePos().y + by;
+      int x = (int) getPos().x + bx;
+      int y = (int) getPos().y + by;
       int tx = 0;
       int ty = 0;
       
@@ -212,7 +213,7 @@ public class NPC extends Creature
     if (m.getPlayer().getField(m) == null)
       return;
     
-    if (m.getPlayer().getField(m).getNode().getDistance(getField(m).getNode()) < 1.1 && m.getPlayer().isLookingAt(this, m) && talkdata.length() > 0)
+    if (m.getPlayer().getPos().getDistance(relPos) <= CFG.FIELDSIZE && m.getPlayer().isLookingAt(this, m) && talkdata.length() > 0)
     {
       if (emoticon == null && !isTalking())
       {
@@ -228,11 +229,11 @@ public class NPC extends Creature
     
     if (hostile && AI != null)
     {
-      path = AI.findPath(m.getPlayer().getRelativePos());
-      if (relPos.equals(path.getNode()))
-        path.setNodeReached();
+      setPath(AI.findPath(m.getPlayer().getPos()));
+      if (relPos.equals(getPath().getNode()))
+        getPath().setNodeReached();
       
-      goTo = path.getNode();
+      goTo = getPath().getNode();
       
       if (AI.canAttack(m.getPlayer()) && !isPlayingSkill(new Sword0()) && System.currentTimeMillis() - time2 > 500)
       {
@@ -245,17 +246,31 @@ public class NPC extends Creature
   @Override
   public void mousePressed(MouseEvent e, Map m)
   {
-    if (m.getPlayer().getField(m).getNode().getDistance(getField(m).getNode()) < 1.3 && m.getPlayer().isLookingAt(this, m) && e.getButton() == 1 && getArea().contains(new Point(e.getX() - m.getX(), e.getY() - m.getY())) && talkdata.length() > 0)
+    boolean contains = getArea().contains(new Point(e.getX() - m.getX(), e.getY() - m.getY()));
+    
+    if (!contains || talkdata.length() == 0 || e.getButton() != 1)
+      return;
+    
+    Player p = m.getPlayer();
+    
+    if (p.getPos().getDistance(relPos) <= CFG.FIELDSIZE && p.isLookingAt(this, m))
     {
+      p.resetTarget();
+      p.setPath(null);
+      
       if (m.talk == null)
       {
         setTalking(true);
         m.talk = new Talk(this, m);
         emoticon = null;
-        lookAt(m.getPlayer(), m);
+        lookAt(p, m);
       }
       else if (m.talk.getBy().equals(this))
         m.talk.triggerNext();
+    }
+    else if (p.getPos().getDistance(relPos) > CFG.FIELDSIZE)
+    {
+      p.setPath(new AStar().getPath(p.getField(m), getField(m), m, p.bx, p.by, p.bw, p.bh));
     }
   }
   
@@ -331,8 +346,8 @@ public class NPC extends Creature
     JSONObject data = new JSONObject();
     try
     {
-      data.put("x", getRelativePos().x);
-      data.put("y", getRelativePos().y);
+      data.put("x", getPos().x);
+      data.put("y", getPos().y);
       data.put("w", w);
       data.put("h", h);
       data.put("id", ID);
@@ -378,8 +393,8 @@ public class NPC extends Creature
     {
       setHostile(true);
       frozen = false;
-      path = AI.findPath(causer.getTrackingNode());
-      goTo = path.getNode();
+      setPath(AI.findPath(causer.getTrackingNode()));
+      goTo = getPath().getNode();
     }
   }
 }
