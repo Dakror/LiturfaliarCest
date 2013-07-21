@@ -2,6 +2,7 @@ package de.dakror.liturfaliar;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
@@ -341,12 +342,17 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     w.addMouseMotionListener(this);
     w.addMouseWheelListener(this);
     w.setIconImage(Assistant.loadImage("system/logo.png"));
+    w.setBackground(Color.black);
+    w.setForeground(Color.white);
     Assistant.setCursor(Viewport.loadImage("system/cursor.png"), w);
     
     FileManager.mk(this);
     FileManager.loadOptions(this);
     try
     {
+      w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/morpheus.ttf")).deriveFont(20f));
+      
+      
       File dir = new File(FileManager.dir, "Logs");
       dir.mkdir();
       for (File f : dir.listFiles())
@@ -558,8 +564,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public void windowDeactivated(WindowEvent e)
   {
     if (scene instanceof Scene_Game && !((Scene_Game) scene).isPaused())
-      ;//((Scene_Game) scene).togglePaused();
-    
+      ;// ((Scene_Game) scene).togglePaused();
+      
     pause();
   }
   

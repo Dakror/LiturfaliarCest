@@ -1,7 +1,5 @@
 package de.dakror.liturfaliar.util;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
@@ -15,9 +13,12 @@ public abstract class GameFrame
   protected boolean running;
   protected boolean frozen;
   public JFrame     w;
+  ScreenManager     s;
   
   public GameFrame()
-  {}
+  {
+    this.s = new ScreenManager();
+  }
   
   public void start()
   {
@@ -33,40 +34,50 @@ public abstract class GameFrame
   
   public void run()
   {
-    try
+    if (!CFG.DIRECTDRAW)
     {
-      w = new JFrame(CFG.WINDOWTITLE);
-      w.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-      w.setUndecorated(true);
       try
       {
-        w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/morpheus.ttf")).deriveFont(20f));
+        w = new JFrame(CFG.WINDOWTITLE);
+        w.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+        w.setUndecorated(true);
+        this.running = true;
+        init();
+        w.setVisible(true);
+        try
+        {
+          w.createBufferStrategy(2);
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+        }
+        
+        mainloop();
+        close();
       }
-      catch (Exception e)
+      finally
       {
-        e.printStackTrace();
+        w.dispose();
       }
-      w.setBackground(Color.black);
-      w.setForeground(Color.white);
-      this.running = true;
-      init();
-      w.setVisible(true);
-      
-      try
-      {
-        w.createBufferStrategy(2);
-      }
-      catch (Exception e)
-      {
-        run();
-      }
-      
-      mainloop();
-      close();
     }
-    finally
+    else
     {
-      w.dispose();
+      this.s.setFullScreen(null);
+      try
+      {
+        w = (JFrame) this.s.getFullScreenWindow();
+        w.setAlwaysOnTop(true);
+        
+        this.running = true;
+        init();
+        mainloop();
+        close();
+      }
+      finally
+      {
+        this.s.restoreScreen();
+      }
     }
   }
   
@@ -80,21 +91,31 @@ public abstract class GameFrame
         continue;
       
       long timePassed = System.currentTimeMillis() - tickTime;
-      if (timePassed >= 20)
+      if (timePassed >= 30)
       {
         tickTime += timePassed;
         update(timePassed);
       }
-      BufferStrategy s = w.getBufferStrategy();
-      Graphics2D g = (Graphics2D) s.getDrawGraphics();
-      g.translate(w.getInsets().left, w.getInsets().top);
-      
-      g.clearRect(0, 0, w.getWidth(), w.getHeight());
-      draw(g);
-      g.dispose();
-      
-      if (!s.contentsLost())
-        s.show();
+      if (!CFG.DIRECTDRAW)
+      {
+        BufferStrategy s = w.getBufferStrategy();
+        Graphics2D g = (Graphics2D) s.getDrawGraphics();
+        
+        g.clearRect(0, 0, w.getWidth(), w.getHeight());
+        draw(g);
+        g.dispose();
+        
+        if (!s.contentsLost())
+          s.show();
+      }
+      else
+      {
+        Graphics2D g = s.getGraphics();
+        g.clearRect(0, 0, w.getWidth(), w.getHeight());
+        draw(g);
+        g.dispose();
+        s.update();
+      }
     }
   }
   
