@@ -17,7 +17,6 @@ import javax.swing.event.ChangeListener;
 public class JColorSlider extends JPanel
 {
   private static final long serialVersionUID = 1L;
-  
   private JLabel            preview;
   private JTextField        hex;
   private JSlider           red, green, blue;
