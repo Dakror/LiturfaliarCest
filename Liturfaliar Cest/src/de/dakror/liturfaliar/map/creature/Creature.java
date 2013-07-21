@@ -128,7 +128,7 @@ public class Creature implements MapEventListener
     goTo = new Vector(x, y);
   }
   
-  public void move(Map map)
+  public Vector move(Map map)
   {
     if (!frozen)
     {
@@ -145,7 +145,7 @@ public class Creature implements MapEventListener
       if (!map.getBumpMap().contains(new Rectangle2D.Double(map.getX() + newPos.x + bx, map.getY() + newPos.y + by, bw, bh)))
       {
         resetTarget();
-        return;
+        return new Vector(0, 0);
       }
       
       for (Creature c : map.creatures)
@@ -178,7 +178,11 @@ public class Creature implements MapEventListener
       }
       
       relPos = newPos;
+      
+      return targetVector.setLength(distance);
     }
+    
+    return new Vector(0, 0);
   }
   
   public void setMassive(boolean b)

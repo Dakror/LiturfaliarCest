@@ -189,9 +189,15 @@ public class Player extends Creature
       }
     }
     
+    boolean scrollLeft = m.getX() < 0;
+    boolean scrollUp = m.getY() < 0;
+    boolean scrollRight = m.getX() + m.getWidth() > v.w.getWidth();
+    boolean scrollDown = m.getY() + m.getHeight() > v.w.getHeight();
     
-    m.setPos(CFG.MAPCENTER.x - (int) getPos().x, CFG.MAPCENTER.y - (int) getPos().y);
-    move(m);
+    Vector moved = move(m);
+    
+    if (scrollLeft | scrollUp | scrollRight | scrollDown)
+      m.move((scrollLeft | scrollRight) ? moved.x : 0, (scrollUp | scrollDown) ? moved.y : 0);
   }
   
   @Override
@@ -216,7 +222,7 @@ public class Player extends Creature
       for (SkillAnimation skill : super.skills)
         skill.drawBelow(g, v, m);
       
-      Assistant.drawChar(CFG.MAPCENTER.x, CFG.MAPCENTER.y, w, h, dir, frame, equipment, g, v.w, true);
+      Assistant.drawChar((int) relPos.x + m.getX(), (int) relPos.y + m.getY(), w, h, dir, frame, equipment, g, v.w, true);
       
       for (SkillAnimation skill : super.skills)
         skill.drawAbove(g, v, m);

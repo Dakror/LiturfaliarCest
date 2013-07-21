@@ -358,10 +358,10 @@ public class Map implements DatabaseEventListener
     setY(y);
   }
   
-  public void move(int x, int y)
+  public void move(double x, double y)
   {
-    setX(getX() + x);
-    setY(getY() + y);
+    setX((int) (getX() + x));
+    setY((int) (getY() + y));
   }
   
   public Area getBumpMap()
