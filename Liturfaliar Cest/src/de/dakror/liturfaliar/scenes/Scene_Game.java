@@ -42,16 +42,19 @@ import de.dakror.liturfaliar.util.Database;
 
 public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEventListener, PlayerEventListener
 {
-  Viewport        v;
-  private MapPack mappack;
-  private Player  player;
-  private boolean pause;
+  Viewport              v;
+  
+  private MapPack       mappack;
+  private Player        player;
   
   // -- HUD -- //
-  TargetLabel     targetLabel;
-  BottomSegment   bottomSegment;
+  private TargetLabel   targetLabel;
+  private BottomSegment bottomSegment;
   
-  boolean         ctrlDown;
+  private boolean       pause;
+  private boolean       ctrlDown;
+  
+  public long           inventoryLastClosed;
   
   @Override
   public void construct(Viewport v)
@@ -90,7 +93,8 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     
     bottomSegment = new BottomSegment(player);
     ItemSlotEventDispatcher.addItemSlotEventListener(bottomSegment.hotbar);
-    // -- //
+    
+    inventoryLastClosed = System.currentTimeMillis();
   }
   
   public Player getPlayer()

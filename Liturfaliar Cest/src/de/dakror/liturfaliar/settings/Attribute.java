@@ -68,6 +68,6 @@ public class Attribute
   
   public String toString()
   {
-    return getClass().getName() + "[max=" + maximum + ",value=" + value + "]";
+    return getClass().getSimpleName() + "[max=" + maximum + ",value=" + value + "]";
   }
 }

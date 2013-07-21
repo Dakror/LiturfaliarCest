@@ -110,10 +110,10 @@ public class ItemSlot extends Component
     if (item != null && cooldown > 0)
     {
       if (!cooldownFrozen)
-        cooldown -= (cooldown - timePassed >= 0) ? timePassed : 0;
+        cooldown = (cooldown - timePassed >= 0) ? cooldown - timePassed : 0;
       
       if (cooldown == 0)
-        item.getAttributes().getAttribute(Attr.cooldown).setValue(item.getAttributes().getAttribute(Attr.cooldown).getMaximum());     
+        item.getAttributes().getAttribute(Attr.cooldown).setValue(item.getAttributes().getAttribute(Attr.cooldown).getMaximum());
       else item.getAttributes().getAttribute(Attr.cooldown).setValue(cooldown / 1000.0);
     }
   }
@@ -232,7 +232,7 @@ public class ItemSlot extends Component
       Color oldColor = g.getColor();
       g.setColor(Colors.GRAY);
       
-      String s = "" + (int) ((cooldown / 1000) + 1);
+      String s = "" + (int) (Math.floor(cooldown / 1000.0) + 1);
       
       int strWidth = g.getFontMetrics().stringWidth(s);
       int strHeight = g.getFontMetrics().getHeight();
@@ -652,7 +652,7 @@ public class ItemSlot extends Component
     if (item == null || item.getAttributes().getAttribute(Attr.cooldown).isEmpty())
       return;
     
-    cooldown = (long) (item.getAttributes().getAttribute(Attr.cooldown).getMaximum() * 1000);
+    cooldown = (long) (item.getAttributes().getAttribute(Attr.cooldown).getMaximum() * 1000) - 1;
   }
   
   public void triggerAction(Map m, Creature c, Viewport v)

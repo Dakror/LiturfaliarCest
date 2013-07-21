@@ -232,7 +232,7 @@ public class Player extends Creature
   
   public void mousePressed(MouseEvent e, Map m)
   {
-    if (e.getButton() == 1)
+    if (e.getButton() == 1 && !e.isControlDown())
       setAStarPath(e, m);
   }
   
