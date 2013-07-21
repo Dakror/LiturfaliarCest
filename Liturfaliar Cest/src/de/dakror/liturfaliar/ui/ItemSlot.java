@@ -107,13 +107,13 @@ public class ItemSlot extends Component
   public void update(long timePassed)
   {
     // -- cooldown stuff -- //
-    if (!cooldownFrozen && item != null && cooldown > 0)
+    if (item != null && cooldown > 0)
     {
-      cooldown = (cooldown - timePassed >= 0) ? cooldown - timePassed : 0;
+      if (!cooldownFrozen)
+        cooldown -= (cooldown - timePassed >= 0) ? timePassed : 0;
       
       if (cooldown == 0)
-        item.getAttributes().getAttribute(Attr.cooldown).setValue(item.getAttributes().getAttribute(Attr.cooldown).getMaximum());
-      
+        item.getAttributes().getAttribute(Attr.cooldown).setValue(item.getAttributes().getAttribute(Attr.cooldown).getMaximum());     
       else item.getAttributes().getAttribute(Attr.cooldown).setValue(cooldown / 1000.0);
     }
   }
@@ -653,7 +653,6 @@ public class ItemSlot extends Component
       return;
     
     cooldown = (long) (item.getAttributes().getAttribute(Attr.cooldown).getMaximum() * 1000);
-    cooldownFrozen = false;
   }
   
   public void triggerAction(Map m, Creature c, Viewport v)

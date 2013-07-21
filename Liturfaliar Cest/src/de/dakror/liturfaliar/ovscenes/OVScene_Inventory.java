@@ -17,6 +17,7 @@ import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.settings.Attribute;
 import de.dakror.liturfaliar.settings.Attributes;
+import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.settings.Keys;
@@ -157,6 +158,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
     for (ItemSlot is : inventory)
     {
       is.setInventory(this);
+      is.setCooldownFrozen(true);
     }
     
     for (int i = 0; i < hotbar.length; i++)
@@ -239,6 +241,16 @@ public class OVScene_Inventory extends OVScene implements Inventory
         }
         contextMenu = null;
       }
+    }
+    
+    for (ItemSlot is : inventory)
+    {
+      is.update(timePassed);
+    }
+    
+    for (ItemSlot is : hotbar)
+    {
+      is.update(timePassed);
     }
   }
   
@@ -377,7 +389,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
       }
       
       sg.getPlayer().setInventory(ItemSlot.serializeItemSlots(inventory));
-      
+      CFG.p(ItemSlot.serializeItemSlots(inventory));
       sg.setPaused(false);
       v.setFramesFrozen(false);
       v.removeOVScene("Inventory");
