@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -280,6 +281,7 @@ public class Map implements DatabaseEventListener
     }
     try
     {
+      Collections.sort(itemDrops, ItemDrop.COMPARATOR);
       for (ItemDrop id : itemDrops)
       {
         if ((hoveredItemDrop != null && id.equals(hoveredItemDrop)) || hoveredItemDrop == null)
@@ -515,7 +517,7 @@ public class Map implements DatabaseEventListener
       {
         id.mouseMoved(e, this);
         
-        if (hoveredItemDrop == null && id.getArea(this).contains(e.getPoint()))
+        if (hoveredItemDrop == null && id.getArea().contains(e.getXOnScreen() - x, e.getYOnScreen() - y))
           hoveredItemDrop = id;
       }
     }
@@ -642,7 +644,13 @@ public class Map implements DatabaseEventListener
   
   public void addItemDrop(Item item, int rx, int ry)
   {
-    ItemDrop d = new ItemDrop(item, rx, ry, getName());
+    int highestZ = -1;
+    for (ItemDrop id : itemDrops)
+    {
+      if (id.getArea().intersects(new Rectangle(rx, ry, ItemDrop.SIZE, ItemDrop.SIZE)) && id.getZ() > highestZ)
+        highestZ = id.getZ();
+    }
+    ItemDrop d = new ItemDrop(item, rx, ry, highestZ + 1, getName());
     mappack.addItemDrop(d);
     itemDrops.add(d);
   }
@@ -770,5 +778,10 @@ public class Map implements DatabaseEventListener
     }
     
     return neighbors.toArray(new Field[] {});
+  }
+  
+  public ArrayList<ItemDrop> getItemDrops()
+  {
+    return itemDrops;
   }
 }

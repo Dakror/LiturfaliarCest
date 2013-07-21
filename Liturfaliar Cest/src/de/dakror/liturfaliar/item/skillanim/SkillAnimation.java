@@ -50,10 +50,7 @@ public abstract class SkillAnimation
       if (c != null && c.isAlive() && !affected.contains(c))
       {
         if (isInRange(c, m))
-        {
-          affected.add(c);
           dealEffect(c);
-        }
       }
     }
   }

@@ -50,6 +50,7 @@ public class Item extends Component
   ItemSlot                itemSlot;
   
   public boolean          showSkillCosts = false;
+  public boolean          showStackSize  = false;
   
   public Item(Types t, String path, int s)
   {
@@ -184,7 +185,7 @@ public class Item extends Component
         att += g + ((attributes.getAttribute(attr).getValue() < 0.0) ? "" : "+") + Attribute.FORMAT.format(attributes.getAttribute(attr).getValue()) + " " + attr.getText() + "[br]";
     }
     
-    String name = "<#999999;30;1>" + this.name;
+    String name = "<#999999;30;1>" + this.name + ((showStackSize && stack > 1) ? " x" + stack : "");
     String category = "<#6666ff;19;1>" + type.getName();
     String weight = c + Attribute.FORMAT.format(attributes.getAttribute(Attr.weight).getValue() * stack) + " kg";
     String cooldown = ((!attributes.getAttribute(Attr.cooldown).isEmpty()) ? b + Attribute.FORMAT.format(attributes.getAttribute(Attr.cooldown).getMaximum()) + "s " + Attr.cooldown.getText() : "");
@@ -245,13 +246,10 @@ public class Item extends Component
       raw = name + "[br]" + sa.getDescription() + "[br]" + level + skillpoints;
     }
     
-    if (tooltip == null)
-    {
-      tooltip = new Tooltip(raw, this);
-      tooltip.follow = true;
-      tooltip.offset = new Point(16, 16);
-    }
-    else tooltip.rawText = raw;
+    tooltip = new Tooltip(raw, this);
+    tooltip.follow = true;
+    tooltip.offset = new Point(16, 16);
+    
   }
   
   private int getAttributeFromDatabase(String key)

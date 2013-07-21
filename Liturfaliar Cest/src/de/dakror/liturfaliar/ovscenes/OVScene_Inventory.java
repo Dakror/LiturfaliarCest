@@ -35,7 +35,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
 {
   public static final String USEITEM   = "Benutzen";
   public static final String TRASHITEM = "Verschrotten";
-  public static final String THROWITEM = "Wegwerfen";
+  public static final String THROWITEM = "Fallen lassen";
   
   public static final int    WIDTH     = 12;
   public static final int    HEIGHT    = 11;
@@ -225,17 +225,11 @@ public class OVScene_Inventory extends OVScene implements Inventory
           case THROWITEM:
           {
             int ran = 16;
-            while (contextItemSlot.getItem() != null)
-            {
-              int rx = (int) Math.round(Math.random() * ran) - ran / 2;
-              int ry = (int) Math.round(Math.random() * ran) - ran / 2;
-              
-              Item item = new Item(contextItemSlot.getItem());
-              item.setStack(1);
-              
-              sg.getMapPack().getActiveMap().addItemDrop(item, (int) sg.getPlayer().getPos().x + rx, (int) sg.getPlayer().getPos().y + ry);
-              contextItemSlot.subItem();
-            }
+            int rx = (int) Math.round(Math.random() * ran) - ran / 2;
+            int ry = (int) Math.round(Math.random() * ran) - ran / 2;
+            Item item = new Item(contextItemSlot.getItem());
+            sg.getMapPack().getActiveMap().addItemDrop(item, (int) sg.getPlayer().getPos().x + rx, (int) sg.getPlayer().getPos().y + ry);
+            contextItemSlot.setItem(null);
             break;
           }
         }
@@ -595,6 +589,8 @@ public class OVScene_Inventory extends OVScene implements Inventory
   @Override
   public void slotReleased(MouseEvent e, ItemSlot slot)
   {
+    slot.setCooldownFrozen(true);
+    
     if (slot.getCategoryFilter() != null && !slot.isOnlyLabel()) // is from equip menu
     {
       int index = Arrays.asList(equipSlots).indexOf(slot);

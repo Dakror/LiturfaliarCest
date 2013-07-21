@@ -78,7 +78,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
       for (int i = 0; i < itemDrops.length(); i++)
       {
         JSONObject o = itemDrops.getJSONObject(i);
-        mappack.addItemDrop(new ItemDrop(new Item(o.getJSONObject("item")), o.getInt("x"), o.getInt("y"), o.getString("map")));
+        mappack.addItemDrop(new ItemDrop(new Item(o.getJSONObject("item")), o.getInt("x"), o.getInt("y"), o.getInt("z"), o.getString("map")));
       }
       
       mappack.setActiveMap(new Map(CFG.MAPPACK, v.savegame.getJSONObject("mappack").getJSONObject("pos").getString("map")));

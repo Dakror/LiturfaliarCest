@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.util.Comparator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,21 +16,33 @@ import de.dakror.liturfaliar.util.Vector;
 
 public class ItemDrop
 {
-  Item   item;
-  int    x;
-  int    y;
-  String map;
+  public static final Comparator<ItemDrop> COMPARATOR = new Comparator<ItemDrop>()
+                                                      {
+                                                        @Override
+                                                        public int compare(ItemDrop o1, ItemDrop o2)
+                                                        {
+                                                          return o1.getZ() - o2.getZ();
+                                                        }
+                                                      };
+  public static final int                  SIZE       = 24;
   
-  public ItemDrop(Item i, int x, int y, String m)
+  Item                                     item;
+  int                                      x;
+  int                                      y;
+  int                                      z;
+  String                                   map;
+  
+  public ItemDrop(Item i, int x, int y, int z, String m)
   {
     item = i;
-    item.setWidth(24);
-    item.setHeight(24);
-    item.setStack(1);
+    item.setWidth(SIZE);
+    item.setHeight(SIZE);
+    item.showStackSize = true;
     item.init();
     
     this.x = x;
     this.y = y;
+    this.z = z;
     map = m;
   }
   
@@ -40,6 +53,7 @@ public class ItemDrop
     {
       o.put("x", x);
       o.put("y", y);
+      o.put("z", z);
       o.put("item", item.serializeItem());
       o.put("map", map);
     }
@@ -80,6 +94,11 @@ public class ItemDrop
     this.y = y;
   }
   
+  public int getZ()
+  {
+    return z;
+  }
+  
   public String getMap()
   {
     return map;
@@ -87,7 +106,7 @@ public class ItemDrop
   
   public boolean equals(ItemDrop o)
   {
-    return o.getItem().equals(item) && o.x == x && o.y == y && o.map.equals(map);
+    return o.getItem().equals(item) && o.x == x && o.y == y && o.z == z && o.map.equals(map);
   }
   
   public void setMap(String map)
@@ -105,10 +124,9 @@ public class ItemDrop
     item.drawWithoutTooltip(m.getX() + x, m.getY() + y, g, v);
   }
   
-  
-  public Area getArea(Map m)
+  public Area getArea()
   {
-    return new Area(new Rectangle2D.Double(m.getX() + x, m.getY() + y, 24, 24));
+    return new Area(new Rectangle2D.Double(x, y, SIZE, SIZE));
   }
   
   public void mouseMoved(MouseEvent e, Map m)
@@ -120,6 +138,12 @@ public class ItemDrop
   {
     if (m.getPlayer().getPos().getDistance(new Vector(x, y)) < CFG.FIELDSIZE * 2)
     {
+      for (ItemDrop id : m.getItemDrops())
+      {
+        if (id.getArea().intersects(getArea().getBounds()) && id.getZ() > z)
+          return;
+      }
+      m.getPlayer().resetTarget();
       m.getPlayer().putItemInFirstInventorySlot(item);
       m.removeItemDrop(this);
       v.playSound("064-Swing03");
