@@ -53,16 +53,20 @@ public class LiturfaliarCest
       {
         if (arg.toLowerCase().equals("help"))
         {
+          CFG.p("");
           CFG.p("Usage: LiturfaliarCest [options]");
           CFG.p("  All options are optional, listed here:");
-          CFG.p("   -hd{alternative harddrive-index}        Enter the index of the harddrive where the game media files are ");
-          CFG.p("                                           downloaded to. Example: -hdE = Sets the harddrive to E:\\");
           CFG.p("");
-          CFG.p("   -d                                      When set, the Java-directdraw method is used, which may");
-          CFG.p("                                           improve or worsen your game performance.");
+          CFG.p("   -hd{alternative harddrive-index}  Enter the index of the harddrive where the");
+          CFG.p("                                     game media files are  downloaded to. ");
+          CFG.p("                                     Example: -hdE = Sets the harddrive to E:\\");
           CFG.p("");
-          CFG.p("   -p{IP}                                  Sets the HTTP proxy server.");
-          CFG.p("   -pp{PORT}                               Sets the HTTP proxy server port.");
+          CFG.p("   -d                                When set, the Java-directdraw method is");
+          CFG.p("                                     used, which may improve or worsen your");
+          CFG.p("                                     game performance.");
+          CFG.p("");
+          CFG.p("   -p{IP}                            Sets the HTTP proxy server.");
+          CFG.p("   -pp{PORT}                         Sets the HTTP proxy server port.");
           System.exit(0);
         }
         else if (arg.startsWith("-hd"))
