@@ -6,6 +6,16 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Represents Text with custom font settings.<br>
+ * <br>
+ * Syntax: <code>&lt;HEX-Color; SIZE; STYLE&gt;</code><br>
+ * HEX-Color is the hexadecimal value of {@link Color}. e.g <code>#ff0000 = red</code><br>
+ * SIZE is just the font size.<br>
+ * STYLE is one of the following values for different Font style. Possible values: 0 (=plain text), 1 (=<i>italics</i>), 2 (=<b>bold</b>)<br>
+ * 
+ * @author Dakror
+ */
 public class HTMLString
 {
   public int     style;

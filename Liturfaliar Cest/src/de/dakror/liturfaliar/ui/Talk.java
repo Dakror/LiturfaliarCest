@@ -18,6 +18,19 @@ import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
 
+/**
+ * Represents interactive Dialogs with NPCs.<br>
+ * Talk-Syntax: <br>
+ * You can set font style, size and color by using the Syntax of {@link HTMLString}.<br>
+ * To declare the person talking, write their accessID in curly braces. <code>e.g {npc_0}</code><br>
+ * To force a line break, write <code>[br]</code>.<br>
+ * And of course the most important thing is the text to display, which is written without any other restrictions.<br>
+ * <br>
+ * A finished talk could look like this:<br>
+ * <code><blockquote>
+ * &lt;#ff3500;17;0&gt;{npc_0}Hello Player!&lt;#ff3500;17;0&gt;{player}Hello NPC #0.
+ * </blockquote></code>
+ */
 public class Talk extends Component
 {
   public static final int SPEED        = 10;
@@ -80,7 +93,14 @@ public class Talk extends Component
       for (int i = 0; i < perspectives.length; i++)
       {
         perspectives[i] = perspec_raw[i].substring(0, perspec_raw[i].indexOf("]"));
-        raw[i] = perspec_raw[i].substring(perspec_raw[i].indexOf("]") + 1);
+        // raw[i] =
+        String content = perspec_raw[i].substring(perspec_raw[i].indexOf("]") + 1);
+        if (content.indexOf("(") > -1) // talk choice parser
+        {
+          String parsel = content.substring(content.indexOf("("), content.indexOf(")"));
+          String[] parts = parsel.split(",");
+          
+        }
       }
       nameLabel = new HTMLString(by.getName(), 32.0F, Color.decode("#999999"), 1);
       cay = 0;
