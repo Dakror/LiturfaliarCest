@@ -1,8 +1,5 @@
 package de.dakror.liturfaliar;
 
-import java.io.File;
-
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import paulscode.sound.SoundSystem;
@@ -51,34 +48,35 @@ public class LiturfaliarCest
   {
     if (args.length > 0)
     {
-      if (args[0].toLowerCase().equals("help"))
+      
+      for (String arg : args)
       {
-        CFG.p("Usage: LiturfaliarCest [alternative harddrive-index | -d]");
-        CFG.p("  Parameters:");
-        CFG.p("   |            NAME              |     MODE     |                DESCRIPTION");
-        CFG.p("   |                              |              |");
-        CFG.p("   |  alternative harddrive-index |   optional   |   Enter the index of the harddrive where the game media files are downloaded to.");
-        CFG.p("   |            -d                |   optional   |   When set, the Java-directdraw methos is used, which may improve or worsen your game performance.");
-        System.exit(0);
-      }
-      if (!args[0].startsWith("-"))
-      {
-        CFG.HARDDRIVE = args[0];
-        if (!new File(CFG.HARDDRIVE + ":/").exists())
+        if (arg.toLowerCase().equals("help"))
         {
-          JOptionPane.showMessageDialog(null, "Die Alternativ-Festplatte \"" + args[0] + "\" existiert nicht!", "Fehler!", JOptionPane.ERROR_MESSAGE);
+          CFG.p("Usage: LiturfaliarCest [options]");
+          CFG.p("  All options are optional, listed here:");
+          CFG.p("   -hd{alternative harddrive-index}        Enter the index of the harddrive where the game media files are downloaded to. Example: -hdE = Sets the harddrive to E:\\");
+          CFG.p("   -d                                      When set, the Java-directdraw method is used, which may improve or worsen your game performance.");
+          CFG.p("   -p{IP}                                  Sets the HTTP proxy server.");
+          CFG.p("   -pp{PORT}                               Sets the HTTP proxy server port.");
           System.exit(0);
         }
-      }
-      else
-      {
-        CFG.DIRECTDRAW = args[0].equals("-d");
-        return;
-      }
-      
-      if (args.length > 1)
-      {
-        CFG.DIRECTDRAW = args[1].equals("-d");
+        else if (arg.startsWith("-hd"))
+        {
+          CFG.HARDDRIVE = arg.replace("-hd", "");
+        }
+        else if (arg.equals("-d"))
+        {
+          CFG.DIRECTDRAW = true;
+        }
+        else if (arg.startsWith("-p"))
+        {
+          System.getProperties().put("http.proxyHost", arg.replace("-p", ""));
+        }
+        else if (arg.startsWith("-pp"))
+        {
+          System.getProperties().put("http.proxyPort", arg.replace("-pp", ""));
+        }
       }
     }
   }
