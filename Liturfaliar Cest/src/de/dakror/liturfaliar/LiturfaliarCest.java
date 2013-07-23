@@ -16,7 +16,7 @@ public class LiturfaliarCest
   public static void main(String[] args)
   {
     loadParameters(args);
-    
+      
     CFG.INTERNET = Assistant.isInternetReachable();
     
     UniVersion.offline = !CFG.INTERNET;
@@ -77,13 +77,15 @@ public class LiturfaliarCest
         {
           CFG.DIRECTDRAW = true;
         }
-        else if (arg.startsWith("-p"))
-        {
-          System.getProperties().put("http.proxyHost", arg.replace("-p", ""));
-        }
         else if (arg.startsWith("-pp"))
         {
+          CFG.p("proxyport");
           System.getProperties().put("http.proxyPort", arg.replace("-pp", ""));
+        }
+        else if (arg.startsWith("-p"))
+        {
+          CFG.p("proxy");
+          System.getProperties().put("http.proxyHost", arg.replace("-p", ""));
         }
       }
     }
