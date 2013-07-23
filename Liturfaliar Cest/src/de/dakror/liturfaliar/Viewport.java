@@ -70,7 +70,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public HashMap<String, OVScene>       ovscenes       = new HashMap<String, OVScene>();
   public JSONObject                     savegame;
   public static Notification            notification;
-  public Scene                          scene;
+  public static Scene                   scene;
   public SoundSystem                    ss;
   public String                         MusicEffectID;
   public String                         MusicID;
@@ -78,7 +78,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   
   public MapEditor                      mapeditor;
   public InputEvent                     skipEvent;
-  public static boolean                 sceneEnabled;
+  private static boolean                sceneEnabled;
   public static Dialog                  dialog;
   
   /**
@@ -626,7 +626,6 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   @Override
   public void mouseMoved(MouseEvent e)
   {
-    
     try
     {
       for (String ovscene : ovscenes.keySet())
@@ -644,6 +643,9 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     
     if (dialog != null)
       dialog.mouseMoved(e);
+    
+    
+    CursorText.mouseMoved(e);
   }
   
   @Override
@@ -833,6 +835,17 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     
     if (dialog != null)
       dialog.keyReleased(e);
+  }
+  
+  public static void setSceneEnabled(boolean b)
+  {
+    CursorText.removeCursorTextByParent(scene.getClass().getSimpleName());
+    sceneEnabled = b;
+  }
+  
+  public static boolean isSceneEnabled()
+  {
+    return sceneEnabled;
   }
   
   static class Scale

@@ -39,6 +39,11 @@ public class Button extends Component
   public BufferedImage image;
   public String        tileset;
   public String        title;
+  
+  /**
+   * Just a way to store some text behind the scenes
+   */
+  public String        name;
   public Tooltip       tooltip;
   
   protected float      alpha      = 0.6f;

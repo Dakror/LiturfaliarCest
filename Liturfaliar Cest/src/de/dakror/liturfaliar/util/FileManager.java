@@ -74,12 +74,18 @@ public class FileManager
     return new File(saves, savename + ".save").exists();
   }
   
-  public static void deleteSave(JSONObject save)
+  public static void deleteSave(JSONObject save, boolean backup)
   {
     try
     {
       File f = new File(saves, save.getJSONObject("char").getString("name") + ".save");
+      if (backup)
+        f = new File(saves, save.getJSONObject("char").getString("name") + " - Sicherung.save");
+      
       f.delete();
+      
+      if (new File(f.getPath() + ".debug").exists())
+        new File(f.getPath() + ".debug").delete();
     }
     catch (JSONException e)
     {

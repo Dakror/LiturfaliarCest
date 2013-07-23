@@ -66,14 +66,16 @@ public class Player extends Creature
     layer = CFG.PLAYERLAYER;
     setData(save);
     frozen = false;
+    
     try
     {
+      name = save.getJSONObject("char").getString("name");
+      
       equipment = new Equipment(save.getJSONObject("char").getJSONObject("equip"));
       
       relPos = goTo = new Vector(save.getJSONObject("mappack").getJSONObject("pos").getInt("x"), save.getJSONObject("mappack").getJSONObject("pos").getInt("y"));
       
       attr.loadAttributes(save.getJSONObject("char").getJSONObject("attr"));
-      
       
       Database.setStringVar("player_sp", "" + (int) attr.getAttribute(Attr.skillpoint).getValue());
       Database.setStringVar("player_level", "" + getLevel());
@@ -88,19 +90,6 @@ public class Player extends Creature
     catch (JSONException e)
     {
       e.printStackTrace();
-    }
-  }
-  
-  public String getName()
-  {
-    try
-    {
-      return getData().getJSONObject("char").getString("name");
-    }
-    catch (JSONException e)
-    {
-      e.printStackTrace();
-      return null;
     }
   }
   

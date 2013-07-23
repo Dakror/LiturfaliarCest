@@ -22,6 +22,8 @@ import de.dakror.liturfaliar.map.creature.ai.path.AStar;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.DamageType;
+import de.dakror.liturfaliar.ui.CursorText;
+import de.dakror.liturfaliar.ui.HTMLString;
 import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
@@ -40,7 +42,6 @@ public class NPC extends Creature
   private int                  randomLookT;
   
   private JSONArray            talkdata;
-  private String               name;
   
   int                          ID;
   long                         time;
@@ -261,16 +262,28 @@ public class NPC extends Creature
       if (m.talk == null)
       {
         setTalking(true);
-        m.talk = new Talk(this, m);
+        m.startTalk(new Talk(this, m));
         emoticon = null;
         lookAt(p, m);
       }
-      else if (m.talk.getBy().equals(this))
-        m.talk.triggerNext();
+//      else if (m.talk.getBy().equals(this))
+//        m.talk.triggerNext();
     }
     else if (p.getPos().getDistance(relPos) > CFG.FIELDSIZE)
     {
       p.setPath(new AStar().getPath(p.getField(m), getField(m), m, p.bx, p.by, p.bw, p.bh));
+    }
+  }
+  
+  public void mouseMoved(MouseEvent e, Map m)
+  {
+    if (talkdata.length() > 0 && !hostile && getArea().contains(e.getXOnScreen() - m.getX(), e.getYOnScreen() - m.getY()))
+    {
+      CursorText.setCursorText(new HTMLString(CursorText.cfg, "Reden"), "NPC#" + ID, "Scene_Game");
+    }
+    else
+    {
+      CursorText.removeCursorText("NPC#" + ID);
     }
   }
   
@@ -312,11 +325,6 @@ public class NPC extends Creature
   public void setTalkData(JSONArray talkdata)
   {
     this.talkdata = talkdata;
-  }
-  
-  public String getName()
-  {
-    return name;
   }
   
   public void setName(String name)

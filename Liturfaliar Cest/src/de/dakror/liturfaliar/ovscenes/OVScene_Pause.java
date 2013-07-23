@@ -94,7 +94,7 @@ public class OVScene_Pause extends OVScene
         sg.setPaused(false);
         v.setFramesFrozen(false);
         
-        Viewport.sceneEnabled = true;
+        Viewport.setSceneEnabled(true);
         
         v.removeOVScene("Pause");
         break;

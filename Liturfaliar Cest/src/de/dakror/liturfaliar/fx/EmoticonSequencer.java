@@ -6,6 +6,10 @@ import java.util.HashMap;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
 
+/**
+ * Template for tag: "{ ( npc_ID | player ) : emoticonID }"<br>
+ * Example: "{npc_0:35}"
+ */
 public class EmoticonSequencer
 {
   Map                        map;
@@ -22,14 +26,8 @@ public class EmoticonSequencer
     parse();
   }
   
-  
-  /**
-   * Template for tag: "{ ( npc_ID | player ) : emoticonID }"<br>
-   * Example: "{npc_0:35}"
-   */
   private void parse()
   {
-    
     String[] parts = raw.split("\\{");
     int startIndex = 0;
     for (int i = 1; i < parts.length; i++)

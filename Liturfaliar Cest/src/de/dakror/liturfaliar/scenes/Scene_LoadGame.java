@@ -156,7 +156,14 @@ public class Scene_LoadGame implements Scene
       Viewport.dialog.update();
       if (Viewport.dialog.buttons[0].getState() == 1)
       {
-        FileManager.deleteSave(datas[active]);
+        try
+        {
+          FileManager.deleteSave(datas[active], saves[active].tooltip.rawText.indexOf(datas[active].getJSONObject("char").getString("name") + " - Sicherung") > -1);
+        }
+        catch (JSONException e)
+        {
+          e.printStackTrace();
+        }
         Viewport.dialog.closeRequested = true;
         if (datas.length - 1 > 0)
           v.setScene(new Scene_LoadGame());

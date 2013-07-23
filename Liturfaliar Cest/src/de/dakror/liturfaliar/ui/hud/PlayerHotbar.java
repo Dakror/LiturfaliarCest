@@ -155,7 +155,7 @@ public class PlayerHotbar extends HUDComponent implements Inventory
   @Override
   public void slotPressed(MouseEvent e, ItemSlot slot)
   {
-    if (!Viewport.sceneEnabled)
+    if (!Viewport.isSceneEnabled())
       return;
     
     pickedUp = new ItemSlot(slot);
@@ -168,21 +168,21 @@ public class PlayerHotbar extends HUDComponent implements Inventory
   @Override
   public void slotExited(MouseEvent e, ItemSlot slot)
   {
-    if (!Viewport.sceneEnabled)
+    if (!Viewport.isSceneEnabled())
       return;
   }
   
   @Override
   public void slotHovered(MouseEvent e, ItemSlot slot)
   {
-    if (!Viewport.sceneEnabled)
+    if (!Viewport.isSceneEnabled())
       return;
   }
   
   @Override
   public void slotReleased(MouseEvent e, ItemSlot slot)
   {
-    if (!Viewport.sceneEnabled)
+    if (!Viewport.isSceneEnabled())
       return;
     
     pickedUp = null;

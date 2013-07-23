@@ -33,7 +33,6 @@ import de.dakror.liturfaliar.ovscenes.OVScene_Skills;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.Keys;
-import de.dakror.liturfaliar.ui.CursorText;
 import de.dakror.liturfaliar.ui.ItemSlot;
 import de.dakror.liturfaliar.ui.hud.BottomSegment;
 import de.dakror.liturfaliar.ui.hud.PlayerHotbar;
@@ -111,13 +110,15 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
       setPaused(true);
       v.stopMusic();
       v.playSound("186-Death");
-      Viewport.sceneEnabled = false;
+      Viewport.setSceneEnabled(false);
     }
     
     if (!v.areFramesFrozen())
+    {
       mappack.getActiveMap().update(timePassed, this);
-    // -- HUD -- //
-    targetLabel.update(timePassed, mappack.getActiveMap());
+      
+      targetLabel.update(timePassed, mappack.getActiveMap());
+    }
     
     bottomSegment.update(timePassed, mappack.getActiveMap());
   }
@@ -185,7 +186,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   {
     v.toggleOVScene(new OVScene_Pause(this), "Pause");
     
-    Viewport.sceneEnabled = !pause;
+    Viewport.setSceneEnabled(!pause);
     
     v.setFramesFrozen(isPaused());
     if (isPaused())
@@ -201,7 +202,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     if (bottomSegment != null)
       bottomSegment.hotbar.frozen = pause;
     
-    Viewport.sceneEnabled = !pause;
+    Viewport.setSceneEnabled(!pause);
     v.setFramesFrozen(pause);
   }
   
@@ -239,8 +240,6 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   {
     if (mappack != null && mappack.getActiveMap() != null)
       mappack.getActiveMap().mouseMoved(e);
-    
-    CursorText.mouseMoved(e);
     
     if (targetLabel != null)
       targetLabel.mouseMoved(e, mappack.getActiveMap());

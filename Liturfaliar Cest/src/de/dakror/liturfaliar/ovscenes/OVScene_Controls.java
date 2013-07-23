@@ -34,7 +34,7 @@ public class OVScene_Controls extends OVScene
   @Override
   public void construct(Viewport v)
   {
-    Viewport.sceneEnabled = false;
+    Viewport.setSceneEnabled(false);
     this.v = v;
     c1 = new Container(0, 0, v.w.getWidth(), 55);
     c1.tileset = null;
@@ -127,7 +127,7 @@ public class OVScene_Controls extends OVScene
     if (e.getKeyCode() == KeyEvent.VK_ESCAPE && !waitForInput)
     {
       v.removeOVScene("Controls");
-      Viewport.sceneEnabled = true;
+      Viewport.setSceneEnabled(true);
       FileManager.saveOptions(v);
     }
     else if (waitForInput)

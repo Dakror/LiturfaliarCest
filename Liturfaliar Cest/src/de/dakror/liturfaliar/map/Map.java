@@ -119,6 +119,8 @@ public class Map implements DatabaseEventListener
   {
     if (talk == null)
       talk = t;
+
+//    talk.setAllInvolvedFrozen(true);
     
     MapEventDispatcher.dispatchTalkStarted(t, this);
   }
@@ -126,6 +128,8 @@ public class Map implements DatabaseEventListener
   public void endTalk()
   {
     talk = null;
+
+//    talk.setAllInvolvedFrozen(false);
     
     MapEventDispatcher.dispatchTalkEnded(talk, this);
   }
@@ -590,9 +594,6 @@ public class Map implements DatabaseEventListener
       if (c.isAlive())
         c.keyPressed(e, this);
     }
-    
-    if (talk != null && e.getKeyCode() == KeyEvent.VK_SPACE)
-      talk.triggerNext();
   }
   
   public void keyReleased(KeyEvent e)
