@@ -3,6 +3,7 @@ package de.dakror.liturfaliar.ui;
 import java.awt.Graphics2D;
 
 import de.dakror.liturfaliar.Viewport;
+import de.dakror.liturfaliar.settings.CFG;
 
 public class TalkChooser extends Component
 {
@@ -19,7 +20,10 @@ public class TalkChooser extends Component
   
   public void parse()
   {
-    return;
+    if(raw.lastIndexOf("(") == -1) return;
+    String rawString = raw.substring(raw.lastIndexOf("(") + 1, raw.lastIndexOf(")"));
+    raw = raw.substring(0, raw.lastIndexOf("("));
+    CFG.p(raw);
   }
   
   public String getClearedString()

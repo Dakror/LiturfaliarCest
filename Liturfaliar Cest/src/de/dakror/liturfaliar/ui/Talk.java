@@ -35,12 +35,14 @@ public class Talk extends Component
 {
   public static final int    SPEED        = 10;
   public static final int    LINEHEIGHT   = 30;
-  public static final int    SIZE         = 16;
+  public static final int    SIZE         = 27;
   
   public static final String defaultColor = "#ffffff";
   public static final int    defaultStyle = 0;
   
   int                        talkID;
+  int                        page;
+  int                        maxCols;
   int                        maxLines;
   int                        perspective;
   int                        activeLine;
@@ -57,13 +59,6 @@ public class Talk extends Component
     super(0, 0, 0, 0);
     initiator = init;
     this.m = m;
-    
-    parse();
-    
-    perspective = -1;
-    nameLabel = new HTMLString("", 32.0F, Color.decode("#999999"), 1);
-    
-    next();
   }
   
   private JSONObject find()
@@ -99,12 +94,15 @@ public class Talk extends Component
     }
   }
   
-  private void parse()
+  private void parse(String firstParsed)
   {
     try
     {
       JSONObject talk = find();
       String rawText = talk.getString("text");
+      if (firstParsed != null)
+        rawText = firstParsed;
+      
       String[] persp = rawText.split("\\[");
       persp = Arrays.copyOfRange(persp, 1, persp.length);
       perspectives = new String[persp.length];
@@ -119,7 +117,7 @@ public class Talk extends Component
         
         pers = pers.substring(pers.indexOf("]") + 2);
         
-        String[] lns = pers.split("(<br>|#)");
+        String[] lns = pers.split("(br>|#)");
         ArrayList<TalkString> strings = new ArrayList<>();
         
         TalkString cache = null;
@@ -128,6 +126,16 @@ public class Talk extends Component
           String line = lns[j];
           if (line.length() == 0)
             continue;
+          
+          if (firstParsed == null)
+            rawText = rawText.replace(line, limitLine(line));
+          
+          boolean br = false;
+          if (line.endsWith("<"))
+          {
+            br = true;
+            line = line.substring(0, line.length() - 2);
+          }
           
           if (cache == null)
           {
@@ -140,6 +148,7 @@ public class Talk extends Component
               line = line.substring(8);
             }
             cache = new TalkString(m, line, Color.decode(color), style);
+            cache.br = br;
           }
           else
           {
@@ -155,11 +164,15 @@ public class Talk extends Component
             }
             
             cache = new TalkString(m, line, color, style);
+            cache.br = br;
           }
         }
         
         strings.add(cache);
         lines[i] = strings.toArray(new TalkString[] {});
+        
+        if (firstParsed == null)
+          parse(rawText);
       }
     }
     catch (Exception e)
@@ -201,6 +214,11 @@ public class Talk extends Component
     activeLine = 0;
   }
   
+  public String limitLine(String s)
+  {
+    return s.replaceAll("([,.!?]{1})(\\S{1})", "$1 $2").replace("#", " #").replace("<br>", " <br>").replaceAll("(.{" + (maxCols - 10) + "," + maxCols + "})( )", "$1<br>");
+  }
+  
   @Override
   public void draw(Graphics2D g, Viewport v)
   {
@@ -210,6 +228,15 @@ public class Talk extends Component
       setY(v.w.getHeight() / 16 * 13);
       setWidth(v.w.getWidth() / 3 * 2);
       setHeight(v.w.getHeight() - getY());
+      
+      maxCols = (getWidth() - 34) / g.getFontMetrics(g.getFont().deriveFont((float) SIZE)).stringWidth("r");
+      
+      parse(null);
+      
+      perspective = -1;
+      nameLabel = new HTMLString("", 32.0F, Color.decode("#999999"), 1);
+      
+      next();
       
       maxLines = (int) Math.floor((getHeight() - 20 - nameLabel.getHeight(g)) / (double) LINEHEIGHT + 0.5D);
     }
@@ -222,6 +249,28 @@ public class Talk extends Component
     {
       Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX() - 80, getY(), 80, 80, g, v.w);
       g.drawImage(speakerFace, getX() - 80 + 7, getY() + 13, 70, 75, v.w);
+    }
+    
+    int y = -1;
+    for (int i = page * maxLines; i < lines[perspective].length; i++)
+    {
+      if (y >= maxLines)
+        break;
+      
+      TalkString line = lines[perspective][i];
+      
+      if (i > 0)
+      {
+        TalkString prev = lines[perspective][i - 1];
+        line.drawString(getX() + 24 + ((!prev.br) ? prev.getWidth(g) : 0), getY() + nameLabel.getHeight(g) + LINEHEIGHT + ((y > 0) ? y * LINEHEIGHT : 0) + ((prev.br) ? LINEHEIGHT : 0), g);
+      }
+      else
+      {
+        line.drawString(getX() + 24, getY() + nameLabel.getHeight(g) + LINEHEIGHT, g);
+      }
+      
+      if (line.br)
+        y++;
     }
   }
   

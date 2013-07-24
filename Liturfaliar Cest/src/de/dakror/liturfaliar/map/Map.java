@@ -594,6 +594,8 @@ public class Map implements DatabaseEventListener
       if (c.isAlive())
         c.keyPressed(e, this);
     }
+    
+    if(talk != null) talk.keyPressed(e);
   }
   
   public void keyReleased(KeyEvent e)
