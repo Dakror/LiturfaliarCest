@@ -56,6 +56,10 @@ public class TalkString extends HTMLString
     s = string;
   }
   
+  public boolean isAllShown(){
+    return s.equals(string);
+  }
+  
   public boolean updateAnimatedString(int speed)
   {
     if (string.length() == 0)
@@ -68,6 +72,6 @@ public class TalkString extends HTMLString
     
     emoticonSequencer.update(s);
     
-    return s.equals(string);
+    return isAllShown();
   }
 }

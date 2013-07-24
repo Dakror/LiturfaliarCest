@@ -40,12 +40,19 @@ public class Talk extends Component
   public static final String defaultColor = "#ffffff";
   public static final int    defaultStyle = 0;
   
+  boolean                    showAll;
+  boolean                    partDone;
+  boolean                    turnPage;
+  
   int                        talkID;
-  int                        page;
+  int                        firstIndex;
   int                        maxCols;
   int                        maxLines;
   int                        perspective;
   int                        activeLine;
+  int                        cos;
+  
+  long                       time;
   
   NPC                        initiator;
   Map                        m;
@@ -128,13 +135,18 @@ public class Talk extends Component
             continue;
           
           if (firstParsed == null)
-            rawText = rawText.replace(line, limitLine(line));
+          {
+            if (cache != null && !cache.br)
+              rawText = rawText.replace(line, limitLine(createEmptyString(cache.string.length()) + line).trim());
+            else rawText = rawText.replace(line, limitLine(line));
+            
+          }
           
           boolean br = false;
           if (line.endsWith("<"))
           {
             br = true;
-            line = line.substring(0, line.length() - 2);
+            line = line.substring(0, line.length() - 1);
           }
           
           if (cache == null)
@@ -181,16 +193,94 @@ public class Talk extends Component
     }
   }
   
+  private String createEmptyString(int l)
+  {
+    String s = "";
+    for (int i = 0; i < l; i++)
+      s += " ";
+    return s;
+  }
+  
+  private int getPreviousWidth(int index, Graphics2D g)
+  {
+    int w = 0;
+    for (int i = firstIndex; i < lines[perspective].length; i++)
+    {
+      if (i == index)
+        return w;
+      
+      if (!lines[perspective][i].br)
+        w += lines[perspective][i].getWidth(g) + 5;
+      else w = 0;
+    }
+    
+    return 0;
+  }
+  
   @Override
   public void update()
-  {}
+  {
+    if (lines == null)
+      return;
+    
+    if (showAll)
+    {
+      activeLine = firstIndex + getLinesForPageMax() - 1;
+      lines[perspective][activeLine].showAll();
+      showAll = false;
+    }
+    
+    if (turnPage)
+    {
+      firstIndex += getLinesForPageMax();
+      activeLine = firstIndex;
+      
+      turnPage = false;
+    }
+    
+    partDone = (activeLine - firstIndex) % getLinesForPageMax() == getLinesForPageMax() - 1 && lines[perspective][activeLine].isAllShown();
+    
+    if (lines[perspective][activeLine].updateAnimatedString(SPEED) && !partDone && activeLine < lines[perspective].length - 1)
+      activeLine++;
+    
+    
+    if (partDone)
+    {
+      if (time == 0)
+        time = System.currentTimeMillis();
+      cos++;
+    }
+  }
   
   public void next()
   {
+    if (lines == null)
+      return;
+    
     if (perspective == -1)
+    {
       perspective = 0;
-    else if (activeLine == lines[perspective].length - 1)
+      firstIndex = 0;
+      activeLine = 0;
+    }
+    else if (activeLine == lines[perspective].length - 1 && perspectives.length > perspective + 1)
+    {
       perspective++;
+      firstIndex = 0;
+      activeLine = 0;
+    }
+    else if (activeLine == lines[perspective].length - 1 && perspectives.length == perspective + 1)
+    {
+      m.endTalk();
+    }
+    else if (partDone)
+    {
+      turnPage = true;
+    }
+    else if (!partDone)
+    {
+      showAll = true;
+    }
     
     BufferedImage bi = new BufferedImage(96, 96, BufferedImage.TYPE_INT_ARGB);
     Graphics g = bi.getGraphics();
@@ -217,6 +307,25 @@ public class Talk extends Component
   public String limitLine(String s)
   {
     return s.replaceAll("([,.!?]{1})(\\S{1})", "$1 $2").replace("#", " #").replace("<br>", " <br>").replaceAll("(.{" + (maxCols - 10) + "," + maxCols + "})( )", "$1<br>");
+  }
+  
+  public int getLinesForPageMax()
+  {
+    if (lines == null)
+      return 0;
+    
+    int r = 0;
+    int y = 0;
+    for (int i = firstIndex; i < lines[perspective].length; i++)
+    {
+      if (y >= maxLines)
+        break;
+      r++;
+      if (lines[perspective][i].br)
+        y++;
+    }
+    
+    return r;
   }
   
   @Override
@@ -252,31 +361,48 @@ public class Talk extends Component
     }
     
     int y = -1;
-    for (int i = page * maxLines; i < lines[perspective].length; i++)
+    for (int i = firstIndex; i < lines[perspective].length; i++)
     {
-      if (y >= maxLines)
+      if (y >= maxLines - 1)
         break;
+      
+      if (i > activeLine)
+        continue;
       
       TalkString line = lines[perspective][i];
       
-      if (i > 0)
+      if (i % getLinesForPageMax() > 0)
       {
-        TalkString prev = lines[perspective][i - 1];
-        line.drawString(getX() + 24 + ((!prev.br) ? prev.getWidth(g) : 0), getY() + nameLabel.getHeight(g) + LINEHEIGHT + ((y > 0) ? y * LINEHEIGHT : 0) + ((prev.br) ? LINEHEIGHT : 0), g);
+        int prev = getPreviousWidth(i, g);
+        
+        if (i == activeLine)
+          line.drawStringAnimated(getX() + 24 + ((prev > 0) ? prev : 0), getY() + nameLabel.getHeight(g) + LINEHEIGHT + ((y > 0) ? y * LINEHEIGHT : 0) + ((prev == 0) ? LINEHEIGHT : 0), g);
+        else line.drawString(getX() + 24 + ((prev > 0) ? prev : 0), getY() + nameLabel.getHeight(g) + LINEHEIGHT + ((y > 0) ? y * LINEHEIGHT : 0) + ((prev == 0) ? LINEHEIGHT : 0), g);
       }
       else
       {
-        line.drawString(getX() + 24, getY() + nameLabel.getHeight(g) + LINEHEIGHT, g);
+        if (i == activeLine)
+          line.drawStringAnimated(getX() + 24, getY() + nameLabel.getHeight(g) + LINEHEIGHT, g);
+        else line.drawString(getX() + 24, getY() + nameLabel.getHeight(g) + LINEHEIGHT, g);
       }
       
       if (line.br)
         y++;
+    }
+    
+    if (partDone)
+    {
+      int size = 2;
+      int c = (int) (Math.sin(0.25D * cos) * 5.0D);
+      g.drawImage(Viewport.loadScaledImage("system/Arrow.png", 18 * size, 9 * size), getX() + getWidth() - 18 * size - 10, getY() + getHeight() - 5 - 9 * size + c, v.w);
+      
     }
   }
   
   @Override
   public void keyPressed(KeyEvent e)
   {
-    // TODO: next
+    if (e.getKeyCode() == KeyEvent.VK_SPACE)
+      next();
   }
 }
