@@ -51,14 +51,14 @@ public class Creature implements MapEventListener
   protected double                     layer;
   
   protected Vector                     lastPos, relPos, goTo;
-  protected Emoticon                   emoticon;  
+  protected Emoticon                   emoticon;
   protected Attributes                 attr;
-  protected Equipment                  equipment; 
+  protected Equipment                  equipment;
   protected ArrayList<SkillAnimation>  skills;
   protected ArrayList<DamageIndicator> dmgIndicators;
   protected Area                       hitArea;
   protected CreatureAI                 AI;
-  protected String name;
+  protected String                     name;
   
   
   public Creature(int x, int y, int w, int h)
@@ -587,7 +587,7 @@ public class Creature implements MapEventListener
   }
   
   public void setName(String s)
-  { 
+  {
     name = s;
   }
 }

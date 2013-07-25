@@ -15,7 +15,7 @@ public class CursorText
   public static HTMLString  cfg   = new HTMLString("", 22.0f, Color.decode("#d9d9d9"), Font.BOLD);
   private static HTMLString text;
   private static String     from;
-  private static String parent;
+  private static String     parent;
   private static Point      mouse = new Point(0, 0);
   
   public static void setCursorText(HTMLString t, String f, String p)
@@ -45,8 +45,9 @@ public class CursorText
     }
   }
   
-  public static void removeCursorTextByParent(String p){
-    if(text != null && parent.equals(p))
+  public static void removeCursorTextByParent(String p)
+  {
+    if (text != null && parent.equals(p))
     {
       text = null;
       from = null;

@@ -12,15 +12,15 @@ public class TalkString extends HTMLString
   long              time = 0;
   String            s;
   EmoticonSequencer emoticonSequencer;
+  TalkChooser       chooser;
   
   public TalkString(Map m, String st, Color color, int styl)
   {
     super(st, Talk.SIZE, color, styl);
-    s = "";
-    
-    emoticonSequencer = new EmoticonSequencer(m, st);
-    
+    s = ""; 
+    emoticonSequencer = new EmoticonSequencer(m, st);    
     string = emoticonSequencer.getClearedString();
+    
   }
   
   public TalkString(Map m, HTMLString htmls, String st)
@@ -35,11 +35,6 @@ public class TalkString extends HTMLString
       time = System.currentTimeMillis();
     }
     
-    // Shape oldClip = g.getClip();
-    
-    // int h = fm.getHeight();
-    
-    // g.setClip(x, y - fm.getLeading() - fm.getMaxAscent(), w, h);
     Color oldColor = g.getColor();
     Font oldFont = g.getFont();
     g.setColor(c);
@@ -47,7 +42,6 @@ public class TalkString extends HTMLString
     g.drawString(s, x, y);
     g.setFont(oldFont);
     g.setColor(oldColor);
-    // g.setClip(oldClip);
     
   }
   
@@ -56,7 +50,8 @@ public class TalkString extends HTMLString
     s = string;
   }
   
-  public boolean isAllShown(){
+  public boolean isAllShown()
+  {
     return s.equals(string);
   }
   

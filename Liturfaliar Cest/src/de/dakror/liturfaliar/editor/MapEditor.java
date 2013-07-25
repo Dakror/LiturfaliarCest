@@ -1291,7 +1291,8 @@ public class MapEditor
       CFG.p(i * ((range) ? 2 : 1));
       panel.add(spinner);
       
-      if(range) {
+      if (range)
+      {
         spinner = new JSpinner(new SpinnerNumberModel(exist.getAttribute(Attr.values()[i]).getMaximum(), -1000.0, 1000.0, 1.0));
         spinners[i * ((range) ? 2 : 1) + 1] = spinner;
         panel.add(spinner);

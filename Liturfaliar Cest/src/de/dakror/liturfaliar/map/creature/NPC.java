@@ -266,8 +266,8 @@ public class NPC extends Creature
         emoticon = null;
         lookAt(p, m);
       }
-//      else if (m.talk.getBy().equals(this))
-//        m.talk.triggerNext();
+      // else if (m.talk.getBy().equals(this))
+      // m.talk.triggerNext();
     }
     else if (p.getPos().getDistance(relPos) > CFG.FIELDSIZE)
     {

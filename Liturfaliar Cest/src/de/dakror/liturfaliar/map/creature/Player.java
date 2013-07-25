@@ -47,6 +47,7 @@ public class Player extends Creature
   public boolean    preventTargetChoose = false;
   public int        dirAfterReachedGoal = -1;
   
+  boolean           lookingEnabled;
   boolean           sprint;
   long              time;
   
@@ -61,6 +62,7 @@ public class Player extends Creature
     super(CFG.MAPCENTER.x, CFG.MAPCENTER.y, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1]);
     
     setHuman();
+    setLookingEnabled(true);
     
     massive = true;
     layer = CFG.PLAYERLAYER;
@@ -201,10 +203,13 @@ public class Player extends Creature
     if ((!relPos.equals(goTo) || !Arrays.equals(dirs, new boolean[] { false, false, false, false })) && !frozen)
       frame = v.getFrame((sprint) ? 0.3f : 0.5f);
     
-    int angle = (int) Math.round(Math.toDegrees(Math.atan2(mouse.y - (relPos.y + m.getY() + h / 2), mouse.x - (relPos.x + m.getX() + w / 2))) / 90.0) + 1;
-    if (angle > -1)
-      dir = DIRS[angle];
-    else dir = 1;
+    if (lookingEnabled)
+    {
+      int angle = (int) Math.round(Math.toDegrees(Math.atan2(mouse.y - (relPos.y + m.getY() + h / 2), mouse.x - (relPos.x + m.getX() + w / 2))) / 90.0) + 1;
+      if (angle > -1)
+        dir = DIRS[angle];
+      else dir = 1;
+    }
     
     try
     {
@@ -455,5 +460,15 @@ public class Player extends Creature
   public void disableDirs()
   {
     dirs = new boolean[] { false, false, false, false };
+  }
+  
+  public boolean isLookingEnabled()
+  {
+    return lookingEnabled;
+  }
+  
+  public void setLookingEnabled(boolean lookingEnabled)
+  {
+    this.lookingEnabled = lookingEnabled;
   }
 }

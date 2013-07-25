@@ -119,18 +119,12 @@ public class Map implements DatabaseEventListener
   {
     if (talk == null)
       talk = t;
-
-//    talk.setAllInvolvedFrozen(true);
-    
     MapEventDispatcher.dispatchTalkStarted(t, this);
   }
   
   public void endTalk()
   {
     talk = null;
-
-//    talk.setAllInvolvedFrozen(false);
-    
     MapEventDispatcher.dispatchTalkEnded(talk, this);
   }
   
@@ -595,7 +589,8 @@ public class Map implements DatabaseEventListener
         c.keyPressed(e, this);
     }
     
-    if(talk != null) talk.keyPressed(e);
+    if (talk != null)
+      talk.keyPressed(e);
   }
   
   public void keyReleased(KeyEvent e)

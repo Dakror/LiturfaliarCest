@@ -44,10 +44,12 @@ public class OVScene_Death extends OVScene
     load.update();
     quit.update();
     
-    if(load.getState() == 1) {
+    if (load.getState() == 1)
+    {
       v.setScene(new Scene_LoadGame());
     }
-    if(quit.getState() == 1) {
+    if (quit.getState() == 1)
+    {
       v.setScene(new Scene_MainMenu());
     }
   }

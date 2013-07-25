@@ -59,6 +59,7 @@ public class Talk extends Component
   HTMLString                 nameLabel;
   BufferedImage              speakerFace;
   TalkString[][]             lines;
+  TalkChooser[]              choosers;
   String[]                   perspectives;
   
   public Talk(NPC init, Map m)
@@ -109,6 +110,20 @@ public class Talk extends Component
       String rawText = talk.getString("text");
       if (firstParsed != null)
         rawText = firstParsed;
+      
+      if (firstParsed == null)
+      {
+        ArrayList<TalkChooser> ch = new ArrayList<>();
+        String[] chs = rawText.split("\\(");
+        chs = Arrays.copyOfRange(chs, 1, chs.length);
+        for (int i = 0; i < chs.length; i++)
+        {
+          String r = chs[i].substring(0, chs[i].indexOf(")"));
+          ch.add(new TalkChooser(r));
+        }
+        
+        choosers = ch.toArray(new TalkChooser[] {});
+      }
       
       String[] persp = rawText.split("\\[");
       persp = Arrays.copyOfRange(persp, 1, persp.length);
@@ -271,7 +286,7 @@ public class Talk extends Component
     }
     else if (activeLine == lines[perspective].length - 1 && perspectives.length == perspective + 1)
     {
-      m.endTalk();
+      endTalk();
     }
     else if (partDone)
     {
@@ -302,6 +317,25 @@ public class Talk extends Component
     speakerFace = bi;
     
     activeLine = 0;
+  }
+  
+  private void endTalk()
+  {
+    for (TalkString[] p : lines)
+      for (TalkString ts : p)
+        ts.emoticonSequencer.clearCreatureEmoticons();
+    
+    for (String p : perspectives)
+    {
+      Creature c = m.getCreatureByAccessKey(p);
+      if (c instanceof NPC)
+        ((NPC) c).setTalking(false);
+      
+      c.setFrozen(false);
+    }
+    m.getPlayer().setLookingEnabled(true);
+    Database.setBooleanVar("talked_" + talkID, true);
+    m.endTalk();
   }
   
   public String limitLine(String s)
@@ -348,6 +382,16 @@ public class Talk extends Component
       next();
       
       maxLines = (int) Math.floor((getHeight() - 20 - nameLabel.getHeight(g)) / (double) LINEHEIGHT + 0.5D);
+      
+      for (String p : perspectives)
+      {
+        Creature c = m.getCreatureByAccessKey(p);
+        if (c instanceof NPC)
+          ((NPC) c).setTalking(true);
+        
+        c.setFrozen(true);
+      }
+      m.getPlayer().setLookingEnabled(false);
     }
     
     Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
