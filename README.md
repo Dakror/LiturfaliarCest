@@ -7,7 +7,6 @@ The game I'm currently working on.
 ### Planned Features ###
 - Character Page
 - Quests
-- Dialog Choices
 - Boss fights
 - Shops
 - Day-Night Cycle
@@ -19,6 +18,7 @@ The game I'm currently working on.
 - Cutscenes
 - Mob Drops
 - Allies, Mounts, Pets
+- ~~Dialog Choices~~
 - ~~Maps~~
 - ~~Items~~
 - ~~Skills~~
