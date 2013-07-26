@@ -12,15 +12,20 @@ public class TalkString extends HTMLString
   long              time = 0;
   String            s;
   EmoticonSequencer emoticonSequencer;
-  TalkChooser       chooser;
+  int               chooser;
   
   public TalkString(Map m, String st, Color color, int styl)
   {
     super(st, Talk.SIZE, color, styl);
-    s = ""; 
-    emoticonSequencer = new EmoticonSequencer(m, st);    
+    s = "";
+    emoticonSequencer = new EmoticonSequencer(m, st);
     string = emoticonSequencer.getClearedString();
-    
+    if (string.indexOf("(") > -1)
+    {
+      chooser = Integer.parseInt(string.substring(string.indexOf("(") + 1, string.indexOf("(") + 2));
+      string = string.replaceAll("\\(\\S{1,}\\)", " ");
+    }
+    else chooser = -1;
   }
   
   public TalkString(Map m, HTMLString htmls, String st)

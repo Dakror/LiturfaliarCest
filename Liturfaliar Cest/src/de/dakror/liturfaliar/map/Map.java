@@ -521,6 +521,9 @@ public class Map implements DatabaseEventListener
     }
     catch (Exception e1)
     {}
+    
+    if (talk != null)
+      talk.mouseMoved(e);
   }
   
   public void mouseClicked(MouseEvent e)
@@ -549,6 +552,10 @@ public class Map implements DatabaseEventListener
     }
     catch (Exception e1)
     {}
+    
+    
+    if (talk != null)
+      talk.mousePressed(e);
   }
   
   public void mouseReleased(MouseEvent e)
@@ -558,6 +565,9 @@ public class Map implements DatabaseEventListener
       if (c.isAlive())
         c.mouseReleased(e, this);
     }
+    
+    if (talk != null)
+      talk.mouseReleased(e);
   }
   
   public void mouseEntered(MouseEvent e)

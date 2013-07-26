@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,6 +61,7 @@ public class Talk extends Component
   BufferedImage              speakerFace;
   TalkString[][]             lines;
   TalkChooser[]              choosers;
+  TalkChooser                activeChooser;
   String[]                   perspectives;
   
   public Talk(NPC init, Map m)
@@ -120,6 +122,8 @@ public class Talk extends Component
         {
           String r = chs[i].substring(0, chs[i].indexOf(")"));
           ch.add(new TalkChooser(r));
+          
+          rawText = rawText.replace(r, "" + (ch.size() - 1));
         }
         
         choosers = ch.toArray(new TalkChooser[] {});
@@ -154,7 +158,6 @@ public class Talk extends Component
             if (cache != null && !cache.br)
               rawText = rawText.replace(line, limitLine(createEmptyString(cache.string.length()) + line).trim());
             else rawText = rawText.replace(line, limitLine(line));
-            
           }
           
           boolean br = false;
@@ -238,6 +241,9 @@ public class Talk extends Component
     if (lines == null)
       return;
     
+    if (activeChooser != null)
+      activeChooser.update();
+    
     if (showAll)
     {
       activeLine = firstIndex + getLinesForPageMax() - 1;
@@ -255,21 +261,29 @@ public class Talk extends Component
     
     partDone = (activeLine - firstIndex) % getLinesForPageMax() == getLinesForPageMax() - 1 && lines[perspective][activeLine].isAllShown();
     
-    if (lines[perspective][activeLine].updateAnimatedString(SPEED) && !partDone && activeLine < lines[perspective].length - 1)
-      activeLine++;
-    
-    
     if (partDone)
     {
       if (time == 0)
         time = System.currentTimeMillis();
       cos++;
     }
+    
+    if (lines[perspective][activeLine].updateAnimatedString(SPEED) && !partDone && activeLine < lines[perspective].length - 1 && activeChooser == null)
+      activeLine++;
+    
+    if (lines[perspective][activeLine].chooser > -1 && activeChooser == null)
+    {
+      activeChooser = choosers[lines[perspective][activeLine].chooser];
+    }
+    if (activeChooser != null && !activeChooser.isCloseRequested())
+      return;
+    else activeChooser = null;
+    
   }
   
   public void next()
   {
-    if (lines == null)
+    if (lines == null || activeChooser != null)
       return;
     
     if (perspective == -1)
@@ -434,13 +448,37 @@ public class Talk extends Component
         y++;
     }
     
-    if (partDone)
+    if (partDone && activeChooser == null)
     {
       int size = 2;
       int c = (int) (Math.sin(0.25D * cos) * 5.0D);
       g.drawImage(Viewport.loadScaledImage("system/Arrow.png", 18 * size, 9 * size), getX() + getWidth() - 18 * size - 10, getY() + getHeight() - 5 - 9 * size + c, v.w);
       
     }
+    
+    if (activeChooser != null)
+      activeChooser.draw(g, v);
+  }
+  
+  @Override
+  public void mouseMoved(MouseEvent e)
+  {
+    if (activeChooser != null)
+      activeChooser.mouseMoved(e);
+  }
+  
+  @Override
+  public void mouseReleased(MouseEvent e)
+  {
+    if (activeChooser != null)
+      activeChooser.mouseReleased(e);
+  }
+  
+  @Override
+  public void mousePressed(MouseEvent e)
+  {
+    if (activeChooser != null)
+      activeChooser.mousePressed(e);
   }
   
   @Override

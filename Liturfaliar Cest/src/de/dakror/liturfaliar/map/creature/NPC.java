@@ -141,9 +141,14 @@ public class NPC extends Creature
     
     if (emoticon != null)
     {
-      emoticon.draw(g, m, v);
-      if (emoticon.done && emoticon.getType() != 50)
-        emoticon = null;
+      try
+      {
+        emoticon.draw(g, m, v);
+        if (emoticon.done && emoticon.getType() != 50)
+          emoticon = null;
+      }
+      catch (Exception e)
+      {}
     }
     
     for (SkillAnimation skill : skills)
