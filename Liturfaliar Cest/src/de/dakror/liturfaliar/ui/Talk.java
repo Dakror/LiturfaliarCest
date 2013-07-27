@@ -279,6 +279,11 @@ public class Talk extends Component
       return;
     else activeChooser = null;
     
+    if (Database.getBooleanVar("quit_talk"))
+    {
+      Database.setBooleanVar("quit_talk", false);
+      endTalk();
+    }
   }
   
   public void next()

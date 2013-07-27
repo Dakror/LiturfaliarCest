@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -503,11 +504,9 @@ public final class Assistant
   {
     try
     {
-      URL u = new URL("http://dakror.de");
-      u.openStream();
-      return true;
+      return InetAddress.getByName("dakror.de").isReachable(0);
     }
-    catch (Exception e1)
+    catch (Exception e)
     {
       return false;
     }

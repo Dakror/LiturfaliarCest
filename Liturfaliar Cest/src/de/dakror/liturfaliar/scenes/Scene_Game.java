@@ -65,11 +65,17 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     CFG.MAPCENTER = new Point((v.w.getWidth() / 2 - CFG.FIELDSIZE / 2), (v.w.getHeight() / 2 - CFG.FIELDSIZE * 3 / 4));
     
     player = new Player(v.savegame, v.w);
+    
     Database.setStringVar("playername", player.getName());
     setMapPack(new MapPack(CFG.MAPPACK, v.w));
     MapPackEventDispatcher.addMapPackEventListener(this);
     try
     {
+      JSONArray flags = v.savegame.getJSONArray("flags");
+      for (int i = 0; i < flags.length(); i++) {
+        Database.setBooleanVar(flags.getString(i), true);
+      }
+      
       mappack.setChangedMaps(v.savegame.getJSONObject("mappack").getJSONObject("cmaps"));
       
       JSONArray itemDrops = v.savegame.getJSONObject("mappack").getJSONArray("drops");

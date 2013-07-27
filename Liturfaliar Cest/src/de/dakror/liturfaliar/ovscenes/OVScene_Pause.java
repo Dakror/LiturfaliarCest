@@ -16,7 +16,6 @@ import de.dakror.liturfaliar.item.ItemDrop;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.scenes.Scene_LoadGame;
 import de.dakror.liturfaliar.scenes.Scene_MainMenu;
-import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Button;
 import de.dakror.liturfaliar.ui.Container;
 import de.dakror.liturfaliar.ui.HandleArea;
@@ -25,6 +24,7 @@ import de.dakror.liturfaliar.ui.ProgressBar;
 import de.dakror.liturfaliar.ui.TextSelect;
 import de.dakror.liturfaliar.ui.Tooltip;
 import de.dakror.liturfaliar.util.Assistant;
+import de.dakror.liturfaliar.util.Database;
 import de.dakror.liturfaliar.util.FileManager;
 
 public class OVScene_Pause extends OVScene
@@ -228,13 +228,15 @@ public class OVScene_Pause extends OVScene
       
       JSONObject pos = new JSONObject();
       pos.put("map", sg.getMapPack().getActiveMap().getName());
-      pos.put("x", (v.w.getWidth() / 2 - CFG.FIELDSIZE / 2) - sg.getMapPack().getActiveMap().getX());
-      pos.put("y", (v.w.getHeight() / 2 - CFG.FIELDSIZE * 3 / 4) - sg.getMapPack().getActiveMap().getY());
+      pos.put("x", (int) sg.getPlayer().getPos().x);
+      pos.put("y", (int) sg.getPlayer().getPos().y);
       mappack.put("pos", pos);
       
       mappack.put("cmaps", sg.getMapPack().getChangedMaps());
       
       save.put("mappack", mappack);
+      
+      save.put("flags", new JSONArray(Database.getBooleanVars()));
     }
     catch (JSONException e)
     {

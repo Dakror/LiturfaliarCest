@@ -270,6 +270,8 @@ public class Scene_NewGame implements Scene
       mappack.put("drops", new JSONArray());
       save.put("mappack", mappack);
       
+      save.put("flags", new JSONArray());
+      
       return save;
     }
     catch (JSONException e)
