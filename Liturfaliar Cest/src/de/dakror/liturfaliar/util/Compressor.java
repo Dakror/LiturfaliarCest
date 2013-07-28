@@ -20,7 +20,7 @@ public class Compressor
 {
   public static void compressFile(File f, String s)
   {
-    compressFile(f, s.getBytes());
+    compressFile(f, (s + ((s.length() < 18) ? "                 " : "")).getBytes());
   }
   
   public static void compressFile(File f, byte[] input)
