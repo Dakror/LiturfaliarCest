@@ -22,7 +22,7 @@ public class TileButton extends JButton
   
   public boolean            update;
   
-  boolean                   fitsFilter;
+  public boolean                   fitsFilter;
   
   private int               x;
   private int               y;

@@ -28,6 +28,9 @@ public class TalkChooser extends Component
     String[] parts = raw.split(",");
     
     choices = new Button[parts.length];
+    
+    boolean allFalse = true;
+    
     for (int i = 0; i < choices.length; i++)
     {
       String text = parts[i].substring(0, parts[i].indexOf("="));
@@ -47,6 +50,11 @@ public class TalkChooser extends Component
         }
       }
       
+      if (allFalse && allRequirementsSet)
+      {
+        allFalse = false;
+      }
+      
       Button b = new Button(getX() + 9, getY() + 9 + i * 32, getWidth() - 18, text, Color.white, 25f);
       b.round = false;
       b.clickmod = 0;
@@ -59,6 +67,8 @@ public class TalkChooser extends Component
       
       choices[i] = b;
     }
+    
+    if(allFalse) closeRequested = true;
   }
   
   public String getClearedString()

@@ -61,7 +61,6 @@ public class Compressor
   {
     byte[] decompressed = decompress(getFileContentAsByteArray(f));
     String text = new String(decompressed);
-    CFG.p(text);
     return text;
   }
   

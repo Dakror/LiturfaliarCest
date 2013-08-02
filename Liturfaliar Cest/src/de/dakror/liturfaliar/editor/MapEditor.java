@@ -2198,6 +2198,8 @@ public class MapEditor
         public void actionPerformed(ActionEvent e)
         {
           map.remove(fNPC);
+          
+          map.repaint();
         }
       });
       jpm.add(del);
@@ -2947,7 +2949,25 @@ public class MapEditor
     });
     p.add(replace);
     
-    SpringUtilities.makeCompactGrid(p, 2, 2, 6, 6, 6, 6);
+    p.add(new JLabel("Gefundene Felder: "));
+    p.add(new JButton(new AbstractAction("Entfernen")
+    {
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        for (Component c : map.getComponents())
+        {
+          if (c instanceof TileButton && ((TileButton) c).fitsFilter)
+          {
+            map.remove(c);
+            map.repaint();
+          }
+        }}
+    }));
+    
+    SpringUtilities.makeCompactGrid(p, 3, 2, 6, 6, 6, 6);
     
     FRframe.setContentPane(p);
     FRframe.pack();
