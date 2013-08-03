@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.editor.MapEditor;
+import de.dakror.liturfaliar.editor.Editor;
 import de.dakror.liturfaliar.ovscenes.OVScene_Controls;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Button;
@@ -96,7 +96,7 @@ public class Scene_MainMenu implements Scene
       mapeditor.update();
       if (mapeditor.getState() == 1)
       {
-        v.mapeditor = new MapEditor(v);
+        v.editor = new Editor(v);
         mapeditor.setState(0);
       }
     }

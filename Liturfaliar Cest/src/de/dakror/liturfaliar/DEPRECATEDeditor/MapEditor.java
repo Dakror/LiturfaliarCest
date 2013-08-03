@@ -1,4 +1,4 @@
-package de.dakror.liturfaliar.editor;
+package de.dakror.liturfaliar.DEPRECATEDeditor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
