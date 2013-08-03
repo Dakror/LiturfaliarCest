@@ -36,7 +36,7 @@ import paulscode.sound.FilenameURL;
 import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.Source;
-import de.dakror.liturfaliar.editor.Editor;
+import de.dakror.liturfaliar.editor.MapEditor;
 import de.dakror.liturfaliar.ovscenes.OVScene;
 import de.dakror.liturfaliar.ovscenes.OVScene_Info;
 import de.dakror.liturfaliar.scenes.Scene;
@@ -76,7 +76,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public String                         MusicID;
   public String                         SoundID;
   
-  public Editor                         editor;
+  public MapEditor                         editor;
   public InputEvent                     skipEvent;
   private static boolean                sceneEnabled;
   public static Dialog                  dialog;
@@ -357,7 +357,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     else
     {
       running = false;
-      editor = new Editor(this);
+      editor = new MapEditor(this);
     }
     frozenFrames = false;
     time = System.currentTimeMillis();

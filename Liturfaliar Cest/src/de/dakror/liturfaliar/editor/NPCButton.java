@@ -1,4 +1,4 @@
-package de.dakror.liturfaliar.DEPRECATEDeditor;
+package de.dakror.liturfaliar.editor;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -16,7 +16,6 @@ import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.util.Assistant;
 
-@Deprecated
 public class NPCButton extends JButton
 {
   private static final long serialVersionUID = 1L;

@@ -1,4 +1,4 @@
-package de.dakror.liturfaliar.DEPRECATEDeditor;
+package de.dakror.liturfaliar.editor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -98,7 +98,6 @@ import de.dakror.liturfaliar.util.FileManager;
 import de.dakror.liturfaliar.util.Vector;
 import de.dakror.universion.UniVersion;
 
-@Deprecated
 public class MapEditor
 {
   
@@ -193,7 +192,7 @@ public class MapEditor
     w.setExtendedState(JFrame.MAXIMIZED_BOTH);
     w.setIconImage(Viewport.loadImage("system/logo.png"));
     w.setLocationRelativeTo(null);
-    w.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    w.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     w.addWindowListener(new WindowAdapter()
     {
       @Override

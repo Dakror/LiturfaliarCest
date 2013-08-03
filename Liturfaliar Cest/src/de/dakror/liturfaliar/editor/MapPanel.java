@@ -1,4 +1,4 @@
-package de.dakror.liturfaliar.DEPRECATEDeditor;
+package de.dakror.liturfaliar.editor;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -12,7 +12,6 @@ import javax.swing.JLayeredPane;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
 
-@Deprecated
 public class MapPanel extends JLayeredPane
 {
   private static final long serialVersionUID = 1L;
