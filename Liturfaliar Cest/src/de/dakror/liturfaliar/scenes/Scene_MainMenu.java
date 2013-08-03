@@ -9,13 +9,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.editor.Editor;
 import de.dakror.liturfaliar.ovscenes.OVScene_Controls;
-import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.Button;
 import de.dakror.liturfaliar.ui.HandleArea;
 import de.dakror.liturfaliar.ui.ProgressBar;
-import de.dakror.liturfaliar.ui.Tooltip;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.FileManager;
 import de.dakror.universion.UniVersion;
@@ -27,7 +24,6 @@ public class Scene_MainMenu implements Scene
   Button        controls;
   HandleArea    credits;
   HandleArea    optionsToggleArea;
-  Button        mapeditor;
   ProgressBar[] optionsSliders = new ProgressBar[2];
   Viewport      v;
   
@@ -49,17 +45,6 @@ public class Scene_MainMenu implements Scene
     if (FileManager.getSaves().length == 0) buttons[0].disabled = true;
     buttons[1] = new Button(v.w.getWidth() / 2 - 150, 400, 300, "Neues Spiel", Color.white, 40.0f);
     buttons[2] = new Button(v.w.getWidth() / 2 - 150, 500, 300, "Spiel beenden", Color.white, 40.0f);
-    if (CFG.MAPEDITOR)
-    {
-      mapeditor = new Button(-8, 50, 60, 60, Viewport.loadImage("system/mapeditor.png"));
-      mapeditor.tooltip = new Tooltip("<#ffffff;20;1>Karteneditor", mapeditor);
-      mapeditor.tooltip.tileset = null;
-      mapeditor.tooltip.follow = true;
-      mapeditor.tileset = "Wood";
-      mapeditor.iw = -20;
-      mapeditor.ih = -20;
-      
-    }
     v.playMusic("013-Theme02", false);
   }
   
@@ -87,16 +72,6 @@ public class Scene_MainMenu implements Scene
     {
       buttons[2].setState(0);
       v.stop();
-    }
-    
-    if (mapeditor != null)
-    {
-      mapeditor.update();
-      if (mapeditor.getState() == 1)
-      {
-        v.editor = new Editor(v);
-        mapeditor.setState(0);
-      }
     }
     
     if (credits.state == 1)
@@ -152,12 +127,7 @@ public class Scene_MainMenu implements Scene
     Assistant.drawMenuBackground(g, v.w);
     // title
     g.drawImage(Viewport.loadImage("system/lc.png"), 400, 75, v.w.getWidth() - 800, (int) (((v.w.getWidth() - 800) / (float) Viewport.loadImage("system/lc.png").getWidth(v.w)) * Viewport.loadImage("system/lc.png").getHeight(v.w)), v.w);
-    
-    if (mapeditor != null)
-    {
-      mapeditor.draw(g, v);
-    }
-    
+
     // buttons
     int highlighted = -1;
     for (int i = 0; i < buttons.length; i++)
@@ -232,9 +202,7 @@ public class Scene_MainMenu implements Scene
     }
     catch (Exception e2)
     {}
-    
-    if (mapeditor != null) mapeditor.mouseMoved(e);
-    
+
     if (optionsToggle && optionsToggleArea.state == 0) controls.mouseMoved(e);
   }
   
@@ -248,9 +216,7 @@ public class Scene_MainMenu implements Scene
     }
     optionsToggleArea.mouseReleased(e);
     credits.mouseReleased(e);
-    
-    if (mapeditor != null) mapeditor.mouseReleased(e);
-    
+  
     if (optionsToggle && optionsToggleArea.state == 0) controls.mouseReleased(e);
   }
   

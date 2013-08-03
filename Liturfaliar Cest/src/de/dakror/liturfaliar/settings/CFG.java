@@ -20,7 +20,7 @@ public final class CFG
   
   public static boolean        HELPOVERLAYCREATE = false;
   public static boolean        GAMEUPDATE        = true;
-  public static final boolean  MAPEDITOR         = true;
+  public static boolean        MAPEDITOR         = false;
   
   public static final double   PLAYERLAYER       = 1.0;
   public static final double   SUPERADDLAYER     = 1000.0;

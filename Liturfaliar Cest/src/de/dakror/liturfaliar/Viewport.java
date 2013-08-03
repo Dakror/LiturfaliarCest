@@ -350,7 +350,15 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       e.printStackTrace();
     }
-    setScene(new Scene_Logo());
+    if (!CFG.MAPEDITOR)
+    {
+      setScene(new Scene_Logo());
+    }
+    else
+    {
+      running = false;
+      editor = new Editor(this);
+    }
     frozenFrames = false;
     time = System.currentTimeMillis();
     initialized = true;

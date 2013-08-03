@@ -57,6 +57,7 @@ public class LiturfaliarCest
           CFG.p("Usage: LiturfaliarCest [options]");
           CFG.p("  All options are optional, listed here:");
           CFG.p("");
+          CFG.p("   -editor                           Opens the Editor instead of the game.");
           CFG.p("   -hd{alternative harddrive-index}  Enter the index of the harddrive where the");
           CFG.p("                                     game media files are  downloaded to. ");
           CFG.p("                                     Example: -hdE = Sets the harddrive to E:\\");
@@ -68,6 +69,10 @@ public class LiturfaliarCest
           CFG.p("   -p{IP}                            Sets the HTTP proxy server.");
           CFG.p("   -pp{PORT}                         Sets the HTTP proxy server port.");
           System.exit(0);
+        }
+        else if (arg.startsWith("-editor"))
+        {
+          CFG.MAPEDITOR = true;
         }
         else if (arg.startsWith("-hd"))
         {

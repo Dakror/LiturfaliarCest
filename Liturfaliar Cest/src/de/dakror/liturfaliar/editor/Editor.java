@@ -3,26 +3,38 @@ package de.dakror.liturfaliar.editor;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.JTree;
 import javax.swing.ToolTipManager;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.universion.UniVersion;
 
 public class Editor extends JFrame
 {
-  private static final long serialVersionUID = 1L;
+  private static final long      serialVersionUID = 1L;
   
-  Viewport                  v;
+  public static final FileFilter FILE_FILTER_PACK = new FileNameExtensionFilter("Liturfaliar Cest Kartenpaket (*.pack)", "pack");
+  public static final FileFilter FILE_FILTER_MAP  = new FileNameExtensionFilter("Liturfaliar Cest Karte (*.map)", "map");
+  
+  Viewport                       v;
+  
+  JTree                          tree;
+  JScrollPane                    treePanel;
   
   public Editor(final Viewport v)
   {
@@ -33,7 +45,7 @@ public class Editor extends JFrame
     setExtendedState(JFrame.MAXIMIZED_BOTH);
     setIconImage(Viewport.loadImage("system/logo.png"));
     setLocationRelativeTo(null);
-    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     addWindowListener(new WindowAdapter()
     {
       @Override
@@ -56,7 +68,7 @@ public class Editor extends JFrame
   
   public Icon getIcon(String name)
   {
-    return new ImageIcon(Viewport.loadScaledImage("icons/eclipse/" + name + ".png", 20, 20));
+    return new ImageIcon(Viewport.loadScaledImage("icon/eclipse/" + name + ".png", 20, 20));
   }
   
   public JButton createToolBarButton(String tooltip, String icon, Action action)
@@ -79,6 +91,69 @@ public class Editor extends JFrame
     JPanel contentPanel = new JPanel(new BorderLayout());
     // -- toolbar -- //
     JToolBar toolBar = new JToolBar();
+    toolBar.setFloatable(false);
+    toolBar.setRollover(true);
+    toolBar.add(createToolBarButton("Neues Kartenpaket", "newprj_wiz", new AbstractAction()
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        newMapPack();
+      }
+    }));
+    toolBar.add(createToolBarButton("Kartenpaket laden", "prj_obj", new AbstractAction()
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        openMapPack();
+      }
+    }));
+    toolBar.add(createToolBarButton("Kartenpaket-Info bearbeiten", "editor", new AbstractAction()
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        editMapPackInfo();
+      }
+    }));
+    toolBar.addSeparator();
+    toolBar.add(createToolBarButton("Neue Karte", "new_con", new AbstractAction()
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        newMap();
+      }
+    }));
+    toolBar.add(createToolBarButton("Karte laden", "fldr_obj", new AbstractAction()
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        openMap();
+      }
+    }));
+    toolBar.add(createToolBarButton("Karte speichern", "save_edit", new AbstractAction()
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        saveMap();
+      }
+    }));
     
     contentPanel.add(toolBar, BorderLayout.PAGE_START);
     
@@ -90,17 +165,29 @@ public class Editor extends JFrame
     setContentPane(contentPanel);
   }
   
+  // -- dialogs -- //
+  
   void newMapPack()
-  { 
-    
-  }
+  {}
   
   void openMapPack()
-  { 
-    
-  }
+  {}
   
-  void saveMapPack()
+  void editMapPackInfo()
+  {}
+  
+  void newMap()
+  {}
+  
+  void openMap()
+  {}
+  
+  void saveMap()
+  {}
+  
+  // -- methods -- //
+  
+  void refresh()
   { 
     
   }
