@@ -58,6 +58,7 @@ public class Door implements FieldData
     dest.setPos(CFG.MAPCENTER.x - dx, CFG.MAPCENTER.y - dy);
     m.getMapPack().setActiveMap(dest);
     ((Player) c).setPos(dx, dy);
+    ((Player) c).setTarget(dx, dy);
     if (dir != -1) c.setDir(dir);
   }
   
