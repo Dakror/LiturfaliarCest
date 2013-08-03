@@ -12,6 +12,7 @@ import javax.swing.JLayeredPane;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
 
+@Deprecated
 public class MapPanel extends JLayeredPane
 {
   private static final long serialVersionUID = 1L;

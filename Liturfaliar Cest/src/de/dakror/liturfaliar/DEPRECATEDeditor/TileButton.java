@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
 
+@Deprecated
 public class TileButton extends JButton
 {
   private static final long serialVersionUID = 1L;

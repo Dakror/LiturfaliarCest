@@ -91,12 +91,14 @@ import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.DamageType;
+import de.dakror.liturfaliar.ui.swing.JColorSlider;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Compressor;
 import de.dakror.liturfaliar.util.FileManager;
 import de.dakror.liturfaliar.util.Vector;
 import de.dakror.universion.UniVersion;
 
+@Deprecated
 public class MapEditor
 {
   
@@ -198,7 +200,7 @@ public class MapEditor
       public void windowClosing(WindowEvent e)
       {
         v.w.setVisible(true);
-        v.mapeditor = null;
+        //v.mapeditor = null;
       }
     });
     init();

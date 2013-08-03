@@ -1,4 +1,4 @@
-package de.dakror.liturfaliar.DEPRECATEDeditor;
+package de.dakror.liturfaliar.ui.swing;
 
 import java.awt.Color;
 import java.awt.Dimension;
