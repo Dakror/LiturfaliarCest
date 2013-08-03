@@ -25,17 +25,23 @@ public class Compressor
   
   public static void compressFile(File f, byte[] input)
   {
-    byte[] length = ByteBuffer.allocate(4).putInt(input.length).array();
-    byte[] buffer = new byte[input.length];
+    setFileContent(f, compress(input));
+  }
+  
+  public static byte[] compress(byte[] b)
+  {
+    byte[] length = ByteBuffer.allocate(4).putInt(b.length).array();
+    byte[] buffer = new byte[b.length];
     Deflater deflater = new Deflater(Deflater.BEST_COMPRESSION);
-    deflater.setInput(input);
+    deflater.setInput(b);
     deflater.finish();
     int len = deflater.deflate(buffer);
     byte[] compr = Arrays.copyOf(buffer, len);
     byte[] output = new byte[compr.length + 4];
     System.arraycopy(length, 0, output, 0, length.length);
     System.arraycopy(compr, 0, output, 4, compr.length);
-    setFileContent(f, output);
+    
+    return output;
   }
   
   public static byte[] decompress(byte[] b)
