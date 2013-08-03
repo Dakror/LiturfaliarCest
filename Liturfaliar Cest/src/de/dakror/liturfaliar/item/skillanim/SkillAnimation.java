@@ -42,15 +42,13 @@ public abstract class SkillAnimation
   
   public void update(long timePassed, Map m)
   {
-    if (m == null)
-      return;
+    if (m == null) return;
     
     for (Creature c : m.creatures)
     {
       if (c != null && c.isAlive() && !affected.contains(c))
       {
-        if (isInRange(c, m))
-          dealEffect(c);
+        if (isInRange(c, m)) dealEffect(c);
       }
     }
   }
@@ -73,16 +71,14 @@ public abstract class SkillAnimation
       hit = false;
     }
     
-    if (!below)
-      return;
+    if (!below) return;
     
     draw(g, v, m);
   }
   
   public void drawAbove(Graphics2D g, Viewport v, Map m)
   {
-    if (below)
-      return;
+    if (below) return;
     
     draw(g, v, m);
   }

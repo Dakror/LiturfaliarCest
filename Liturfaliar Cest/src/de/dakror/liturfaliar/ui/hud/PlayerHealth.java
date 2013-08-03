@@ -23,8 +23,7 @@ public class PlayerHealth extends HUDComponent
   @Override
   public void update(long timePassed, Map m)
   {
-    if (visible)
-      bar.value = (float) (player.getAttributes().getAttribute(Attr.health).getValue() / player.getAttributes().getAttribute(Attr.health).getMaximum());
+    if (visible) bar.value = (float) (player.getAttributes().getAttribute(Attr.health).getValue() / player.getAttributes().getAttribute(Attr.health).getMaximum());
   }
   
   @Override
@@ -41,7 +40,6 @@ public class PlayerHealth extends HUDComponent
       visible = true;
     }
     
-    if (visible)
-      bar.draw(g, v);
+    if (visible) bar.draw(g, v);
   }
 }

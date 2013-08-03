@@ -30,8 +30,7 @@ public class Container extends Component
   @Override
   public void draw(Graphics2D g, Viewport v)
   {
-    if (this.tileset != null)
-      Assistant.stretchTileset(Viewport.loadImage("tileset/" + this.tileset + ".png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
+    if (this.tileset != null) Assistant.stretchTileset(Viewport.loadImage("tileset/" + this.tileset + ".png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
     else Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8), Color.decode("#222222"), 0.6f, g);
   }
   

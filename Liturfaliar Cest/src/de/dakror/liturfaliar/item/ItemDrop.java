@@ -140,8 +140,7 @@ public class ItemDrop
     {
       for (ItemDrop id : m.getItemDrops())
       {
-        if (id.getArea().intersects(getArea().getBounds()) && id.getZ() > z)
-          return;
+        if (id.getArea().intersects(getArea().getBounds()) && id.getZ() > z) return;
       }
       m.getPlayer().resetTarget();
       m.getPlayer().putItemInFirstInventorySlot(item);

@@ -13,8 +13,7 @@ public class Projection
   
   public boolean intersects(Projection o)
   {
-    if (min < o.min)
-      return max > o.min;
+    if (min < o.min) return max > o.min;
     else return min < o.max;
   }
   

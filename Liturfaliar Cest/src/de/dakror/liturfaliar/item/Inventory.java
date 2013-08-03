@@ -1,10 +1,10 @@
 package de.dakror.liturfaliar.item;
 
-import de.dakror.liturfaliar.event.listener.ItemSlotEventListener;
+import de.dakror.liturfaliar.event.Listener;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.ui.ItemSlot;
 
-public interface Inventory extends ItemSlotEventListener
+public interface Inventory extends Listener
 {
   public ItemSlot getPickedUpItemSlot();
   

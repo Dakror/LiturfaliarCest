@@ -53,8 +53,7 @@ public class TargetLabel extends HUDComponent
       try
       {
         String name = "";
-        if (this.target.getClass() == NPC.class)
-          name = ((NPC) this.target).getName();
+        if (this.target.getClass() == NPC.class) name = ((NPC) this.target).getName();
         else
         {
           this.target = null;
@@ -71,8 +70,7 @@ public class TargetLabel extends HUDComponent
         int ix = Assistant.drawHorizontallyCenteredString(name, getX(), getWidth(), getY() + getHeight() / 3, g, 22, Color.white);
         if (target instanceof NPC && ((NPC) target).isHostile())
         {
-          if (hostile == null)
-            hostile = new Icon(ix - 24, getY() + 5, 22, 22, 4, 238);
+          if (hostile == null) hostile = new Icon(ix - 24, getY() + 5, 22, 22, 4, 238);
           
           hostile.draw(g, v.w);
         }

@@ -86,27 +86,20 @@ public final class Assistant
         Assistant.drawChar(x, y, w, h, dir, frame, "skin", equip.getEquipmentItem(Categories.SKIN).getCharPath() + "_b", g, window, ch);
         Assistant.drawChar(x, y, w, h, dir, frame, "skin", equip.getEquipmentItem(Categories.SKIN).getCharPath() + "_f", g, window, ch);
       }
-      if (equip.hasEquipmentItem(Categories.EYES))
-        Assistant.drawChar(x, y, w, h, dir, frame, "eyes", equip.getEquipmentItem(Categories.EYES).getCharPath(), g, window, ch);
+      if (equip.hasEquipmentItem(Categories.EYES)) Assistant.drawChar(x, y, w, h, dir, frame, "eyes", equip.getEquipmentItem(Categories.EYES).getCharPath(), g, window, ch);
       
-      if (equip.hasEquipmentItem(Categories.PANTS))
-        Assistant.drawChar(x, y, w, h, dir, frame, "pants", equip.getEquipmentItem(Categories.PANTS).getCharPath(), g, window, ch);
+      if (equip.hasEquipmentItem(Categories.PANTS)) Assistant.drawChar(x, y, w, h, dir, frame, "pants", equip.getEquipmentItem(Categories.PANTS).getCharPath(), g, window, ch);
       
-      if (equip.hasEquipmentItem(Categories.BOOTS))
-        Assistant.drawChar(x, y, w, h, dir, frame, "boots", equip.getEquipmentItem(Categories.BOOTS).getCharPath(), g, window, ch);
+      if (equip.hasEquipmentItem(Categories.BOOTS)) Assistant.drawChar(x, y, w, h, dir, frame, "boots", equip.getEquipmentItem(Categories.BOOTS).getCharPath(), g, window, ch);
       
-      if (equip.hasEquipmentItem(Categories.SHIRT))
-        Assistant.drawChar(x, y, w, h, dir, frame, "shirt", equip.getEquipmentItem(Categories.SHIRT).getCharPath(), g, window, ch);
+      if (equip.hasEquipmentItem(Categories.SHIRT)) Assistant.drawChar(x, y, w, h, dir, frame, "shirt", equip.getEquipmentItem(Categories.SHIRT).getCharPath(), g, window, ch);
       
-      if (equip.hasEquipmentItem(Categories.HAIR))
-        Assistant.drawChar(x, y, w, h, dir, frame, "hair", equip.getEquipmentItem(Categories.HAIR).getCharPath(), g, window, ch);
+      if (equip.hasEquipmentItem(Categories.HAIR)) Assistant.drawChar(x, y, w, h, dir, frame, "hair", equip.getEquipmentItem(Categories.HAIR).getCharPath(), g, window, ch);
       
       
-      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "m"))
-        Assistant.drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_m", g, window, ch);
+      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "m")) Assistant.drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_m", g, window, ch);
       
-      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "f"))
-        Assistant.drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_f", g, window, ch);
+      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "f")) Assistant.drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_f", g, window, ch);
     }
   }
   
@@ -115,8 +108,7 @@ public final class Assistant
     Image i = Viewport.loadScaledImage("char/" + type + "/" + image + ".png", w * 4, h * 4);
     int iw = i.getWidth(null) / 4;
     int ih = i.getHeight(null) / 4;
-    if (!ch)
-      g.drawImage(i, x, y, x + w, y + h, dir * iw, (frame % 4) * ih, dir * iw + iw, (frame % 4) * ih + ih, window);
+    if (!ch) g.drawImage(i, x, y, x + w, y + h, dir * iw, (frame % 4) * ih, dir * iw + iw, (frame % 4) * ih + ih, window);
     else g.drawImage(i, x, y, x + w, y + h, (frame % 4) * iw, dir * ih, (frame % 4) * iw + iw, dir * ih + ih, window);
   }
   
@@ -281,29 +273,23 @@ public final class Assistant
       {
         do
         {
-          if (isvowel == 1)
-            data = cfg.getJSONArray("vowels").getJSONArray(rolldie(0, cfg.getJSONArray("vowels").length() - 1));
+          if (isvowel == 1) data = cfg.getJSONArray("vowels").getJSONArray(rolldie(0, cfg.getJSONArray("vowels").length() - 1));
           else data = cfg.getJSONArray("consonants").getJSONArray(rolldie(0, cfg.getJSONArray("consonants").length() - 1));
           if (i == 1)
           {
-            if ((data.getInt(1) & 2) > 0)
-              break;
+            if ((data.getInt(1) & 2) > 0) break;
           }
           else if (i == length)
           {
-            if ((data.getInt(1) & 1) > 0)
-              break;
+            if ((data.getInt(1) & 1) > 0) break;
           }
-          else if ((data.getInt(1) & 4) > 0)
-            break;
+          else if ((data.getInt(1) & 4) > 0) break;
         }
         while (genname == "");
-        if (data != null)
-          genname += data.getString(0);
+        if (data != null) genname += data.getString(0);
         isvowel = 1 - isvowel;
       }
-      if (genname.length() > 1)
-        genname = (genname.substring(0, 1)).toUpperCase() + genname.substring(1);
+      if (genname.length() > 1) genname = (genname.substring(0, 1)).toUpperCase() + genname.substring(1);
       return genname;
     }
     catch (JSONException e)
@@ -315,8 +301,7 @@ public final class Assistant
   
   public static int getSorting(int i)
   {
-    if (i > 0)
-      return 1;
+    if (i > 0) return 1;
     else return -1;
   }
   
@@ -360,8 +345,7 @@ public final class Assistant
     for (int i = 0; i < a.length(); i++)
       try
       {
-        if (a.get(i) instanceof JSONObject)
-          list.add(a.getJSONObject(i));
+        if (a.get(i) instanceof JSONObject) list.add(a.getJSONObject(i));
       }
       catch (JSONException e)
       {
@@ -433,8 +417,7 @@ public final class Assistant
   
   public static int round(int i, int step)
   {
-    if (i % step > step / 2.0f)
-      return i + (step - (i % step));
+    if (i % step > step / 2.0f) return i + (step - (i % step));
     else return i - (i % step);
   }
   
@@ -448,8 +431,7 @@ public final class Assistant
     for (int i = 0; i < array.length(); i++)
       try
       {
-        if (array.get(i).equals(thing))
-          return i;
+        if (array.get(i).equals(thing)) return i;
       }
       catch (JSONException e)
       {
@@ -461,8 +443,7 @@ public final class Assistant
   
   public static void setCursor(Image cursor, Window w)
   {
-    if (cursor == null)
-      cursor = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    if (cursor == null) cursor = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
     w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "Cursor"));
   }
   
@@ -526,18 +507,13 @@ public final class Assistant
   
   public static Area toArea(Image img)
   {
-    long time = System.currentTimeMillis();
-    
     BufferedImage image = Assistant.toBufferedImage(img);
     
     Area area = new Area();
     
     for (int i = 0; i < image.getHeight(); i++)
       for (int j = 0; j < image.getWidth(); j++)
-        if (((image.getRGB(j, i) >> 24) & 0xff) == 255)
-          area.add(new Area(new Rectangle2D.Double(j, i, 1, 1)));
-    
-    CFG.p("rendering took: " + (System.currentTimeMillis() - time));
+        if (((image.getRGB(j, i) >> 24) & 0xff) == 255) area.add(new Area(new Rectangle2D.Double(j, i, 1, 1)));
     return area;
   }
   
@@ -552,10 +528,8 @@ public final class Assistant
   public static String wrap(String in, int len)
   {
     in = in.trim();
-    if (in.length() < len)
-      return in;
-    if (in.substring(0, len).contains("\n"))
-      return in.substring(0, in.indexOf("\n")).trim() + "\n\n" + wrap(in.substring(in.indexOf("\n") + 1), len);
+    if (in.length() < len) return in;
+    if (in.substring(0, len).contains("\n")) return in.substring(0, in.indexOf("\n")).trim() + "\n\n" + wrap(in.substring(in.indexOf("\n") + 1), len);
     int place = Math.max(Math.max(in.lastIndexOf(" ", len), in.lastIndexOf("\t", len)), in.lastIndexOf("-", len));
     return in.substring(0, place).trim() + "\n" + wrap(in.substring(place), len);
   }
@@ -566,8 +540,7 @@ public final class Assistant
     while (true)
     {
       result = (int) Math.floor(Math.random() * (maxvalue - minvalue + 1) + minvalue);
-      if ((result >= minvalue) && (result <= maxvalue))
-        return result;
+      if ((result >= minvalue) && (result <= maxvalue)) return result;
     }
   }
 }

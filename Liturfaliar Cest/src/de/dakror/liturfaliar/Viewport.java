@@ -98,10 +98,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
    */
   public void update(long paramLong)
   {
-    if (!initialized)
-      return;
-    if (scene != null)
-      scene.update(paramLong);
+    if (!initialized) return;
+    if (scene != null) scene.update(paramLong);
     
     try
     {
@@ -114,8 +112,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     catch (ConcurrentModificationException e)
     {}
     
-    if (dialog != null)
-      dialog.update();
+    if (dialog != null) dialog.update();
   }
   
   /**
@@ -130,8 +127,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
     g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     
-    if (scene != null && initialized)
-      scene.draw(g);
+    if (scene != null && initialized) scene.draw(g);
     
     if (takeScreenshot)
     {
@@ -169,12 +165,10 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     if (notification != null)
     {
       notification.draw(g, w);
-      if (notification.finished)
-        notification = null;
+      if (notification.finished) notification = null;
     }
     // static drawers
-    if (dialog != null)
-      dialog.draw(g, this);
+    if (dialog != null) dialog.draw(g, this);
     
     CursorText.draw(g, w);
     HelpOverlay.draw(g, this);
@@ -194,8 +188,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     
     clearOVScenes();
     
-    if (scene != null)
-      scene.destruct();
+    if (scene != null) scene.destruct();
     
     HelpOverlay.clear();
     scene = s;
@@ -211,8 +204,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     HashMap<String, OVScene> newov = new HashMap<String, OVScene>();
     for (int i = 0; i < ovscenes.size(); i++)
     {
-      if (ovscenes.get(keys.get(i)).consistent)
-        newov.put(keys.get(i), ovscenes.get(keys.get(i)));
+      if (ovscenes.get(keys.get(i)).consistent) newov.put(keys.get(i), ovscenes.get(keys.get(i)));
       else ovscenes.get(keys.get(i)).destruct();
     }
     ovscenes = newov;
@@ -226,8 +218,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   
   public void toggleOVScene(OVScene scene, String name)
   {
-    if (ovscenes.containsKey(name))
-      removeOVScene(name);
+    if (ovscenes.containsKey(name)) removeOVScene(name);
     
     else addOVScene(scene, name);
   }
@@ -270,8 +261,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
       }
       
       else i = Assistant.loadImage(path);
-      if (i == null)
-        System.err.println("Image is missing: " + path);
+      if (i == null) System.err.println("Image is missing: " + path);
       cache.put(path, i);
       REVcache.put(i, path);
       return i;
@@ -305,29 +295,25 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   
   public int getFrame()
   {
-    if (areFramesFrozen())
-      return 0;
+    if (areFramesFrozen()) return 0;
     return (int) ((System.currentTimeMillis() - time) / 250);
   }
   
   public int getFrame(long time)
   {
-    if (areFramesFrozen())
-      return 0;
+    if (areFramesFrozen()) return 0;
     return (int) Math.round((System.currentTimeMillis() - time) / 250.0);
   }
   
   public int getFrame(float size)
   {
-    if (areFramesFrozen())
-      return 0;
+    if (areFramesFrozen()) return 0;
     return (int) ((System.currentTimeMillis() - time) / (250 * size));
   }
   
   public int getFrame(long time, float size)
   {
-    if (areFramesFrozen())
-      return 0;
+    if (areFramesFrozen()) return 0;
     return (int) ((System.currentTimeMillis() - time) / (250 * size));
   }
   
@@ -357,8 +343,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
       dir.mkdir();
       for (File f : dir.listFiles())
       {
-        if (f.length() == 0)
-          f.delete();
+        if (f.length() == 0) f.delete();
       }
     }
     catch (Exception e)
@@ -378,10 +363,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   {
     try
     {
-      if (MusicEffectID != null)
-        ss.pause(MusicEffectID);
-      if (MusicID != null)
-        ss.pause(MusicID);
+      if (MusicEffectID != null) ss.pause(MusicEffectID);
+      if (MusicID != null) ss.pause(MusicID);
     }
     catch (Exception e)
     {}
@@ -393,10 +376,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public void play()
   {
     pausedfromscene = false;
-    if (MusicEffectID != null)
-      ss.play(MusicEffectID);
-    if (MusicID != null)
-      ss.play(MusicID);
+    if (MusicEffectID != null) ss.play(MusicEffectID);
+    if (MusicID != null) ss.play(MusicID);
   }
   
   /**
@@ -474,8 +455,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       stopMusic();
     }
-    if (FileManager.pullMediaFile("Music", name + ".wav") == null)
-      return;
+    if (FileManager.pullMediaFile("Music", name + ".wav") == null) return;
     MusicID = name + ".wav";
     ss.backgroundMusic(MusicID, FileManager.pullMediaFile("Music", name + ".wav"), MusicID, true);
     ss.setVolume(MusicID, (float) fMusicID);
@@ -488,8 +468,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
       play();
       return;
     }
-    if (FileManager.pullMediaFile("Music", name + ".wav") == null)
-      return;
+    if (FileManager.pullMediaFile("Music", name + ".wav") == null) return;
     MusicID = name + ".wav";
     ss.backgroundMusic(MusicID, FileManager.pullMediaFile("Music", name + ".wav"), MusicID, true);
     ss.setVolume(MusicID, vol);
@@ -527,8 +506,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   @Override
   public void windowClosing(WindowEvent e)
   {
-    if (!initialized)
-      return;
+    if (!initialized) return;
     FileManager.saveOptions(this);
     stop();
   }
@@ -556,16 +534,14 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   @Override
   public void windowActivated(WindowEvent e)
   {
-    if (!pausedfromscene)
-      play();
+    if (!pausedfromscene) play();
   }
   
   @Override
   public void windowDeactivated(WindowEvent e)
   {
-    if (scene instanceof Scene_Game && !((Scene_Game) scene).isPaused())
-      ;// ((Scene_Game) scene).togglePaused();
-      
+    if (scene instanceof Scene_Game && !((Scene_Game) scene).isPaused()) ;// ((Scene_Game) scene).togglePaused();
+    
     pause();
   }
   
@@ -586,19 +562,16 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
-        if (dialog != null && dialog.freezeOVScene)
-          continue;
+        if (dialog != null && dialog.freezeOVScene) continue;
         ovscenes.get(ovscene).mouseWheelMoved(e);
       }
     }
     catch (ConcurrentModificationException e1)
     {}
     
-    if (scene != null && sceneEnabled && dialog == null)
-      scene.mouseWheelMoved(e);
+    if (scene != null && sceneEnabled && dialog == null) scene.mouseWheelMoved(e);
     
-    if (dialog != null)
-      dialog.mouseWheelMoved(e);
+    if (dialog != null) dialog.mouseWheelMoved(e);
   }
   
   @Override
@@ -608,19 +581,16 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
-        if (dialog != null && dialog.freezeOVScene)
-          continue;
+        if (dialog != null && dialog.freezeOVScene) continue;
         ovscenes.get(ovscene).mouseDragged(e);
       }
     }
     catch (ConcurrentModificationException e1)
     {}
     
-    if (scene != null && sceneEnabled && dialog == null)
-      scene.mouseDragged(e);
+    if (scene != null && sceneEnabled && dialog == null) scene.mouseDragged(e);
     
-    if (dialog != null)
-      dialog.mouseDragged(e);
+    if (dialog != null) dialog.mouseDragged(e);
   }
   
   @Override
@@ -630,19 +600,16 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
-        if (dialog != null && dialog.freezeOVScene)
-          continue;
+        if (dialog != null && dialog.freezeOVScene) continue;
         ovscenes.get(ovscene).mouseMoved(e);
       }
     }
     catch (ConcurrentModificationException e1)
     {}
     
-    if (scene != null && sceneEnabled && dialog == null)
-      scene.mouseMoved(e);
+    if (scene != null && sceneEnabled && dialog == null) scene.mouseMoved(e);
     
-    if (dialog != null)
-      dialog.mouseMoved(e);
+    if (dialog != null) dialog.mouseMoved(e);
     
     
     CursorText.mouseMoved(e);
@@ -655,19 +622,16 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
-        if (dialog != null && dialog.freezeOVScene)
-          continue;
+        if (dialog != null && dialog.freezeOVScene) continue;
         ovscenes.get(ovscene).mouseClicked(e);
       }
     }
     catch (ConcurrentModificationException e1)
     {}
     
-    if (scene != null && sceneEnabled && dialog == null)
-      scene.mouseClicked(e);
+    if (scene != null && sceneEnabled && dialog == null) scene.mouseClicked(e);
     
-    if (dialog != null)
-      dialog.mouseClicked(e);
+    if (dialog != null) dialog.mouseClicked(e);
   }
   
   @Override
@@ -677,19 +641,16 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
-        if (dialog != null && dialog.freezeOVScene)
-          continue;
+        if (dialog != null && dialog.freezeOVScene) continue;
         ovscenes.get(ovscene).mousePressed(e);
       }
     }
     catch (ConcurrentModificationException e1)
     {}
     
-    if (scene != null && sceneEnabled && dialog == null)
-      scene.mousePressed(e);
+    if (scene != null && sceneEnabled && dialog == null) scene.mousePressed(e);
     
-    if (dialog != null)
-      dialog.mousePressed(e);
+    if (dialog != null) dialog.mousePressed(e);
   }
   
   @Override
@@ -699,19 +660,16 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
-        if (dialog != null && dialog.freezeOVScene)
-          continue;
+        if (dialog != null && dialog.freezeOVScene) continue;
         ovscenes.get(ovscene).mouseReleased(e);
       }
     }
     catch (ConcurrentModificationException e1)
     {}
     
-    if (scene != null && sceneEnabled && dialog == null)
-      scene.mouseReleased(e);
+    if (scene != null && sceneEnabled && dialog == null) scene.mouseReleased(e);
     
-    if (dialog != null)
-      dialog.mouseReleased(e);
+    if (dialog != null) dialog.mouseReleased(e);
   }
   
   @Override
@@ -721,19 +679,16 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
-        if (dialog != null && dialog.freezeOVScene)
-          continue;
+        if (dialog != null && dialog.freezeOVScene) continue;
         ovscenes.get(ovscene).mouseEntered(e);
       }
     }
     catch (ConcurrentModificationException e1)
     {}
     
-    if (scene != null && sceneEnabled && dialog == null)
-      scene.mouseEntered(e);
+    if (scene != null && sceneEnabled && dialog == null) scene.mouseEntered(e);
     
-    if (dialog != null)
-      dialog.mouseEntered(e);
+    if (dialog != null) dialog.mouseEntered(e);
   }
   
   @Override
@@ -743,19 +698,16 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
-        if (dialog != null && dialog.freezeOVScene)
-          continue;
+        if (dialog != null && dialog.freezeOVScene) continue;
         ovscenes.get(ovscene).mouseExited(e);
       }
     }
     catch (ConcurrentModificationException e1)
     {}
     
-    if (scene != null && sceneEnabled && dialog == null)
-      scene.mouseExited(e);
+    if (scene != null && sceneEnabled && dialog == null) scene.mouseExited(e);
     
-    if (dialog != null)
-      dialog.mouseExited(e);
+    if (dialog != null) dialog.mouseExited(e);
   }
   
   @Override
@@ -765,19 +717,16 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
-        if (dialog != null && dialog.freezeOVScene)
-          continue;
+        if (dialog != null && dialog.freezeOVScene) continue;
         ovscenes.get(ovscene).keyTyped(e);
       }
     }
     catch (ConcurrentModificationException e1)
     {}
     
-    if (scene != null && sceneEnabled && dialog == null)
-      scene.keyTyped(e);
+    if (scene != null && sceneEnabled && dialog == null) scene.keyTyped(e);
     
-    if (dialog != null)
-      dialog.keyTyped(e);
+    if (dialog != null) dialog.keyTyped(e);
   }
   
   @Override
@@ -800,19 +749,16 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
-        if (dialog != null && dialog.freezeOVScene)
-          continue;
+        if (dialog != null && dialog.freezeOVScene) continue;
         ovscenes.get(ovscene).keyPressed(e);
       }
     }
     catch (ConcurrentModificationException e1)
     {}
     
-    if (scene != null && sceneEnabled && dialog == null)
-      scene.keyPressed(e);
+    if (scene != null && sceneEnabled && dialog == null) scene.keyPressed(e);
     
-    if (dialog != null)
-      dialog.keyPressed(e);
+    if (dialog != null) dialog.keyPressed(e);
   }
   
   @Override
@@ -822,19 +768,16 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {
       for (String ovscene : ovscenes.keySet())
       {
-        if (dialog != null && dialog.freezeOVScene)
-          continue;
+        if (dialog != null && dialog.freezeOVScene) continue;
         ovscenes.get(ovscene).keyReleased(e);
       }
     }
     catch (ConcurrentModificationException e1)
     {}
     
-    if (scene != null && sceneEnabled && dialog == null)
-      scene.keyReleased(e);
+    if (scene != null && sceneEnabled && dialog == null) scene.keyReleased(e);
     
-    if (dialog != null)
-      dialog.keyReleased(e);
+    if (dialog != null) dialog.keyReleased(e);
   }
   
   public static void setSceneEnabled(boolean b)

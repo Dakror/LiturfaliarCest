@@ -41,17 +41,14 @@ public class PotionAction extends ItemAction
   @Override
   public void actionTriggered(Item item, Creature c, Map m, Viewport v)
   {
-    if (item.getItemSlot() == null)
-      return;
+    if (item.getItemSlot() == null) return;
     
     Creature target = c;
     
-    if (targetID.indexOf("_") > -1)
-      target = m.getCreatureByAccessKey(targetID);
+    if (targetID.indexOf("_") > -1) target = m.getCreatureByAccessKey(targetID);
     // else if(targetID.equals(CASTER)) // TODO: add relative target mechanic
     
-    if (target == null)
-      return;
+    if (target == null) return;
     
     Attributes attributes = target.getAttributes();
     

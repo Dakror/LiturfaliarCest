@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
+import de.dakror.liturfaliar.event.Dispatcher;
+import de.dakror.liturfaliar.event.Event;
+import de.dakror.liturfaliar.event.Events;
 import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.item.Item;
@@ -54,7 +56,7 @@ public class OVScene_Skills extends OVScene implements Inventory
   public void construct(Viewport v)
   {
     this.v = v;
-    ItemSlotEventDispatcher.addItemSlotEventListener(this);
+    Dispatcher.addListener(this);
     c1 = new Container(0, 0, v.w.getWidth(), 55);
     c1.tileset = null;
     
@@ -80,7 +82,7 @@ public class OVScene_Skills extends OVScene implements Inventory
   @Override
   public void destruct()
   {
-    ItemSlotEventDispatcher.removeItemSlotEventListener(this);
+    Dispatcher.removeListener(this);
   }
   
   @Override
@@ -120,8 +122,7 @@ public class OVScene_Skills extends OVScene implements Inventory
     int size = 70;
     Font oldFont = g.getFont();
     g.setFont(new Font("Times New Roman", 0, 1));
-    if (g.getFontMetrics(g.getFont().deriveFont(size)).stringWidth(string) > 50)
-      size -= g.getFontMetrics(g.getFont().deriveFont(size)).stringWidth(string) - 50;
+    if (g.getFontMetrics(g.getFont().deriveFont(size)).stringWidth(string) > 50) size -= g.getFontMetrics(g.getFont().deriveFont(size)).stringWidth(string) - 50;
     
     Assistant.drawHorizontallyCenteredString(string, v.w.getWidth() / 2 + 410, 172, 174, g, size, Color.white);
     g.setFont(oldFont);
@@ -147,8 +148,7 @@ public class OVScene_Skills extends OVScene implements Inventory
     
     if (pickedUp != null)
     {
-      if (pickedUp instanceof SkillSlot)
-        ((SkillSlot) pickedUp).getItem().draw(g, v);
+      if (pickedUp instanceof SkillSlot) ((SkillSlot) pickedUp).getItem().draw(g, v);
       else pickedUp.drawLightWeight(g, v);
     }
   }
@@ -181,20 +181,17 @@ public class OVScene_Skills extends OVScene implements Inventory
       for (SkillSlot slot : slots)
       {
         SkillAction sa = (SkillAction) slot.getItem().getAction();
-        if (sa.getParents().length == 0)
-          continue;
+        if (sa.getParents().length == 0) continue;
         
         ArrayList<SkillSlot> parents = new ArrayList<SkillSlot>();
         
         for (SkillSlot slot1 : slots)
         {
-          if (slot1.equals(slot))
-            continue;
+          if (slot1.equals(slot)) continue;
           
           for (Items parent : sa.getParents())
           {
-            if (slot1.getItem().equals(new Item(parent, 1)))
-              parents.add(slot1);
+            if (slot1.getItem().equals(new Item(parent, 1))) parents.add(slot1);
           }
         }
         slot.setParents(parents.toArray(new SkillSlot[] {}));
@@ -203,56 +200,52 @@ public class OVScene_Skills extends OVScene implements Inventory
   }
   
   @Override
-  public void slotPressed(MouseEvent e, ItemSlot slot)
+  public void onEvent(Event e)
   {
-    if (slot instanceof SkillSlot)
-      pickedUp = new SkillSlot((SkillSlot) slot);
-    
-    else
-    // hotbar
+    if (e.equals(Events.slotPressed))
     {
-      pickedUp = new ItemSlot(slot);
-      pickedUp.setHotKey(-1, false);
-      sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), null);
-      slot.setItem(null);
-    }
-  }
-  
-  @Override
-  public void slotExited(MouseEvent e, ItemSlot slot)
-  {}
-  
-  @Override
-  public void slotHovered(MouseEvent e, ItemSlot slot)
-  {
-    // fake usage: updating tooltips
-    for (SkillSlot s : slots)
-    {
-      s.getItem().updateTooltip();
-    }
-  }
-  
-  @Override
-  public void slotReleased(MouseEvent e, ItemSlot slot)
-  {
-    if (slot instanceof ItemSlot) // hotbar
-    {
-      if (slot.getItem().getType().getCategory().equals(Categories.SKILL))
+      ItemSlot slot = (ItemSlot) e.getParam("slot");
+      
+      if (slot instanceof SkillSlot) pickedUp = new SkillSlot((SkillSlot) slot);
+      
+      else
+      // hotbar
       {
-        for (int i = 0; i < PlayerHotbar.SLOTCOUNT; i++)
+        pickedUp = new ItemSlot(slot);
+        pickedUp.setHotKey(-1, false);
+        sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), null);
+        slot.setItem(null);
+      }
+    }
+    else if (e.equals(Events.slotHovered))
+    {
+      // fake usage: updating tooltips
+      for (SkillSlot s : slots)
+      {
+        s.getItem().updateTooltip();
+      }
+    }
+    else if (e.equals(Events.slotPressed))
+    {
+      ItemSlot slot = (ItemSlot) e.getParam("slot");
+      if (slot instanceof ItemSlot) // hotbar
+      {
+        if (slot.getItem().getType().getCategory().equals(Categories.SKILL))
         {
-          if (sg.getPlayer().getEquipment().getHotbarItem(i) == null || Arrays.asList(hotbar).indexOf(slot) == i)
-            continue;
-          
-          if (sg.getPlayer().getEquipment().getHotbarItem(i).equals(slot.getItem()))
+          for (int i = 0; i < PlayerHotbar.SLOTCOUNT; i++)
           {
-            sg.getPlayer().getEquipment().setHotbarItem(i, null);
-            hotbar[i].setItem(null);
+            if (sg.getPlayer().getEquipment().getHotbarItem(i) == null || Arrays.asList(hotbar).indexOf(slot) == i) continue;
+            
+            if (sg.getPlayer().getEquipment().getHotbarItem(i).equals(slot.getItem()))
+            {
+              sg.getPlayer().getEquipment().setHotbarItem(i, null);
+              hotbar[i].setItem(null);
+            }
           }
         }
+        
+        sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), slot.getItem());
       }
-      
-      sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), slot.getItem());
     }
   }
   

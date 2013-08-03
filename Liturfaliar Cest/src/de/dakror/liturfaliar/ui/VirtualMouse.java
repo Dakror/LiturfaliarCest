@@ -25,12 +25,9 @@ public class VirtualMouse extends Component
   public void draw(Graphics2D g, Viewport v)
   {
     g.drawImage(Viewport.loadImage("system/mouse.png"), getX(), getY(), getWidth(), getHeight(), v.w);
-    if (this.mouse1)
-      g.drawImage(Viewport.loadImage("system/mouse1.png"), getX(), getY(), getWidth(), getHeight(), v.w);
-    if (this.mouse2)
-      g.drawImage(Viewport.loadImage("system/mouse2.png"), getX(), getY(), getWidth(), getHeight(), v.w);
-    if (this.mouse3)
-      g.drawImage(Viewport.loadImage("system/mouse3.png"), getX(), getY(), getWidth(), getHeight(), v.w);
+    if (this.mouse1) g.drawImage(Viewport.loadImage("system/mouse1.png"), getX(), getY(), getWidth(), getHeight(), v.w);
+    if (this.mouse2) g.drawImage(Viewport.loadImage("system/mouse2.png"), getX(), getY(), getWidth(), getHeight(), v.w);
+    if (this.mouse3) g.drawImage(Viewport.loadImage("system/mouse3.png"), getX(), getY(), getWidth(), getHeight(), v.w);
   }
   
   @Override
@@ -52,23 +49,17 @@ public class VirtualMouse extends Component
   @Override
   public void mousePressed(MouseEvent e)
   {
-    if (e.getButton() == 1)
-      this.mouse1 = true;
-    if (e.getButton() == 3)
-      this.mouse2 = true;
-    if (e.getButton() == 2)
-      this.mouse3 = true;
+    if (e.getButton() == 1) this.mouse1 = true;
+    if (e.getButton() == 3) this.mouse2 = true;
+    if (e.getButton() == 2) this.mouse3 = true;
   }
   
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    if (e.getButton() == 1)
-      this.mouse1 = false;
-    if (e.getButton() == 3)
-      this.mouse2 = false;
-    if (e.getButton() == 2)
-      this.mouse3 = false;
+    if (e.getButton() == 1) this.mouse1 = false;
+    if (e.getButton() == 3) this.mouse2 = false;
+    if (e.getButton() == 2) this.mouse3 = false;
   }
   
   @Override

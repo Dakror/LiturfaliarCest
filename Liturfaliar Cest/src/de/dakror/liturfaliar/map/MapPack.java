@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.liturfaliar.event.dispatcher.MapPackEventDispatcher;
+import de.dakror.liturfaliar.event.Dispatcher;
+import de.dakror.liturfaliar.event.Events;
 import de.dakror.liturfaliar.item.ItemDrop;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.FileManager;
@@ -25,7 +26,7 @@ public class MapPack
     try
     {
       // -- loading maps -- //
-      data = new JSONObject(Assistant.getFileContent(new File(FileManager.dir, "Maps/" + name + "/pack.json")));
+      data = new JSONObject(Assistant.getFileContent(new File(FileManager.dir, "Maps/" + name + "/.pack")));
     }
     catch (Exception e)
     {
@@ -72,14 +73,13 @@ public class MapPack
       {
         if (pathname.isDirectory())
         {
-          if (new File(pathname, "pack.json").exists())
+          if (new File(pathname, ".pack").exists())
           {
             try
             {
-              String content = Assistant.getFileContent(new File(pathname, "pack.json"));
+              String content = Assistant.getFileContent(new File(pathname, ".pack"));
               JSONObject json = new JSONObject(content);
-              if (json.has("init"))
-                return true;
+              if (json.has("init")) return true;
               else return false;
             }
             catch (Exception e)
@@ -102,10 +102,9 @@ public class MapPack
   
   public void setActiveMap(Map activeMap)
   {
-    MapPackEventDispatcher.dispatchMapChanged(activeMap, activeMap);
+    Dispatcher.dispatch(Events.mapChanged, this.activeMap, activeMap);
     
-    if (this.activeMap != null)
-      addChangedMap(this.activeMap);
+    if (this.activeMap != null) addChangedMap(this.activeMap);
     
     this.activeMap = activeMap;
     if (getChangedMap(activeMap.getName()) != null)
@@ -162,15 +161,13 @@ public class MapPack
   
   public ArrayList<ItemDrop> getItemDrops(Map m)
   {
-    if (m == null)
-      return itemDrops;
+    if (m == null) return itemDrops;
     
     ArrayList<ItemDrop> drops = new ArrayList<ItemDrop>();
     
     for (ItemDrop d : itemDrops)
     {
-      if (d.getMap().equals(m.getName()))
-        drops.add(d);
+      if (d.getMap().equals(m.getName())) drops.add(d);
     }
     return drops;
   }

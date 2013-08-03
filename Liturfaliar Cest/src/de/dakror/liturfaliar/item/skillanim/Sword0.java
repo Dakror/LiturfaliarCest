@@ -47,8 +47,7 @@ public class Sword0 extends SkillAnimation
   @Override
   public boolean isInRange(Creature o, Map m)
   {
-    if (realHitArea == null)
-      return false;
+    if (realHitArea == null) return false;
     
     Area intersection = o.getHitArea(m);
     
@@ -59,8 +58,7 @@ public class Sword0 extends SkillAnimation
   @Override
   protected void draw(Graphics2D g, Viewport v, Map m)
   {
-    if (this.hitArea == null)
-      return;
+    if (this.hitArea == null) return;
     
     if (left >= 50)
     {

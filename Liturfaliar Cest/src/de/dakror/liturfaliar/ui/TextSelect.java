@@ -61,8 +61,7 @@ public class TextSelect extends Component
     try
     {
       this.setOldSelected(this.selected);
-      if (this.selected != -1)
-        this.elements[this.selected].setState(0);
+      if (this.selected != -1) this.elements[this.selected].setState(0);
       this.elements[index].setState(1);
       if (this.v != null)
       {
@@ -80,8 +79,7 @@ public class TextSelect extends Component
     {
       if (reset)
       {
-        if (this.pulledindex == this.selected)
-          return null;
+        if (this.pulledindex == this.selected) return null;
         this.pulledindex = this.selected;
       }
       return this.elements[this.selected].title;
@@ -95,8 +93,7 @@ public class TextSelect extends Component
     {
       if (reset)
       {
-        if (this.pulledindex == this.selected)
-          return -1;
+        if (this.pulledindex == this.selected) return -1;
         this.pulledindex = this.selected;
       }
       return this.selected;
@@ -119,8 +116,7 @@ public class TextSelect extends Component
         this.selected = i;
       }
     }
-    if (this.selected != -1)
-      this.elements[this.selected].setState(1);
+    if (this.selected != -1) this.elements[this.selected].setState(1);
     if (this.v != null)
     {
       int scrollY = (int) ((getFullHeight() - getHeight()) * this.v.getValue());
@@ -150,28 +146,23 @@ public class TextSelect extends Component
     for (int i = 0; i < this.elements.length; i++)
     {
       this.elements[i].draw(g, v);
-      if (this.elements[i].getState() == 2)
-        sel = i;
+      if (this.elements[i].getState() == 2) sel = i;
     }
     g.setClip(null);
-    if (sel != -1 && this.elements[sel].tooltip != null)
-      this.elements[sel].tooltip.draw(g, v);
-    if (this.v != null)
-      this.v.draw(g, v);
+    if (sel != -1 && this.elements[sel].tooltip != null) this.elements[sel].tooltip.draw(g, v);
+    if (this.v != null) this.v.draw(g, v);
   }
   
   @Override
   public void mouseWheelMoved(MouseWheelEvent e)
   {
-    if (this.v != null)
-      this.v.mouseWheelMoved(e);
+    if (this.v != null) this.v.mouseWheelMoved(e);
   }
   
   @Override
   public void mouseDragged(MouseEvent e)
   {
-    if (this.v != null)
-      this.v.mouseDragged(e);
+    if (this.v != null) this.v.mouseDragged(e);
   }
   
   @Override
@@ -184,15 +175,13 @@ public class TextSelect extends Component
         b.mouseMoved(e);
       }
     }
-    if (this.v != null)
-      this.v.mouseMoved(e, this);
+    if (this.v != null) this.v.mouseMoved(e, this);
   }
   
   @Override
   public void mousePressed(MouseEvent e)
   {
-    if (this.v != null)
-      this.v.mousePressed(e);
+    if (this.v != null) this.v.mousePressed(e);
   }
   
   @Override

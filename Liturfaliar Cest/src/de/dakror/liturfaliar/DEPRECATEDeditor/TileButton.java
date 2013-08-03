@@ -23,7 +23,7 @@ public class TileButton extends JButton
   
   public boolean            update;
   
-  public boolean                   fitsFilter;
+  public boolean            fitsFilter;
   
   private int               x;
   private int               y;
@@ -110,17 +110,12 @@ public class TileButton extends JButton
   
   public void execFilterReplace(String tileset, Double layer, Integer tx, Integer ty)
   {
-    if (!fitsFilter)
-      return;
+    if (!fitsFilter) return;
     
-    if (!tileset.equals("Ignorieren"))
-      this.tileset = tileset;
-    if (layer != Double.NaN)
-      this.layer = layer;
-    if (tx != null)
-      this.tx = tx;
-    if (ty != null)
-      this.ty = ty;
+    if (!tileset.equals("Ignorieren")) this.tileset = tileset;
+    if (layer != Double.NaN) this.layer = layer;
+    if (tx != null) this.tx = tx;
+    if (ty != null) this.ty = ty;
     
     setToolTipText("Ebene: " + layer);
     
@@ -195,11 +190,9 @@ public class TileButton extends JButton
       Graphics2D g2 = (Graphics2D) image.getGraphics();
       g2.drawImage(i, 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, null);
       
-      if (data.length() > 0)
-        Assistant.Rect(0, 0, CFG.FIELDSIZE - 1, CFG.FIELDSIZE - 1, Color.blue, null, g2);
+      if (data.length() > 0) Assistant.Rect(0, 0, CFG.FIELDSIZE - 1, CFG.FIELDSIZE - 1, Color.blue, null, g2);
       
-      if (fitsFilter)
-        Assistant.Rect(0, 0, CFG.FIELDSIZE - 1, CFG.FIELDSIZE - 1, Color.green, null, g2);
+      if (fitsFilter) Assistant.Rect(0, 0, CFG.FIELDSIZE - 1, CFG.FIELDSIZE - 1, Color.green, null, g2);
       
       setIcon(new ImageIcon(image));
       setDisabledIcon(getIcon());

@@ -30,13 +30,12 @@ public class ScreenManager
     window.setIgnoreRepaint(true);
     window.setResizable(false);
     this.vc.setFullScreenWindow(window);
-    if ((dm != null) && (this.vc.isDisplayChangeSupported()))
-      try
-      {
-        this.vc.setDisplayMode(dm);
-      }
-      catch (Exception localException)
-      {}
+    if ((dm != null) && (this.vc.isDisplayChangeSupported())) try
+    {
+      this.vc.setDisplayMode(dm);
+    }
+    catch (Exception localException)
+    {}
     window.createBufferStrategy(2);
   }
   
@@ -57,8 +56,7 @@ public class ScreenManager
     if (window != null)
     {
       BufferStrategy s = window.getBufferStrategy();
-      if (!s.contentsLost())
-        s.show();
+      if (!s.contentsLost()) s.show();
     }
   }
   
@@ -70,8 +68,7 @@ public class ScreenManager
   public void restoreScreen()
   {
     Window window = this.vc.getFullScreenWindow();
-    if (window != null)
-      window.dispose();
+    if (window != null) window.dispose();
     this.vc.setFullScreenWindow(null);
   }
 }

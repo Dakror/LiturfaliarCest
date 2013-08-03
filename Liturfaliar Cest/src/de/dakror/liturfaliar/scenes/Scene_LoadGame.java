@@ -49,8 +49,7 @@ public class Scene_LoadGame implements Scene
     c1 = new Container(0, 0, v.w.getWidth(), 55);
     c1.tileset = null;
     datas = FileManager.getSaves();
-    if (datas.length == 0)
-      v.setScene(new Scene_MainMenu());
+    if (datas.length == 0) v.setScene(new Scene_MainMenu());
     
     saves = new Button[datas.length];
     int charsperpage = 5;
@@ -128,8 +127,7 @@ public class Scene_LoadGame implements Scene
       chooser.update();
       for (int i = 5 * ((Integer) chooser.getSelected(false) - 1); i < ((5 * (Integer) chooser.getSelected(false) < saves.length) ? 5 * (Integer) chooser.getSelected(false) : saves.length); i++)
       {
-        if (saves[i] == null)
-          continue;
+        if (saves[i] == null) continue;
         saves[i].update();
       }
     }
@@ -137,15 +135,12 @@ public class Scene_LoadGame implements Scene
     {
       for (int i = 0; i < saves.length; i++)
       {
-        if (saves[i] == null)
-          continue;
+        if (saves[i] == null) continue;
         saves[i].update();
       }
     }
-    if (delete != null)
-      delete.update();
-    if (start != null)
-      start.update();
+    if (delete != null) delete.update();
+    if (start != null) start.update();
     if (start.getState() == 1)
     {
       v.savegame = datas[active];
@@ -165,12 +160,10 @@ public class Scene_LoadGame implements Scene
           e.printStackTrace();
         }
         Viewport.dialog.closeRequested = true;
-        if (datas.length - 1 > 0)
-          v.setScene(new Scene_LoadGame());
+        if (datas.length - 1 > 0) v.setScene(new Scene_LoadGame());
         else v.setScene(new Scene_MainMenu());
       }
-      if (Viewport.dialog.buttons[1].getState() == 1)
-        Viewport.dialog.closeRequested = true;
+      if (Viewport.dialog.buttons[1].getState() == 1) Viewport.dialog.closeRequested = true;
       if (Viewport.dialog.closeRequested)
       {
         Viewport.dialog = null;
@@ -197,26 +190,20 @@ public class Scene_LoadGame implements Scene
       chooser.draw(g, v);
       for (int i = 5 * ((Integer) chooser.getSelected(false) - 1); i < ((5 * (Integer) chooser.getSelected(false) < saves.length) ? 5 * (Integer) chooser.getSelected(false) : saves.length); i++)
       {
-        if (saves[i] == null)
-          continue;
+        if (saves[i] == null) continue;
         saves[i].draw(g, v);
-        if (saves[i].getArea().contains(mouse))
-          selected = i;
-        if (saves[i].getState() == 1)
-          active = i;
+        if (saves[i].getArea().contains(mouse)) selected = i;
+        if (saves[i].getState() == 1) active = i;
       }
     }
     else
     {
       for (int i = 0; i < saves.length; i++)
       {
-        if (saves[i] == null)
-          continue;
+        if (saves[i] == null) continue;
         saves[i].draw(g, v);
-        if (saves[i].getArea().contains(mouse))
-          selected = i;
-        if (saves[i].getState() == 1)
-          active = i;
+        if (saves[i].getArea().contains(mouse)) selected = i;
+        if (saves[i].getState() == 1) active = i;
       }
     }
     if (active != -1 && saves[active] != null && saves[active].getState() == 1)
@@ -229,12 +216,9 @@ public class Scene_LoadGame implements Scene
       start.disabled = true;
       delete.disabled = true;
     }
-    if (delete != null)
-      delete.draw(g, v);
-    if (start != null)
-      start.draw(g, v);
-    if (selected != -1)
-      saves[selected].draw(g, v);
+    if (delete != null) delete.draw(g, v);
+    if (start != null) start.draw(g, v);
+    if (selected != -1) saves[selected].draw(g, v);
   }
   
   @Override
@@ -245,8 +229,7 @@ public class Scene_LoadGame implements Scene
       v.setScene(new Scene_MainMenu());
       v.playSound("002-System02");
     }
-    if (chooser != null)
-      chooser.keyPressed(e);
+    if (chooser != null) chooser.keyPressed(e);
   }
   
   @Override
@@ -261,14 +244,12 @@ public class Scene_LoadGame implements Scene
   public void mouseMoved(MouseEvent e)
   {
     mouse = e.getPoint();
-    if (saves == null)
-      return;
+    if (saves == null) return;
     if (chooser != null)
     {
       for (int i = 5 * ((Integer) chooser.getSelected(false) - 1); i < ((5 * (Integer) chooser.getSelected(false) < saves.length) ? 5 * (Integer) chooser.getSelected(false) : saves.length); i++)
       {
-        if (saves[i] == null)
-          continue;
+        if (saves[i] == null) continue;
         saves[i].mouseMoved(e);
       }
       chooser.mouseReleased(e);
@@ -277,17 +258,13 @@ public class Scene_LoadGame implements Scene
     {
       for (int i = 0; i < saves.length; i++)
       {
-        if (saves[i] == null)
-          continue;
+        if (saves[i] == null) continue;
         saves[i].mouseMoved(e);
       }
     }
-    if (chooser != null)
-      chooser.mouseMoved(e);
-    if (delete != null)
-      delete.mouseMoved(e);
-    if (start != null)
-      start.mouseMoved(e);
+    if (chooser != null) chooser.mouseMoved(e);
+    if (delete != null) delete.mouseMoved(e);
+    if (start != null) start.mouseMoved(e);
   }
   
   @Override
@@ -297,15 +274,13 @@ public class Scene_LoadGame implements Scene
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    if (saves == null)
-      return;
+    if (saves == null) return;
     
     if (chooser != null)
     {
       for (int i = 5 * ((Integer) chooser.getSelected(false) - 1); i < ((5 * (Integer) chooser.getSelected(false) < saves.length) ? 5 * (Integer) chooser.getSelected(false) : saves.length); i++)
       {
-        if (saves[i] == null || !chars.contains(e.getPoint()))
-          continue;
+        if (saves[i] == null || !chars.contains(e.getPoint())) continue;
         saves[i].mouseReleased(e);
       }
       chooser.mouseReleased(e);
@@ -314,15 +289,12 @@ public class Scene_LoadGame implements Scene
     {
       for (int i = 0; i < saves.length; i++)
       {
-        if (saves[i] == null || !chars.contains(e.getPoint()))
-          continue;
+        if (saves[i] == null || !chars.contains(e.getPoint())) continue;
         saves[i].mouseReleased(e);
       }
     }
-    if (delete != null)
-      delete.mouseReleased(e);
-    if (start != null)
-      start.mouseReleased(e);
+    if (delete != null) delete.mouseReleased(e);
+    if (start != null) start.mouseReleased(e);
   }
   
   @Override

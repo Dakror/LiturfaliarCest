@@ -62,13 +62,12 @@ public class TalkChooser extends Component
       b.soundMOVER = false;
       b.tileset = null;
       b.name = name.replaceAll("\\[\\S{1,}\\]", " ");
-      if (!allRequirementsSet)
-        b.disabled = true;
+      if (!allRequirementsSet) b.disabled = true;
       
       choices[i] = b;
     }
     
-    if(allFalse) closeRequested = true;
+    if (allFalse) closeRequested = true;
   }
   
   public String getClearedString()

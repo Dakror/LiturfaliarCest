@@ -18,7 +18,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
+import de.dakror.liturfaliar.event.Dispatcher;
+import de.dakror.liturfaliar.event.Events;
 import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.item.Item;
@@ -109,11 +110,9 @@ public class ItemSlot extends Component
     // -- cooldown stuff -- //
     if (item != null && cooldown > 0)
     {
-      if (!cooldownFrozen)
-        cooldown = (cooldown - timePassed >= 0) ? cooldown - timePassed : 0;
+      if (!cooldownFrozen) cooldown = (cooldown - timePassed >= 0) ? cooldown - timePassed : 0;
       
-      if (cooldown == 0)
-        item.getAttributes().getAttribute(Attr.cooldown).setValue(item.getAttributes().getAttribute(Attr.cooldown).getMaximum());
+      if (cooldown == 0) item.getAttributes().getAttribute(Attr.cooldown).setValue(item.getAttributes().getAttribute(Attr.cooldown).getMaximum());
       else item.getAttributes().getAttribute(Attr.cooldown).setValue(cooldown / 1000.0);
     }
   }
@@ -144,8 +143,7 @@ public class ItemSlot extends Component
   
   public void drawLightWeight(Graphics2D g, Viewport v)
   {
-    if (item != null)
-      item.draw(g, v);
+    if (item != null) item.draw(g, v);
     
     int ax = item.mouse.x - item.width / 2;
     int ay = item.mouse.y - item.height / 2;
@@ -189,8 +187,7 @@ public class ItemSlot extends Component
       g.drawImage(Viewport.loadImage("system/" + categoryFilter.name().toLowerCase() + "ItemSlotFilter.png"), ax + 4, ay + 4, getWidth() - 8, getWidth() - 8, null);
     }
     
-    if (item != null)
-      item.draw(ax, ay, g, v);
+    if (item != null) item.draw(ax, ay, g, v);
     
     if (keyString != null)
     {
@@ -241,12 +238,12 @@ public class ItemSlot extends Component
       int yt = ay + height / 2 + strHeight / 4;
       
       if (item.getAttributes().getAttribute(Attr.cooldown).getMaximum() >= 0.5) // longer than 0.5s
-        area.add(new Area(new RoundRectangle2D.Double(xt - 2, yt - strHeight * 0.625, strWidth + 4, strHeight * 0.75, 8, 8)));
+      area.add(new Area(new RoundRectangle2D.Double(xt - 2, yt - strHeight * 0.625, strWidth + 4, strHeight * 0.75, 8, 8)));
       
       Assistant.Shadow(area, Colors.DGRAY, 0.9f, g);
       
       if (item.getAttributes().getAttribute(Attr.cooldown).getMaximum() >= 0.5) // longer than 0.5s
-        g.drawString(s, xt, yt);
+      g.drawString(s, xt, yt);
       
       g.setFont(oldFont);
       g.setColor(oldColor);
@@ -254,14 +251,12 @@ public class ItemSlot extends Component
       g.setClip(oldClip);
     }
     
-    if (hover)
-      Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + getWidth() - height, width, height, 5, 5), Color.WHITE, 0.2f, g);
+    if (hover) Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + getWidth() - height, width, height, 5, 5), Color.WHITE, 0.2f, g);
   }
   
   public void drawTooltip(Graphics2D g, Viewport v)
   {
-    if (item != null)
-      item.tooltip.draw(g, v);
+    if (item != null) item.tooltip.draw(g, v);
   }
   
   public Item getItem()
@@ -275,8 +270,7 @@ public class ItemSlot extends Component
     
     if (this.item != null)
     {
-      if (!item.getAttributes().getAttribute(Attr.cooldown).isEmpty() && item.getAttributes().getAttribute(Attr.cooldown).getValue() != item.getAttributes().getAttribute(Attr.cooldown).getMaximum())
-        cooldown = (long) (item.getAttributes().getAttribute(Attr.cooldown).getValue() * 1000);
+      if (!item.getAttributes().getAttribute(Attr.cooldown).isEmpty() && item.getAttributes().getAttribute(Attr.cooldown).getValue() != item.getAttributes().getAttribute(Attr.cooldown).getMaximum()) cooldown = (long) (item.getAttributes().getAttribute(Attr.cooldown).getValue() * 1000);
       
       this.item.setItemSlot(this);
       this.item.updateTooltip();
@@ -285,21 +279,18 @@ public class ItemSlot extends Component
   
   public void addItem()
   {
-    if (item.getStack() + 1 <= item.getType().getStackSize())
-      item.setStack(item.getStack() + 1);
+    if (item.getStack() + 1 <= item.getType().getStackSize()) item.setStack(item.getStack() + 1);
   }
   
   public void subItem()
   {
-    if (item == null)
-      return;
+    if (item == null) return;
     
     item.setStack(item.getStack() - 1);
     
     if (item.getStack() > 0)
     {
-      if (!item.getAttributes().getAttribute(Attr.cooldown).isEmpty())
-        item.getAttributes().getAttribute(Attr.cooldown).setValue(item.getAttributes().getAttribute(Attr.cooldown).getMaximum());
+      if (!item.getAttributes().getAttribute(Attr.cooldown).isEmpty()) item.getAttributes().getAttribute(Attr.cooldown).setValue(item.getAttributes().getAttribute(Attr.cooldown).getMaximum());
       
       return;
     }
@@ -310,16 +301,13 @@ public class ItemSlot extends Component
   @Override
   public void mouseMoved(MouseEvent e)
   {
-    if (item != null)
-      item.mouseMoved(e);
+    if (item != null) item.mouseMoved(e);
     
-    if (hover && !new Area(new Rectangle2D.Double(ax, ay, width, height)).contains(e.getPoint()))
-      ItemSlotEventDispatcher.dispatchSlotExited(e, this);
+    if (hover && !new Area(new Rectangle2D.Double(ax, ay, width, height)).contains(e.getPoint())) Dispatcher.dispatch(Events.slotExited, e, this);
     
     hover = new Area(new Rectangle2D.Double(ax, ay, width, height)).contains(e.getPoint());
     
-    if (hover)
-      ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
+    if (hover) Dispatcher.dispatch(Events.slotHovered, e, this);
   }
   
   @Override
@@ -331,20 +319,19 @@ public class ItemSlot extends Component
     {
       if (e.getButton() == 1 && inventory != null && inventory.getPickedUpItemSlot() != null)
       {
-        if ((categoryFilter != null && !inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(inventory.getPickedUpItemSlot().getItem().getType()) == -1))
-          return;
+        if ((categoryFilter != null && !inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(inventory.getPickedUpItemSlot().getItem().getType()) == -1)) return;
         
         setItem(new Item(inventory.getPickedUpItemSlot().getItem()));
         
-        ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
-        ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
+        Dispatcher.dispatch(Events.slotReleased, e, this);
+        Dispatcher.dispatch(Events.slotHovered, e, this);
       }
       else if (e.getButton() == 3)
       {
         setItem(null);
         
-        ItemSlotEventDispatcher.dispatchSlotPressed(e, this);
-        ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
+        Dispatcher.dispatch(Events.slotPressed, e, this);
+        Dispatcher.dispatch(Events.slotHovered, e, this);
       }
     }
     else if (clip)
@@ -355,16 +342,14 @@ public class ItemSlot extends Component
         {
           item.mouse = e.getPoint();
           
-          ItemSlotEventDispatcher.dispatchSlotPressed(e, this);
-          ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
+          Dispatcher.dispatch(Events.slotPressed, e, this);
+          Dispatcher.dispatch(Events.slotHovered, e, this);
         }
-        else if ((categoryFilter != null && !inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(inventory.getPickedUpItemSlot().getItem().getType()) == -1))
-          return;
+        else if ((categoryFilter != null && !inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && inventory.getPickedUpItemSlot().getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(inventory.getPickedUpItemSlot().getItem().getType()) == -1)) return;
         else
         {
           ItemSlot oldPickedUp;
-          if (inventory.getPickedUpItemSlot() instanceof SkillSlot)
-            oldPickedUp = new SkillSlot((SkillSlot) inventory.getPickedUpItemSlot());
+          if (inventory.getPickedUpItemSlot() instanceof SkillSlot) oldPickedUp = new SkillSlot((SkillSlot) inventory.getPickedUpItemSlot());
           
           else oldPickedUp = new ItemSlot(inventory.getPickedUpItemSlot());
           
@@ -384,8 +369,7 @@ public class ItemSlot extends Component
           }
           else
           {
-            if (!item.getType().getCategory().equals(Categories.SKILL))
-              ItemSlotEventDispatcher.dispatchSlotPressed(e, this);
+            if (!item.getType().getCategory().equals(Categories.SKILL)) Dispatcher.dispatch(Events.slotPressed, e, this);
             
             else inventory.setPickedUpItemSlot(null);
             
@@ -394,8 +378,8 @@ public class ItemSlot extends Component
           item.tooltip.visible = true;
           item.tooltip.setX(e.getX() + item.tooltip.offset.x);
           item.tooltip.setY(e.getY() + item.tooltip.offset.y);
-          ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
-          ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
+          Dispatcher.dispatch(Events.slotReleased, e, this);
+          Dispatcher.dispatch(Events.slotHovered, e, this);
           return;
           
         }
@@ -405,11 +389,9 @@ public class ItemSlot extends Component
         if (item == null)
         {
           ItemSlot slot = inventory.getPickedUpItemSlot();
-          if (slot == null || (categoryFilter != null && !slot.getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && slot.getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(slot.getItem().getType()) == -1))
-            return;
+          if (slot == null || (categoryFilter != null && !slot.getItem().getType().getCategory().equals(categoryFilter)) || (typesFilter.size() > 0 && slot.getItem().getType().getCategory().equals(categoryFilter) && typesFilter.indexOf(slot.getItem().getType()) == -1)) return;
           
-          if (categoryFilter != null && !slot.getItem().areRequirementsSatisfied(null))
-            return;
+          if (categoryFilter != null && !slot.getItem().areRequirementsSatisfied(null)) return;
           
           setItem(new Item(slot.getItem()));
           
@@ -418,7 +400,7 @@ public class ItemSlot extends Component
           this.item.tooltip.visible = true;
           this.item.tooltip.setX(e.getX());
           this.item.tooltip.setY(e.getY());
-          ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
+          Dispatcher.dispatch(Events.slotReleased, e, this);
         }
       }
     }
@@ -427,8 +409,7 @@ public class ItemSlot extends Component
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    if (isOnlyLabel())
-      return;
+    if (isOnlyLabel()) return;
     
     boolean clip = new Rectangle(ax, ay, getWidth(), getHeight()).contains(e.getPoint());
     
@@ -441,14 +422,11 @@ public class ItemSlot extends Component
     {
       ItemSlot slot = inventory.getPickedUpItemSlot();
       
-      if (slot == null || slot.getItem().getStack() < 1)
-        return;
+      if (slot == null || slot.getItem().getStack() < 1) return;
       
-      if (item != null && !item.equals(slot.getItem()))
-        return;
+      if (item != null && !item.equals(slot.getItem())) return;
       
-      if (item != null && item.equals(slot.getItem()) && item.getStack() == item.getType().getStackSize())
-        return;
+      if (item != null && item.equals(slot.getItem()) && item.getStack() == item.getType().getStackSize()) return;
       
       if (item == null)
       {
@@ -462,19 +440,17 @@ public class ItemSlot extends Component
         slot.subItem();
       }
       
-      if (slot.getItem() == null)
-        inventory.setPickedUpItemSlot(null);
+      if (slot.getItem() == null) inventory.setPickedUpItemSlot(null);
       
-      ItemSlotEventDispatcher.dispatchSlotReleased(e, this);
-      ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
+      Dispatcher.dispatch(Events.slotReleased, e, this);
+      Dispatcher.dispatch(Events.slotHovered, e, this);
     }
   }
   
   @Override
   public void keyPressed(KeyEvent e)
   {
-    if (item == null || !hover)
-      return;
+    if (item == null || !hover) return;
     
     // TODO: remove - it's debug only
     if (e.getKeyCode() == KeyEvent.VK_LEFT)
@@ -582,8 +558,7 @@ public class ItemSlot extends Component
       try
       {
         JSONObject o = data.getJSONObject(i);
-        if (o.length() == 0)
-          continue;
+        if (o.length() == 0) continue;
         
         slots[i].setItem(new Item(o.getJSONObject("item")));
       }
@@ -621,8 +596,7 @@ public class ItemSlot extends Component
   
   public double getWeight()
   {
-    if (item == null)
-      return 0;
+    if (item == null) return 0;
     
     return item.getWeight();
   }
@@ -649,16 +623,14 @@ public class ItemSlot extends Component
   
   public void startCooldown()
   {
-    if (item == null || item.getAttributes().getAttribute(Attr.cooldown).isEmpty())
-      return;
+    if (item == null || item.getAttributes().getAttribute(Attr.cooldown).isEmpty()) return;
     
     cooldown = (long) (item.getAttributes().getAttribute(Attr.cooldown).getMaximum() * 1000) - 1;
   }
   
   public void triggerAction(Map m, Creature c, Viewport v)
   {
-    if (item == null)
-      return;
+    if (item == null) return;
     
     if (cooldown > 0)
     {

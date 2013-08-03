@@ -140,8 +140,7 @@ public class OVScene_Controls extends OVScene
   @Override
   public void mouseMoved(MouseEvent e)
   {
-    if (waitForInput)
-      return;
+    if (waitForInput) return;
     
     for (Button b : buttons)
     {
@@ -152,8 +151,7 @@ public class OVScene_Controls extends OVScene
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    if (waitForInput)
-      return;
+    if (waitForInput) return;
     
     for (Button b : buttons)
     {
@@ -164,8 +162,7 @@ public class OVScene_Controls extends OVScene
   @Override
   public void mousePressed(MouseEvent e)
   {
-    if (waitForInput)
-      return;
+    if (waitForInput) return;
     
     for (Button b : buttons)
     {
@@ -178,10 +175,8 @@ public class OVScene_Controls extends OVScene
     for (int i = 0; i < order.length; i++)
     {
       Button button = buttons[i];
-      if (button.equals(b))
-        continue;
-      if (button.title.equals(b.title))
-        return i;
+      if (button.equals(b)) continue;
+      if (button.title.equals(b.title)) return i;
     }
     return -1;
   }

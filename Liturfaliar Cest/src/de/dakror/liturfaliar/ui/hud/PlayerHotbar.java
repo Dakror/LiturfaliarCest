@@ -7,7 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.dispatcher.PlayerHotbarEventDispatcher;
+import de.dakror.liturfaliar.event.Dispatcher;
+import de.dakror.liturfaliar.event.Event;
+import de.dakror.liturfaliar.event.Events;
 import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.map.Map;
@@ -49,18 +51,13 @@ public class PlayerHotbar extends HUDComponent implements Inventory
     {
       ItemSlot slot = slots[i];
       
-      if (!frozen)
-        slot.update(timePassed);
+      if (!frozen) slot.update(timePassed);
       
       Item eItem = player.getEquipment().getHotbarItem(i);
-      if (slot.getItem() == null && eItem == null)
-        continue;
-      if (slot.getItem() == null && eItem != null)
-        slot.setItem(eItem);
-      else if (slot.getItem() != null && eItem == null)
-        slot.setItem(eItem);
-      else if (!slot.getItem().equals(eItem))
-        slot.setItem(eItem);
+      if (slot.getItem() == null && eItem == null) continue;
+      if (slot.getItem() == null && eItem != null) slot.setItem(eItem);
+      else if (slot.getItem() != null && eItem == null) slot.setItem(eItem);
+      else if (!slot.getItem().equals(eItem)) slot.setItem(eItem);
     }
   }
   
@@ -86,38 +83,31 @@ public class PlayerHotbar extends HUDComponent implements Inventory
     if (visible)
     {
       for (int i = 0; i < slots.length; i++)
-        if (slots[i] != null)
-          slots[i].draw(g, v);
+        if (slots[i] != null) slots[i].draw(g, v);
       
       for (int i = 0; i < slots.length; i++)
-        if (slots[i] != null)
-          slots[i].drawTooltip(g, v);
+        if (slots[i] != null) slots[i].drawTooltip(g, v);
       
-      if (pickedUp != null)
-        pickedUp.drawLightWeight(g, v);
+      if (pickedUp != null) pickedUp.drawLightWeight(g, v);
     }
   }
   
   @Override
   public void keyReleased(KeyEvent e, Map m)
   {
-    if (!visible)
-      return;
+    if (!visible) return;
     
     List<Integer> slots = Arrays.asList(KEYSLOTS);
-    if (slots.contains(e.getKeyCode()))
-      PlayerHotbarEventDispatcher.dispatchSlotTriggered(slots.indexOf(e.getKeyCode()), this.slots[slots.indexOf(e.getKeyCode())]);
+    if (slots.contains(e.getKeyCode())) Dispatcher.dispatch(Events.slotTriggered, slots.indexOf(e.getKeyCode()), this.slots[slots.indexOf(e.getKeyCode())]);
   }
   
   @Override
   public void mousePressed(MouseEvent e, Map m)
   {
-    if (!visible)
-      return;
+    if (!visible) return;
     
     List<Integer> slots = Arrays.asList(MOUSESLOTS);
-    if (slots.contains(e.getButton()) && !getArea().contains(e.getLocationOnScreen()))
-      PlayerHotbarEventDispatcher.dispatchSlotTriggered(slots.indexOf(e.getButton()) + KEYSLOTS.length, this.slots[slots.indexOf(e.getButton()) + KEYSLOTS.length]);
+    if (slots.contains(e.getButton()) && !getArea().contains(e.getLocationOnScreen())) Dispatcher.dispatch(Events.slotTriggered, slots.indexOf(e.getButton()) + KEYSLOTS.length, this.slots[slots.indexOf(e.getButton()) + KEYSLOTS.length]);
     
     for (ItemSlot slot : this.slots)
     {
@@ -128,23 +118,20 @@ public class PlayerHotbar extends HUDComponent implements Inventory
   @Override
   public void mouseMoved(MouseEvent e, Map m)
   {
-    if (!visible)
-      return;
+    if (!visible) return;
     
     for (ItemSlot slot : this.slots)
     {
       slot.mouseMoved(e);
     }
     
-    if (pickedUp != null)
-      pickedUp.mouseMoved(e);
+    if (pickedUp != null) pickedUp.mouseMoved(e);
   }
   
   @Override
   public void mouseReleased(MouseEvent e, Map m)
   {
-    if (!visible)
-      return;
+    if (!visible) return;
     
     for (ItemSlot slot : this.slots)
     {
@@ -153,40 +140,27 @@ public class PlayerHotbar extends HUDComponent implements Inventory
   }
   
   @Override
-  public void slotPressed(MouseEvent e, ItemSlot slot)
+  public void onEvent(Event e)
   {
-    if (!Viewport.isSceneEnabled())
-      return;
-    
-    pickedUp = new ItemSlot(slot);
-    pickedUp.setHotKey(-1, false);
-    slot.setItem(null);
-    
-    player.getEquipment().setHotbarItem(Arrays.asList(slots).indexOf(slot), null);
-  }
-  
-  @Override
-  public void slotExited(MouseEvent e, ItemSlot slot)
-  {
-    if (!Viewport.isSceneEnabled())
-      return;
-  }
-  
-  @Override
-  public void slotHovered(MouseEvent e, ItemSlot slot)
-  {
-    if (!Viewport.isSceneEnabled())
-      return;
-  }
-  
-  @Override
-  public void slotReleased(MouseEvent e, ItemSlot slot)
-  {
-    if (!Viewport.isSceneEnabled())
-      return;
-    
-    pickedUp = null;
-    player.getEquipment().setHotbarItem(Arrays.asList(slots).indexOf(slot), slot.getItem());
+    if (e.equals(Events.slotPressed))
+    {
+      ItemSlot slot = (ItemSlot) e.getParam("slot");
+      if (!Viewport.isSceneEnabled()) return;
+      
+      pickedUp = new ItemSlot(slot);
+      pickedUp.setHotKey(-1, false);
+      slot.setItem(null);
+      
+      player.getEquipment().setHotbarItem(Arrays.asList(slots).indexOf(slot), null);
+    }
+    else if (e.equals(Events.slotReleased))
+    {
+      ItemSlot slot = (ItemSlot) e.getParam("slot");
+      if (!Viewport.isSceneEnabled()) return;
+      
+      pickedUp = null;
+      player.getEquipment().setHotbarItem(Arrays.asList(slots).indexOf(slot), slot.getItem());
+    }
   }
   
   @Override

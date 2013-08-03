@@ -43,10 +43,8 @@ public class CountButton extends Button
       this.handle.mouseReleased(e);
       if (this.handle.state == 1)
       {
-        if (e.getButton() == 1 && this.getValue() < this.max)
-          this.setValue(this.getValue() + 1);
-        if (e.getButton() == 3 && this.getValue() > this.min)
-          this.setValue(this.getValue() - 1);
+        if (e.getButton() == 1 && this.getValue() < this.max) this.setValue(this.getValue() + 1);
+        if (e.getButton() == 3 && this.getValue() > this.min) this.setValue(this.getValue() - 1);
       }
     }
   }

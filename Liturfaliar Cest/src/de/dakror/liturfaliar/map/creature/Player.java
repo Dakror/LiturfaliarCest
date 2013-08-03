@@ -8,7 +8,6 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
@@ -18,7 +17,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.dispatcher.PlayerEventDispatcher;
+import de.dakror.liturfaliar.event.Dispatcher;
+import de.dakror.liturfaliar.event.Event;
+import de.dakror.liturfaliar.event.Events;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.skillanim.SkillAnimation;
@@ -31,7 +32,6 @@ import de.dakror.liturfaliar.settings.Balance;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.Keys;
 import de.dakror.liturfaliar.ui.ItemSlot;
-import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
 import de.dakror.liturfaliar.util.Vector;
@@ -103,8 +103,7 @@ public class Player extends Creature
     {
       for (SkillAnimation skill : super.skills)
       {
-        if (skill.isDone())
-          super.skills.remove(skill);
+        if (skill.isDone()) super.skills.remove(skill);
         
         else skill.update(timePassed, m);
       }
@@ -140,14 +139,10 @@ public class Player extends Creature
     setSpeed((sprint) ? Balance.Player.SPRINT : Balance.Player.WALK);
     
     double x = 0, y = 0;
-    if (dirs[0] && !dirs[3] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.x + bx, m.getY() + relPos.y + by - getSpeed() * 2, bw, bh)))
-      y -= getSpeed();
-    else if (dirs[3] && !dirs[0] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.x + bx, m.getY() + relPos.y + by + getSpeed() * 2, bw, bh)))
-      y += getSpeed();
-    if (dirs[1] && !dirs[2] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.x + bx - getSpeed() * 2, m.getY() + relPos.y + by, bw, bh)))
-      x -= getSpeed();
-    else if (dirs[2] && !dirs[1] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.x + bx + getSpeed() * 2, m.getY() + relPos.y + by, bw, bh)))
-      x += getSpeed();
+    if (dirs[0] && !dirs[3] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.x + bx, m.getY() + relPos.y + by - getSpeed() * 2, bw, bh))) y -= getSpeed();
+    else if (dirs[3] && !dirs[0] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.x + bx, m.getY() + relPos.y + by + getSpeed() * 2, bw, bh))) y += getSpeed();
+    if (dirs[1] && !dirs[2] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.x + bx - getSpeed() * 2, m.getY() + relPos.y + by, bw, bh))) x -= getSpeed();
+    else if (dirs[2] && !dirs[1] && m.getBumpMap().contains(new Rectangle2D.Double(m.getX() + relPos.x + bx + getSpeed() * 2, m.getY() + relPos.y + by, bw, bh))) x += getSpeed();
     
     if (x != 0 || y != 0)
     {
@@ -159,25 +154,22 @@ public class Player extends Creature
       
       if (getPath() != null)
       {
-        
-        if (relPos.translate(bx + bw / 2, bh + by).equals(getPath().getNode()))
-          getPath().setNodeReached();
+        if (relPos.translate(bx + bw / 2, bh + by).equals(getPath().getNode())) getPath().setNodeReached();
         
         goTo = getPath().getNode().translate(-bx - bw / 2, -bh - by);
         
-        if (getPath().isPathComplete())
-          setPath(null);
+        if (getPath().isPathComplete()) setPath(null);
       }
     }
     for (Field f : m.fields)
     {
       if (getBumpArea().contains(new Point2D.Double(f.getX() + CFG.FIELDSIZE * 0.5, f.getY() + CFG.FIELDSIZE * 0.5)))
       {
-        f.fieldTriggered(this, m);
+        f.onEvent(new Event(Events.fieldTriggered, this, m));
       }
       else if (getBumpArea().intersects(f.getX(), f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE))
       {
-        f.fieldTouched(this, m);
+        f.onEvent(new Event(Events.fieldTouched, this, m));
       }
     }
     
@@ -188,8 +180,7 @@ public class Player extends Creature
     
     Vector moved = move(m);
     
-    if (scrollLeft | scrollUp | scrollRight | scrollDown)
-      m.move((scrollLeft | scrollRight) ? moved.x : 0, (scrollUp | scrollDown) ? moved.y : 0);
+    if (scrollLeft | scrollUp | scrollRight | scrollDown) m.move((scrollLeft | scrollRight) ? moved.x : 0, (scrollUp | scrollDown) ? moved.y : 0);
   }
   
   @Override
@@ -201,14 +192,12 @@ public class Player extends Creature
     
     int frame = 0;
     
-    if ((!relPos.equals(goTo) || !Arrays.equals(dirs, new boolean[] { false, false, false, false })) && !frozen)
-      frame = v.getFrame((sprint) ? 0.3f : 0.5f);
+    if ((!relPos.equals(goTo) || !Arrays.equals(dirs, new boolean[] { false, false, false, false })) && !frozen) frame = v.getFrame((sprint) ? 0.3f : 0.5f);
     
     if (lookingEnabled)
     {
       int angle = (int) Math.round(Math.toDegrees(Math.atan2(mouse.y - (relPos.y + m.getY() + h / 2), mouse.x - (relPos.x + m.getX() + w / 2))) / 90.0) + 1;
-      if (angle > -1)
-        dir = DIRS[angle];
+      if (angle > -1) dir = DIRS[angle];
       else dir = 1;
     }
     
@@ -217,9 +206,9 @@ public class Player extends Creature
       for (SkillAnimation skill : super.skills)
         skill.drawBelow(g, v, m);
       
-      BufferedImage i = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-      Assistant.drawChar(0, 0, w, h, dir, frame, equipment, (Graphics2D) i.getGraphics(), v.w, true);
-      hitArea = Assistant.toArea(i);
+      // BufferedImage i = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+      // Assistant.drawChar(0, 0, w, h, dir, frame, equipment, (Graphics2D) i.getGraphics(), v.w, true);
+      // hitArea = Assistant.toArea(i);
       
       Assistant.drawChar((int) relPos.x + m.getX(), (int) relPos.y + m.getY(), w, h, dir, frame, equipment, g, v.w, true);
       
@@ -237,8 +226,7 @@ public class Player extends Creature
   
   public void mousePressed(MouseEvent e, Map m)
   {
-    if (e.getButton() == 1 && !e.isControlDown())
-      setAStarPath(e, m);
+    if (e.getButton() == 1 && !e.isControlDown()) setAStarPath(e, m);
   }
   
   public void mouseDragged(MouseEvent e, Map m)
@@ -266,27 +254,21 @@ public class Player extends Creature
   @Override
   public void keyPressed(KeyEvent e, Map m)
   {
-    if (frozen)
-      return;
+    if (frozen) return;
     
     int c = e.getExtendedKeyCode();
     
-    if (c == Keys.UP)
-      dirs[0] = true;
+    if (c == Keys.UP) dirs[0] = true;
     
-    else if (c == Keys.LEFT)
-      dirs[1] = true;
+    else if (c == Keys.LEFT) dirs[1] = true;
     
-    else if (c == Keys.RIGHT)
-      dirs[2] = true;
+    else if (c == Keys.RIGHT) dirs[2] = true;
     
-    else if (c == Keys.DOWN)
-      dirs[3] = true;
+    else if (c == Keys.DOWN) dirs[3] = true;
     
     else if (c == Keys.SPRINT)
     {
-      if (!sprint)
-        time = System.currentTimeMillis();
+      if (!sprint) time = System.currentTimeMillis();
       
       sprint = true;
     }
@@ -297,22 +279,17 @@ public class Player extends Creature
   {
     int c = e.getExtendedKeyCode();
     
-    if (c == Keys.UP)
-      dirs[0] = false;
+    if (c == Keys.UP) dirs[0] = false;
     
-    else if (c == Keys.LEFT)
-      dirs[1] = false;
+    else if (c == Keys.LEFT) dirs[1] = false;
     
-    else if (c == Keys.RIGHT)
-      dirs[2] = false;
+    else if (c == Keys.RIGHT) dirs[2] = false;
     
-    else if (c == Keys.DOWN)
-      dirs[3] = false;
+    else if (c == Keys.DOWN) dirs[3] = false;
     
     else if (c == Keys.SPRINT)
     {
-      if (sprint)
-        time = System.currentTimeMillis();
+      if (sprint) time = System.currentTimeMillis();
       
       sprint = false;
     }
@@ -350,15 +327,10 @@ public class Player extends Creature
   }
   
   @Override
-  public void talkStarted(Talk t, Map m)
+  public void onEvent(Event e)
   {
-    frozen = true;
-  }
-  
-  @Override
-  public void talkEnded(Talk t, Map m)
-  {
-    frozen = false;
+    if (e.equals(Events.talkStarted)) frozen = true;
+    else if (e.equals(Events.talkEnded)) frozen = false;
   }
   
   public void setInventory(JSONArray o)
@@ -429,8 +401,7 @@ public class Player extends Creature
   
   public Attributes getAttributes(boolean equip)
   {
-    if (equip)
-      return equipment.getAttributes().add(attr);
+    if (equip) return equipment.getAttributes().add(attr);
     
     return attr;
   }
@@ -439,8 +410,7 @@ public class Player extends Creature
   {
     for (Item item : skills)
     {
-      if (item.equals(skill))
-        return true;
+      if (item.equals(skill)) return true;
     }
     return false;
   }
@@ -458,7 +428,7 @@ public class Player extends Creature
     if (getLevel() > lvl)
     {
       attr.getAttribute(Attr.level).increase(getLevel() - lvl);
-      PlayerEventDispatcher.dispatchLevelUp(lvl);
+      Dispatcher.dispatch(Events.levelUp, lvl);
     }
   }
   

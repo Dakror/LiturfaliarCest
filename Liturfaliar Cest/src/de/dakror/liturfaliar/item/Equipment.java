@@ -41,19 +41,16 @@ public class Equipment
         
         setEquipmentItem(c, (d.length() != 0) ? new Item(d) : null);
       }
-      if (data.getJSONObject("weapon1").length() > 0)
-        setFirstWeapon(new Item(data.getJSONObject("weapon1")));
+      if (data.getJSONObject("weapon1").length() > 0) setFirstWeapon(new Item(data.getJSONObject("weapon1")));
       
-      if (data.getJSONObject("weapon2").length() > 0)
-        setSecondWeapon(new Item(data.getJSONObject("weapon2")));
+      if (data.getJSONObject("weapon2").length() > 0) setSecondWeapon(new Item(data.getJSONObject("weapon2")));
       
       JSONArray hb = data.getJSONArray("hotbar");
       
       hotbar = new Item[PlayerHotbar.SLOTCOUNT];
       for (int i = 0; i < hb.length(); i++)
       {
-        if (hb.getJSONObject(i).length() > 0)
-          hotbar[i] = new Item(hb.getJSONObject(i));
+        if (hb.getJSONObject(i).length() > 0) hotbar[i] = new Item(hb.getJSONObject(i));
       }
     }
     catch (JSONException e)
@@ -107,8 +104,7 @@ public class Equipment
     int filled = 0;
     for (Item item : equips.values())
     {
-      if (item != null)
-        filled++;
+      if (item != null) filled++;
     }
     return filled > 1; // more than skin
   }
@@ -128,19 +124,16 @@ public class Equipment
         o.put(key, (equips.get(key) != null) ? equips.get(key).serializeItem() : new JSONObject());
       }
       
-      if (weapon1 != null)
-        o.put("weapon1", weapon1.serializeItem());
+      if (weapon1 != null) o.put("weapon1", weapon1.serializeItem());
       else o.put("weapon1", new JSONObject());
       
-      if (weapon2 != null)
-        o.put("weapon2", weapon2.serializeItem());
+      if (weapon2 != null) o.put("weapon2", weapon2.serializeItem());
       else o.put("weapon2", new JSONObject());
       
       JSONArray hb = new JSONArray();
       for (int i = 0; i < hotbar.length; i++)
       {
-        if (hotbar[i] == null)
-          hb.put(new JSONObject());
+        if (hotbar[i] == null) hb.put(new JSONObject());
         else hb.put(hotbar[i].serializeItem());
       }
       o.put("hotbar", hb);
@@ -193,8 +186,7 @@ public class Equipment
     
     for (Item e : equips.values())
     {
-      if (e != null)
-        attr.add(e.getAttributes());
+      if (e != null) attr.add(e.getAttributes());
     }
     
     return attr;

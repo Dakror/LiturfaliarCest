@@ -93,8 +93,7 @@ public class Attributes
       {
         String key = i.next().toString();
         
-        if (key.indexOf("max") > -1)
-          attributes.get(Attr.valueOf(key.replace("max", ""))).setMaximum(o.getDouble(key));
+        if (key.indexOf("max") > -1) attributes.get(Attr.valueOf(key.replace("max", ""))).setMaximum(o.getDouble(key));
         
         else attributes.get(Attr.valueOf(key)).setValue(o.getDouble(key));
       }
@@ -133,8 +132,7 @@ public class Attributes
       
       for (Attr attr : Attr.values())
       {
-        if (attributes.get(attr).isEmpty())
-          continue;
+        if (attributes.get(attr).isEmpty()) continue;
         
         o.put("max" + attr.name(), attributes.get(attr).getMaximum());
         o.put(attr.name(), attributes.get(attr).getValue());
@@ -156,8 +154,7 @@ public class Attributes
   {
     for (Attr attr : Attr.values())
     {
-      if (!getAttribute(attr).equals(o.getAttribute(attr)))
-        return false;
+      if (!getAttribute(attr).equals(o.getAttribute(attr))) return false;
     }
     return true;
   }
@@ -167,8 +164,7 @@ public class Attributes
     Attributes sum = new Attributes();
     for (Attr attr : Attr.values())
     {
-      if (a.getAttribute(attr).isEmpty() && b.getAttribute(attr).isEmpty())
-        continue;
+      if (a.getAttribute(attr).isEmpty() && b.getAttribute(attr).isEmpty()) continue;
       
       double max = a.getAttribute(attr).getMaximum() + b.getAttribute(attr).getMaximum();
       
@@ -186,8 +182,7 @@ public class Attributes
     Attributes sum = new Attributes();
     for (Attr attr : Attr.values())
     {
-      if (a.getAttribute(attr).isEmpty() && b.getAttribute(attr).isEmpty())
-        continue;
+      if (a.getAttribute(attr).isEmpty() && b.getAttribute(attr).isEmpty()) continue;
       
       double max = a.getAttribute(attr).getMaximum();
       
@@ -205,8 +200,7 @@ public class Attributes
     Attributes sum = new Attributes();
     for (Attr attr : Attr.values())
     {
-      if (a.getAttribute(attr).isEmpty() && b.getAttribute(attr).isEmpty())
-        continue;
+      if (a.getAttribute(attr).isEmpty() && b.getAttribute(attr).isEmpty()) continue;
       
       double max = a.getAttribute(attr).getMaximum() - b.getAttribute(attr).getMaximum();
       

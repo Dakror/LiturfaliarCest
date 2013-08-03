@@ -23,10 +23,8 @@ public class Box extends Component
     {
       c.setX(getX() + c.getX());
       c.setY(getY() + c.getY());
-      if (c.getWidth() > getWidth())
-        c.setWidth(getWidth());
-      if (c.getHeight() > getHeight())
-        c.setHeight(getHeight());
+      if (c.getWidth() > getWidth()) c.setWidth(getWidth());
+      if (c.getHeight() > getHeight()) c.setHeight(getHeight());
       components.add(c);
     }
   }
@@ -46,8 +44,7 @@ public class Box extends Component
   {
     for (Component c : components)
     {
-      if (c != null)
-        c.update();
+      if (c != null) c.update();
     }
   }
   
@@ -56,8 +53,7 @@ public class Box extends Component
   {
     for (Component c : components)
     {
-      if (c != null)
-        c.draw(g, v);
+      if (c != null) c.draw(g, v);
     }
   }
   
@@ -66,8 +62,7 @@ public class Box extends Component
   {
     for (Component c : components)
     {
-      if (c != null)
-        c.mouseWheelMoved(e);
+      if (c != null) c.mouseWheelMoved(e);
     }
   }
   
@@ -76,8 +71,7 @@ public class Box extends Component
   {
     for (Component c : components)
     {
-      if (c != null)
-        c.mouseDragged(e);
+      if (c != null) c.mouseDragged(e);
     }
   }
   
@@ -86,8 +80,7 @@ public class Box extends Component
   {
     for (Component c : components)
     {
-      if (c != null)
-        c.mouseMoved(e);
+      if (c != null) c.mouseMoved(e);
     }
   }
   
@@ -96,8 +89,7 @@ public class Box extends Component
   {
     for (Component c : components)
     {
-      if (c != null)
-        c.mouseClicked(e);
+      if (c != null) c.mouseClicked(e);
     }
   }
   
@@ -106,8 +98,7 @@ public class Box extends Component
   {
     for (Component c : components)
     {
-      if (c != null)
-        c.mousePressed(e);
+      if (c != null) c.mousePressed(e);
     }
   }
   
@@ -116,8 +107,7 @@ public class Box extends Component
   {
     for (Component c : components)
     {
-      if (c != null)
-        c.mouseReleased(e);
+      if (c != null) c.mouseReleased(e);
     }
   }
   
@@ -126,8 +116,7 @@ public class Box extends Component
   {
     for (Component c : components)
     {
-      if (c != null)
-        c.mouseEntered(e);
+      if (c != null) c.mouseEntered(e);
     }
   }
   
@@ -136,8 +125,7 @@ public class Box extends Component
   {
     for (Component c : components)
     {
-      if (c != null)
-        c.mouseExited(e);
+      if (c != null) c.mouseExited(e);
     }
   }
   
@@ -146,8 +134,7 @@ public class Box extends Component
   {
     for (Component c : components)
     {
-      if (c != null)
-        c.keyTyped(e);
+      if (c != null) c.keyTyped(e);
     }
   }
   
@@ -156,8 +143,7 @@ public class Box extends Component
   {
     for (Component c : components)
     {
-      if (c != null)
-        c.keyPressed(e);
+      if (c != null) c.keyPressed(e);
     }
   }
   
@@ -166,8 +152,7 @@ public class Box extends Component
   {
     for (Component c : components)
     {
-      if (c != null)
-        c.keyReleased(e);
+      if (c != null) c.keyReleased(e);
     }
   }
 }

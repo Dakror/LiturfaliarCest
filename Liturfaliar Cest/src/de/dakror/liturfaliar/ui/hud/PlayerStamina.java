@@ -34,16 +34,13 @@ public class PlayerStamina extends HUDComponent
   {
     visible = m.talk == null;
     
-    if (visible)
-      bar.value = (float) (player.getAttributes().getAttribute(Attr.stamina).getValue() / (float) player.getAttributes().getAttribute(Attr.stamina).getMaximum());
+    if (visible) bar.value = (float) (player.getAttributes().getAttribute(Attr.stamina).getValue() / (float) player.getAttributes().getAttribute(Attr.stamina).getMaximum());
     
     if (bar.value == 1)
     {
-      if (time == 0)
-        time = System.currentTimeMillis();
+      if (time == 0) time = System.currentTimeMillis();
       
-      if (System.currentTimeMillis() - time >= TIME && alpha > 0)
-        alpha -= (alpha - ALPHA > 0) ? ALPHA : alpha;
+      if (System.currentTimeMillis() - time >= TIME && alpha > 0) alpha -= (alpha - ALPHA > 0) ? ALPHA : alpha;
     }
     else
     {
@@ -57,8 +54,7 @@ public class PlayerStamina extends HUDComponent
   {
     if (!visible && bar == null)
     {
-      if (player.getAttributes().getAttribute(Attr.stamina).getMaximum() == -1)
-        return;
+      if (player.getAttributes().getAttribute(Attr.stamina).getMaximum() == -1) return;
       
       setX(v.w.getWidth() / 2 - ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);
       setHeight(32);

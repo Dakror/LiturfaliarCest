@@ -53,8 +53,7 @@ public class Flicker extends Component
   {
     super(x, y, w, h);
     objects = o;
-    if (objects.length % 2 == 0)
-      dragX = s / 2 + space / 2;
+    if (objects.length % 2 == 0) dragX = s / 2 + space / 2;
   }
   
   @Override
@@ -86,8 +85,7 @@ public class Flicker extends Component
       int iy = y + height / 2 - s / 2;
       int s = this.s;
       
-      if (Math.abs((ix + this.s / 2) - (x + width / 2)) < 1)
-        selectedIndex = i;
+      if (Math.abs((ix + this.s / 2) - (x + width / 2)) < 1) selectedIndex = i;
       
       g.drawImage(objects[i].getIcon(), ix - (s - this.s) / 2, iy - (s - this.s) / 2, s, s, v.w);
     }
@@ -100,14 +98,12 @@ public class Flicker extends Component
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    if (!getArea().contains(e.getPoint()))
-      return;
+    if (!getArea().contains(e.getPoint())) return;
     
     if (e.getButton() == 1 && e.getWhen() - press < 200 && e.getPoint().distance(Ppress) < 10)
     {
       int index = (int) ((e.getX() - x) - (space + width / 2.0 - ((objects.length * (s + space)) / 2.0) - dragX)) / (s + 13);
-      if (index > -1 && index < objects.length)
-        FselectedIndex = index;
+      if (index > -1 && index < objects.length) FselectedIndex = index;
       
       else FselectedIndex = -1;
     }
@@ -115,8 +111,7 @@ public class Flicker extends Component
     {
       dragInit = 0;
       int modolo = (dragX + (objects.length - 1) * (s + space) / 2) % (s + space);
-      if (modolo < (s + space) / 2)
-        dragX -= modolo;
+      if (modolo < (s + space) / 2) dragX -= modolo;
       
       else dragX += (s + space) - modolo;
     }
@@ -125,8 +120,7 @@ public class Flicker extends Component
   @Override
   public void mousePressed(MouseEvent e)
   {
-    if (e.getButton() != 1)
-      return;
+    if (e.getButton() != 1) return;
     
     press = e.getWhen();
     Ppress = e.getPoint();

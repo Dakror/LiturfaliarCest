@@ -11,14 +11,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.dispatcher.DatabaseEventDispatcher;
-import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
-import de.dakror.liturfaliar.event.dispatcher.MapPackEventDispatcher;
-import de.dakror.liturfaliar.event.dispatcher.PlayerEventDispatcher;
-import de.dakror.liturfaliar.event.dispatcher.PlayerHotbarEventDispatcher;
-import de.dakror.liturfaliar.event.listener.MapPackEventListener;
-import de.dakror.liturfaliar.event.listener.PlayerEventListener;
-import de.dakror.liturfaliar.event.listener.PlayerHotbarEventListener;
+import de.dakror.liturfaliar.event.Dispatcher;
+import de.dakror.liturfaliar.event.Event;
+import de.dakror.liturfaliar.event.Events;
+import de.dakror.liturfaliar.event.Listener;
 import de.dakror.liturfaliar.fx.Animation;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.item.ItemDrop;
@@ -39,7 +35,7 @@ import de.dakror.liturfaliar.ui.hud.PlayerHotbar;
 import de.dakror.liturfaliar.ui.hud.TargetLabel;
 import de.dakror.liturfaliar.util.Database;
 
-public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEventListener, PlayerEventListener
+public class Scene_Game implements Scene, Listener
 {
   Viewport              v;
   
@@ -59,8 +55,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   public void construct(Viewport v)
   {
     this.v = v;
-    PlayerHotbarEventDispatcher.addPlayerHotbarEventListener(this);
-    PlayerEventDispatcher.addPlayerEventListener(this);
+    Dispatcher.addListener(this);
     v.setFramesFrozen(false);
     CFG.MAPCENTER = new Point((v.w.getWidth() / 2 - CFG.FIELDSIZE / 2), (v.w.getHeight() / 2 - CFG.FIELDSIZE * 3 / 4));
     
@@ -68,11 +63,11 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     
     Database.setStringVar("playername", player.getName());
     setMapPack(new MapPack(CFG.MAPPACK, v.w));
-    MapPackEventDispatcher.addMapPackEventListener(this);
     try
     {
       JSONArray flags = v.savegame.getJSONArray("flags");
-      for (int i = 0; i < flags.length(); i++) {
+      for (int i = 0; i < flags.length(); i++)
+      {
         Database.setBooleanVar(flags.getString(i), true);
       }
       
@@ -97,7 +92,7 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     targetLabel = new TargetLabel();
     
     bottomSegment = new BottomSegment(player);
-    ItemSlotEventDispatcher.addItemSlotEventListener(bottomSegment.hotbar);
+    Dispatcher.addListener(bottomSegment.hotbar);
     
     inventoryLastClosed = System.currentTimeMillis();
   }
@@ -142,11 +137,9 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   @Override
   public void keyPressed(KeyEvent e)
   {
-    if (mappack != null && mappack.getActiveMap() != null)
-      mappack.getActiveMap().keyPressed(e);
+    if (mappack != null && mappack.getActiveMap() != null) mappack.getActiveMap().keyPressed(e);
     
-    if (e.getKeyCode() == KeyEvent.VK_CONTROL)
-      ctrlDown = true;
+    if (e.getKeyCode() == KeyEvent.VK_CONTROL) ctrlDown = true;
   }
   
   @Override
@@ -158,11 +151,9 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
       return;
     }
     
-    if (mappack != null && mappack.getActiveMap() != null)
-      mappack.getActiveMap().keyReleased(e);
+    if (mappack != null && mappack.getActiveMap() != null) mappack.getActiveMap().keyReleased(e);
     
-    if (e.getKeyCode() == Keys.PAUSE)
-      togglePaused();
+    if (e.getKeyCode() == Keys.PAUSE) togglePaused();
     
     else if (e.getKeyCode() == Keys.INVENTORY)
     {
@@ -176,11 +167,9 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
       v.toggleOVScene(new OVScene_Skills(this), "Skills");
     }
     
-    if (bottomSegment != null)
-      bottomSegment.keyReleased(e, mappack.getActiveMap());
+    if (bottomSegment != null) bottomSegment.keyReleased(e, mappack.getActiveMap());
     
-    if (e.getKeyCode() == KeyEvent.VK_CONTROL)
-      ctrlDown = false;
+    if (e.getKeyCode() == KeyEvent.VK_CONTROL) ctrlDown = false;
   }
   
   public boolean isPaused()
@@ -195,18 +184,15 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
     Viewport.setSceneEnabled(!pause);
     
     v.setFramesFrozen(isPaused());
-    if (isPaused())
-      v.playSound("008-System08");
+    if (isPaused()) v.playSound("008-System08");
   }
   
   public void setPaused(boolean pause)
   {
     this.pause = pause;
-    if (pause)
-      player.disableDirs();
+    if (pause) player.disableDirs();
     
-    if (bottomSegment != null)
-      bottomSegment.hotbar.frozen = pause;
+    if (bottomSegment != null) bottomSegment.hotbar.frozen = pause;
     
     Viewport.setSceneEnabled(!pause);
     v.setFramesFrozen(pause);
@@ -223,42 +209,66 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   }
   
   @Override
-  public void mapChanged(Map oldmap, Map newmap)
+  public void onEvent(Event e)
   {
-    DatabaseEventDispatcher.removeDatabaseEventListener(oldmap);
-    newmap.setPlayer(player);
-    if (!(newmap.getMusic() + ".wav").equals(v.MusicID) && newmap.getMusic().length() > 0)
-      v.playMusic(newmap.getMusic(), true);
+    if (e.equals(Events.mapChanged))
+    {
+      Map newmap = (Map) e.getParam("new");
+      Dispatcher.removeListener((Map) e.getParam("old"));
+      newmap.setPlayer(player);
+      if (!(newmap.getMusic() + ".wav").equals(v.MusicID) && newmap.getMusic().length() > 0) v.playMusic(newmap.getMusic(), true);
+    }
+    else if (e.equals(Events.slotTriggered))
+    {
+      int index = (int) e.getParam("index");
+      ItemSlot slot = (ItemSlot) e.getParam("slot");
+      if (slot.getItem() == null) return;
+      
+      // -- is LMB -- //
+      if (index == PlayerHotbar.KEYSLOTS.length)
+      {
+        if (targetLabel.getTarget() == null || !((NPC) targetLabel.getTarget()).isHostile()) if (!ctrlDown)
+        {
+          player.resetTarget();
+          return;
+        }
+      }
+      
+      slot.triggerAction(mappack.getActiveMap(), player, v);
+      player.getEquipment().setHotbarItem(index, slot.getItem());
+    }
+    else if (e.equals(Events.levelUp))
+    {
+      v.playSound("105-Heal01");
+      mappack.getActiveMap().playAnimation(new Animation(-25, -30, 80, 0, 10, 0.35f, false, "Heal3.png", player));
+      player.getAttributes().getAttribute(Attr.skillpoint).increase((int) Math.floor(player.getLevel() / 10.0) + 1);
+      Database.setStringVar("player_sp", "" + (int) player.getAttributes().getAttribute(Attr.skillpoint).getValue());
+      Database.setStringVar("player_level", "" + player.getLevel());
+    }
   }
   
   @Override
   public void mousePressed(MouseEvent e)
   {
-    if (mappack != null && mappack.getActiveMap() != null)
-      mappack.getActiveMap().mousePressed(e, v);
+    if (mappack != null && mappack.getActiveMap() != null) mappack.getActiveMap().mousePressed(e, v);
     
-    if (bottomSegment != null && mappack.getActiveMap().talk == null)
-      bottomSegment.mousePressed(e, mappack.getActiveMap());
+    if (bottomSegment != null && mappack.getActiveMap().talk == null) bottomSegment.mousePressed(e, mappack.getActiveMap());
   }
   
   @Override
   public void mouseMoved(MouseEvent e)
   {
-    if (mappack != null && mappack.getActiveMap() != null)
-      mappack.getActiveMap().mouseMoved(e);
+    if (mappack != null && mappack.getActiveMap() != null) mappack.getActiveMap().mouseMoved(e);
     
-    if (targetLabel != null)
-      targetLabel.mouseMoved(e, mappack.getActiveMap());
+    if (targetLabel != null) targetLabel.mouseMoved(e, mappack.getActiveMap());
     
-    if (bottomSegment != null)
-      bottomSegment.mouseMoved(e, mappack.getActiveMap());
+    if (bottomSegment != null) bottomSegment.mouseMoved(e, mappack.getActiveMap());
   }
   
   @Override
   public void mouseDragged(MouseEvent e)
   {
-    if (mappack != null && mappack.getActiveMap() != null)
-      mappack.getActiveMap().mouseDragged(e);
+    if (mappack != null && mappack.getActiveMap() != null) mappack.getActiveMap().mouseDragged(e);
   }
   
   @Override
@@ -268,32 +278,27 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   @Override
   public void mouseClicked(MouseEvent e)
   {
-    if (mappack != null && mappack.getActiveMap() != null)
-      mappack.getActiveMap().mouseClicked(e);
+    if (mappack != null && mappack.getActiveMap() != null) mappack.getActiveMap().mouseClicked(e);
   }
   
   @Override
   public void mouseEntered(MouseEvent e)
   {
-    if (mappack != null && mappack.getActiveMap() != null)
-      mappack.getActiveMap().mouseEntered(e);
+    if (mappack != null && mappack.getActiveMap() != null) mappack.getActiveMap().mouseEntered(e);
   }
   
   @Override
   public void mouseExited(MouseEvent e)
   {
-    if (mappack != null && mappack.getActiveMap() != null)
-      mappack.getActiveMap().mouseExited(e);
+    if (mappack != null && mappack.getActiveMap() != null) mappack.getActiveMap().mouseExited(e);
   }
   
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    if (mappack != null && mappack.getActiveMap() != null)
-      mappack.getActiveMap().mouseReleased(e);
+    if (mappack != null && mappack.getActiveMap() != null) mappack.getActiveMap().mouseReleased(e);
     
-    if (bottomSegment != null)
-      bottomSegment.mouseReleased(e, mappack.getActiveMap());
+    if (bottomSegment != null) bottomSegment.mouseReleased(e, mappack.getActiveMap());
   }
   
   @Override
@@ -301,42 +306,9 @@ public class Scene_Game implements Scene, MapPackEventListener, PlayerHotbarEven
   {}
   
   @Override
-  public void slotTriggered(int index, ItemSlot slot)
-  {
-    if (slot.getItem() == null)
-      return;
-    
-    // -- is LMB -- //
-    if (index == PlayerHotbar.KEYSLOTS.length)
-    {
-      if (targetLabel.getTarget() == null || !((NPC) targetLabel.getTarget()).isHostile())
-        if (!ctrlDown)
-        {
-          player.resetTarget();
-          return;
-        }
-    }
-    
-    slot.triggerAction(mappack.getActiveMap(), player, v);
-    player.getEquipment().setHotbarItem(index, slot.getItem());
-  }
-  
-  @Override
   public void destruct()
   {
-    MapPackEventDispatcher.removeMapPackEventListener(this);
-    PlayerHotbarEventDispatcher.removePlayerHotbarEventListener(this);
-    PlayerEventDispatcher.removePlayerEventListener(this);
-    ItemSlotEventDispatcher.removeItemSlotEventListener(bottomSegment.hotbar);
-  }
-  
-  @Override
-  public void levelUp(int oldLevel)
-  {
-    v.playSound("105-Heal01");
-    mappack.getActiveMap().playAnimation(new Animation(-25, -30, 80, 0, 10, 0.35f, false, "Heal3.png", player));
-    player.getAttributes().getAttribute(Attr.skillpoint).increase((int) Math.floor(player.getLevel() / 10.0) + 1);
-    Database.setStringVar("player_sp", "" + (int) player.getAttributes().getAttribute(Attr.skillpoint).getValue());
-    Database.setStringVar("player_level", "" + player.getLevel());
+    Dispatcher.removeListener(this);
+    Dispatcher.removeListener(bottomSegment.hotbar);
   }
 }

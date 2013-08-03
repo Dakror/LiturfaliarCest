@@ -184,8 +184,7 @@ public class OVScene_Pause extends OVScene
         optionsSliders[i].draw(g, v);
       }
       controls.draw(g, v);
-      if (optionsToggleArea == null)
-        optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 150, 192, 64);
+      if (optionsToggleArea == null) optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 150, 192, 64);
       
     }
     else
@@ -198,8 +197,7 @@ public class OVScene_Pause extends OVScene
       }
     }
     
-    if (notification != null)
-      notification.draw(g, v.w);
+    if (notification != null) notification.draw(g, v.w);
   }
   
   public void save()
@@ -251,12 +249,10 @@ public class OVScene_Pause extends OVScene
   {
     ts.mousePressed(e);
     
-    if (optionsToggle && optionsToggleArea.state == 0)
-      for (int i = 0; i < optionsSliders.length; i++)
-        optionsSliders[i].mousePressed(e);
+    if (optionsToggle && optionsToggleArea.state == 0) for (int i = 0; i < optionsSliders.length; i++)
+      optionsSliders[i].mousePressed(e);
     
-    if (optionsToggle && optionsToggleArea.state == 0)
-      controls.mousePressed(e);
+    if (optionsToggle && optionsToggleArea.state == 0) controls.mousePressed(e);
   }
   
   @Override
@@ -266,8 +262,7 @@ public class OVScene_Pause extends OVScene
     
     optionsToggleArea.mouseReleased(e);
     
-    if (optionsToggle && optionsToggleArea.state == 0)
-      controls.mouseReleased(e);
+    if (optionsToggle && optionsToggleArea.state == 0) controls.mouseReleased(e);
   }
   
   @Override
@@ -289,8 +284,7 @@ public class OVScene_Pause extends OVScene
   {
     ts.mouseMoved(e);
     
-    if (optionsToggle && optionsToggleArea.state == 0)
-      controls.mouseMoved(e);
+    if (optionsToggle && optionsToggleArea.state == 0) controls.mouseMoved(e);
   }
   
   @Override

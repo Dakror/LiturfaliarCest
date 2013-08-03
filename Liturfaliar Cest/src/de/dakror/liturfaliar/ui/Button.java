@@ -93,16 +93,14 @@ public class Button extends Component
   public void setWidth(int w)
   {
     super.setWidth(w);
-    if (handle != null)
-      handle.setWidth(w);
+    if (handle != null) handle.setWidth(w);
   }
   
   @Override
   public void setHeight(int h)
   {
     super.setHeight(h);
-    if (handle != null)
-      handle.setHeight(h);
+    if (handle != null) handle.setHeight(h);
   }
   
   public int getState()
@@ -134,8 +132,7 @@ public class Button extends Component
     }
     handle.setX(getX());
     handle.setY(getY());
-    if (disabled)
-      handle.state = 0;
+    if (disabled) handle.state = 0;
     
     Font oldFont = g.getFont();
     Color oldColor = g.getColor();
@@ -164,10 +161,8 @@ public class Button extends Component
     g.setColor(c);
     if (image != null && imagelower)
     {
-      if (disabled)
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-      if (tileset != null)
-        Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g, v.w);
+      if (disabled) g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+      if (tileset != null) Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g, v.w);
       if (iw != 0)
       {
         int x1 = (iw != 0) ? -iw / 2 : 0;
@@ -184,18 +179,15 @@ public class Button extends Component
     {
       if (tileset == null)
       {
-        if (handle.state != 0)
-          g.setColor(Colors.ORANGE);
+        if (handle.state != 0) g.setColor(Colors.ORANGE);
         else g.setColor(Colors.DGRAY);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-        if (round)
-          g.fill(new RoundRectangle2D.Double(x, y, w, h, 8, 8));
+        if (round) g.fill(new RoundRectangle2D.Double(x, y, w, h, 8, 8));
         else g.fill(new Rectangle2D.Double(x, y, w, h));
         if (disabled)
         {
           g.setColor(Colors.DGRAY);
-          if (round)
-            g.fill(new RoundRectangle2D.Double(x, y, w, h, 8, 8));
+          if (round) g.fill(new RoundRectangle2D.Double(x, y, w, h, 8, 8));
           else g.fill(new Rectangle2D.Double(x, y, w, h));
         }
         g.setColor(c);
@@ -225,14 +217,12 @@ public class Button extends Component
         {
           g.drawString(title, x, y + y1);
         }
-        if (disabled)
-          Assistant.Shadow(new Rectangle2D.Double(x, y, w, h), Color.black, 0.6f, g);
+        if (disabled) Assistant.Shadow(new Rectangle2D.Double(x, y, w, h), Color.black, 0.6f, g);
       }
     }
     else if (Bicon == true)
     {
-      if (tileset != null && tileset.length() > 0)
-        Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g, v.w);
+      if (tileset != null && tileset.length() > 0) Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g, v.w);
       if (handle.state == 2)
       {
         g.drawImage(Viewport.loadImage("icon/white/" + icon + ".png"), x + ((iw != 0) ? (w / 2 - iw / 2) : 0), y + ((ih != 0) ? (h / 2 - ih / 2) : 0), (iw != 0) ? iw : w, (ih != 0) ? ih : h, v.w);
@@ -241,20 +231,16 @@ public class Button extends Component
       {
         g.drawImage(Viewport.loadImage("icon/black/" + icon + ".png"), x + ((iw != 0) ? (w / 2 - iw / 2) : 0), y + ((ih != 0) ? (h / 2 - ih / 2) : 0), (iw != 0) ? iw : w, (ih != 0) ? ih : h, v.w);
       }
-      if (disabled)
-        Assistant.Shadow(new RoundRectangle2D.Double(x, y, w, h, 8, 8), Color.black, 0.6f, g);
+      if (disabled) Assistant.Shadow(new RoundRectangle2D.Double(x, y, w, h, 8, 8), Color.black, 0.6f, g);
     }
     else
     {
-      if (tileset != null && tileset.length() > 0)
-        Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g, v.w);
+      if (tileset != null && tileset.length() > 0) Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g, v.w);
     }
     if (image != null && !imagelower)
     {
-      if (disabled)
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-      if (tileset != null)
-        Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g, v.w);
+      if (disabled) g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+      if (tileset != null) Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g, v.w);
       if (iw != 0)
       {
         int x1 = (iw != 0) ? -iw / 2 : 0;
@@ -270,8 +256,7 @@ public class Button extends Component
     g.setColor(oldColor);
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     handle.draw(g, v);
-    if (tooltip != null)
-      tooltip.draw(g, v);
+    if (tooltip != null) tooltip.draw(g, v);
   }
   
   public Image getIcon()
@@ -296,15 +281,13 @@ public class Button extends Component
   @Override
   public void mousePressed(MouseEvent e)
   {
-    if (!disabled)
-      handle.mousePressed(e);
+    if (!disabled) handle.mousePressed(e);
   }
   
   @Override
   public void mouseReleased(MouseEvent e)
   {
     HelpOverlayClicked(e, (title != null) ? title : "button");
-    if (!disabled)
-      handle.mouseReleased(e);
+    if (!disabled) handle.mouseReleased(e);
   }
 }

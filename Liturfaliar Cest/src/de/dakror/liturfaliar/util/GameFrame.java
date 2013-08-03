@@ -87,8 +87,7 @@ public abstract class GameFrame
     long tickTime = startTime;
     while (this.running)
     {
-      if (this.frozen)
-        continue;
+      if (this.frozen) continue;
       
       long timePassed = System.currentTimeMillis() - tickTime;
       if (timePassed >= 30)
@@ -105,8 +104,7 @@ public abstract class GameFrame
         draw(g);
         g.dispose();
         
-        if (!s.contentsLost())
-          s.show();
+        if (!s.contentsLost()) s.show();
       }
       else
       {

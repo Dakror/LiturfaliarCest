@@ -46,8 +46,7 @@ public class Scene_MainMenu implements Scene
     optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 48, 192, 64);
     credits = new HandleArea(14, v.w.getHeight() - 28, 110, 24);
     buttons[0] = new Button(v.w.getWidth() / 2 - 150, 300, 300, "Spiel laden", Color.white, 40.0f);
-    if (FileManager.getSaves().length == 0)
-      buttons[0].disabled = true;
+    if (FileManager.getSaves().length == 0) buttons[0].disabled = true;
     buttons[1] = new Button(v.w.getWidth() / 2 - 150, 400, 300, "Neues Spiel", Color.white, 40.0f);
     buttons[2] = new Button(v.w.getWidth() / 2 - 150, 500, 300, "Spiel beenden", Color.white, 40.0f);
     if (CFG.MAPEDITOR)
@@ -69,8 +68,7 @@ public class Scene_MainMenu implements Scene
   {
     for (Button b : buttons)
     {
-      if (b != null)
-        b.update();
+      if (b != null) b.update();
     }
     
     if (buttons[0] != null && buttons[0].getState() == 1)
@@ -164,16 +162,14 @@ public class Scene_MainMenu implements Scene
     int highlighted = -1;
     for (int i = 0; i < buttons.length; i++)
     {
-      if (buttons[i] == null)
-        continue;
+      if (buttons[i] == null) continue;
       buttons[i].draw(g, v);
       if (buttons[i].getState() != 0)
       {
         highlighted = i;
       }
     }
-    if (highlighted > -1)
-      buttons[highlighted].draw(g, v);
+    if (highlighted > -1) buttons[highlighted].draw(g, v);
     // version stuff
     g.drawImage(Viewport.loadImage("system/logo.png"), 0, 0, 35, 35, v.w);
     
@@ -192,8 +188,7 @@ public class Scene_MainMenu implements Scene
         optionsSliders[i].draw(g, v);
       
       controls.draw(g, v);
-      if (optionsToggleArea == null)
-        optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 150, 192, 64);
+      if (optionsToggleArea == null) optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 150, 192, 64);
       
     }
     else
@@ -201,8 +196,7 @@ public class Scene_MainMenu implements Scene
       Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 96, v.w.getHeight() - 48, 192, 64, g, v.w);
       Assistant.drawHorizontallyCenteredString("Optionen", v.w.getWidth() / 2 - 96, 192, v.w.getHeight() - 8, g, 26, Color.white);
       
-      if (optionsToggleArea == null)
-        optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 48, 192, 64);
+      if (optionsToggleArea == null) optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 48, 192, 64);
     }
   }
   
@@ -219,12 +213,10 @@ public class Scene_MainMenu implements Scene
   @Override
   public void mousePressed(MouseEvent e)
   {
-    if (optionsToggle && optionsToggleArea.state == 0)
-      for (int i = 0; i < optionsSliders.length; i++)
-        optionsSliders[i].mousePressed(e);
+    if (optionsToggle && optionsToggleArea.state == 0) for (int i = 0; i < optionsSliders.length; i++)
+      optionsSliders[i].mousePressed(e);
     
-    if (optionsToggle && optionsToggleArea.state == 0)
-      controls.mousePressed(e);
+    if (optionsToggle && optionsToggleArea.state == 0) controls.mousePressed(e);
   }
   
   @Override
@@ -234,19 +226,16 @@ public class Scene_MainMenu implements Scene
     {
       for (int i = 0; i < buttons.length; i++)
       {
-        if (buttons[i] == null)
-          continue;
+        if (buttons[i] == null) continue;
         buttons[i].mouseMoved(e);
       }
     }
     catch (Exception e2)
     {}
     
-    if (mapeditor != null)
-      mapeditor.mouseMoved(e);
+    if (mapeditor != null) mapeditor.mouseMoved(e);
     
-    if (optionsToggle && optionsToggleArea.state == 0)
-      controls.mouseMoved(e);
+    if (optionsToggle && optionsToggleArea.state == 0) controls.mouseMoved(e);
   }
   
   @Override
@@ -254,26 +243,22 @@ public class Scene_MainMenu implements Scene
   {
     for (int i = 0; i < buttons.length; i++)
     {
-      if (buttons[i] == null)
-        continue;
+      if (buttons[i] == null) continue;
       buttons[i].mouseReleased(e);
     }
     optionsToggleArea.mouseReleased(e);
     credits.mouseReleased(e);
     
-    if (mapeditor != null)
-      mapeditor.mouseReleased(e);
+    if (mapeditor != null) mapeditor.mouseReleased(e);
     
-    if (optionsToggle && optionsToggleArea.state == 0)
-      controls.mouseReleased(e);
+    if (optionsToggle && optionsToggleArea.state == 0) controls.mouseReleased(e);
   }
   
   @Override
   public void mouseDragged(MouseEvent e)
   {
-    if (optionsToggle && optionsToggleArea.state == 0)
-      for (int i = 0; i < optionsSliders.length; i++)
-        optionsSliders[i].mouseDragged(e);
+    if (optionsToggle && optionsToggleArea.state == 0) for (int i = 0; i < optionsSliders.length; i++)
+      optionsSliders[i].mouseDragged(e);
   }
   
   @Override

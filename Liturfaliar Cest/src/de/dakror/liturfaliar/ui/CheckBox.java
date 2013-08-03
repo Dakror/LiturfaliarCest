@@ -30,8 +30,7 @@ public class CheckBox extends Button
   {
     if (reset)
     {
-      if (askedstate == state)
-        return false;
+      if (askedstate == state) return false;
       else
       {
         askedstate = state;
@@ -78,18 +77,15 @@ public class CheckBox extends Button
     {
       iw = 0;
       ih = 0;
-      if (handle.state > 0)
-        g.setColor(Colors.ORANGE);
+      if (handle.state > 0) g.setColor(Colors.ORANGE);
       else g.setColor(Colors.DGRAY);
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-      if (round)
-        g.fill(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8));
+      if (round) g.fill(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8));
       else g.fill(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight()));
       if (disabled)
       {
         g.setColor(Colors.DGRAY);
-        if (round)
-          g.fill(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8));
+        if (round) g.fill(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8));
         else g.fill(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight()));
       }
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));

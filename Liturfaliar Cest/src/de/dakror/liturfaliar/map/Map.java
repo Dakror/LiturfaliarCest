@@ -21,9 +21,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.dispatcher.DatabaseEventDispatcher;
-import de.dakror.liturfaliar.event.dispatcher.MapEventDispatcher;
-import de.dakror.liturfaliar.event.listener.DatabaseEventListener;
+import de.dakror.liturfaliar.event.Dispatcher;
+import de.dakror.liturfaliar.event.Event;
+import de.dakror.liturfaliar.event.Events;
+import de.dakror.liturfaliar.event.Listener;
 import de.dakror.liturfaliar.fx.Animation;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.Item;
@@ -40,7 +41,7 @@ import de.dakror.liturfaliar.util.Compressor;
 import de.dakror.liturfaliar.util.FileManager;
 import de.dakror.liturfaliar.util.Vector;
 
-public class Map implements DatabaseEventListener
+public class Map implements Listener
 {
   private boolean              peaceful;
   private int                  x, y, height, width;
@@ -48,6 +49,7 @@ public class Map implements DatabaseEventListener
   private BufferedImage        lrender;
   private BufferedImage        hrender;
   private Area                 bump;
+  private Area                 aboveArea;
   private JSONObject           data;
   private MapPack              mappack;
   private ArrayList<Animation> animations = new ArrayList<Animation>();
@@ -82,7 +84,7 @@ public class Map implements DatabaseEventListener
   
   public Map(String mappack, String mapname, String dir)
   {
-    this(Compressor.openMap(new File(FileManager.dir, dir + "/" + mappack + "/maps/" + mapname + ".map")));
+    this(Compressor.openMap(new File(FileManager.dir, dir + "/" + mappack + "/" + mapname + ".map")));
   }
   
   public JSONObject getData()
@@ -116,27 +118,26 @@ public class Map implements DatabaseEventListener
   
   public void startTalk(Talk t)
   {
-    if (talk == null)
-      talk = t;
-    MapEventDispatcher.dispatchTalkStarted(t, this);
+    if (talk == null) talk = t;
+    Dispatcher.dispatch(Events.talkStarted, t, this);
   }
   
   public void endTalk()
   {
     talk = null;
-    MapEventDispatcher.dispatchTalkEnded(talk, this);
+    Dispatcher.dispatch(Events.talkEnded, talk, this);
   }
   
   public void changeTalk(Talk t)
   {
     talk = t;
     
-    MapEventDispatcher.dispatchTalkChanged(talk, t, this);
+    Dispatcher.dispatch(Events.talkChanged, talk, t, this);
   }
   
   public void init() throws Exception
   {
-    DatabaseEventDispatcher.addDatabaseEventListener(this);
+    Dispatcher.addListener(this);
     alpha = 1.0f;
     creatures = new ArrayList<Creature>();
     aboveFields = new ArrayList<Field>();
@@ -147,10 +148,8 @@ public class Map implements DatabaseEventListener
     {
       JSONObject o = data.getJSONArray("tile").getJSONObject(i);
       fields.add(new Field(o.getInt("x"), o.getInt("y"), o.getInt("tx"), o.getInt("ty"), o.getDouble("l"), o.getString("tileset"), Field.loadFieldData(o.getJSONObject("data"))));
-      if (o.getInt("x") + CFG.FIELDSIZE > w)
-        w = o.getInt("x") + CFG.FIELDSIZE;
-      if (o.getInt("y") + CFG.FIELDSIZE > h)
-        h = o.getInt("y") + CFG.FIELDSIZE;
+      if (o.getInt("x") + CFG.FIELDSIZE > w) w = o.getInt("x") + CFG.FIELDSIZE;
+      if (o.getInt("y") + CFG.FIELDSIZE > h) h = o.getInt("y") + CFG.FIELDSIZE;
     }
     
     setPeaceful(data.getBoolean("peaceful"));
@@ -164,7 +163,7 @@ public class Map implements DatabaseEventListener
       @Override
       public int compare(Field e1, Field e2)
       {
-        return (int) (e1.getLayer() * 100) - (int) (e2.getLayer() * 100);
+        return (int) (e1.getLayer() * 1000) - (int) (e2.getLayer() * 1000);
       }
     });
     bump = new Area(new Rectangle2D.Double(0, 0, 1, 1));
@@ -173,8 +172,7 @@ public class Map implements DatabaseEventListener
       if (f.getLayer() <= CFG.PLAYERLAYER && f.getLayer() > CFG.SUPERDELLAYER)
       {
         lrender.getGraphics().drawImage(f.getImage(), f.getX(), f.getY(), null);
-        if (f.getLayer() < CFG.PLAYERLAYER)
-          belowFields.add(f);
+        if (f.getLayer() < CFG.PLAYERLAYER) belowFields.add(f);
       }
       else if (f.getLayer() > CFG.PLAYERLAYER && f.getLayer() < CFG.SUPERADDLAYER)
       {
@@ -219,6 +217,27 @@ public class Map implements DatabaseEventListener
       }
     }
     
+    // -- aboveArea -- //
+    
+    aboveArea = new Area();
+    @SuppressWarnings("unchecked")
+    ArrayList<Field> aboveCopy = (ArrayList<Field>) aboveFields.clone();
+    Collections.sort(aboveCopy, new Comparator<Field>()
+    {
+      
+      @Override
+      public int compare(Field o1, Field o2)
+      {
+        return (int) (o1.getLayer() * 1000) - (int) (o2.getLayer() * 1000);
+      }
+    });
+    for (Field field : aboveCopy)
+    {
+      aboveArea.add(field.getArea(null));
+    }
+    
+    // -- NPCs -- //
+    
     JSONArray npcs = data.getJSONArray("npc");
     for (int i = 0; i < npcs.length(); i++)
     {
@@ -238,8 +257,7 @@ public class Map implements DatabaseEventListener
     
     for (Creature c : creatures)
     {
-      if (c.isAlive())
-        c.update(timePassed, this);
+      if (c.isAlive()) c.update(timePassed, this);
     }
     
     if (talk != null)
@@ -252,8 +270,7 @@ public class Map implements DatabaseEventListener
     {
       for (Animation a : animations)
       {
-        if (a.isDone())
-          animations.remove(a);
+        if (a.isDone()) animations.remove(a);
       }
     }
     catch (Exception e)
@@ -267,8 +284,7 @@ public class Map implements DatabaseEventListener
     // -- animations -- //
     for (Animation a : animations)
     {
-      if (a.isBelow())
-        a.draw(this, g, v);
+      if (a.isBelow()) a.draw(this, g, v);
     }
     
     // -- field data -- //
@@ -281,8 +297,7 @@ public class Map implements DatabaseEventListener
       Collections.sort(itemDrops, ItemDrop.COMPARATOR);
       for (ItemDrop id : itemDrops)
       {
-        if ((hoveredItemDrop != null && id.equals(hoveredItemDrop)) || hoveredItemDrop == null)
-          id.draw(this, g, v);
+        if ((hoveredItemDrop != null && id.equals(hoveredItemDrop)) || hoveredItemDrop == null) id.draw(this, g, v);
         
         else id.drawWithoutTooltip(this, g, v);
       }
@@ -299,15 +314,13 @@ public class Map implements DatabaseEventListener
     Collections.sort(creatures, comp);
     for (Creature c : creatures)
     {
-      if (c.isAlive())
-        c.draw(g, v, this);
+      if (c.isAlive()) c.draw(g, v, this);
     }
     
     // -- animations -- //
     for (Animation a : animations)
     {
-      if (!a.isBelow())
-        a.draw(this, g, v);
+      if (!a.isBelow()) a.draw(this, g, v);
     }
     
     
@@ -316,44 +329,27 @@ public class Map implements DatabaseEventListener
       g.drawImage(field.getImage(), x + field.getX(), y + field.getY(), v.w);
     }
     
-    Area wireFrame = new Area();
-    
-    @SuppressWarnings("unchecked")
-    ArrayList<Field> aboveCopy = (ArrayList<Field>) aboveFields.clone();
-    Collections.sort(aboveCopy, new Comparator<Field>()
-    {
-      
-      @Override
-      public int compare(Field o1, Field o2)
-      {
-        return (int) (o1.getLayer() * 1000) - (int) (o2.getLayer() * 1000);
-      }
-    });
-    for (Field field : aboveCopy)
-    {
-      if (getPlayer() != null)
-        if (new Vector(field.getX(), field.getY()).getDistance(getPlayer().getPos()) < CFG.FIELDSIZE)
-        {
-          Area area = (Area) getPlayer().getHitArea(this).clone();
-          area.intersect(new Area(new Rectangle2D.Double(field.getX() + x, field.getY() + y, CFG.FIELDSIZE, CFG.FIELDSIZE)));
-          wireFrame.add(area);
-        }
-      
-    }
-    
-    Color oldColor = g.getColor();
-    g.setColor(Color.black);
-    
-    g.draw(wireFrame);
-    
-    g.setColor(oldColor);
+    // Area wireFrame = new Area();
+    //
+    // if (getPlayer() != null)
+    // {
+    // wireFrame = getPlayer().getHitArea(this);
+    // wireFrame.intersect(aboveArea.createTransformedArea(AffineTransform.getTranslateInstance(x, y)));
+    // }
+    //
+    //
+    // Color oldColor = g.getColor();
+    // g.setColor(Color.black);
+    //
+    // g.draw(wireFrame);
+    //
+    // g.setColor(oldColor);
     
     try
     {
       for (ItemDrop id : itemDrops)
       {
-        if ((hoveredItemDrop != null && id.equals(hoveredItemDrop)) || hoveredItemDrop == null)
-          id.getItem().tooltip.draw(g, v);
+        if ((hoveredItemDrop != null && id.equals(hoveredItemDrop)) || hoveredItemDrop == null) id.getItem().tooltip.draw(g, v);
       }
     }
     catch (Exception e)
@@ -371,8 +367,7 @@ public class Map implements DatabaseEventListener
     
     Assistant.Shadow(v.w.getBounds(), Color.black, 1 - alpha, g);
     
-    if (talk != null)
-      talk.draw(g, v);
+    if (talk != null) talk.draw(g, v);
   }
   
   public void setPos(int x, int y)
@@ -520,8 +515,7 @@ public class Map implements DatabaseEventListener
   {
     for (Creature c : creatures)
     {
-      if (c.isAlive())
-        c.mouseDragged(e, this);
+      if (c.isAlive()) c.mouseDragged(e, this);
     }
   }
   
@@ -530,8 +524,7 @@ public class Map implements DatabaseEventListener
     hoveredItemDrop = null;
     for (Creature c : creatures)
     {
-      if (c.isAlive())
-        c.mouseMoved(e, this);
+      if (c.isAlive()) c.mouseMoved(e, this);
     }
     
     try
@@ -540,23 +533,20 @@ public class Map implements DatabaseEventListener
       {
         id.mouseMoved(e, this);
         
-        if (hoveredItemDrop == null && id.getArea().contains(e.getXOnScreen() - x, e.getYOnScreen() - y))
-          hoveredItemDrop = id;
+        if (hoveredItemDrop == null && id.getArea().contains(e.getXOnScreen() - x, e.getYOnScreen() - y)) hoveredItemDrop = id;
       }
     }
     catch (Exception e1)
     {}
     
-    if (talk != null)
-      talk.mouseMoved(e);
+    if (talk != null) talk.mouseMoved(e);
   }
   
   public void mouseClicked(MouseEvent e)
   {
     for (Creature c : creatures)
     {
-      if (c.isAlive())
-        c.mouseClicked(e, this);
+      if (c.isAlive()) c.mouseClicked(e, this);
     }
   }
   
@@ -564,8 +554,7 @@ public class Map implements DatabaseEventListener
   {
     for (Creature c : creatures)
     {
-      if (c.isAlive())
-        c.mousePressed(e, this);
+      if (c.isAlive()) c.mousePressed(e, this);
     }
     
     try
@@ -579,28 +568,24 @@ public class Map implements DatabaseEventListener
     {}
     
     
-    if (talk != null)
-      talk.mousePressed(e);
+    if (talk != null) talk.mousePressed(e);
   }
   
   public void mouseReleased(MouseEvent e)
   {
     for (Creature c : creatures)
     {
-      if (c.isAlive())
-        c.mouseReleased(e, this);
+      if (c.isAlive()) c.mouseReleased(e, this);
     }
     
-    if (talk != null)
-      talk.mouseReleased(e);
+    if (talk != null) talk.mouseReleased(e);
   }
   
   public void mouseEntered(MouseEvent e)
   {
     for (Creature c : creatures)
     {
-      if (c.isAlive())
-        c.mouseEntered(e, this);
+      if (c.isAlive()) c.mouseEntered(e, this);
     }
   }
   
@@ -608,8 +593,7 @@ public class Map implements DatabaseEventListener
   {
     for (Creature c : creatures)
     {
-      if (c.isAlive())
-        c.mouseExited(e, this);
+      if (c.isAlive()) c.mouseExited(e, this);
     }
   }
   
@@ -620,37 +604,35 @@ public class Map implements DatabaseEventListener
   {
     for (Creature c : creatures)
     {
-      if (c.isAlive())
-        c.keyPressed(e, this);
+      if (c.isAlive()) c.keyPressed(e, this);
     }
     
-    if (talk != null)
-      talk.keyPressed(e);
+    if (talk != null) talk.keyPressed(e);
   }
   
   public void keyReleased(KeyEvent e)
   {
     for (Creature c : creatures)
     {
-      if (c.isAlive())
-        c.keyReleased(e, this);
+      if (c.isAlive()) c.keyReleased(e, this);
     }
   }
   
   @Override
-  public void stringVarChanged(String key, String value)
-  {}
-  
-  @Override
-  public void booleanVarChanged(String key, boolean value)
-  {}
+  public void onEvent(Event e)
+  {
+    for (Field f : fields)
+    {
+      f.onEvent(e);
+    }
+    
+  }
   
   public static String[] getMaps(String pack, String dir)
   {
-    File directory = new File(FileManager.dir, dir + "/" + pack + "/maps");
+    File directory = new File(FileManager.dir, dir + "/" + pack);
     
-    if (!directory.exists())
-      return null;
+    if (!directory.exists()) return null;
     
     Compressor.compileMaps(directory);
     
@@ -680,8 +662,7 @@ public class Map implements DatabaseEventListener
     int highestZ = -1;
     for (ItemDrop id : itemDrops)
     {
-      if (id.getArea().intersects(new Rectangle(rx, ry, ItemDrop.SIZE, ItemDrop.SIZE)) && id.getZ() > highestZ)
-        highestZ = id.getZ();
+      if (id.getArea().intersects(new Rectangle(rx, ry, ItemDrop.SIZE, ItemDrop.SIZE)) && id.getZ() > highestZ) highestZ = id.getZ();
     }
     ItemDrop d = new ItemDrop(item, rx, ry, highestZ + 1, getName());
     mappack.addItemDrop(d);
@@ -700,8 +681,7 @@ public class Map implements DatabaseEventListener
     
     for (Creature c : creatures)
     {
-      if (c instanceof NPC)
-        arr.put(((NPC) c).serializeNPC());
+      if (c instanceof NPC) arr.put(((NPC) c).serializeNPC());
     }
     
     return arr;
@@ -718,8 +698,7 @@ public class Map implements DatabaseEventListener
       {
         if (creatures.get(j) instanceof NPC)
         {
-          if (((NPC) creatures.get(j)).getID() == npc.getID())
-            creatures.set(j, npc);
+          if (((NPC) creatures.get(j)).getID() == npc.getID()) creatures.set(j, npc);
         }
       }
     }
@@ -755,8 +734,7 @@ public class Map implements DatabaseEventListener
   {
     for (Field f : belowFields)
     {
-      if (new Area(new Rectangle2D.Double(f.getX(), f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE)).contains(x, y))
-        return f;
+      if (new Area(new Rectangle2D.Double(f.getX(), f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE)).contains(x, y)) return f;
     }
     return null;
   }
@@ -806,8 +784,7 @@ public class Map implements DatabaseEventListener
     ArrayList<Field> neighbors = new ArrayList<>();
     for (Field field : fields)
     {
-      if (f.getNode().getDistance(field.getNode()) <= CFG.FIELDSIZE + 1 && field.getLayer() < CFG.PLAYERLAYER && bump.contains(field.getX(), field.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE))
-        neighbors.add(field);
+      if (f.getNode().getDistance(field.getNode()) <= CFG.FIELDSIZE + 1 && field.getLayer() < CFG.PLAYERLAYER && bump.contains(field.getX(), field.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE)) neighbors.add(field);
     }
     
     return neighbors.toArray(new Field[] {});

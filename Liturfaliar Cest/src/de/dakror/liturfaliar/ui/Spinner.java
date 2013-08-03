@@ -55,15 +55,13 @@ public class Spinner extends Component
       this.value = this.min;
       this.down.disabled = true;
     }
-    else if (!this.disabled)
-      this.down.disabled = false;
+    else if (!this.disabled) this.down.disabled = false;
     if (this.value >= this.max)
     {
       this.value = this.max;
       this.up.disabled = true;
     }
-    else if (!this.disabled)
-      this.up.disabled = false;
+    else if (!this.disabled) this.up.disabled = false;
     this.down.update();
     this.up.update();
     if (this.up.getState() == 1)
@@ -88,8 +86,7 @@ public class Spinner extends Component
   {
     this.h.update(v);
     Color c = g.getColor();
-    if (this.h.state > 0 && !this.disabled)
-      c = Colors.ORANGE;
+    if (this.h.state > 0 && !this.disabled) c = Colors.ORANGE;
     else c = Colors.DGRAY;
     Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8), c, 0.6f, g);
     DecimalFormat df = new DecimalFormat();
@@ -98,8 +95,7 @@ public class Spinner extends Component
     Assistant.drawHorizontallyCenteredString(((this.title != null) ? title : "") + df.format(this.value), getX(), getWidth(), getY() + 22, g, 22, Color.white);
     this.down.draw(g, v);
     this.up.draw(g, v);
-    if (this.disabled)
-      Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8), c, 0.6f, g);
+    if (this.disabled) Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8), c, 0.6f, g);
   }
   
   @Override

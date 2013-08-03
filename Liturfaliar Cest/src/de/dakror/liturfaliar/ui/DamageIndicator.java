@@ -41,16 +41,14 @@ public class DamageIndicator
     
     Color color = t.getColor();
     
-    if (t.equals(DamageType.NORMAL) && c instanceof Player)
-      color = Color.red;
+    if (t.equals(DamageType.NORMAL) && c instanceof Player) color = Color.red;
     
     text = new HTMLString(v.toString(), t.getSize(), color, Font.BOLD);
   }
   
   public void draw(Map m, Graphics2D g, Viewport v)
   {
-    if (v.areFramesFrozen())
-      return;
+    if (v.areFramesFrozen()) return;
     
     if (outline == null)
     {
@@ -63,8 +61,7 @@ public class DamageIndicator
       time = System.currentTimeMillis();
     }
     
-    if (isDone())
-      return;
+    if (isDone()) return;
     
     int x = m.getX() + (int) creature.getPos().x + this.x - text.getWidth(g) / 2 + creature.getWidth() / 4;
     int y = m.getY() + (int) creature.getPos().y - pos;

@@ -150,14 +150,11 @@ public class Item extends Component
   public void init()
   {
     icon = ((BufferedImage) Viewport.loadImage("system/icons.png")).getSubimage(iconx * 24, icony * 24, 24, 24).getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_REPLICATE);
-    if (attributes == null)
-      attributes = new Attributes();
+    if (attributes == null) attributes = new Attributes();
     
-    if (requirements == null)
-      requirements = new Attributes();
+    if (requirements == null) requirements = new Attributes();
     
-    if (action == null)
-      action = new EmptyAction();
+    if (action == null) action = new EmptyAction();
     
     updateTooltip();
     
@@ -172,17 +169,14 @@ public class Item extends Component
     String req = "";
     for (Attr attr : Attr.values())
     {
-      if (requirements.getAttribute(attr).getValue() != 0)
-        req += "<" + ((getAttributeFromDatabase(attr.name()) >= requirements.getAttribute(attr).getValue()) ? Colors.BETTER : Colors.WORSE) + ";17;1>" + Attribute.FORMAT.format(requirements.getAttribute(attr).getValue()) + " " + attr.getText() + "[br]";
+      if (requirements.getAttribute(attr).getValue() != 0) req += "<" + ((getAttributeFromDatabase(attr.name()) >= requirements.getAttribute(attr).getValue()) ? Colors.BETTER : Colors.WORSE) + ";17;1>" + Attribute.FORMAT.format(requirements.getAttribute(attr).getValue()) + " " + attr.getText() + "[br]";
     }
     
     String att = "";
     for (Attr attr : Attr.values())
     {
-      if (attr.equals(Attr.weight) || attr.equals(Attr.cooldown))
-        continue;
-      if (attributes.getAttribute(attr).getValue() != 0)
-        att += g + ((attributes.getAttribute(attr).getValue() < 0.0) ? "" : "+") + Attribute.FORMAT.format(attributes.getAttribute(attr).getValue()) + " " + attr.getText() + "[br]";
+      if (attr.equals(Attr.weight) || attr.equals(Attr.cooldown)) continue;
+      if (attributes.getAttribute(attr).getValue() != 0) att += g + ((attributes.getAttribute(attr).getValue() < 0.0) ? "" : "+") + Attribute.FORMAT.format(attributes.getAttribute(attr).getValue()) + " " + attr.getText() + "[br]";
     }
     
     String name = "<#999999;30;1>" + this.name + ((showStackSize && stack > 1) ? " x" + stack : "");
@@ -198,8 +192,7 @@ public class Item extends Component
       PotionAction potion = (PotionAction) this.action;
       for (Attr attr : Attr.values())
       {
-        if (potion.getChanges().getAttribute(attr).getValue() != 0)
-          action += g + ((potion.getChanges().getAttribute(attr).getValue() < 0.0) ? "" : "+") + Attribute.FORMAT.format(potion.getChanges().getAttribute(attr).getValue()) + " " + attr.getText() + "[br]";
+        if (potion.getChanges().getAttribute(attr).getValue() != 0) action += g + ((potion.getChanges().getAttribute(attr).getValue() < 0.0) ? "" : "+") + Attribute.FORMAT.format(potion.getChanges().getAttribute(attr).getValue()) + " " + attr.getText() + "[br]";
       }
     }
     
@@ -211,8 +204,7 @@ public class Item extends Component
       {
         Attribute a = weapon.getEffect().getAttribute(attr);
         
-        if (!a.isEmpty())
-          action += g + "  " + Attribute.FORMAT.format(Math.abs(a.getValue())) + " - " + Attribute.FORMAT.format(Math.abs(a.getMaximum())) + " " + attr.getText() + "[br]";
+        if (!a.isEmpty()) action += g + "  " + Attribute.FORMAT.format(Math.abs(a.getValue())) + " - " + Attribute.FORMAT.format(Math.abs(a.getMaximum())) + " " + attr.getText() + "[br]";
       }
     }
     
@@ -234,8 +226,7 @@ public class Item extends Component
       String skillpoints = "<" + ((sp >= requirements.getAttribute(Attr.skillpoint).getValue()) ? "#cccccc" : Colors.WORSE) + ";17;1>" + (int) requirements.getAttribute(Attr.skillpoint).getValue() + " " + Attr.skillpoint.getText();
       
       String level = c + " [br]";
-      if (!requirements.getAttribute(Attr.level).isEmpty())
-        level += "<" + ((lvl >= requirements.getAttribute(Attr.level).getValue()) ? "#cccccc" : Colors.WORSE) + ";17;1>" + Attr.level.getText() + ": " + (int) requirements.getAttribute(Attr.level).getValue() + "[br]";
+      if (!requirements.getAttribute(Attr.level).isEmpty()) level += "<" + ((lvl >= requirements.getAttribute(Attr.level).getValue()) ? "#cccccc" : Colors.WORSE) + ";17;1>" + Attr.level.getText() + ": " + (int) requirements.getAttribute(Attr.level).getValue() + "[br]";
       
       if (!showSkillCosts)
       {
@@ -270,8 +261,7 @@ public class Item extends Component
     setY(y1 + SPACING);
     g.drawImage(icon, getX() + (getWidth() / 2 - icon.getWidth(null) / 2) + corrx, getY() + (getHeight() / 2 - icon.getHeight(null) / 2) + corry, icon.getWidth(null), icon.getHeight(null), v.w);
     
-    if (tooltip != null)
-      tooltip.draw(g, v);
+    if (tooltip != null) tooltip.draw(g, v);
   }
   
   public void drawWithoutTooltip(int x1, int y1, Graphics2D g, Viewport v)
@@ -295,8 +285,7 @@ public class Item extends Component
   public void mouseMoved(MouseEvent e)
   {
     mouse = e.getPoint();
-    if (tooltip != null)
-      tooltip.mouseMoved(e);
+    if (tooltip != null) tooltip.mouseMoved(e);
   }
   
   public JSONObject serializeItem()
@@ -404,9 +393,7 @@ public class Item extends Component
   {
     for (Attr attr : Attr.values())
     {
-      if (requirements.getAttribute(attr).getValue() > 0)
-        if (((attributes == null) ? getAttributeFromDatabase(attr.name()) : attributes.getAttribute(attr).getValue()) < requirements.getAttribute(attr).getValue())
-          return false;
+      if (requirements.getAttribute(attr).getValue() > 0) if (((attributes == null) ? getAttributeFromDatabase(attr.name()) : attributes.getAttribute(attr).getValue()) < requirements.getAttribute(attr).getValue()) return false;
     }
     return true;
   }

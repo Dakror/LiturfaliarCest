@@ -40,8 +40,7 @@ public class Dialog extends Component
   
   public void setButtons(String... titles)
   {
-    if (getHeight() == -1)
-      return;
+    if (getHeight() == -1) return;
     this.buttons = new Button[titles.length];
     int width = getWidth() / titles.length;
     for (int i = 0; i < titles.length; i++)
@@ -53,19 +52,16 @@ public class Dialog extends Component
   
   public void update()
   {
-    if (this.close != null)
-      this.close.update();
+    if (this.close != null) this.close.update();
     if (this.buttons.length > 0)
     {
       for (int i = 0; i < buttons.length; i++)
       {
-        if (this.buttons[i].handle.state > 0)
-          this.selected = i;
+        if (this.buttons[i].handle.state > 0) this.selected = i;
         this.buttons[i].update();
       }
     }
-    if (this.close != null && this.close.handle.state == 1)
-      this.closeRequested = true;
+    if (this.close != null && this.close.handle.state == 1) this.closeRequested = true;
     else this.closeRequested = false;
     for (Component child : this.children)
     {
@@ -77,8 +73,7 @@ public class Dialog extends Component
   {
     setX(v.w.getWidth() / 2 - getWidth() / 2);
     int sy = v.w.getHeight() / 3 - getHeight() / 2;
-    if (getHeight() > v.w.getHeight() / 3)
-      sy = v.w.getHeight() / 2 - getHeight() / 2;
+    if (getHeight() > v.w.getHeight() / 3) sy = v.w.getHeight() / 2 - getHeight() / 2;
     if (getY() != sy)
     {
       setY(sy);
@@ -93,8 +88,7 @@ public class Dialog extends Component
     }
     // -- just init stuff -- //
     String[] lines = this.message.split("\\[br\\]");
-    if (getHeight() == -1 && this.message.length() > 0)
-      setHeight((int) (lines.length * 20 * 1.4f + 32 + (30 * 1.4f)));
+    if (getHeight() == -1 && this.message.length() > 0) setHeight((int) (lines.length * 20 * 1.4f + 32 + (30 * 1.4f)));
     Assistant.Shadow(new Rectangle2D.Double(0, 0, v.w.getWidth(), v.w.getHeight()), Colors.DGRAY, 0.8f, g);
     Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
     Assistant.drawHorizontallyCenteredString(this.title, getX() + 16, getWidth(), getY() + (int) (30 * 1.4f), g, 30, Color.decode("#999999"));
@@ -105,8 +99,7 @@ public class Dialog extends Component
     }
     for (int i = 0; i < lines.length; i++)
     {
-      if (lines[i].length() == 0)
-        continue;
+      if (lines[i].length() == 0) continue;
       Assistant.drawHorizontallyCenteredString(lines[i], getX() + 16, getWidth(), (int) (getY() + (30 * 1.4f) + (i + 1) * 20 * 1.4f), g, 20, Color.white);
     }
     int selected = -1;
@@ -114,8 +107,7 @@ public class Dialog extends Component
     {
       Component child = this.children.get(i);
       child.draw(g, v);
-      if (child.getArea() != null && child.getArea().contains(this.mouse))
-        selected = i;
+      if (child.getArea() != null && child.getArea().contains(this.mouse)) selected = i;
     }
     if (this.buttons.length > 0)
     {
@@ -124,11 +116,9 @@ public class Dialog extends Component
         this.buttons[i].setY(getY() + getHeight());
         this.buttons[i].draw(g, v);
       }
-      if (this.selected > -1)
-        this.buttons[this.selected].draw(g, v);
+      if (this.selected > -1) this.buttons[this.selected].draw(g, v);
     }
-    if (selected > -1)
-      this.children.get(selected).draw(g, v);
+    if (selected > -1) this.children.get(selected).draw(g, v);
   }
   
   public void mouseReleased(MouseEvent e)
@@ -140,8 +130,7 @@ public class Dialog extends Component
         buttons[i].mouseReleased(e);
       }
     }
-    if (this.close != null)
-      this.close.mouseReleased(e);
+    if (this.close != null) this.close.mouseReleased(e);
     for (Component child : this.children)
     {
       child.mouseReleased(e);
@@ -158,8 +147,7 @@ public class Dialog extends Component
         buttons[i].mouseMoved(e);
       }
     }
-    if (this.close != null)
-      this.close.mouseMoved(e);
+    if (this.close != null) this.close.mouseMoved(e);
     for (Component child : this.children)
     {
       child.mouseMoved(e);

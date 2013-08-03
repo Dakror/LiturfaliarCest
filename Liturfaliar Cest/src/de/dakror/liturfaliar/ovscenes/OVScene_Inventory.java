@@ -7,7 +7,9 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
+import de.dakror.liturfaliar.event.Dispatcher;
+import de.dakror.liturfaliar.event.Event;
+import de.dakror.liturfaliar.event.Events;
 import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Inventory;
 import de.dakror.liturfaliar.item.Item;
@@ -72,7 +74,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
   public void construct(Viewport v)
   {
     this.v = v;
-    ItemSlotEventDispatcher.addItemSlotEventListener(this);
+    Dispatcher.addListener(this);
     c1 = new Container(0, 0, v.w.getWidth(), 55);
     c1.tileset = null;
     
@@ -85,43 +87,35 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     equipSlots[0] = new ItemSlot(183, 80); // helmet
     equipSlots[0].setCategoryFilter(Categories.HELMET);
-    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.HELMET))
-      equipSlots[0].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.HELMET));
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.HELMET)) equipSlots[0].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.HELMET));
     
     equipSlots[1] = new ItemSlot(80, 160); // cape
     equipSlots[1].setCategoryFilter(Categories.CAPE);
-    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.CAPE))
-      equipSlots[1].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.CAPE));
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.CAPE)) equipSlots[1].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.CAPE));
     
     equipSlots[2] = new ItemSlot(266, 210); // shoulder
     equipSlots[2].setCategoryFilter(Categories.SHOULDER);
-    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.SHOULDER))
-      equipSlots[2].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.SHOULDER));
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.SHOULDER)) equipSlots[2].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.SHOULDER));
     
     equipSlots[3] = new ItemSlot(155, 240); // shirt
     equipSlots[3].setCategoryFilter(Categories.SHIRT);
-    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.SHIRT))
-      equipSlots[3].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.SHIRT));
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.SHIRT)) equipSlots[3].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.SHIRT));
     
     equipSlots[4] = new ItemSlot(99, 240); // arm
     equipSlots[4].setCategoryFilter(Categories.ARM);
-    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.ARM))
-      equipSlots[4].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.ARM));
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.ARM)) equipSlots[4].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.ARM));
     
     equipSlots[5] = new ItemSlot(210, 240); // armor
     equipSlots[5].setCategoryFilter(Categories.ARMOR);
-    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.ARMOR))
-      equipSlots[5].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.ARMOR));
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.ARMOR)) equipSlots[5].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.ARMOR));
     
     equipSlots[6] = new ItemSlot(320, 270); // gloves
     equipSlots[6].setCategoryFilter(Categories.GLOVES);
-    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.GLOVES))
-      equipSlots[6].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.GLOVES));
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.GLOVES)) equipSlots[6].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.GLOVES));
     
     equipSlots[7] = new ItemSlot(183, 305); // belt
     equipSlots[7].setCategoryFilter(Categories.BELT);
-    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.BELT))
-      equipSlots[7].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.BELT));
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.BELT)) equipSlots[7].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.BELT));
     
     equipSlots[8] = new ItemSlot(75, 330); // left wpn
     equipSlots[8].setCategoryFilter(Categories.WEAPON);
@@ -135,13 +129,11 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     equipSlots[10] = new ItemSlot(183, 368); // pants
     equipSlots[10].setCategoryFilter(Categories.PANTS);
-    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.PANTS))
-      equipSlots[10].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.PANTS));
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.PANTS)) equipSlots[10].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.PANTS));
     
     equipSlots[11] = new ItemSlot(182, 430); // boots
     equipSlots[11].setCategoryFilter(Categories.BOOTS);
-    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.BOOTS))
-      equipSlots[11].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.BOOTS));
+    if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.BOOTS)) equipSlots[11].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.BOOTS));
     
     inventory = ItemSlot.createSlotGrid(v.w.getWidth() / 2 - 180, v.w.getHeight() / 2 - 350 + 110 - 52, WIDTH, HEIGHT);
     
@@ -180,7 +172,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
   @Override
   public void destruct()
   {
-    ItemSlotEventDispatcher.removeItemSlotEventListener(this);
+    Dispatcher.removeListener(this);
   }
   
   @Override
@@ -324,11 +316,9 @@ public class OVScene_Inventory extends OVScene implements Inventory
     {
       is.drawTooltip(g, v);
     }
-    if (pickedUp != null)
-      pickedUp.drawLightWeight(g, v);
+    if (pickedUp != null) pickedUp.drawLightWeight(g, v);
     
-    if (contextMenu != null)
-      contextMenu.draw(g, v);
+    if (contextMenu != null) contextMenu.draw(g, v);
   }
   
   public void trashItem()
@@ -339,8 +329,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     for (ItemSlot is : inventory)
     {
-      if (is.getItem() == null)
-        continue;
+      if (is.getItem() == null) continue;
       if (is.getItem().equals(scrap) && is.getItem().getStack() + 1 <= scrap.getType().getStackSize())
       {
         scrapSlot = is;
@@ -378,8 +367,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
       if (pickedUp != null)
       {
         pickUpSource.setItem(pickedUp.getItem());
-        if (pickUpSource.getCategoryFilter() == null && pickUpSource.hasHotKey())
-          sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(pickUpSource), pickedUp.getItem());
+        if (pickUpSource.getCategoryFilter() == null && pickUpSource.hasHotKey()) sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(pickUpSource), pickedUp.getItem());
       }
       
       sg.getPlayer().setInventory(ItemSlot.serializeItemSlots(inventory));
@@ -415,8 +403,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
       slot.mouseMoved(e);
     }
     
-    if (pickedUp != null)
-      pickedUp.mouseMoved(e);
+    if (pickedUp != null) pickedUp.mouseMoved(e);
   }
   
   @Override
@@ -443,8 +430,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
       slot.mousePressed(e);
     }
     
-    if (contextMenu != null && e.getButton() == 1)
-      contextMenu = null;
+    if (contextMenu != null && e.getButton() == 1) contextMenu = null;
   }
   
   @Override
@@ -498,119 +484,121 @@ public class OVScene_Inventory extends OVScene implements Inventory
   }
   
   @Override
-  public void slotPressed(MouseEvent e, ItemSlot slot)
+  public void onEvent(Event e)
   {
-    if (slot.getCategoryFilter() != null && !slot.isOnlyLabel()) // is from equip menu
+    if (e.equals(Events.slotPressed))
     {
-      int index = Arrays.asList(equipSlots).indexOf(slot);
-      switch (index)
+      ItemSlot slot = (ItemSlot) e.getParam("slot");
+      
+      if (slot.getCategoryFilter() != null && !slot.isOnlyLabel()) // is from equip menu
       {
-        case 8: // left weapon
-          sg.getPlayer().getEquipment().setFirstWeapon(null);
-          break;
-        case 9: // right weapon
-          sg.getPlayer().getEquipment().setSecondWeapon(null);
-          break;
-        default:
-          sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), null);
+        int index = Arrays.asList(equipSlots).indexOf(slot);
+        switch (index)
+        {
+          case 8: // left weapon
+            sg.getPlayer().getEquipment().setFirstWeapon(null);
+            break;
+          case 9: // right weapon
+            sg.getPlayer().getEquipment().setSecondWeapon(null);
+            break;
+          default:
+            sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), null);
+        }
       }
-    }
-    
-    else if (slot.hasHotKey()) // is from hotbar
+      
+      else if (slot.hasHotKey()) // is from hotbar
       sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), null);
-    
-    if (slot.getItem().getType().getCategory().equals(Categories.SKILL))
-    {
-      slot.setItem(null);
-      return;
-    }
-    
-    pickedUp = new ItemSlot(slot);
-    pickedUp.setHotKey(-1, true);
-    pickUpSource = slot;
-    
-    slot.setItem(null);
-    
-    updateStats(true);
-    
-    for (ItemSlot is : equipSlots)
-    {
-      if (is.getItem() != null && !is.getItem().areRequirementsSatisfied(Attributes.dif(sg.getPlayer().getAttributes(true), is.getItem().getAttributes())))
-      {
-        sg.getPlayer().getEquipment().setEquipmentItem(is.getItem().getType().getCategory(), null);
-        getFirstSlot(null).setItem(is.getItem());
-        is.setItem(null);
-        
-        updateStats(true);
-      }
-    }
-  }
-  
-  @Override
-  public void slotHovered(MouseEvent e, ItemSlot slot)
-  {
-    if (slot.getCategoryFilter() != null && pickedUp != null && slot.getCategoryFilter().equals(pickedUp.getItem().getType().getCategory()) && !slot.isOnlyLabel()) // is from equip menu
-    {
-      Attributes attributes = pickedUp.getItem().getAttributes();
       
-      if (slot.equals(pickedUp))
+      if (slot.getItem().getType().getCategory().equals(Categories.SKILL))
+      {
+        slot.setItem(null);
         return;
-      
-      Attributes player = sg.getPlayer().getAttributes(false);
-      Attributes totalplayer = sg.getPlayer().getAttributes(true);
-      
-      for (Attr attr : Attr.values())
-      {
-        String color = "#ffffff";
-        
-        if (slot.getItem() == null)
-        {
-          if (player.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() > player.getAttribute(attr).getValue())
-            color = (attr.equals(Attr.weight)) ? Colors.WORSE : Colors.BETTER;
-          else if (player.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() < player.getAttribute(attr).getValue())
-            color = (attr.equals(Attr.weight)) ? Colors.BETTER : Colors.WORSE;
-        }
-        else
-        {
-          if (attributes.getAttribute(attr).getValue() > slot.getItem().getAttributes().getAttribute(attr).getValue())
-            color = (attr.equals(Attr.weight)) ? Colors.WORSE : Colors.BETTER;
-          else if (attributes.getAttribute(attr).getValue() < slot.getItem().getAttributes().getAttribute(attr).getValue())
-            color = (attr.equals(Attr.weight)) ? Colors.BETTER : Colors.WORSE;
-        }
-        
-        Database.setStringVar("ov_inv_attr_color_" + attr.name(), color);
-        Database.setStringVar("ov_inv_attr_display_" + attr.name(), Attribute.FORMAT.format(totalplayer.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() - ((slot.getItem() != null) ? slot.getItem().getAttributes().getAttribute(attr).getValue() : 0.0)));
       }
       
-      updateStats(false);
+      pickedUp = new ItemSlot(slot);
+      pickedUp.setHotKey(-1, true);
+      pickUpSource = slot;
+      
+      slot.setItem(null);
+      
+      updateStats(true);
+      
+      for (ItemSlot is : equipSlots)
+      {
+        if (is.getItem() != null && !is.getItem().areRequirementsSatisfied(Attributes.dif(sg.getPlayer().getAttributes(true), is.getItem().getAttributes())))
+        {
+          sg.getPlayer().getEquipment().setEquipmentItem(is.getItem().getType().getCategory(), null);
+          getFirstSlot(null).setItem(is.getItem());
+          is.setItem(null);
+          
+          updateStats(true);
+        }
+      }
     }
-  }
-  
-  @Override
-  public void slotReleased(MouseEvent e, ItemSlot slot)
-  {
-    slot.setCooldownFrozen(true);
-    
-    if (slot.getCategoryFilter() != null && !slot.isOnlyLabel()) // is from equip menu
+    else if (e.equals(Events.slotHovered))
     {
-      int index = Arrays.asList(equipSlots).indexOf(slot);
-      switch (index)
+      ItemSlot slot = (ItemSlot) e.getParam("slot");
+      if (slot.getCategoryFilter() != null && pickedUp != null && slot.getCategoryFilter().equals(pickedUp.getItem().getType().getCategory()) && !slot.isOnlyLabel()) // is from equip menu
       {
-        case 8: // left weapon
-          sg.getPlayer().getEquipment().setFirstWeapon(slot.getItem());
-          break;
-        case 9: // right weapon
-          sg.getPlayer().getEquipment().setSecondWeapon(slot.getItem());
-          break;
-        default:
-          sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), slot.getItem());
+        Attributes attributes = pickedUp.getItem().getAttributes();
+        
+        if (slot.equals(pickedUp)) return;
+        
+        Attributes player = sg.getPlayer().getAttributes(false);
+        Attributes totalplayer = sg.getPlayer().getAttributes(true);
+        
+        for (Attr attr : Attr.values())
+        {
+          String color = "#ffffff";
+          
+          if (slot.getItem() == null)
+          {
+            if (player.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() > player.getAttribute(attr).getValue()) color = (attr.equals(Attr.weight)) ? Colors.WORSE : Colors.BETTER;
+            else if (player.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() < player.getAttribute(attr).getValue()) color = (attr.equals(Attr.weight)) ? Colors.BETTER : Colors.WORSE;
+          }
+          else
+          {
+            if (attributes.getAttribute(attr).getValue() > slot.getItem().getAttributes().getAttribute(attr).getValue()) color = (attr.equals(Attr.weight)) ? Colors.WORSE : Colors.BETTER;
+            else if (attributes.getAttribute(attr).getValue() < slot.getItem().getAttributes().getAttribute(attr).getValue()) color = (attr.equals(Attr.weight)) ? Colors.BETTER : Colors.WORSE;
+          }
+          
+          Database.setStringVar("ov_inv_attr_color_" + attr.name(), color);
+          Database.setStringVar("ov_inv_attr_display_" + attr.name(), Attribute.FORMAT.format(totalplayer.getAttribute(attr).getValue() + attributes.getAttribute(attr).getValue() - ((slot.getItem() != null) ? slot.getItem().getAttributes().getAttribute(attr).getValue() : 0.0)));
+        }
+        
+        updateStats(false);
       }
     }
-    
-    else if (slot.hasHotKey()) // is from hotbar
+    else if (e.equals(Events.slotReleased))
+    {
+      ItemSlot slot = (ItemSlot) e.getParam("slot");
+      slot.setCooldownFrozen(true);
+      
+      if (slot.getCategoryFilter() != null && !slot.isOnlyLabel()) // is from equip menu
+      {
+        int index = Arrays.asList(equipSlots).indexOf(slot);
+        switch (index)
+        {
+          case 8: // left weapon
+            sg.getPlayer().getEquipment().setFirstWeapon(slot.getItem());
+            break;
+          case 9: // right weapon
+            sg.getPlayer().getEquipment().setSecondWeapon(slot.getItem());
+            break;
+          default:
+            sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), slot.getItem());
+        }
+      }
+      
+      else if (slot.hasHotKey()) // is from hotbar
       sg.getPlayer().getEquipment().setHotbarItem(Arrays.asList(hotbar).indexOf(slot), slot.getItem());
-    
-    updateStats(true);
+      
+      updateStats(true);
+    }
+    else if (e.equals(Events.slotExited))
+    {
+      updateStats(true);
+    }
   }
   
   public void updateStats(boolean force)
@@ -659,27 +647,22 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     String st2 = "";
     
-    if (stats1 == null)
-      stats1 = new HTMLLabel(v.w.getWidth() / 2 - 590 + 125, v.w.getHeight() / 2 - 350 + 546, 97, 150, st1);
+    if (stats1 == null) stats1 = new HTMLLabel(v.w.getWidth() / 2 - 590 + 125, v.w.getHeight() / 2 - 350 + 546, 97, 150, st1);
     else stats1.doUpdate(st1);
     
-    if (stats2 == null)
-      stats2 = new HTMLLabel(v.w.getWidth() / 2 - 590 + 125 + 205, v.w.getHeight() / 2 - 350 + 546, 97, 150, st2);
+    if (stats2 == null) stats2 = new HTMLLabel(v.w.getWidth() / 2 - 590 + 125 + 205, v.w.getHeight() / 2 - 350 + 546, 97, 150, st2);
     else stats2.doUpdate(st2);
     
-    if (invWeight == null)
-      invWeight = new HTMLLabel(v.w.getWidth() / 2 - 175, v.w.getHeight() / 2 - 350 + 110 - 52 + HEIGHT * ItemSlot.SIZE - 7, 160, 30, w + "Gewicht: <#ffffff;20;1>" + Attribute.FORMAT.format(getInventoryWeight()) + " kg[br]");
+    if (invWeight == null) invWeight = new HTMLLabel(v.w.getWidth() / 2 - 175, v.w.getHeight() / 2 - 350 + 110 - 52 + HEIGHT * ItemSlot.SIZE - 7, 160, 30, w + "Gewicht: <#ffffff;20;1>" + Attribute.FORMAT.format(getInventoryWeight()) + " kg[br]");
     else invWeight.doUpdate(w + "Gewicht: <#ffffff;20;1>" + Attribute.FORMAT.format(getInventoryWeight()) + " kg[br]");
     
     for (ItemSlot is : equipSlots)
     {
-      if (is.getItem() != null)
-        is.getItem().updateTooltip();
+      if (is.getItem() != null) is.getItem().updateTooltip();
     }
     for (ItemSlot is : inventory)
     {
-      if (is.getItem() != null)
-        is.getItem().updateTooltip();
+      if (is.getItem() != null) is.getItem().updateTooltip();
     }
   }
   
@@ -705,15 +688,8 @@ public class OVScene_Inventory extends OVScene implements Inventory
   @Override
   public void setPickedUpItemSlot(ItemSlot item)
   {
-    if (item != null)
-      item.setHotKey(-1, true);
+    if (item != null) item.setHotKey(-1, true);
     pickedUp = item;
-  }
-  
-  @Override
-  public void slotExited(MouseEvent e, ItemSlot slot)
-  {
-    updateStats(true);
   }
   
   @Override
@@ -723,11 +699,9 @@ public class OVScene_Inventory extends OVScene implements Inventory
     {
       if (item != null)
       {
-        if (is.getItem() != null && is.getItem().equals(item))
-          return is;
+        if (is.getItem() != null && is.getItem().equals(item)) return is;
       }
-      else if (is.getItem() == null)
-        return is;
+      else if (is.getItem() == null) return is;
     }
     return null;
   }
@@ -741,8 +715,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
   @Override
   public void showContextMenu(ItemSlot slot, int x, int y)
   {
-    if (slot.getItem() == null || slot.getItem().getType().getCategory().equals(Categories.SKILL))
-      return;
+    if (slot.getItem() == null || slot.getItem().getType().getCategory().equals(Categories.SKILL)) return;
     
     contextItemSlot = slot;
     
@@ -750,22 +723,18 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     Types type = slot.getItem().getType();
     
-    if (type.getCategory().equals(Categories.CONSUMABLE))
-      options = new Object[] { USEITEM, THROWITEM };
+    if (type.getCategory().equals(Categories.CONSUMABLE)) options = new Object[] { USEITEM, THROWITEM };
     
-    else if (Arrays.asList(Categories.EQUIPS).indexOf(type.getCategory()) > -1 || type.getCategory().equals(Categories.WEAPON) || type.getCategory().equals(Categories.ITEM))
-      options = new Object[] { TRASHITEM, THROWITEM };
+    else if (Arrays.asList(Categories.EQUIPS).indexOf(type.getCategory()) > -1 || type.getCategory().equals(Categories.WEAPON) || type.getCategory().equals(Categories.ITEM)) options = new Object[] { TRASHITEM, THROWITEM };
     
     int lx = x;
     int ly = y;
     int w = 300;
     int h = 28 * options.length + 18;
     
-    if (lx + w > v.w.getWidth())
-      lx -= (lx + w) - v.w.getWidth();
+    if (lx + w > v.w.getWidth()) lx -= (lx + w) - v.w.getWidth();
     
-    if (ly + h > v.w.getHeight())
-      ly -= (ly + h) - v.w.getHeight();
+    if (ly + h > v.w.getHeight()) ly -= (ly + h) - v.w.getHeight();
     
     contextMenu = new TextSelect(lx, ly, w, h, options);
   }

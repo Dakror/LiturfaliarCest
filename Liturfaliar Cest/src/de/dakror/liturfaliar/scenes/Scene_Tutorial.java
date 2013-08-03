@@ -44,8 +44,7 @@ public class Scene_Tutorial implements Scene
   public void update(long timePassed)
   {
     next.update();
-    if (next.getState() == 1)
-      v.setScene(new Scene_Game());
+    if (next.getState() == 1) v.setScene(new Scene_Game());
   }
   
   @Override
@@ -59,16 +58,11 @@ public class Scene_Tutorial implements Scene
     next.draw(g, v);
     int frame = 0;
     int dir = 0;
-    if (dirs[0] || dirs[1] || dirs[2] || dirs[3])
-      frame = v.getFrame();
-    if (dirs[0])
-      dir = 3;
-    if (dirs[1])
-      dir = 1;
-    if (dirs[2])
-      dir = 2;
-    if (dirs[3])
-      dir = 0;
+    if (dirs[0] || dirs[1] || dirs[2] || dirs[3]) frame = v.getFrame();
+    if (dirs[0]) dir = 3;
+    if (dirs[1]) dir = 1;
+    if (dirs[2]) dir = 2;
+    if (dirs[3]) dir = 0;
     try
     {
       Assistant.drawChar(v.w.getWidth() / 5 * 2, v.w.getHeight() / 2 - v.w.getWidth() / 5 * 3 / 4, v.w.getWidth() / 5, v.w.getWidth() / 5 * 3 / 2, dir, frame, new Equipment(v.savegame.getJSONObject("char").getJSONObject("equip")), g, v.w, true);

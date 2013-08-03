@@ -98,8 +98,7 @@ public class Scene_NewGame implements Scene
     start.update();
     name.update();
     
-    if (name.value.length() == 0 || name.value.equals("Name"))
-      start.disabled = true;
+    if (name.value.length() == 0 || name.value.equals("Name")) start.disabled = true;
     else start.disabled = false;
     
     if (random.getState() == 1)
@@ -137,13 +136,11 @@ public class Scene_NewGame implements Scene
       c.update();
     }
     
-    if (gender.getSelected(false).equals("Junge") != equip.isMale())
-      equip = Equipment.getDefault(!equip.isMale());
+    if (gender.getSelected(false).equals("Junge") != equip.isMale()) equip = Equipment.getDefault(!equip.isMale());
     for (int i = 0; i < parts.length; i++)
     {
       String sel;
-      if ((sel = (String) parts[i].getSelected(true)) != null)
-        equip.setEquipmentItem(Categories.valueOf(partsENG[i].toUpperCase()), new Item(Types.valueOf(partsENG[i].toUpperCase()), sel.replaceAll("(_.{1}\\.png)|(\\.png)", ""), 1));
+      if ((sel = (String) parts[i].getSelected(true)) != null) equip.setEquipmentItem(Categories.valueOf(partsENG[i].toUpperCase()), new Item(Types.valueOf(partsENG[i].toUpperCase()), sel.replaceAll("(_.{1}\\.png)|(\\.png)", ""), 1));
     }
     
     if (Viewport.dialog != null && Viewport.dialog.buttons.length > 0)
@@ -178,8 +175,7 @@ public class Scene_NewGame implements Scene
     c1.draw(g, v);
     Assistant.drawHorizontallyCenteredString("Neues Spiel", v.w.getWidth(), 43, g, 45, Color.white);
     
-    if (equip != null)
-      Assistant.drawChar(v.w.getWidth() / 2 - 320, v.w.getHeight() / 2 - 240, 320, 480, 0, v.getFrame(2.5f) % 4, equip, g, v.w, true);
+    if (equip != null) Assistant.drawChar(v.w.getWidth() / 2 - 320, v.w.getHeight() / 2 - 240, 320, 480, 0, v.getFrame(2.5f) % 4, equip, g, v.w, true);
     
     Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2, v.w.getHeight() / 2 - 240, 320, 416, g, v.w);
     
@@ -196,13 +192,11 @@ public class Scene_NewGame implements Scene
   
   public int createSave()
   {
-    if (FileManager.doesSaveExist(name.value))
-      return 0;
+    if (FileManager.doesSaveExist(name.value)) return 0;
     else
     {
       JSONObject save = getSave();
-      if (save == null)
-        return 2;
+      if (save == null) return 2;
       FileManager.setSave(save);
       return 1;
     }
@@ -293,8 +287,7 @@ public class Scene_NewGame implements Scene
       v.playSound("002-System02");
     }
     
-    if (gender != null)
-      gender.keyPressed(e);
+    if (gender != null) gender.keyPressed(e);
     name.keyPressed(e);
     
     for (Chooser c : parts)
@@ -327,8 +320,7 @@ public class Scene_NewGame implements Scene
       
       for (Chooser c : parts)
       {
-        if (c != null)
-          c.mouseMoved(e);
+        if (c != null) c.mouseMoved(e);
       }
     }
     catch (Exception e1)

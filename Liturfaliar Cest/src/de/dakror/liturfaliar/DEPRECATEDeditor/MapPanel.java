@@ -54,10 +54,8 @@ public class MapPanel extends JLayeredPane
         {
           if (c instanceof TileButton)
           {
-            if (c.getX() > w)
-              w = c.getX();
-            if (c.getY() > h)
-              h = c.getY();
+            if (c.getX() > w) w = c.getX();
+            if (c.getY() > h) h = c.getY();
           }
         }
         w += CFG.FIELDSIZE;

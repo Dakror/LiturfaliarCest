@@ -56,8 +56,7 @@ public class Scene_Logo implements Scene
       {
         for (File f : new File(FileManager.dir, "Animations").listFiles())
         {
-          if (!f.getName().endsWith(".png"))
-            continue;
+          if (!f.getName().endsWith(".png")) continue;
           
           Viewport.loadImage("Animations/" + f.getName());
         }
@@ -69,12 +68,9 @@ public class Scene_Logo implements Scene
   public void update(long timePassed)
   {
     alphas[0] += 0.015f;
-    if (alphas[0] > 1)
-      alphas[0] = 1;
-    if (alphas[0] == 1)
-      alphas[1] += 0.015f;
-    if (alphas[1] > 1)
-      alphas[1] = 1;
+    if (alphas[0] > 1) alphas[0] = 1;
+    if (alphas[0] == 1) alphas[1] += 0.015f;
+    if (alphas[1] > 1) alphas[1] = 1;
     if (homepageButton != null && homepageButton.state == 1)
     {
       Assistant.openLink("http://www.dakror.de");
@@ -91,8 +87,7 @@ public class Scene_Logo implements Scene
         {
           fullsize += downloader.get(i).fullsize;
           prog += downloader.get(i).downloaded;
-          if (downloader.get(i).state != null && downloader.get(i).state.equals("Fertig"))
-            done++;
+          if (downloader.get(i).state != null && downloader.get(i).state.equals("Fertig")) done++;
           if (done == downloader.size())
           {
             break;
@@ -102,13 +97,11 @@ public class Scene_Logo implements Scene
       progress.value = prog / (float) fullsize;
       progress.title = Assistant.formatBinarySize(prog, 2) + " / " + Assistant.formatBinarySize(fullsize, 2) + " @ " + Assistant.formatBinarySize((long) ((prog / (float) ((System.currentTimeMillis() - time) / 1000))), 1) + "/s";
       
-      if (progress.value == 1 && (System.currentTimeMillis() - time) > 5000)
-        v.setScene(new Scene_MainMenu());
+      if (progress.value == 1 && (System.currentTimeMillis() - time) > 5000) v.setScene(new Scene_MainMenu());
     }
     else
     {
-      if ((System.currentTimeMillis() - time) > 5000)
-        v.setScene(new Scene_MainMenu());
+      if ((System.currentTimeMillis() - time) > 5000) v.setScene(new Scene_MainMenu());
     }
   }
   
@@ -124,8 +117,7 @@ public class Scene_Logo implements Scene
     if (update)
     {
       new Container(0, v.w.getHeight() - 90, v.w.getWidth(), 90).draw(g, v);
-      if (progress != null)
-        progress.draw(g, v);
+      if (progress != null) progress.draw(g, v);
       Assistant.drawHorizontallyCenteredString("Aktualisierung", v.w.getWidth(), v.w.getHeight() - 50, g, 30, Color.white);
     }
   }
@@ -145,8 +137,7 @@ public class Scene_Logo implements Scene
             finished = downloader.get(i).state.equals("Fertig");
           }
         }
-        if (finished)
-          v.setScene(new Scene_MainMenu());
+        if (finished) v.setScene(new Scene_MainMenu());
       }
       else v.setScene(new Scene_MainMenu());
     }
@@ -163,8 +154,7 @@ public class Scene_Logo implements Scene
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    if (homepageButton != null)
-      homepageButton.mouseReleased(e);
+    if (homepageButton != null) homepageButton.mouseReleased(e);
   }
   
   public void mouseDragged(MouseEvent e)
@@ -172,8 +162,7 @@ public class Scene_Logo implements Scene
   
   public void mouseMoved(MouseEvent e)
   {
-    if (homepageButton != null)
-      homepageButton.mouseMoved(e);
+    if (homepageButton != null) homepageButton.mouseMoved(e);
   }
   
   @Override

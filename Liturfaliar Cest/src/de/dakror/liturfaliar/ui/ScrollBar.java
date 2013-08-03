@@ -53,10 +53,8 @@ public class ScrollBar extends Component
       if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight())).contains(e.getPoint()))
       {
         value = e.getY() - getY();
-        if (value < 0)
-          value = 0;
-        if (value > getHeight() - getWidth())
-          value = getHeight() - getWidth();
+        if (value < 0) value = 0;
+        if (value > getHeight() - getWidth()) value = getHeight() - getWidth();
       }
     }
     else
@@ -64,10 +62,8 @@ public class ScrollBar extends Component
       if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight())).contains(e.getPoint()))
       {
         value = e.getX() - getX();
-        if (value < 0)
-          value = 0;
-        if (value > getWidth() - getHeight())
-          value = getWidth() - getHeight();
+        if (value < 0) value = 0;
+        if (value > getWidth() - getHeight()) value = getWidth() - getHeight();
       }
     }
   }
@@ -80,10 +76,8 @@ public class ScrollBar extends Component
       if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight())).contains(e.getPoint()) && !new Area(new Rectangle2D.Double(getX(), getY() + this.value, getWidth(), getWidth())).contains(e.getPoint()))
       {
         value = e.getY() - getY();
-        if (value < 0)
-          value = 0;
-        if (value > getHeight() - getWidth())
-          value = getHeight() - getWidth();
+        if (value < 0) value = 0;
+        if (value > getHeight() - getWidth()) value = getHeight() - getWidth();
       }
     }
     else
@@ -91,37 +85,28 @@ public class ScrollBar extends Component
       if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight())).contains(e.getPoint()) && !new Area(new Rectangle2D.Double(getX() + this.value, getY(), getHeight(), getHeight())).contains(e.getPoint()))
       {
         value = e.getX() - getX();
-        if (value < 0)
-          value = 0;
-        if (value > getWidth() - getHeight())
-          value = getWidth() - getHeight();
+        if (value < 0) value = 0;
+        if (value > getWidth() - getHeight()) value = getWidth() - getHeight();
       }
     }
   }
   
   public void mouseWheelMoved(MouseWheelEvent e)
   {
-    if (!focus)
-      return;
+    if (!focus) return;
     if (this.dir == ScrollBar.VERTICAL)
     {
-      if (e.isControlDown())
-        return;
+      if (e.isControlDown()) return;
       value += e.getWheelRotation() * 5;
-      if (value < 0)
-        value = 0;
-      if (value > getHeight() - getWidth())
-        value = getHeight() - getWidth();
+      if (value < 0) value = 0;
+      if (value > getHeight() - getWidth()) value = getHeight() - getWidth();
     }
     else
     {
-      if (!e.isControlDown())
-        return;
+      if (!e.isControlDown()) return;
       value += e.getWheelRotation() * getHeight() / 10;
-      if (value < 0)
-        value = 0;
-      if (value > getWidth() - getHeight())
-        value = getWidth() - getHeight();
+      if (value < 0) value = 0;
+      if (value > getWidth() - getHeight()) value = getWidth() - getHeight();
     }
   }
   

@@ -56,8 +56,7 @@ public class Chooser extends Component
     {
       if (reset)
       {
-        if (selected == oldselected)
-          return null;
+        if (selected == oldselected) return null;
         else
         {
           oldselected = selected;
@@ -108,13 +107,11 @@ public class Chooser extends Component
   public void draw(Graphics2D g, Viewport v)
   {
     this.v = v;
-    if (elem.length == 0)
-      disabled = true;
+    if (elem.length == 0) disabled = true;
     if (alternate)
     {
       Color c;
-      if (focus)
-        c = Colors.ORANGE;
+      if (focus) c = Colors.ORANGE;
       else c = Colors.DGRAY;
       Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8), c, 0.6f, g);
     }
@@ -126,8 +123,7 @@ public class Chooser extends Component
       {
         Image icon = getIcons()[selected];
         g.drawImage(icon, x + g.getFontMetrics(g.getFont().deriveFont(getHeight() / 1.4f)).stringWidth(title + ((selected != -1) ? ((elem[selected] != null) ? elem[selected] != null : "") : "")) - icon.getWidth(null), getY(), v.w);
-        if (iconrect)
-          Assistant.Rect(x + g.getFontMetrics(g.getFont().deriveFont(getHeight() / 1.4f)).stringWidth(title + ((selected != -1) ? ((elem[selected] != null) ? elem[selected] != null : "") : "")) - icon.getWidth(null), getY(), icon.getWidth(null), icon.getHeight(null), Color.cyan, null, g);
+        if (iconrect) Assistant.Rect(x + g.getFontMetrics(g.getFont().deriveFont(getHeight() / 1.4f)).stringWidth(title + ((selected != -1) ? ((elem[selected] != null) ? elem[selected] != null : "") : "")) - icon.getWidth(null), getY(), icon.getWidth(null), icon.getHeight(null), Color.cyan, null, g);
       }
     }
     else
@@ -145,8 +141,7 @@ public class Chooser extends Component
   @Override
   public void mouseMoved(MouseEvent e)
   {
-    if (disabled)
-      return;
+    if (disabled) return;
     focus = getArea().contains(e.getPoint());
     prev.mouseMoved(e);
     next.mouseMoved(e);
@@ -155,8 +150,7 @@ public class Chooser extends Component
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    if (disabled)
-      return;
+    if (disabled) return;
     prev.mouseReleased(e);
     next.mouseReleased(e);
   }
@@ -164,8 +158,7 @@ public class Chooser extends Component
   @Override
   public void keyPressed(KeyEvent e)
   {
-    if (!focus || disabled)
-      return;
+    if (!focus || disabled) return;
     if ((e.getExtendedKeyCode() == KeyEvent.VK_LEFT || e.getExtendedKeyCode() == KeyEvent.VK_A) && selected > 0)
     {
       selected--;

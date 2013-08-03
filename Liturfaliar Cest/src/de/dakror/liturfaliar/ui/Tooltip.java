@@ -57,8 +57,7 @@ public class Tooltip extends Component
       for (int i = 0; i < text.length; i++)
       {
         int width = getTotalLineWidth(i, g);
-        if (width > mostwidth)
-          mostwidth = width;
+        if (width > mostwidth) mostwidth = width;
       }
       setWidth(mostwidth + 32);
     }
@@ -66,11 +65,9 @@ public class Tooltip extends Component
     int lx = getX();
     int ly = getY();
     
-    if (lx + getWidth() > v.w.getWidth())
-      lx -= (lx + getWidth()) - v.w.getWidth();
+    if (lx + getWidth() > v.w.getWidth()) lx -= (lx + getWidth()) - v.w.getWidth();
     
-    if (ly + getHeight() > v.w.getHeight())
-      ly -= (ly + getHeight()) - v.w.getHeight();
+    if (ly + getHeight() > v.w.getHeight()) ly -= (ly + getHeight()) - v.w.getHeight();
     
     Font oldFont = g.getFont();
     g.setFont(new Font("Times New Roman", g.getFont().getStyle(), g.getFont().getSize()));
@@ -115,8 +112,7 @@ public class Tooltip extends Component
     for (int i = firstIndex; i < text.length; i++)
     {
       width += text[i].getWidth(g);
-      if (text[i].br)
-        return width;
+      if (text[i].br) return width;
     }
     return width;
   }
@@ -126,8 +122,7 @@ public class Tooltip extends Component
     int height = 0;
     for (int i = 0; i < index; i++)
     {
-      if (this.text[(i > 0) ? i - 1 : 0].br || index == 1)
-        height += text[i].getHeight(g);
+      if (this.text[(i > 0) ? i - 1 : 0].br || index == 1) height += text[i].getHeight(g);
     }
     return height;
   }

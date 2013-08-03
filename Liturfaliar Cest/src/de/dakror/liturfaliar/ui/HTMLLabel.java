@@ -47,8 +47,7 @@ public class HTMLLabel extends Component
   
   public void doUpdate(String newraw)
   {
-    if (newraw != null)
-      raw = newraw;
+    if (newraw != null) raw = newraw;
     
     update = true;
   }
@@ -58,11 +57,9 @@ public class HTMLLabel extends Component
     int height = 0;
     for (int i = 0; i < index; i++)
     {
-      if (lines[(i > 0) ? i - 1 : 0].br)
-        height += lines[i].getHeight(g);
+      if (lines[(i > 0) ? i - 1 : 0].br) height += lines[i].getHeight(g);
     }
-    if (!lines[0].br)
-      height += lines[0].getHeight(g);
+    if (!lines[0].br) height += lines[0].getHeight(g);
     
     return height;
   }

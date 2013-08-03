@@ -71,14 +71,12 @@ public class VirtualKey extends Component
   @Override
   public void keyPressed(KeyEvent e)
   {
-    if (e.getExtendedKeyCode() == this.c)
-      this.active = true;
+    if (e.getExtendedKeyCode() == this.c) this.active = true;
   }
   
   @Override
   public void keyReleased(KeyEvent e)
   {
-    if (e.getExtendedKeyCode() == this.c)
-      this.active = false;
+    if (e.getExtendedKeyCode() == this.c) this.active = false;
   }
 }

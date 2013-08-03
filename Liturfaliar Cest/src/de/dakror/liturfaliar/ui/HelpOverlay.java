@@ -50,16 +50,13 @@ public class HelpOverlay
   
   public static void draw(Graphics2D g, Viewport v)
   {
-    if (!HelpOverlay.visible)
-      return;
+    if (!HelpOverlay.visible) return;
     Area shadowed = new Area(v.w.getBounds());
-    if (HelpOverlay.hoc == null || HelpOverlay.hoc.length == 0)
-      return;
+    if (HelpOverlay.hoc == null || HelpOverlay.hoc.length == 0) return;
     for (HelpOverlayContainer h : HelpOverlay.hoc)
     {
       shadowed.subtract(h.getArea());
-      if (h != null)
-        h.draw(g, v);
+      if (h != null) h.draw(g, v);
     }
     Assistant.Shadow(shadowed, Colors.DGRAY, 0.8f, g);
   }

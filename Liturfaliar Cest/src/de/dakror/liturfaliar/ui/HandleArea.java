@@ -39,27 +39,22 @@ public class HandleArea extends Component
   
   public void mouseMoved(MouseEvent e)
   {
-    if (this.v == null || this.state == 1)
-      return;
+    if (this.v == null || this.state == 1) return;
     if (getArea().contains(e.getPoint()))
     {
-      if (this.soundMOVER && this.state == 0)
-        this.v.playSound("181-Hover");
+      if (this.soundMOVER && this.state == 0) this.v.playSound("181-Hover");
       this.state = 2;
     }
-    else if (this.state == 2)
-      this.state = 0;
+    else if (this.state == 2) this.state = 0;
   }
   
   public void mouseReleased(MouseEvent e)
   {
-    if ((e.getButton() != 1 && !this.allowRightClick) || this.v == null || !this.mouseReleased)
-      return;
+    if ((e.getButton() != 1 && !this.allowRightClick) || this.v == null || !this.mouseReleased) return;
     
     if (getArea().contains(e.getPoint()))
     {
-      if (this.soundCLICK)
-        this.v.playSound("182-Click");
+      if (this.soundCLICK) this.v.playSound("182-Click");
       this.state = 1;
     }
     else this.state = 0;
@@ -68,12 +63,10 @@ public class HandleArea extends Component
   @Override
   public void mousePressed(MouseEvent e)
   {
-    if ((e.getButton() != 1 && !this.allowRightClick) || this.v == null || this.mouseReleased)
-      return;
+    if ((e.getButton() != 1 && !this.allowRightClick) || this.v == null || this.mouseReleased) return;
     if (getArea().contains(e.getPoint()))
     {
-      if (this.soundCLICK)
-        this.v.playSound("182-Click");
+      if (this.soundCLICK) this.v.playSound("182-Click");
       this.state = 1;
     }
     else this.state = 0;

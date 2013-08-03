@@ -89,8 +89,7 @@ public class WeaponAction extends ItemAction
   
   public double getReandomValue(Attr attr)
   {
-    if (effect.getAttribute(attr).isEmpty())
-      return 0;
+    if (effect.getAttribute(attr).isEmpty()) return 0;
     
     Attribute a = effect.getAttribute(attr);
     

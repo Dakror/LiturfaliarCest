@@ -8,7 +8,8 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.dispatcher.ItemSlotEventDispatcher;
+import de.dakror.liturfaliar.event.Dispatcher;
+import de.dakror.liturfaliar.event.Events;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.scenes.Scene_Game;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
@@ -101,8 +102,7 @@ public class SkillSlot extends ItemSlot
     g.drawImage(Viewport.loadImage("tileset/Wood.png"), x, y, SIZE, SIZE, null);
     item.draw(x + 2, y + 2, g, v);
     
-    if (!known)
-      Assistant.Shadow(item.getArea(), Colors.DGRAY, 0.6f, g);
+    if (!known) Assistant.Shadow(item.getArea(), Colors.DGRAY, 0.6f, g);
   }
   
   public double getAngle(Point fromPt, Point toPt)
@@ -136,8 +136,7 @@ public class SkillSlot extends ItemSlot
     {
       for (SkillSlot p : parents)
       {
-        if (!p.canLearn() || !p.known)
-          can = false;
+        if (!p.canLearn() || !p.known) can = false;
       }
     }
     return can;
@@ -152,8 +151,7 @@ public class SkillSlot extends ItemSlot
   @Override
   public void mousePressed(MouseEvent e)
   {
-    if (!getArea().contains(e.getLocationOnScreen()))
-      return;
+    if (!getArea().contains(e.getLocationOnScreen())) return;
     
     if (e.getButton() == 1 && e.getClickCount() == 2 && canLearn() && !known)
     {
@@ -163,11 +161,11 @@ public class SkillSlot extends ItemSlot
       known = true;
       item.showSkillCosts = !known;
       item.updateTooltip();
-      ItemSlotEventDispatcher.dispatchSlotHovered(e, this);
+      Dispatcher.dispatch(Events.slotHovered, e, this);
     }
     else if (e.getButton() == 1 && e.getClickCount() == 1 && known)
     {
-      ItemSlotEventDispatcher.dispatchSlotPressed(e, this);
+      Dispatcher.dispatch(Events.slotPressed, e, this);
     }
   }
   

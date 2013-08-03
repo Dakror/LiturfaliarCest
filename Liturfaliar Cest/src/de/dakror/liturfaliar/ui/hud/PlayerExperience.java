@@ -23,8 +23,7 @@ public class PlayerExperience extends HUDComponent
   @Override
   public void update(long timePassed, Map m)
   {
-    if (visible)
-      bar.value = (float) ((player.getAttributes().getAttribute(Attr.experience).getValue() - player.getXPforLevel(0)) / (float) (player.getXPforLevel(1) - player.getXPforLevel(0)));
+    if (visible) bar.value = (float) ((player.getAttributes().getAttribute(Attr.experience).getValue() - player.getXPforLevel(0)) / (float) (player.getXPforLevel(1) - player.getXPforLevel(0)));
   }
   
   @Override
@@ -41,7 +40,6 @@ public class PlayerExperience extends HUDComponent
       visible = true;
     }
     
-    if (visible)
-      bar.draw(g, v);
+    if (visible) bar.draw(g, v);
   }
 }

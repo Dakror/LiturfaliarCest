@@ -85,8 +85,7 @@ public class Talk extends Component
         JSONArray c = t.getJSONArray("cond");
         for (int j = 0; j < c.length(); j++)
         {
-          if (Database.getBooleanVar(c.getString(j)))
-            count++;
+          if (Database.getBooleanVar(c.getString(j))) count++;
         }
         if (count > highest)
         {
@@ -110,8 +109,7 @@ public class Talk extends Component
     {
       JSONObject talk = find();
       String rawText = talk.getString("text");
-      if (firstParsed != null)
-        rawText = firstParsed;
+      if (firstParsed != null) rawText = firstParsed;
       
       if (firstParsed == null)
       {
@@ -150,13 +148,11 @@ public class Talk extends Component
         for (int j = 0; j < lns.length; j++)
         {
           String line = lns[j];
-          if (line.length() == 0)
-            continue;
+          if (line.length() == 0) continue;
           
           if (firstParsed == null)
           {
-            if (cache != null && !cache.br)
-              rawText = rawText.replace(line, limitLine(createEmptyString(cache.string.length()) + line).trim());
+            if (cache != null && !cache.br) rawText = rawText.replace(line, limitLine(createEmptyString(cache.string.length()) + line).trim());
             else rawText = rawText.replace(line, limitLine(line));
           }
           
@@ -201,8 +197,7 @@ public class Talk extends Component
         strings.add(cache);
         lines[i] = strings.toArray(new TalkString[] {});
         
-        if (firstParsed == null)
-          parse(rawText);
+        if (firstParsed == null) parse(rawText);
       }
     }
     catch (Exception e)
@@ -224,11 +219,9 @@ public class Talk extends Component
     int w = 0;
     for (int i = firstIndex; i < lines[perspective].length; i++)
     {
-      if (i == index)
-        return w;
+      if (i == index) return w;
       
-      if (!lines[perspective][i].br)
-        w += lines[perspective][i].getWidth(g) + 5;
+      if (!lines[perspective][i].br) w += lines[perspective][i].getWidth(g) + 5;
       else w = 0;
     }
     
@@ -238,11 +231,9 @@ public class Talk extends Component
   @Override
   public void update()
   {
-    if (lines == null)
-      return;
+    if (lines == null) return;
     
-    if (activeChooser != null)
-      activeChooser.update();
+    if (activeChooser != null) activeChooser.update();
     
     if (showAll)
     {
@@ -263,20 +254,17 @@ public class Talk extends Component
     
     if (partDone)
     {
-      if (time == 0)
-        time = System.currentTimeMillis();
+      if (time == 0) time = System.currentTimeMillis();
       cos++;
     }
     
-    if (lines[perspective][activeLine].updateAnimatedString(SPEED) && !partDone && activeLine < lines[perspective].length - 1 && activeChooser == null)
-      activeLine++;
+    if (lines[perspective][activeLine].updateAnimatedString(SPEED) && !partDone && activeLine < lines[perspective].length - 1 && activeChooser == null) activeLine++;
     
     if (lines[perspective][activeLine].chooser > -1 && activeChooser == null)
     {
       activeChooser = choosers[lines[perspective][activeLine].chooser];
     }
-    if (activeChooser != null && !activeChooser.isCloseRequested())
-      return;
+    if (activeChooser != null && !activeChooser.isCloseRequested()) return;
     else activeChooser = null;
     
     if (Database.getBooleanVar("quit_talk"))
@@ -288,8 +276,7 @@ public class Talk extends Component
   
   public void next()
   {
-    if (lines == null || activeChooser != null)
-      return;
+    if (lines == null || activeChooser != null) return;
     
     if (perspective == -1)
     {
@@ -324,8 +311,7 @@ public class Talk extends Component
       Creature c = m.getCreatureByAccessKey(perspectives[perspective]);
       nameLabel.string = c.getName();
       
-      if (c.getCharacter() != null)
-        Assistant.drawChar(0, 0, 96, 128, 0, 0, "chars", c.getCharacter(), (Graphics2D) g, null, true);
+      if (c.getCharacter() != null) Assistant.drawChar(0, 0, 96, 128, 0, 0, "chars", c.getCharacter(), (Graphics2D) g, null, true);
       else Assistant.drawChar(0, 0, 96, 128, 0, 0, c.getEquipment(), (Graphics2D) g, null, true);
     }
     else if (perspectives[perspective].indexOf("player") > -1)
@@ -347,8 +333,7 @@ public class Talk extends Component
     for (String p : perspectives)
     {
       Creature c = m.getCreatureByAccessKey(p);
-      if (c instanceof NPC)
-        ((NPC) c).setTalking(false);
+      if (c instanceof NPC) ((NPC) c).setTalking(false);
       
       c.setFrozen(false);
     }
@@ -364,18 +349,15 @@ public class Talk extends Component
   
   public int getLinesForPageMax()
   {
-    if (lines == null)
-      return 0;
+    if (lines == null) return 0;
     
     int r = 0;
     int y = 0;
     for (int i = firstIndex; i < lines[perspective].length; i++)
     {
-      if (y >= maxLines)
-        break;
+      if (y >= maxLines) break;
       r++;
-      if (lines[perspective][i].br)
-        y++;
+      if (lines[perspective][i].br) y++;
     }
     
     return r;
@@ -405,8 +387,7 @@ public class Talk extends Component
       for (String p : perspectives)
       {
         Creature c = m.getCreatureByAccessKey(p);
-        if (c instanceof NPC)
-          ((NPC) c).setTalking(true);
+        if (c instanceof NPC) ((NPC) c).setTalking(true);
         
         c.setFrozen(true);
       }
@@ -426,11 +407,9 @@ public class Talk extends Component
     int y = -1;
     for (int i = firstIndex; i < lines[perspective].length; i++)
     {
-      if (y >= maxLines - 1)
-        break;
+      if (y >= maxLines - 1) break;
       
-      if (i > activeLine)
-        continue;
+      if (i > activeLine) continue;
       
       TalkString line = lines[perspective][i];
       
@@ -438,19 +417,16 @@ public class Talk extends Component
       {
         int prev = getPreviousWidth(i, g);
         
-        if (i == activeLine)
-          line.drawStringAnimated(getX() + 24 + ((prev > 0) ? prev : 0), getY() + nameLabel.getHeight(g) + LINEHEIGHT + ((y > 0) ? y * LINEHEIGHT : 0) + ((prev == 0) ? LINEHEIGHT : 0), g);
+        if (i == activeLine) line.drawStringAnimated(getX() + 24 + ((prev > 0) ? prev : 0), getY() + nameLabel.getHeight(g) + LINEHEIGHT + ((y > 0) ? y * LINEHEIGHT : 0) + ((prev == 0) ? LINEHEIGHT : 0), g);
         else line.drawString(getX() + 24 + ((prev > 0) ? prev : 0), getY() + nameLabel.getHeight(g) + LINEHEIGHT + ((y > 0) ? y * LINEHEIGHT : 0) + ((prev == 0) ? LINEHEIGHT : 0), g);
       }
       else
       {
-        if (i == activeLine)
-          line.drawStringAnimated(getX() + 24, getY() + nameLabel.getHeight(g) + LINEHEIGHT, g);
+        if (i == activeLine) line.drawStringAnimated(getX() + 24, getY() + nameLabel.getHeight(g) + LINEHEIGHT, g);
         else line.drawString(getX() + 24, getY() + nameLabel.getHeight(g) + LINEHEIGHT, g);
       }
       
-      if (line.br)
-        y++;
+      if (line.br) y++;
     }
     
     if (partDone && activeChooser == null)
@@ -461,35 +437,30 @@ public class Talk extends Component
       
     }
     
-    if (activeChooser != null)
-      activeChooser.draw(g, v);
+    if (activeChooser != null) activeChooser.draw(g, v);
   }
   
   @Override
   public void mouseMoved(MouseEvent e)
   {
-    if (activeChooser != null)
-      activeChooser.mouseMoved(e);
+    if (activeChooser != null) activeChooser.mouseMoved(e);
   }
   
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    if (activeChooser != null)
-      activeChooser.mouseReleased(e);
+    if (activeChooser != null) activeChooser.mouseReleased(e);
   }
   
   @Override
   public void mousePressed(MouseEvent e)
   {
-    if (activeChooser != null)
-      activeChooser.mousePressed(e);
+    if (activeChooser != null) activeChooser.mousePressed(e);
   }
   
   @Override
   public void keyPressed(KeyEvent e)
   {
-    if (e.getKeyCode() == KeyEvent.VK_SPACE)
-      next();
+    if (e.getKeyCode() == KeyEvent.VK_SPACE) next();
   }
 }

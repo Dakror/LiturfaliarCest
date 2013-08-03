@@ -22,8 +22,7 @@ public abstract class ItemAction
   
   public static ItemAction load(JSONObject o)
   {
-    if (o.length() == 0)
-      return new EmptyAction();
+    if (o.length() == 0) return new EmptyAction();
     
     try
     {

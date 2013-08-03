@@ -58,8 +58,7 @@ public class HTMLString
     ArrayList<HTMLString> strings = new ArrayList<HTMLString>();
     for (int i = 1; i < tags.length; i++)
     {
-      if (tags[i].length() == 0)
-        continue;
+      if (tags[i].length() == 0) continue;
       String[] options = tags[i].substring(0, tags[i].indexOf(">")).split(";");
       String text = tags[i].substring(tags[i].indexOf(">") + 1);
       if (text.indexOf("[br]") > -1)
@@ -70,8 +69,7 @@ public class HTMLString
           HTMLString string = new HTMLString(lines[j], Float.parseFloat((options[1] != null) ? options[1] : "16"), Color.decode("#" + ((options[0] != null) ? options[0] : "ffffff")), Integer.parseInt((options[2] != null) ? options[2] : "0"));
           if (j == lines.length - 1)
           {
-            if (text.lastIndexOf("[br]") == text.length() - new String("[br]").length())
-              string.br = true;
+            if (text.lastIndexOf("[br]") == text.length() - new String("[br]").length()) string.br = true;
             else string.br = false;
           }
           else string.br = true;

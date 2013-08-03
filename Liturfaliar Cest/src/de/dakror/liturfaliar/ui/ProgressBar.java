@@ -49,17 +49,14 @@ public class ProgressBar extends Component
     }
     Font oldf = g.getFont();
     g.setFont(new Font("Arial", Font.BOLD, 14));
-    if (!showPercentage && title != null)
-      Assistant.drawHorizontallyCenteredString(Database.filterString(title), getX(), getWidth(), getY() + 16, g, 14, Color.black);
-    else if (showPercentage)
-      Assistant.drawHorizontallyCenteredString(((title != null) ? (Database.filterString(title) + ": ") : "") + (int) (value * 100) + "%", getX(), getWidth(), getY() + 16, g, 14, Color.black);
+    if (!showPercentage && title != null) Assistant.drawHorizontallyCenteredString(Database.filterString(title), getX(), getWidth(), getY() + 16, g, 14, Color.black);
+    else if (showPercentage) Assistant.drawHorizontallyCenteredString(((title != null) ? (Database.filterString(title) + ": ") : "") + (int) (value * 100) + "%", getX(), getWidth(), getY() + 16, g, 14, Color.black);
     g.setFont(oldf);
   }
   
   public void mouseDragged(MouseEvent e)
   {
-    if (!editable)
-      return;
+    if (!editable) return;
     if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), 23)).contains(e.getPoint()))
     {
       value = (e.getX() - getX()) / (float) getWidth();
@@ -68,8 +65,7 @@ public class ProgressBar extends Component
   
   public void mousePressed(MouseEvent e)
   {
-    if (!editable)
-      return;
+    if (!editable) return;
     if (new Area(new Rectangle2D.Double(getX(), getY(), getWidth(), 23)).contains(e.getPoint()))
     {
       value = (e.getX() - getX()) / (float) getWidth();

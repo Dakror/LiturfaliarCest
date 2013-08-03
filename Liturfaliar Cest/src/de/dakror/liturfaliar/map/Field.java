@@ -1,6 +1,8 @@
 package de.dakror.liturfaliar.map;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,14 +10,14 @@ import java.util.Iterator;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.listener.MapEventListener;
-import de.dakror.liturfaliar.map.creature.Creature;
+import de.dakror.liturfaliar.event.Event;
+import de.dakror.liturfaliar.event.Listener;
 import de.dakror.liturfaliar.map.data.FieldData;
 import de.dakror.liturfaliar.settings.CFG;
-import de.dakror.liturfaliar.ui.Talk;
+import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Vector;
 
-public class Field implements MapEventListener
+public class Field implements Listener
 {
   int           x;
   int           y;
@@ -24,6 +26,7 @@ public class Field implements MapEventListener
   String        tileset;
   BufferedImage i;
   FieldData[]   datas;
+  Area          area;
   
   public Field(int dx, int dy, int tx, int ty, double layer, String t, FieldData... data)
   {
@@ -34,11 +37,18 @@ public class Field implements MapEventListener
     this.datas = data;
     this.i = new BufferedImage(CFG.FIELDSIZE, CFG.FIELDSIZE, BufferedImage.TYPE_INT_ARGB);
     this.i.getGraphics().drawImage(Viewport.loadImage("Tiles/" + t + ".png"), 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, tx * CFG.FIELDSIZE, ty * CFG.FIELDSIZE, tx * CFG.FIELDSIZE + CFG.FIELDSIZE, ty * CFG.FIELDSIZE + CFG.FIELDSIZE, null);
+    if (l > CFG.PLAYERLAYER) area = Assistant.toArea(i);
   }
   
   public BufferedImage getImage()
   {
     return this.i;
+  }
+  
+  public Area getArea(Map m)
+  {
+    if (m == null) return area.createTransformedArea(AffineTransform.getTranslateInstance(x, y));
+    return area.createTransformedArea(AffineTransform.getTranslateInstance(m.getX() + x, m.getY() + y));
   }
   
   public void drawData(Map m, Graphics2D g, Viewport v)
@@ -54,30 +64,11 @@ public class Field implements MapEventListener
   }
   
   @Override
-  public void fieldTouched(Creature c, Map m)
+  public void onEvent(Event e)
   {
     for (FieldData fd : this.datas)
-      fd.fieldTouched(c, m);
+      fd.onEvent(e);
   }
-  
-  @Override
-  public void fieldTriggered(Creature c, Map m)
-  {
-    for (FieldData fd : this.datas)
-      fd.fieldTriggered(c, m);
-  }
-  
-  @Override
-  public void talkStarted(Talk t, Map m)
-  {}
-  
-  @Override
-  public void talkEnded(Talk t, Map m)
-  {}
-  
-  @Override
-  public void talkChanged(Talk old, Talk n, Map m)
-  {}
   
   public int getX()
   {

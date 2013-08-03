@@ -42,8 +42,7 @@ public class ToggleButton extends Button
   @Override
   public int getState()
   {
-    if (this.checked)
-      return 1;
+    if (this.checked) return 1;
     else return 0;
   }
   

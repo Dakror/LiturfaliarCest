@@ -86,8 +86,7 @@ public final class CFG
     }
     else
     {
-      if (System.currentTimeMillis() - lastTime > minPeriod)
-        CFG.b("timespan", System.currentTimeMillis() - lastTime);
+      if (System.currentTimeMillis() - lastTime > minPeriod) CFG.b("timespan", System.currentTimeMillis() - lastTime);
       lastTime = 0;
       minPeriod = 0;
     }

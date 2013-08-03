@@ -62,8 +62,7 @@ public class TalkString extends HTMLString
   
   public boolean updateAnimatedString(int speed)
   {
-    if (string.length() == 0)
-      return false;
+    if (string.length() == 0) return false;
     
     if (s.length() < string.length())
     {

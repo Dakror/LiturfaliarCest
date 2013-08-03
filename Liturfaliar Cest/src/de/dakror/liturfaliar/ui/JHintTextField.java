@@ -25,8 +25,7 @@ public class JHintTextField extends JTextField
       @Override
       public void focusLost(FocusEvent e)
       {
-        if (getText().length() == 0 || getText().equals(hint))
-          setHintVisible(true);
+        if (getText().length() == 0 || getText().equals(hint)) setHintVisible(true);
       }
       
       @Override
@@ -34,8 +33,7 @@ public class JHintTextField extends JTextField
       {
         if (getText().length() == 0 || getText().equals(hint))
         {
-          if (getText().equals(hint))
-            setText("");
+          if (getText().equals(hint)) setText("");
           setHintVisible(false);
         }
       }

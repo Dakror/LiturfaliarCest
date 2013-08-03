@@ -54,8 +54,7 @@ public class Animation
   
   public void draw(Map m, Graphics2D g, Viewport v)
   {
-    if (!frozen && v.getFrame(time, speed) != 0)
-      frame = v.getFrame(time, speed) % (endFrame - startFrame) + 1;
+    if (!frozen && v.getFrame(time, speed) != 0) frame = v.getFrame(time, speed) % (endFrame - startFrame) + 1;
     
     int x = this.x + ((m == null) ? 0 : m.getX()) + ((c == null) ? 0 : (int) c.getPos().x);
     int y = this.y + ((m == null) ? 0 : m.getY()) + ((c == null) ? 0 : (int) c.getPos().y);

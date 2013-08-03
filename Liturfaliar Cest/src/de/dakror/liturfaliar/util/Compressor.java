@@ -143,8 +143,7 @@ public class Compressor
   
   public static void compileMaps(File dir)
   {
-    if (!CFG.DEBUG)
-      return;
+    if (!CFG.DEBUG) return;
     
     File[] files = dir.listFiles(new FileFilter()
     {

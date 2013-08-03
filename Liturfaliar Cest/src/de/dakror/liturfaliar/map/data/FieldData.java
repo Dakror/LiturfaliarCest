@@ -5,11 +5,11 @@ import java.awt.Graphics2D;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.listener.MapEventListener;
+import de.dakror.liturfaliar.event.Listener;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
 
-public interface FieldData extends MapEventListener
+public interface FieldData extends Listener
 {
   public static final String[] DATATYPES = { "Door" };
   

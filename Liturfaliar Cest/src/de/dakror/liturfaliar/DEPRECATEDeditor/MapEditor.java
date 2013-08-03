@@ -200,7 +200,7 @@ public class MapEditor
       public void windowClosing(WindowEvent e)
       {
         v.w.setVisible(true);
-        //v.mapeditor = null;
+        // v.mapeditor = null;
       }
     });
     init();
@@ -559,8 +559,7 @@ public class MapEditor
         int h = image.getHeight(null) / CFG.FIELDSIZE;
         tiles.setPreferredSize(new Dimension(w * CFG.FIELDSIZE, h * CFG.FIELDSIZE));
         
-        if (Arrays.asList(CFG.AUTOTILES).contains(tileset))
-          autotiles = new BufferedImage[w][h];
+        if (Arrays.asList(CFG.AUTOTILES).contains(tileset)) autotiles = new BufferedImage[w][h];
         
         
         for (int i = 0; i < w; i++)
@@ -570,8 +569,7 @@ public class MapEditor
             BufferedImage bi = new BufferedImage(CFG.FIELDSIZE, CFG.FIELDSIZE, BufferedImage.TYPE_INT_ARGB);
             bi.getGraphics().drawImage(image, 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, i * CFG.FIELDSIZE, j * CFG.FIELDSIZE, i * CFG.FIELDSIZE + CFG.FIELDSIZE, j * CFG.FIELDSIZE + CFG.FIELDSIZE, null);
             
-            if (Arrays.asList(CFG.AUTOTILES).contains(tileset))
-              autotiles[i][j] = bi;
+            if (Arrays.asList(CFG.AUTOTILES).contains(tileset)) autotiles[i][j] = bi;
             
             JButton button = new JButton();
             button.setBounds(i * CFG.FIELDSIZE, j * CFG.FIELDSIZE, CFG.FIELDSIZE, CFG.FIELDSIZE);
@@ -587,8 +585,7 @@ public class MapEditor
                 JButton src = (JButton) e.getSource();
                 for (Component c : tiles.getComponents())
                 {
-                  if (c.getClass() == JButton.class)
-                    ((JButton) c).setBorder(BorderFactory.createEmptyBorder());
+                  if (c.getClass() == JButton.class) ((JButton) c).setBorder(BorderFactory.createEmptyBorder());
                 }
                 src.setBorder(BorderFactory.createLineBorder(Color.blue));
                 src.setBorderPainted(true);
@@ -671,8 +668,7 @@ public class MapEditor
   
   public void showNewMapPackDialog()
   {
-    if (mappackdata != null)
-      return;
+    if (mappackdata != null) return;
     JDialog dialog = new JDialog(w, true);
     dialog.setTitle("Kartenpaket erstellen");
     dialog.setSize(400, 170);
@@ -757,8 +753,7 @@ public class MapEditor
   
   public void showNewMapDialog()
   {
-    if (mappackdata == null)
-      return;
+    if (mappackdata == null) return;
     JDialog dialog = new JDialog(w, true);
     dialog.addWindowListener(new WindowAdapter()
     {
@@ -784,8 +779,7 @@ public class MapEditor
     music.addItem("Keine Musik");
     for (File f : new File(FileManager.dir, "Music").listFiles())
     {
-      if (f.isFile() && f.getName().endsWith(".wav"))
-        music.addItem(f.getName().replace(".wav", ""));
+      if (f.isFile() && f.getName().endsWith(".wav")) music.addItem(f.getName().replace(".wav", ""));
     }
     music.addItemListener(new ItemListener()
     {
@@ -802,8 +796,7 @@ public class MapEditor
           }
           case ItemEvent.SELECTED:
           {
-            if (!item.equals("Keine Musik"))
-              v.playMusic(item, true, 0.2f);
+            if (!item.equals("Keine Musik")) v.playMusic(item, true, 0.2f);
             break;
           }
         }
@@ -822,8 +815,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        if (name.getText().length() == 0)
-          return;
+        if (name.getText().length() == 0) return;
         v.stopMusic();
         try
         {
@@ -854,8 +846,7 @@ public class MapEditor
   
   public void showOpenMapDialog()
   {
-    if (mappackdata == null)
-      return;
+    if (mappackdata == null) return;
     JDialog dialog = new JDialog(w, true);
     dialog.setTitle("Karte öffnen");
     dialog.setSize(400, 170);
@@ -882,14 +873,12 @@ public class MapEditor
       @Override
       public void valueChanged(final ListSelectionEvent e)
       {
-        if (e.getValueIsAdjusting())
-          return;
+        if (e.getValueIsAdjusting()) return;
         new Thread()
         {
           public void run()
           {
-            if (openMap((String) ((JList<?>) e.getSource()).getSelectedValue()))
-              d2.dispose();
+            if (openMap((String) ((JList<?>) e.getSource()).getSelectedValue())) d2.dispose();
           }
         }.start();
       }
@@ -920,8 +909,7 @@ public class MapEditor
       dir.mkdir();
       new File(dir, "maps").mkdir();
       File pack = new File(dir, "pack.json");
-      if (!pack.exists())
-        pack.createNewFile();
+      if (!pack.exists()) pack.createNewFile();
       Assistant.setFileContent(pack, mappackdata.toString(4));
     }
     catch (Exception e)
@@ -971,10 +959,8 @@ public class MapEditor
           try
           {
             double dif = o1.getDouble("l") - o2.getDouble("l");
-            if (dif < 0)
-              return -1;
-            else if (dif > 0)
-              return 1;
+            if (dif < 0) return -1;
+            else if (dif > 0) return 1;
             else return 0;
           }
           catch (JSONException e)
@@ -1069,8 +1055,7 @@ public class MapEditor
       NPCframe.setResizable(false);
     }
     
-    if (exist != null)
-      NPCattr = exist.attributes;
+    if (exist != null) NPCattr = exist.attributes;
     else NPCattr = new Attributes();
     
     JPanel p = new JPanel(new SpringLayout());
@@ -1078,24 +1063,21 @@ public class MapEditor
     JLabel label = new JLabel("X-Position: ", JLabel.TRAILING);
     p.add(label);
     NPCx = new JTextField(15);
-    if (exist != null)
-      NPCx.setText(exist.x + "");
+    if (exist != null) NPCx.setText(exist.x + "");
     
     p.add(NPCx);
     
     label = new JLabel("Y-Position: ", JLabel.TRAILING);
     p.add(label);
     NPCy = new JTextField(15);
-    if (exist != null)
-      NPCy.setText(exist.y + "");
+    if (exist != null) NPCy.setText(exist.y + "");
     
     p.add(NPCy);
     
     label = new JLabel("Blickrichtung: ", JLabel.TRAILING);
     p.add(label);
     NPCdir = new JComboBox<String>(new String[] { "Unten", "Links", "Rechts", "Oben" });
-    if (exist != null)
-      NPCdir.setSelectedIndex(exist.dir);
+    if (exist != null) NPCdir.setSelectedIndex(exist.dir);
     
     NPCdir.addItemListener(new ItemListener()
     {
@@ -1103,8 +1085,7 @@ public class MapEditor
       @Override
       public void itemStateChanged(ItemEvent e)
       {
-        if (e.getStateChange() == ItemEvent.SELECTED)
-          updateNPCDialogPreview();
+        if (e.getStateChange() == ItemEvent.SELECTED) updateNPCDialogPreview();
       }
     });
     p.add(NPCdir);
@@ -1112,16 +1093,14 @@ public class MapEditor
     label = new JLabel("Name: ", JLabel.TRAILING);
     p.add(label);
     NPCname = new JTextField(15);
-    if (exist != null)
-      NPCname.setText(exist.name);
+    if (exist != null) NPCname.setText(exist.name);
     
     p.add(NPCname);
     
     label = new JLabel("Sprite: ", JLabel.TRAILING);
     p.add(label);
     NPCsprite = new JComboBox<String>(NPC.CHARS);
-    if (exist != null)
-      NPCsprite.setSelectedItem(exist.sprite);
+    if (exist != null) NPCsprite.setSelectedItem(exist.sprite);
     
     else NPCsprite.setSelectedIndex(0);
     
@@ -1130,8 +1109,7 @@ public class MapEditor
       @Override
       public void itemStateChanged(ItemEvent e)
       {
-        if (e.getStateChange() == ItemEvent.SELECTED)
-          updateNPCDialogPreview();
+        if (e.getStateChange() == ItemEvent.SELECTED) updateNPCDialogPreview();
       }
     });
     
@@ -1147,16 +1125,14 @@ public class MapEditor
     label = new JLabel("Bewegungsgeschwindigkeit: ", JLabel.TRAILING);
     p.add(label);
     NPCspeed = new JSpinner(new SpinnerNumberModel(1.0, 0, 20, 0.1));
-    if (exist != null)
-      NPCspeed.setValue(exist.speed);
+    if (exist != null) NPCspeed.setValue(exist.speed);
     
     p.add(NPCspeed);
     
     label = new JLabel("zufällige Bewegung:", JLabel.TRAILING);
     p.add(label);
     NPCmove = new JCheckBox();
-    if (exist != null)
-      NPCmove.setSelected(exist.move);
+    if (exist != null) NPCmove.setSelected(exist.move);
     
     NPCmove.addChangeListener(new ChangeListener()
     {
@@ -1171,8 +1147,7 @@ public class MapEditor
     label = new JLabel("Zufallsbewegung-Interval. (ms):", JLabel.TRAILING);
     p.add(label);
     NPCmoveT = new JSpinner(new SpinnerNumberModel(3000, 0, 1000000000, 100));
-    if (exist != null)
-      NPCmoveT.setValue(exist.moveT);
+    if (exist != null) NPCmoveT.setValue(exist.moveT);
     
     NPCmoveT.setEnabled(NPCmove.isSelected());
     p.add(NPCmoveT);
@@ -1180,8 +1155,7 @@ public class MapEditor
     label = new JLabel("zufälliges Blicken:", JLabel.TRAILING);
     p.add(label);
     NPClook = new JCheckBox();
-    if (exist != null)
-      NPClook.setSelected(exist.look);
+    if (exist != null) NPClook.setSelected(exist.look);
     
     NPClook.addChangeListener(new ChangeListener()
     {
@@ -1197,8 +1171,7 @@ public class MapEditor
     label = new JLabel("Zufallsblicken-Interval. (ms):", JLabel.TRAILING);
     p.add(label);
     NPClookT = new JSpinner(new SpinnerNumberModel(3000, 0, 1000000000, 100));
-    if (exist != null)
-      NPClookT.setValue(exist.lookT);
+    if (exist != null) NPClookT.setValue(exist.lookT);
     
     NPClookT.setEnabled(NPClook.isSelected());
     p.add(NPClookT);
@@ -1206,15 +1179,13 @@ public class MapEditor
     label = new JLabel("Künstliche Intelligenz:", JLabel.TRAILING);
     p.add(label);
     NPCai = new JComboBox<String>(new String[] { "MeleeAI" }); // TODO: Keep in sync
-    if (exist != null)
-      NPCai.setSelectedItem(exist.ai);
+    if (exist != null) NPCai.setSelectedItem(exist.ai);
     p.add(NPCai);
     
     label = new JLabel("immer feindlich:", JLabel.TRAILING);
     p.add(label);
     NPChostile = new JCheckBox();
-    if (exist != null)
-      NPChostile.setSelected(exist.hostile);
+    if (exist != null) NPChostile.setSelected(exist.hostile);
     p.add(NPChostile);
     
     label = new JLabel("Attribute:", JLabel.TRAILING);
@@ -1245,17 +1216,14 @@ public class MapEditor
           talk = exist.talk;
           equipment = exist.getEquipment();
           
-          if (NPClastID == exist.ID + 1)
-            NPClastID--;
+          if (NPClastID == exist.ID + 1) NPClastID--;
           
           map.remove(exist);
         }
         NPCButton b = addNPC(null);
-        if (talk != null)
-          b.talk = talk;
+        if (talk != null) b.talk = talk;
         
-        if (equipment != null)
-          b.setEquipment(equipment);
+        if (equipment != null) b.setEquipment(equipment);
         
         showNPCDialog(b);
       }
@@ -1314,8 +1282,7 @@ public class MapEditor
         for (int i = 0; i < Attr.values().length; i++)
         {
           tmpAttr.getAttribute(Attr.values()[i]).setValue(Double.valueOf(spinners[i * ((range) ? 2 : 1)].getValue().toString()));
-          if (!range)
-            tmpAttr.getAttribute(Attr.values()[i]).setMaximum(Double.valueOf(spinners[i * ((range) ? 2 : 1)].getValue().toString()));
+          if (!range) tmpAttr.getAttribute(Attr.values()[i]).setMaximum(Double.valueOf(spinners[i * ((range) ? 2 : 1)].getValue().toString()));
           else tmpAttr.getAttribute(Attr.values()[i]).setMaximum(Double.valueOf(spinners[i * ((range) ? 2 : 1) + 1].getValue().toString()));
         }
         attrFrame.dispose();
@@ -1334,8 +1301,7 @@ public class MapEditor
   
   public void showEquipmentDialog(final NPCButton npc)
   {
-    if (npc != null)
-      EQ = npc.getEquipment();
+    if (npc != null) EQ = npc.getEquipment();
     
     final JDialog adjFrame = new JDialog(w);
     
@@ -1414,18 +1380,15 @@ public class MapEditor
     ArrayList<String> list = new ArrayList<String>();
     for (String part : chars)
     {
-      if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1)
-        continue;
+      if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1) continue;
       list.add(part.replace("_f.png", "").replace(".png", ""));
     }
     EQhair.setModel(new SpinnerListModel(list));
     
     EQhair.setPreferredSize(new Dimension(150, 22));
-    if (Arrays.asList(chars).indexOf("none.png") > -1)
-      EQhair.setValue("none");
+    if (Arrays.asList(chars).indexOf("none.png") > -1) EQhair.setValue("none");
     
-    if (npc.getEquipment().hasEquipmentItem(Categories.HAIR))
-      EQhair.setValue(npc.getEquipment().getEquipmentItem(Categories.HAIR).getCharPath());
+    if (npc.getEquipment().hasEquipmentItem(Categories.HAIR)) EQhair.setValue(npc.getEquipment().getEquipmentItem(Categories.HAIR).getCharPath());
     
     EQhair.addChangeListener(new ChangeListener()
     {
@@ -1445,11 +1408,9 @@ public class MapEditor
       {
         if (e.getWheelRotation() < 0)
         {
-          if (EQhair.getModel().getPreviousValue() != null)
-            EQhair.getModel().setValue(EQhair.getModel().getPreviousValue());
+          if (EQhair.getModel().getPreviousValue() != null) EQhair.getModel().setValue(EQhair.getModel().getPreviousValue());
         }
-        else if (EQhair.getModel().getNextValue() != null)
-          EQhair.getModel().setValue(EQhair.getModel().getNextValue());
+        else if (EQhair.getModel().getNextValue() != null) EQhair.getModel().setValue(EQhair.getModel().getNextValue());
       }
     });
     panel.add(EQhair);
@@ -1462,18 +1423,15 @@ public class MapEditor
     list = new ArrayList<String>();
     for (String part : chars)
     {
-      if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1)
-        continue;
+      if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1) continue;
       list.add(part.replace("_f.png", "").replace(".png", ""));
     }
     EQskin.setModel(new SpinnerListModel(list));
     
     EQskin.setPreferredSize(new Dimension(150, 22));
-    if (Arrays.asList(chars).indexOf("none.png") > -1)
-      EQskin.setValue("none");
+    if (Arrays.asList(chars).indexOf("none.png") > -1) EQskin.setValue("none");
     
-    if (npc.getEquipment().hasEquipmentItem(Categories.SKIN))
-      EQskin.setValue(npc.getEquipment().getEquipmentItem(Categories.SKIN).getCharPath());
+    if (npc.getEquipment().hasEquipmentItem(Categories.SKIN)) EQskin.setValue(npc.getEquipment().getEquipmentItem(Categories.SKIN).getCharPath());
     
     EQskin.addChangeListener(new ChangeListener()
     {
@@ -1493,11 +1451,9 @@ public class MapEditor
       {
         if (e.getWheelRotation() < 0)
         {
-          if (EQskin.getModel().getPreviousValue() != null)
-            EQskin.getModel().setValue(EQskin.getModel().getPreviousValue());
+          if (EQskin.getModel().getPreviousValue() != null) EQskin.getModel().setValue(EQskin.getModel().getPreviousValue());
         }
-        else if (EQskin.getModel().getNextValue() != null)
-          EQskin.getModel().setValue(EQskin.getModel().getNextValue());
+        else if (EQskin.getModel().getNextValue() != null) EQskin.getModel().setValue(EQskin.getModel().getNextValue());
       }
     });
     panel.add(EQskin);
@@ -1510,18 +1466,15 @@ public class MapEditor
     list = new ArrayList<String>();
     for (String part : chars)
     {
-      if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1)
-        continue;
+      if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1) continue;
       list.add(part.replace("_f.png", "").replace(".png", ""));
     }
     EQeyes.setModel(new SpinnerListModel(list));
     
     EQeyes.setPreferredSize(new Dimension(150, 22));
-    if (Arrays.asList(chars).indexOf("none.png") > -1)
-      EQeyes.setValue("none");
+    if (Arrays.asList(chars).indexOf("none.png") > -1) EQeyes.setValue("none");
     
-    if (npc.getEquipment().hasEquipmentItem(Categories.EYES))
-      EQeyes.setValue(npc.getEquipment().getEquipmentItem(Categories.EYES).getCharPath());
+    if (npc.getEquipment().hasEquipmentItem(Categories.EYES)) EQeyes.setValue(npc.getEquipment().getEquipmentItem(Categories.EYES).getCharPath());
     
     EQeyes.addChangeListener(new ChangeListener()
     {
@@ -1541,19 +1494,16 @@ public class MapEditor
       {
         if (e.getWheelRotation() < 0)
         {
-          if (EQeyes.getModel().getPreviousValue() != null)
-            EQeyes.getModel().setValue(EQeyes.getModel().getPreviousValue());
+          if (EQeyes.getModel().getPreviousValue() != null) EQeyes.getModel().setValue(EQeyes.getModel().getPreviousValue());
         }
-        else if (EQeyes.getModel().getNextValue() != null)
-          EQeyes.getModel().setValue(EQeyes.getModel().getNextValue());
+        else if (EQeyes.getModel().getNextValue() != null) EQeyes.getModel().setValue(EQeyes.getModel().getNextValue());
       }
     });
     panel.add(EQeyes);
     
     for (final Categories c : Categories.EQUIPS)
     {
-      if (Arrays.asList(Categories.NATIVES).contains(c))
-        continue;
+      if (Arrays.asList(Categories.NATIVES).contains(c)) continue;
       
       l = new JLabel(c.name());
       panel.add(l);
@@ -1577,8 +1527,7 @@ public class MapEditor
         public void actionPerformed(ActionEvent e)
         {
           showItemDialog(EQ.getEquipmentItem(c));
-          if (tmpItem != null)
-            EQ.setEquipmentItem(c, tmpItem);
+          if (tmpItem != null) EQ.setEquipmentItem(c, tmpItem);
           updateEquipDialogPreview();
         }
       });
@@ -1609,8 +1558,7 @@ public class MapEditor
       public void actionPerformed(ActionEvent e)
       {
         showItemDialog(EQ.getFirstWeapon());
-        if (tmpItem != null)
-          EQ.setFirstWeapon(tmpItem);
+        if (tmpItem != null) EQ.setFirstWeapon(tmpItem);
         updateEquipDialogPreview();
       }
     });
@@ -1640,8 +1588,7 @@ public class MapEditor
       public void actionPerformed(ActionEvent e)
       {
         showItemDialog(EQ.getSecondWeapon());
-        if (tmpItem != null)
-          EQ.setSecondWeapon(tmpItem);
+        if (tmpItem != null) EQ.setSecondWeapon(tmpItem);
         updateEquipDialogPreview();
       }
     });
@@ -1721,8 +1668,7 @@ public class MapEditor
           JTextField talkCond = (JTextField) ((JPanel) talkPanel.getComponent(i)).getComponent(1);
           JTextArea talkText = (JTextArea) ((JScrollPane) ((JPanel) talkPanel.getComponent(i)).getComponent(3)).getViewport().getView();
           
-          if (talkCond.getText().length() == 0 && talkText.getText().length() == 0)
-            continue;
+          if (talkCond.getText().length() == 0 && talkText.getText().length() == 0) continue;
           
           JSONArray cond = null;
           try
@@ -1782,8 +1728,7 @@ public class MapEditor
     
     JPanel p = new JPanel(new SpringLayout());
     
-    if (talkPanel.getComponentCount() > 0)
-      p.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.gray));
+    if (talkPanel.getComponentCount() > 0) p.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.gray));
     
     JLabel label = new JLabel("Bedingungen: ", JLabel.TRAILING);
     p.add(label);
@@ -1850,36 +1795,31 @@ public class MapEditor
     JLabel l = new JLabel("Icon-X:");
     p.add(l);
     final JSpinner ix = new JSpinner(new SpinnerNumberModel(0, 0, 16, 1));
-    if (exist != null)
-      ix.setValue(exist.getIconPoint().x);
+    if (exist != null) ix.setValue(exist.getIconPoint().x);
     p.add(ix);
     
     l = new JLabel("Icon-Y:");
     p.add(l);
     final JSpinner iy = new JSpinner(new SpinnerNumberModel(0, 0, 629, 1));
-    if (exist != null)
-      iy.setValue(exist.getIconPoint().y);
+    if (exist != null) iy.setValue(exist.getIconPoint().y);
     p.add(iy);
     
     l = new JLabel("Korrektur-X:");
     p.add(l);
     final JSpinner cx = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-    if (exist != null)
-      cx.setValue(exist.getCorrectionX());
+    if (exist != null) cx.setValue(exist.getCorrectionX());
     p.add(cx);
     
     l = new JLabel("Korrektur-Y:");
     p.add(l);
     final JSpinner cy = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-    if (exist != null)
-      cy.setValue(exist.getCorrectionY());
+    if (exist != null) cy.setValue(exist.getCorrectionY());
     p.add(cy);
     
     l = new JLabel("Name:");
     p.add(l);
     final JTextField name = new JTextField(15);
-    if (exist != null)
-      name.setText(exist.getName());
+    if (exist != null) name.setText(exist.getName());
     p.add(name);
     
     final JLabel preview = new JLabel();
@@ -1909,21 +1849,17 @@ public class MapEditor
       @Override
       public void itemStateChanged(ItemEvent e)
       {
-        if (e.getStateChange() != ItemEvent.SELECTED)
-          return;
+        if (e.getStateChange() != ItemEvent.SELECTED) return;
         
         Image body1 = Viewport.loadImage("char/skin/man_f.png");
         Image body2 = Viewport.loadImage("char/skin/man_b.png");
         Image part = Viewport.loadImage("char/" + type.getSelectedItem().toString().toLowerCase() + "/" + path.getSelectedItem().toString() + ".png");
-        if (part == null)
-          part = Viewport.loadImage("char/" + type.getSelectedItem().toString().toLowerCase() + "/" + path.getSelectedItem().toString() + "_f.png");
+        if (part == null) part = Viewport.loadImage("char/" + type.getSelectedItem().toString().toLowerCase() + "/" + path.getSelectedItem().toString() + "_f.png");
         
         BufferedImage bi = new BufferedImage(body1.getWidth(null), body1.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics g = bi.getGraphics();
-        if (!((Types) type.getSelectedItem()).equals(Types.SKIN))
-          g.drawImage(body2, 0, 0, null);
-        if (!((Types) type.getSelectedItem()).equals(Types.SKIN))
-          g.drawImage(body1, 0, 0, null);
+        if (!((Types) type.getSelectedItem()).equals(Types.SKIN)) g.drawImage(body2, 0, 0, null);
+        if (!((Types) type.getSelectedItem()).equals(Types.SKIN)) g.drawImage(body1, 0, 0, null);
         g.drawImage(part, 0, 0, null);
         preview.setIcon(new ImageIcon(bi));
       }
@@ -1942,17 +1878,14 @@ public class MapEditor
           String[] parts = FileManager.getCharParts(i.name().toLowerCase());
           for (String part : parts)
           {
-            if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1)
-              continue;
+            if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1) continue;
             path.addItem(part.replace("_f.png", "").replace(".png", ""));
           }
-          if (exist != null && exist.getCharPath() != null && exist.getType().equals(i))
-            path.setSelectedItem(exist.getCharPath());
+          if (exist != null && exist.getCharPath() != null && exist.getType().equals(i)) path.setSelectedItem(exist.getCharPath());
         }
       }
     });
-    if (exist != null)
-      type.setSelectedItem(exist.getType());
+    if (exist != null) type.setSelectedItem(exist.getType());
     p.add(type);
     
     l = new JLabel("Attribute:");
@@ -1994,8 +1927,7 @@ public class MapEditor
       @Override
       public void itemStateChanged(ItemEvent e)
       {
-        if (e.getStateChange() != ItemEvent.SELECTED)
-          return;
+        if (e.getStateChange() != ItemEvent.SELECTED) return;
         
         JPanel labels = new JPanel(new SpringLayout());
         JPanel panel = new JPanel(new SpringLayout());
@@ -2007,14 +1939,12 @@ public class MapEditor
             labels.add(new JLabel("Target:"));
             potionTarget = new JTextField("CASTER");
             potionTarget.setColumns(15);
-            if (exist != null && exist.getAction() instanceof PotionAction)
-              potionTarget.setText(((PotionAction) exist.getAction()).getTarget());
+            if (exist != null && exist.getAction() instanceof PotionAction) potionTarget.setText(((PotionAction) exist.getAction()).getTarget());
             panel.add(potionTarget);
             
             labels.add(new JLabel("Attribute:"));
             JButton btn = new JButton("Bearbeiten");
-            if (potionAttributes == null && exist != null && exist.getAction() instanceof PotionAction)
-              potionAttributes = ((PotionAction) exist.getAction()).getChanges();
+            if (potionAttributes == null && exist != null && exist.getAction() instanceof PotionAction) potionAttributes = ((PotionAction) exist.getAction()).getChanges();
             btn.addActionListener(new ActionListener()
             {
               @Override
@@ -2038,8 +1968,7 @@ public class MapEditor
           {
             labels.add(new JLabel("Attribute:"));
             JButton btn = new JButton("Bearbeiten");
-            if (weaponAttributes == null && exist != null && exist.getAction() instanceof WeaponAction)
-              weaponAttributes = ((WeaponAction) exist.getAction()).getEffect();
+            if (weaponAttributes == null && exist != null && exist.getAction() instanceof WeaponAction) weaponAttributes = ((WeaponAction) exist.getAction()).getEffect();
             btn.addActionListener(new ActionListener()
             {
               @Override
@@ -2053,8 +1982,7 @@ public class MapEditor
             
             labels.add(new JLabel("Schadens-Typ:"));
             weaponDamageType = new JComboBox<DamageType>(DamageType.values());
-            if (exist != null && exist.getAction() instanceof WeaponAction)
-              weaponDamageType.setSelectedItem(((WeaponAction) exist.getAction()).getDamageType());
+            if (exist != null && exist.getAction() instanceof WeaponAction) weaponDamageType.setSelectedItem(((WeaponAction) exist.getAction()).getDamageType());
             panel.add(weaponDamageType);
             
             SpringUtilities.makeCompactGrid(labels, 2, 1, 6, 6, 6, 6);
@@ -2087,15 +2015,12 @@ public class MapEditor
       {
         ItemAction ia = new EmptyAction();
         
-        if (action.getSelectedItem().equals("PotionAction"))
-          ia = new PotionAction(potionTarget.getText(), potionAttributes, (DamageType) potionDamageType.getSelectedItem());
+        if (action.getSelectedItem().equals("PotionAction")) ia = new PotionAction(potionTarget.getText(), potionAttributes, (DamageType) potionDamageType.getSelectedItem());
         
-        else if (action.getSelectedItem().equals("WeaponAction"))
-          ia = new WeaponAction(weaponAttributes, (DamageType) weaponDamageType.getSelectedItem());
+        else if (action.getSelectedItem().equals("WeaponAction")) ia = new WeaponAction(weaponAttributes, (DamageType) weaponDamageType.getSelectedItem());
         
         String charPath = "";
-        if (path.getSelectedItem() != null)
-          charPath = path.getSelectedItem().toString().replace("_f.png", "").replace("_b.png", "").replace("_m.png", "").replace(".png", "");
+        if (path.getSelectedItem() != null) charPath = path.getSelectedItem().toString().replace("_f.png", "").replace("_b.png", "").replace("_m.png", "").replace(".png", "");
         
         tmpItem = new Item((Types) type.getSelectedItem(), name.getText(), (int) ix.getValue(), (int) iy.getValue(), (int) cx.getValue(), (int) cy.getValue(), charPath, tmpAttributes, tmpRequires, ia, 1);
         
@@ -2104,8 +2029,7 @@ public class MapEditor
     });
     p.add(ok);
     
-    if (exist != null)
-      action.setSelectedItem(exist.getAction().getClass().getSimpleName());
+    if (exist != null) action.setSelectedItem(exist.getAction().getClass().getSimpleName());
     
     SpringUtilities.makeCompactGrid(p, 13, 2, 6, 6, 6, 6);
     
@@ -2210,8 +2134,7 @@ public class MapEditor
         @Override
         public void mousePressed(MouseEvent e)
         {
-          if (e.getButton() == 3)
-            jpm.show(e.getComponent(), e.getX(), e.getY());
+          if (e.getButton() == 3) jpm.show(e.getComponent(), e.getX(), e.getY());
         }
       });
       map.add(npc, JLayeredPane.PALETTE_LAYER);
@@ -2236,8 +2159,7 @@ public class MapEditor
       {
         for (int i = 0; i < map.getComponentCount(); i++)
         {
-          if (!(map.getComponent(i) instanceof TileButton))
-            continue;
+          if (!(map.getComponent(i) instanceof TileButton)) continue;
           TileButton b = (TileButton) map.getComponent(i);
           if (b.getBounds().intersects(x, y, CFG.FIELDSIZE, CFG.FIELDSIZE))
           {
@@ -2282,8 +2204,7 @@ public class MapEditor
         {
           String result = JOptionPane.showInputDialog(w, "Layer anpassen", tile.getLayer());
           
-          if (result == null)
-            return;
+          if (result == null) return;
           
           try
           {
@@ -2333,8 +2254,7 @@ public class MapEditor
         @Override
         public void mouseReleased(MouseEvent e)
         {
-          if (e.getButton() == 3 && !deletemode && !dragmode)
-            jpm.show(tile, e.getX(), e.getY());
+          if (e.getButton() == 3 && !deletemode && !dragmode) jpm.show(tile, e.getX(), e.getY());
           
           if (e.getButton() == 1)
           {
@@ -2368,8 +2288,7 @@ public class MapEditor
           showCustomCursor(false);
         }
       });
-      if (mapdata == null)
-        return null;
+      if (mapdata == null) return null;
       map.add(tile, JLayeredPane.DEFAULT_LAYER);
       
       map.setComponentZOrder(tile, 0);
@@ -2435,8 +2354,7 @@ public class MapEditor
           name.setPreferredSize(new Dimension(190, 23));
           final JTextField dx = new JTextField("0");
           dx.setName("int_dx");
-          if (exist != null)
-            dx.setText("" + exist.getInt("dx"));
+          if (exist != null) dx.setText("" + exist.getInt("dx"));
           dx.setPreferredSize(new Dimension(190, 23));
           inputs.add(name);
           inputs.add(dx);
@@ -2444,8 +2362,7 @@ public class MapEditor
           name.setPreferredSize(new Dimension(190, 23));
           final JTextField dy = new JTextField("0");
           dy.setName("int_dy");
-          if (exist != null)
-            dy.setText("" + exist.getInt("dy"));
+          if (exist != null) dy.setText("" + exist.getInt("dy"));
           dy.setPreferredSize(new Dimension(190, 23));
           inputs.add(name);
           inputs.add(dy);
@@ -2459,8 +2376,7 @@ public class MapEditor
           {
             dir.addItem(s);
           }
-          if (exist != null)
-            dir.setSelectedIndex(exist.getInt("dir") + 1);
+          if (exist != null) dir.setSelectedIndex(exist.getInt("dir") + 1);
           inputs.add(name);
           inputs.add(dir);
           name = new JLabel("Zielkarte:");
@@ -2522,8 +2438,7 @@ public class MapEditor
             }
           });
           map.setSelectedIndex(0);
-          if (exist != null)
-            map.setSelectedItem(exist.getString("map"));
+          if (exist != null) map.setSelectedItem(exist.getString("map"));
           inputs.add(name);
           inputs.add(map);
           name = new JLabel("Sound:");
@@ -2536,15 +2451,13 @@ public class MapEditor
           {
             sound.addItem(s);
           }
-          if (exist != null)
-            sound.setSelectedItem(exist.getString("sound"));
+          if (exist != null) sound.setSelectedItem(exist.getString("sound"));
           sound.addActionListener(new ActionListener()
           {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-              if (((String) sound.getSelectedItem()).equals("< Leer >"))
-                return;
+              if (((String) sound.getSelectedItem()).equals("< Leer >")) return;
               v.playSound((String) sound.getSelectedItem());
             }
           });
@@ -2659,21 +2572,18 @@ public class MapEditor
         int w = map.selW / CFG.FIELDSIZE;
         int h = map.selH / CFG.FIELDSIZE;
         
-        if (w + h < 2)
-          return;
+        if (w + h < 2) return;
         
         ArrayList<TileButton> tiles = new ArrayList<TileButton>();
         
-        if (!map.delSelection && selectedtile == null)
-          return;
+        if (!map.delSelection && selectedtile == null) return;
         
         double layer = 0;
         
         if (!map.delSelection)
         {
           String inputString = JOptionPane.showInputDialog(MapEditor.this.w, "Layer der einzufügenden Felder angeben");
-          if (inputString == null)
-            return;
+          if (inputString == null) return;
           
           layer = Double.parseDouble(inputString);
         }
@@ -2690,20 +2600,14 @@ public class MapEditor
               
               if (Arrays.asList(CFG.AUTOTILES).contains(tileset))
               {
-                if (i == 0)
-                  tx = 0;
-                if (j == 0)
-                  ty = 1;
+                if (i == 0) tx = 0;
+                if (j == 0) ty = 1;
                 
-                if (i > 0 && i < w - 1)
-                  tx = 1;
-                if (j > 0 && j < w - 1)
-                  ty = 2;
+                if (i > 0 && i < w - 1) tx = 1;
+                if (j > 0 && j < w - 1) ty = 2;
                 
-                if (i == w - 1)
-                  tx = 2;
-                if (j == h - 1)
-                  ty = 3;
+                if (i == w - 1) tx = 2;
+                if (j == h - 1) ty = 3;
                 
                 image = autotiles[tx][ty];
               }
@@ -2747,8 +2651,7 @@ public class MapEditor
       return;
     }
     
-    if (selectedtile != null)
-      w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(getTileImage(), new Point(CFG.FIELDSIZE / 2, CFG.FIELDSIZE / 2), "tile"));
+    if (selectedtile != null) w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(getTileImage(), new Point(CFG.FIELDSIZE / 2, CFG.FIELDSIZE / 2), "tile"));
     
     if (NPCframe != null)
     {
@@ -2990,23 +2893,19 @@ public class MapEditor
     @Override
     public void mouseDragged(MouseEvent e)
     {
-      if (!dragmode)
-        return;
+      if (!dragmode) return;
       
-      if (e.getModifiers() != 16 && e.getModifiers() != 4)
-        return;
+      if (e.getModifiers() != 16 && e.getModifiers() != 4) return;
       
       map.delSelection = e.getModifiers() == 4;
       
       if (map.mouseDown == null)
       {
-        if (gridmode)
-          map.mouseDown = new Point(Assistant.round(e.getPoint().x + ((component != null) ? component.getX() : 0), CFG.FIELDSIZE), Assistant.round(e.getPoint().y + ((component != null) ? component.getY() : 0), CFG.FIELDSIZE));
+        if (gridmode) map.mouseDown = new Point(Assistant.round(e.getPoint().x + ((component != null) ? component.getX() : 0), CFG.FIELDSIZE), Assistant.round(e.getPoint().y + ((component != null) ? component.getY() : 0), CFG.FIELDSIZE));
         else map.mouseDown = new Point(e.getPoint().x + ((component != null) ? component.getX() : 0), e.getPoint().y + ((component != null) ? component.getY() : 0));
       }
       
-      if (gridmode)
-        map.mousePos = new Point(Assistant.round(e.getPoint().x + ((component != null) ? component.getX() : 0), CFG.FIELDSIZE), Assistant.round(e.getPoint().y + ((component != null) ? component.getY() : 0), CFG.FIELDSIZE));
+      if (gridmode) map.mousePos = new Point(Assistant.round(e.getPoint().x + ((component != null) ? component.getX() : 0), CFG.FIELDSIZE), Assistant.round(e.getPoint().y + ((component != null) ? component.getY() : 0), CFG.FIELDSIZE));
       else map.mousePos = new Point(Assistant.round(e.getPoint().x + ((component != null) ? component.getX() : 0) - map.mouseDown.x, CFG.FIELDSIZE) + map.mouseDown.x, Assistant.round(e.getPoint().y + ((component != null) ? component.getY() : 0) - map.mouseDown.y, CFG.FIELDSIZE) + map.mouseDown.y);
       
       map.repaint();
@@ -3023,8 +2922,7 @@ public class MapEditor
     @Override
     public void mousePressed(MouseEvent e)
     {
-      if (!dragmode)
-        return;
+      if (!dragmode) return;
       
       
       map.mouseDown = null;
@@ -3035,11 +2933,9 @@ public class MapEditor
     @Override
     public void mouseReleased(MouseEvent e)
     {
-      if (!dragmode)
-        return;
+      if (!dragmode) return;
       
-      if (map.mouseDown != null)
-        handleSelectionBox();
+      if (map.mouseDown != null) handleSelectionBox();
       map.repaint();
     }
     

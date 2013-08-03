@@ -120,8 +120,7 @@ public class NPC extends Creature
       try
       {
         int index = (int) Math.round(angle / 90.0) + 1;
-        if (index > -1)
-          dir = DIRS[index];
+        if (index > -1) dir = DIRS[index];
         
         else dir = 1;
         
@@ -135,8 +134,7 @@ public class NPC extends Creature
     for (SkillAnimation skill : skills)
       skill.drawBelow(g, v, m);
     
-    if (character != null)
-      Assistant.drawChar((int) getPos().x + m.getX(), (int) getPos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, "chars", character, g, v.w, true);
+    if (character != null) Assistant.drawChar((int) getPos().x + m.getX(), (int) getPos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, "chars", character, g, v.w, true);
     else Assistant.drawChar((int) getPos().x + m.getX(), (int) getPos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, equipment, g, v.w, true);
     
     if (emoticon != null)
@@ -144,8 +142,7 @@ public class NPC extends Creature
       try
       {
         emoticon.draw(g, m, v);
-        if (emoticon.done && emoticon.getType() != 50)
-          emoticon = null;
+        if (emoticon.done && emoticon.getType() != 50) emoticon = null;
       }
       catch (Exception e)
       {}
@@ -216,8 +213,7 @@ public class NPC extends Creature
       time = System.currentTimeMillis();
     }
     
-    if (m.getPlayer().getField(m) == null)
-      return;
+    if (m.getPlayer().getField(m) == null) return;
     
     if (m.getPlayer().getPos().getDistance(relPos) <= CFG.FIELDSIZE && m.getPlayer().isLookingAt(this, m) && talkdata.length() > 0)
     {
@@ -236,8 +232,7 @@ public class NPC extends Creature
     if (hostile && AI != null)
     {
       setPath(AI.findPath(m.getPlayer().getPos()));
-      if (relPos.equals(getPath().getNode()))
-        getPath().setNodeReached();
+      if (relPos.equals(getPath().getNode())) getPath().setNodeReached();
       
       goTo = getPath().getNode();
       
@@ -254,8 +249,7 @@ public class NPC extends Creature
   {
     boolean contains = getArea().contains(new Point(e.getX() - m.getX(), e.getY() - m.getY()));
     
-    if (!contains || talkdata.length() == 0 || e.getButton() != 1)
-      return;
+    if (!contains || talkdata.length() == 0 || e.getButton() != 1) return;
     
     Player p = m.getPlayer();
     

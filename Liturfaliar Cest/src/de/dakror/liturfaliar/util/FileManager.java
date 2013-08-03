@@ -42,8 +42,7 @@ public class FileManager
     saves = new File("C:/Dakror/Liturfaliar Cest/Saves");
     dir.mkdirs();
     saves.mkdirs();
-    if (!new File(dir, "options.json").exists() && v != null)
-      saveOptions(v);
+    if (!new File(dir, "options.json").exists() && v != null) saveOptions(v);
   }
   
   public static File getDir()
@@ -79,13 +78,11 @@ public class FileManager
     try
     {
       File f = new File(saves, save.getJSONObject("char").getString("name") + ".save");
-      if (backup)
-        f = new File(saves, save.getJSONObject("char").getString("name") + " - Sicherung.save");
+      if (backup) f = new File(saves, save.getJSONObject("char").getString("name") + " - Sicherung.save");
       
       f.delete();
       
-      if (new File(f.getPath() + ".debug").exists())
-        new File(f.getPath() + ".debug").delete();
+      if (new File(f.getPath() + ".debug").exists()) new File(f.getPath() + ".debug").delete();
     }
     catch (JSONException e)
     {
@@ -98,8 +95,7 @@ public class FileManager
     try
     {
       Compressor.compressFile(new File(saves, save.getJSONObject("char").getString("name") + " - Sicherung.save"), save.toString());
-      if (CFG.DEBUG)
-        Assistant.setFileContent(new File(saves, save.getJSONObject("char").getString("name") + " - Sicherung.save.debug"), save.toString());
+      if (CFG.DEBUG) Assistant.setFileContent(new File(saves, save.getJSONObject("char").getString("name") + " - Sicherung.save.debug"), save.toString());
     }
     catch (JSONException e)
     {
@@ -112,8 +108,7 @@ public class FileManager
     try
     {
       Compressor.compressFile(new File(saves, save.getJSONObject("char").getString("name") + ".save"), save.toString());
-      if (CFG.DEBUG)
-        Assistant.setFileContent(new File(saves, save.getJSONObject("char").getString("name") + ".save.debug"), save.toString());
+      if (CFG.DEBUG) Assistant.setFileContent(new File(saves, save.getJSONObject("char").getString("name") + ".save.debug"), save.toString());
     }
     catch (JSONException e)
     {
@@ -344,8 +339,7 @@ public class FileManager
         @Override
         public boolean accept(File dir, String name)
         {
-          if (name.matches("_.{1}\\.png"))
-            return name.endsWith("_f.png");
+          if (name.matches("_.{1}\\.png")) return name.endsWith("_f.png");
           
           return true;
         }

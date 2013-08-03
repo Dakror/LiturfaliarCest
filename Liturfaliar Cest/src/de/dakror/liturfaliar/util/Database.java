@@ -8,7 +8,8 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import de.dakror.liturfaliar.event.dispatcher.DatabaseEventDispatcher;
+import de.dakror.liturfaliar.event.Dispatcher;
+import de.dakror.liturfaliar.event.Events;
 import de.dakror.liturfaliar.settings.CFG;
 
 public class Database
@@ -29,8 +30,7 @@ public class Database
       frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
     
-    if (frame == null)
-      return;
+    if (frame == null) return;
     
     JTextArea c = new JTextArea();
     c.setEditable(false);
@@ -71,34 +71,29 @@ public class Database
   
   public static String getStringVar(String key)
   {
-    if (stringvars.containsKey(key))
-      return stringvars.get(key);
+    if (stringvars.containsKey(key)) return stringvars.get(key);
     else return null;
   }
   
   public static boolean getBooleanVar(String tag)
   {
-    if (booleanvars.contains(tag))
-      return true;
+    if (booleanvars.contains(tag)) return true;
     else return false;
   }
   
   public static void setBooleanVar(String key, Boolean value)
   {
-    if (value)
-      booleanvars.add(key);
+    if (value) booleanvars.add(key);
     else booleanvars.remove(key);
-    if (CFG.DEBUG)
-      print();
-    DatabaseEventDispatcher.dispatchBooleanVarChanged(key, value);
+    if (CFG.DEBUG) print();
+    Dispatcher.dispatch(Events.booleanVarChanged, key, value);
   }
   
   public static void setStringVar(String key, String value)
   {
     stringvars.put(key, value);
-    if (CFG.DEBUG)
-      print();
-    DatabaseEventDispatcher.dispatchStringVarChanged(key, value);
+    if (CFG.DEBUG) print();
+    Dispatcher.dispatch(Events.stringVarChanged, key, value);
   }
   
   public static String[] getStringVarNames()
@@ -118,8 +113,7 @@ public class Database
       String res = raw;
       for (String key : stringvars.keySet())
       {
-        if (key == null || stringvars.get(key) == null)
-          continue;
+        if (key == null || stringvars.get(key) == null) continue;
         res = res.replace("%" + key + "%", stringvars.get(key));
       }
       return res;

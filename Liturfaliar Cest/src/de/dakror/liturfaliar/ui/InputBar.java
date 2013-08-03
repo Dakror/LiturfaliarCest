@@ -49,15 +49,13 @@ public class InputBar extends Component
     maxCharsReached = false;
     this.blink = 0.0f;
     this.centered = false;
-    if (value == null)
-      this.value = "";
+    if (value == null) this.value = "";
     else
     {
       this.value = value;
       this.pre = value;
     }
-    if (c == null)
-      this.c = Color.white;
+    if (c == null) this.c = Color.white;
     else this.c = c;
     this.tileset = "tileset/Wood.png";
   }
@@ -71,8 +69,7 @@ public class InputBar extends Component
   {
     Font old = g.getFont();
     g.setFont(old.deriveFont(size));
-    if (alternate)
-      this.setHeight((int) (this.size * 1.425f));
+    if (alternate) this.setHeight((int) (this.size * 1.425f));
     else this.setHeight(g.getFontMetrics().getHeight() + 32);
     if (g.getFontMetrics().stringWidth(this.value) >= this.getWidth() || (max != 0 && this.value.length() > max))
     {
@@ -83,8 +80,7 @@ public class InputBar extends Component
     if (this.alternate)
     {
       Color c = Color.white;
-      if (this.hover && !this.focus)
-        c = Colors.ORANGE;
+      if (this.hover && !this.focus) c = Colors.ORANGE;
       else c = Colors.DGRAY;
       Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY(), getWidth(), g.getFontMetrics().getHeight(), 8, 8), c, 0.6f, g);
     }
@@ -116,24 +112,19 @@ public class InputBar extends Component
     g.setFont(old);
     if (this.alternate)
     {
-      if (this.disabled)
-        Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8), Color.black, 0.6f, g);
+      if (this.disabled) Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8), Color.black, 0.6f, g);
     }
     else
     {
-      if (this.disabled)
-        Assistant.Shadow(getArea(), Color.black, 0.6f, g);
+      if (this.disabled) Assistant.Shadow(getArea(), Color.black, 0.6f, g);
     }
-    if (this.info != null)
-      this.info.draw(g, v.w);
-    if (this.tooltip != null)
-      this.tooltip.draw(g, v);
+    if (this.info != null) this.info.draw(g, v.w);
+    if (this.tooltip != null) this.tooltip.draw(g, v);
   }
   
   public void mouseReleased(MouseEvent e)
   {
-    if (this.disabled)
-      return;
+    if (this.disabled) return;
     this.focus = new Area(new Rectangle2D.Double(this.getX(), this.getY(), this.getWidth(), this.getHeight())).contains(e.getPoint());
     if (this.focus && this.value == this.pre)
     {
@@ -143,17 +134,14 @@ public class InputBar extends Component
   
   public void mouseMoved(MouseEvent e)
   {
-    if (this.disabled)
-      return;
+    if (this.disabled) return;
     this.hover = new Area(new Rectangle2D.Double(this.getX(), this.getY(), this.getWidth(), this.getHeight())).contains(e.getPoint());
-    if (this.tooltip != null)
-      this.tooltip.mouseMoved(e);
+    if (this.tooltip != null) this.tooltip.mouseMoved(e);
   }
   
   public void keyPressed(KeyEvent e)
   {
-    if (!this.focus || this.disabled)
-      return;
+    if (!this.focus || this.disabled) return;
     int key = e.getExtendedKeyCode();
     if (e.isControlDown())
     {
@@ -165,8 +153,7 @@ public class InputBar extends Component
           String clipboard = ((String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor));
           for (int i = 0; i < clipboard.length(); i++)
           {
-            if (this.allowed.indexOf(clipboard.charAt(i)) > -1)
-              this.value += clipboard.charAt(i);
+            if (this.allowed.indexOf(clipboard.charAt(i)) > -1) this.value += clipboard.charAt(i);
           }
         }
         catch (Exception e1)
@@ -182,8 +169,7 @@ public class InputBar extends Component
         Viewport.notification = new Notification("Text in die Zwischenablage kopiert.", Notification.DEFAULT);
       }
     }
-    if (e.isControlDown())
-      return;
+    if (e.isControlDown()) return;
     if (this.value.length() > 0 && key == 0x8)
     {
       this.value = this.value.substring(0, this.value.length() - 1);
@@ -192,8 +178,7 @@ public class InputBar extends Component
     {
       if (!this.maxCharsReached)
       {
-        if (this.allowed != null && this.allowed.indexOf(" ") == -1)
-          return;
+        if (this.allowed != null && this.allowed.indexOf(" ") == -1) return;
         this.value = this.value + " ";
       }
     }
@@ -201,8 +186,7 @@ public class InputBar extends Component
     {
       if (!this.maxCharsReached)
       {
-        if (this.allowed != null && this.allowed.indexOf(e.getKeyChar()) == -1)
-          return;
+        if (this.allowed != null && this.allowed.indexOf(e.getKeyChar()) == -1) return;
         this.value = this.value + e.getKeyChar();
       }
     }

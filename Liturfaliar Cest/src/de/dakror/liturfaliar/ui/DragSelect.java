@@ -37,8 +37,7 @@ public class DragSelect extends Component
     int h1 = this.getY() + this.getHeight();
     int x = (this.getWidth() > 0) ? this.getX() : w1;
     int y = (this.getHeight() > 0) ? this.getY() : h1;
-    if (CFG.UIDEBUG)
-      Assistant.Rect(x, y, Math.abs(this.getWidth()), Math.abs(this.getHeight()), Color.white, null, g);
+    if (CFG.UIDEBUG) Assistant.Rect(x, y, Math.abs(this.getWidth()), Math.abs(this.getHeight()), Color.white, null, g);
   }
   
   public void mousePressed(MouseEvent e)
@@ -54,12 +53,9 @@ public class DragSelect extends Component
   
   public void mouseDragged(MouseEvent e)
   {
-    if (e.getModifiers() != this.button)
-      return;
-    if (this.parent.contains(new Point(e.getX(), getY())))
-      this.setWidth(e.getX() - this.getX());
-    if (this.parent.contains(new Point(getX(), e.getY())))
-      this.setHeight(e.getY() - this.getY());
+    if (e.getModifiers() != this.button) return;
+    if (this.parent.contains(new Point(e.getX(), getY()))) this.setWidth(e.getX() - this.getX());
+    if (this.parent.contains(new Point(getX(), e.getY()))) this.setHeight(e.getY() - this.getY());
   }
   
   public int roundToGrid(int i, int cell)

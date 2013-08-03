@@ -54,8 +54,7 @@ public class Label extends Component
       {
         setWidth(g.getFontMetrics(g.getFont().deriveFont(this.size)).stringWidth(this.s));
       }
-      if (this.s != null && this.w != 0)
-        Assistant.drawHorizontallyCenteredString(this.s, getX(), this.w, (int) (getY() + this.size), g, (int) this.size, this.c);
+      if (this.s != null && this.w != 0) Assistant.drawHorizontallyCenteredString(this.s, getX(), this.w, (int) (getY() + this.size), g, (int) this.size, this.c);
       else Assistant.drawString(this.s, getX(), (int) (getY() + this.size), g, this.c, g.getFont().deriveFont(this.size));
     }
     else if (this.img != null)

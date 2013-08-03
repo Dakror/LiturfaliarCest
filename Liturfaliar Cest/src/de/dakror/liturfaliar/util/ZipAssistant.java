@@ -60,8 +60,7 @@ public class ZipAssistant extends Thread
       this.fullsize = 0;
       for (ZipEntry entry : Collections.list(zipFile.entries()))
       {
-        if (!entry.isDirectory())
-          this.fullsize += entry.getSize();
+        if (!entry.isDirectory()) this.fullsize += entry.getSize();
       }
       for (ZipEntry entry : Collections.list(zipFile.entries()))
       {
@@ -80,8 +79,7 @@ public class ZipAssistant extends Thread
   public void extractEntry(ZipFile zipFile, ZipEntry entry, String destDir) throws IOException
   {
     File file = new File(destDir, entry.getName());
-    if (entry.isDirectory())
-      file.mkdirs();
+    if (entry.isDirectory()) file.mkdirs();
     else
     {
       new File(file.getParent()).mkdirs();
@@ -99,10 +97,8 @@ public class ZipAssistant extends Thread
       }
       finally
       {
-        if (os != null)
-          os.close();
-        if (is != null)
-          is.close();
+        if (os != null) os.close();
+        if (is != null) is.close();
       }
     }
   }

@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.event.listener.MapEventListener;
+import de.dakror.liturfaliar.event.Event;
+import de.dakror.liturfaliar.event.Events;
+import de.dakror.liturfaliar.event.Listener;
 import de.dakror.liturfaliar.fx.Emoticon;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.Item;
@@ -27,12 +29,11 @@ import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.DamageType;
 import de.dakror.liturfaliar.ui.DamageIndicator;
-import de.dakror.liturfaliar.ui.Talk;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Projection;
 import de.dakror.liturfaliar.util.Vector;
 
-public class Creature implements MapEventListener
+public class Creature implements Listener
 {
   public static final Integer[]        DIRS  = { 3, 2, 0, 1 };
   public static final int              LEVEL = 25;
@@ -156,8 +157,7 @@ public class Creature implements MapEventListener
           Vector v = getIntersection(newPos, c, map);
           if (v != null)
           {
-            if (getIntersection(newPos.sub(v), c, map) != null)
-              newPos = newPos.add(v);
+            if (getIntersection(newPos.sub(v), c, map) != null) newPos = newPos.add(v);
             
             else newPos = newPos.sub(v);
           }
@@ -168,8 +168,7 @@ public class Creature implements MapEventListener
       
       if (newPos.equals(relPos))
       {
-        if (!didntMove)
-          didntMove = true;
+        if (!didntMove) didntMove = true;
         else
         {
           setPath(null);
@@ -199,11 +198,11 @@ public class Creature implements MapEventListener
     {
       if (getBumpArea().contains(new Point2D.Double(f.getX() * CFG.FIELDSIZE + CFG.FIELDSIZE * 0.5, f.getY() * CFG.FIELDSIZE + CFG.FIELDSIZE * 0.5)))
       {
-        f.fieldTriggered(this, map);
+        f.onEvent(new Event(Events.fieldTriggered, this, map));
       }
       else if (getBumpArea().intersects(f.getX() * CFG.FIELDSIZE, f.getY() * CFG.FIELDSIZE, CFG.FIELDSIZE, CFG.FIELDSIZE))
       {
-        f.fieldTouched(this, map);
+        f.onEvent(new Event(Events.fieldTouched, this, map));
       }
     }
     
@@ -211,8 +210,7 @@ public class Creature implements MapEventListener
     {
       for (SkillAnimation skill : skills)
       {
-        if (skill.isDone())
-          skills.remove(skill);
+        if (skill.isDone()) skills.remove(skill);
         
         else
         {
@@ -227,8 +225,7 @@ public class Creature implements MapEventListener
     {
       for (DamageIndicator dmgi : dmgIndicators)
       {
-        if (dmgi.isDone())
-          dmgIndicators.remove(dmgi);
+        if (dmgi.isDone()) dmgIndicators.remove(dmgi);
       }
     }
     catch (ConcurrentModificationException e)
@@ -241,8 +238,7 @@ public class Creature implements MapEventListener
     {
       for (DamageIndicator dmgi : dmgIndicators)
       {
-        if (!dmgi.isDone())
-          dmgi.draw(m, g, v);
+        if (!dmgi.isDone()) dmgi.draw(m, g, v);
       }
     }
     catch (ConcurrentModificationException e)
@@ -259,15 +255,13 @@ public class Creature implements MapEventListener
       Field f = getField(m);
       Assistant.Rect(m.getX() + f.getX(), m.getY() + f.getY(), CFG.FIELDSIZE, CFG.FIELDSIZE, Color.gray, null, g);
       
-      if (path != null)
-        path.draw(g, m);
+      if (path != null) path.draw(g, m);
     }
   }
   
   public void drawEmoticon(Graphics2D g, Viewport v, Map m)
   {
-    if (emoticon != null)
-      emoticon.draw(g, m, v);
+    if (emoticon != null) emoticon.draw(g, m, v);
   }
   
   public boolean isMassive()
@@ -284,14 +278,12 @@ public class Creature implements MapEventListener
     Projection myX = new Projection(v[4].x, v[1].x);
     Projection otherX = new Projection(ov[4].x, ov[1].x);
     
-    if (!myX.intersects(otherX))
-      return null;
+    if (!myX.intersects(otherX)) return null;
     
     // -- y Axis -- //
     Projection myY = new Projection(v[4].y, v[3].y);
     Projection otherY = new Projection(ov[4].y, ov[3].y);
-    if (!myY.intersects(otherY))
-      return null;
+    if (!myY.intersects(otherY)) return null;
     
     double overlapX = myX.getIntersection(otherX);
     double overlapY = myY.getIntersection(otherY);
@@ -397,8 +389,7 @@ public class Creature implements MapEventListener
   
   public void lookAt(Creature c, Map m)
   {
-    if (isLookingAt(c, m))
-      return;
+    if (isLookingAt(c, m)) return;
     for (int i = 0; i < 4; i++)
     {
       double x = getPos().x + getWidth() / 2.0;
@@ -450,26 +441,6 @@ public class Creature implements MapEventListener
   public void mouseExited(MouseEvent e, Map m)
   {}
   
-  @Override
-  public void fieldTouched(Creature c, Map m)
-  {}
-  
-  @Override
-  public void fieldTriggered(Creature c, Map m)
-  {}
-  
-  @Override
-  public void talkStarted(Talk t, Map m)
-  {}
-  
-  @Override
-  public void talkEnded(Talk t, Map m)
-  {}
-  
-  @Override
-  public void talkChanged(Talk old, Talk n, Map m)
-  {}
-  
   public Attributes getAttributes()
   {
     return attr;
@@ -482,13 +453,11 @@ public class Creature implements MapEventListener
   
   public int getLevel()
   {
-    if (attr.getAttribute(Attr.experience).isEmpty())
-      return 1;
+    if (attr.getAttribute(Attr.experience).isEmpty()) return 1;
     
     int lvl = (int) Math.sqrt(attr.getAttribute(Attr.experience).getValue() / (double) LEVEL);
     
-    if (lvl == 0)
-      return 1;
+    if (lvl == 0) return 1;
     
     return lvl;
   }
@@ -518,8 +487,7 @@ public class Creature implements MapEventListener
   
   public boolean isAlive()
   {
-    if (attr.getAttribute(Attr.health).isEmpty())
-      return true;
+    if (attr.getAttribute(Attr.health).isEmpty()) return true;
     
     else return attr.getAttribute(Attr.health).getValue() > 0;
   }
@@ -532,8 +500,7 @@ public class Creature implements MapEventListener
     if (val > a.getMaximum())
     {
       int dif = (int) (a.getMaximum() - a.getValue());
-      if (dif == 0)
-        return;
+      if (dif == 0) return;
       
       else val = (int) (dif + a.getValue());
     }
@@ -591,4 +558,8 @@ public class Creature implements MapEventListener
   {
     name = s;
   }
+  
+  @Override
+  public void onEvent(Event e)
+  {}
 }
