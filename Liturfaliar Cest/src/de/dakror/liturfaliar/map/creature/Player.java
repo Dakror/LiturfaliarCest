@@ -329,9 +329,7 @@ public class Player extends Creature
   @Override
   public void onEvent(Event e)
   {
-    if (e.equals(Events.talkStarted)) frozen = true;
-    else if (e.equals(Events.talkEnded)) frozen = false;
-    else if (e.equals(Events.equipmentChanged) && e.getParam(0).equals(this))
+    if (e.equals(Events.equipmentChanged) && e.getParam(0).equals(this))
     {
       updateRealAreas();
     }
@@ -339,7 +337,7 @@ public class Player extends Creature
   
   public void updateRealAreas()
   {
-    realAreas = new Area[4][4];
+    if (realAreas == null) realAreas = new Area[4][4];
     for (int i = 0; i < 4; i++)
     {
       for (int j = 0; j < 4; j++)

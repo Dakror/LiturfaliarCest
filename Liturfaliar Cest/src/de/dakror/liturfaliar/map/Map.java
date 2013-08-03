@@ -626,6 +626,10 @@ public class Map implements Listener
       f.onEvent(e);
     }
     
+    for (Creature c : creatures)
+    {
+      c.onEvent(e);
+    }
   }
   
   public static String[] getMaps(String pack, String dir)
