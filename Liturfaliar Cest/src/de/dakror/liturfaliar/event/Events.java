@@ -21,6 +21,8 @@ public enum Events
   
   mapChanged("old", "new"),
   
+  equipmentChanged("c"),
+  
   levelUp("old");
   
   private String[] keys;

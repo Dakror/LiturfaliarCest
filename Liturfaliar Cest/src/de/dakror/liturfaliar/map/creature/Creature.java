@@ -58,7 +58,7 @@ public class Creature implements Listener
   protected ArrayList<SkillAnimation>  skills;
   protected ArrayList<DamageIndicator> dmgIndicators;
   protected Area                       hitArea;
-  protected Area                       realArea;
+  protected Area[][]                       realAreas;
   protected CreatureAI                 AI;
   protected String                     name;
   

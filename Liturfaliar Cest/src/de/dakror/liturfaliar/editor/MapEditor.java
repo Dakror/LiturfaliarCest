@@ -199,7 +199,6 @@ public class MapEditor
       public void windowClosing(WindowEvent e)
       {
         v.w.setVisible(true);
-        // v.mapeditor = null;
       }
     });
     init();
@@ -725,7 +724,7 @@ public class MapEditor
     final DefaultListModel<String> mappacks = new DefaultListModel<String>();
     for (File f : new File(FileManager.dir, CFG.MAPEDITORDIR).listFiles())
     {
-      if (f.isDirectory() && Arrays.asList(f.list()).contains("pack.json") && Arrays.asList(f.list()).contains("maps"))
+      if (f.isDirectory() && Arrays.asList(f.list()).contains(".pack"))
       {
         mappacks.addElement(f.getName());
       }
@@ -890,7 +889,7 @@ public class MapEditor
   {
     try
     {
-      mappackdata = new JSONObject(Assistant.getFileContent(new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + pack + "/pack.json")));
+      mappackdata = new JSONObject(Assistant.getFileContent(new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + pack + "/.pack")));
       w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + mappackdata.getString("name"));
       mmenu.setEnabled(true);
     }
@@ -907,7 +906,7 @@ public class MapEditor
       File dir = new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + mappackdata.getString("name"));
       dir.mkdir();
       new File(dir, "maps").mkdir();
-      File pack = new File(dir, "pack.json");
+      File pack = new File(dir, ".pack");
       if (!pack.exists()) pack.createNewFile();
       Assistant.setFileContent(pack, mappackdata.toString(4));
     }
@@ -931,7 +930,7 @@ public class MapEditor
       map.removeAll();
       msp.setViewportView(map);
       selectedtile = null;
-      mapdata = Compressor.openMap(new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + mappackdata.getString("name") + "/maps/" + m + ".map"));
+      mapdata = Compressor.openMap(new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + mappackdata.getString("name") + "/" + m + ".map"));
       ArrayList<JSONObject> tiles = Assistant.JSONArrayToArray(mapdata.getJSONArray("tile"));
       Collections.sort(tiles, new Comparator<JSONObject>()
       {
@@ -976,6 +975,7 @@ public class MapEditor
         bi.getGraphics().drawImage(Viewport.loadImage("Tiles/" + o.getString("tileset") + ".png"), 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, o.getInt("tx") * CFG.FIELDSIZE, o.getInt("ty") * CFG.FIELDSIZE, o.getInt("tx") * CFG.FIELDSIZE + CFG.FIELDSIZE, o.getInt("ty") * CFG.FIELDSIZE + CFG.FIELDSIZE, null);
         addTile(bi, o.getInt("x"), o.getInt("y"), o.getString("tileset"), o.getInt("tx"), o.getInt("ty"), o.getDouble("l"), o.getJSONObject("data"), false);
       }
+      
       JSONArray npcs = mapdata.getJSONArray("npc");
       for (int i = 0; i < npcs.length(); i++)
       {
@@ -1007,7 +1007,7 @@ public class MapEditor
   {
     try
     {
-      File f = new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + mappackdata.getString("name") + "/maps/" + mapdata.getString("name") + ".map");
+      File f = new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + mappackdata.getString("name") + "/" + mapdata.getString("name") + ".map");
       
       JSONArray tiles = new JSONArray();
       JSONArray npcs = new JSONArray();

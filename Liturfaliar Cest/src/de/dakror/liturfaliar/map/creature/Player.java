@@ -5,9 +5,11 @@ import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
@@ -48,6 +50,8 @@ public class Player extends Creature
   public boolean    preventTargetChoose = false;
   public int        dirAfterReachedGoal = -1;
   
+  int               frame               = 0;
+  
   boolean           lookingEnabled;
   boolean           sprint;
   long              time;
@@ -75,7 +79,7 @@ public class Player extends Creature
       name = save.getJSONObject("char").getString("name");
       
       equipment = new Equipment(save.getJSONObject("char").getJSONObject("equip"));
-      
+      updateRealAreas();
       relPos = goTo = new Vector(save.getJSONObject("mappack").getJSONObject("pos").getInt("x"), save.getJSONObject("mappack").getJSONObject("pos").getInt("y"));
       
       attr.loadAttributes(save.getJSONObject("char").getJSONObject("attr"));
@@ -190,7 +194,7 @@ public class Player extends Creature
     
     this.v = v;
     
-    int frame = 0;
+    frame = 0;
     
     if ((!relPos.equals(goTo) || !Arrays.equals(dirs, new boolean[] { false, false, false, false })) && !frozen) frame = v.getFrame((sprint) ? 0.3f : 0.5f);
     
@@ -205,10 +209,6 @@ public class Player extends Creature
     {
       for (SkillAnimation skill : super.skills)
         skill.drawBelow(g, v, m);
-      
-      // BufferedImage i = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-      // Assistant.drawChar(0, 0, w, h, dir, frame, equipment, (Graphics2D) i.getGraphics(), v.w, true);
-      // hitArea = Assistant.toArea(i);
       
       Assistant.drawChar((int) relPos.x + m.getX(), (int) relPos.y + m.getY(), w, h, dir, frame, equipment, g, v.w, true);
       
@@ -331,6 +331,30 @@ public class Player extends Creature
   {
     if (e.equals(Events.talkStarted)) frozen = true;
     else if (e.equals(Events.talkEnded)) frozen = false;
+    else if (e.equals(Events.equipmentChanged) && e.getParam(0).equals(this))
+    {
+      updateRealAreas();
+    }
+  }
+  
+  public void updateRealAreas()
+  {
+    realAreas = new Area[4][4];
+    for (int i = 0; i < 4; i++)
+    {
+      for (int j = 0; j < 4; j++)
+      {
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Assistant.drawChar(0, 0, w, h, i, j, equipment, (Graphics2D) img.getGraphics(), null, true);
+        realAreas[i][j] = Assistant.toArea(img);
+      }
+    }
+  }
+  
+  public Area getRealArea(Map m)
+  {
+    if (realAreas == null) return new Area();
+    return realAreas[dir][frame % 4].createTransformedArea(AffineTransform.getTranslateInstance(m.getX() + relPos.x, m.getY() + relPos.y));
   }
   
   public void setInventory(JSONArray o)

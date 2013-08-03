@@ -329,21 +329,21 @@ public class Map implements Listener
       g.drawImage(field.getImage(), x + field.getX(), y + field.getY(), v.w);
     }
     
-    // Area wireFrame = new Area();
-    //
-    // if (getPlayer() != null)
-    // {
-    // wireFrame = getPlayer().getHitArea(this);
-    // wireFrame.intersect(aboveArea.createTransformedArea(AffineTransform.getTranslateInstance(x, y)));
-    // }
-    //
-    //
-    // Color oldColor = g.getColor();
-    // g.setColor(Color.black);
-    //
-    // g.draw(wireFrame);
-    //
-    // g.setColor(oldColor);
+    Area wireFrame = new Area();
+    
+    if (getPlayer() != null)
+    {
+      wireFrame = getPlayer().getRealArea(this);
+      wireFrame.intersect(aboveArea.createTransformedArea(AffineTransform.getTranslateInstance(x, y)));
+    }
+    
+    
+    Color oldColor = g.getColor();
+    g.setColor(Color.black);
+    
+    g.draw(wireFrame);
+    
+    g.setColor(oldColor);
     
     try
     {

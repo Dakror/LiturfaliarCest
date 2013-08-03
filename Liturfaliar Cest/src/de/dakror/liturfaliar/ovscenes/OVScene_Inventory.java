@@ -502,7 +502,10 @@ public class OVScene_Inventory extends OVScene implements Inventory
             sg.getPlayer().getEquipment().setSecondWeapon(null);
             break;
           default:
+          {
             sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), null);
+            Dispatcher.dispatch(Events.equipmentChanged, sg.getPlayer());
+          }
         }
       }
       
@@ -528,6 +531,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
         if (is.getItem() != null && !is.getItem().areRequirementsSatisfied(Attributes.dif(sg.getPlayer().getAttributes(true), is.getItem().getAttributes())))
         {
           sg.getPlayer().getEquipment().setEquipmentItem(is.getItem().getType().getCategory(), null);
+          Dispatcher.dispatch(Events.equipmentChanged, sg.getPlayer());
           getFirstSlot(null).setItem(is.getItem());
           is.setItem(null);
           
@@ -586,7 +590,10 @@ public class OVScene_Inventory extends OVScene implements Inventory
             sg.getPlayer().getEquipment().setSecondWeapon(slot.getItem());
             break;
           default:
+          {
             sg.getPlayer().getEquipment().setEquipmentItem(slot.getItem().getType().getCategory(), slot.getItem());
+            Dispatcher.dispatch(Events.equipmentChanged, sg.getPlayer());
+          }
         }
       }
       
