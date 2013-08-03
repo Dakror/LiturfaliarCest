@@ -2953,7 +2953,7 @@ public class MapEditor
     p.add(new JButton(new AbstractAction("Entfernen")
     {
       private static final long serialVersionUID = 1L;
-
+      
       @Override
       public void actionPerformed(ActionEvent e)
       {
@@ -2964,7 +2964,8 @@ public class MapEditor
             map.remove(c);
             map.repaint();
           }
-        }}
+        }
+      }
     }));
     
     SpringUtilities.makeCompactGrid(p, 3, 2, 6, 6, 6, 6);

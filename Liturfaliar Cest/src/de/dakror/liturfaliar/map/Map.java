@@ -1,6 +1,5 @@
 package de.dakror.liturfaliar.map;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
@@ -311,17 +310,43 @@ public class Map implements DatabaseEventListener
         a.draw(this, g, v);
     }
     
+    
     for (Field field : aboveFields)
     {
-      if (getPlayer() != null)
-      {
-        if (new Vector(field.getX(), field.getY()).getDistance(getPlayer().getPos()) < CFG.FIELDSIZE * 0.8)
-          g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
-      }
       g.drawImage(field.getImage(), x + field.getX(), y + field.getY(), v.w);
-      
-      g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
+    
+    Area wireFrame = new Area();
+    
+    @SuppressWarnings("unchecked")
+    ArrayList<Field> aboveCopy = (ArrayList<Field>) aboveFields.clone();
+    Collections.sort(aboveCopy, new Comparator<Field>()
+    {
+      
+      @Override
+      public int compare(Field o1, Field o2)
+      {
+        return (int) (o1.getLayer() * 1000) - (int) (o2.getLayer() * 1000);
+      }
+    });
+    for (Field field : aboveCopy)
+    {
+      if (getPlayer() != null)
+        if (new Vector(field.getX(), field.getY()).getDistance(getPlayer().getPos()) < CFG.FIELDSIZE)
+        {
+          Area area = (Area) getPlayer().getHitArea(this).clone();
+          area.intersect(new Area(new Rectangle2D.Double(field.getX() + x, field.getY() + y, CFG.FIELDSIZE, CFG.FIELDSIZE)));
+          wireFrame.add(area);
+        }
+      
+    }
+    
+    Color oldColor = g.getColor();
+    g.setColor(Color.black);
+    
+    g.draw(wireFrame);
+    
+    g.setColor(oldColor);
     
     try
     {

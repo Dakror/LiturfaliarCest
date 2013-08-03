@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
@@ -215,6 +216,10 @@ public class Player extends Creature
     {
       for (SkillAnimation skill : super.skills)
         skill.drawBelow(g, v, m);
+      
+      BufferedImage i = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+      Assistant.drawChar(0, 0, w, h, dir, frame, equipment, (Graphics2D) i.getGraphics(), v.w, true);
+      hitArea = Assistant.toArea(i);
       
       Assistant.drawChar((int) relPos.x + m.getX(), (int) relPos.y + m.getY(), w, h, dir, frame, equipment, g, v.w, true);
       

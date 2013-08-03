@@ -57,6 +57,7 @@ public class Creature implements MapEventListener
   protected ArrayList<SkillAnimation>  skills;
   protected ArrayList<DamageIndicator> dmgIndicators;
   protected Area                       hitArea;
+  protected Area                       realArea;
   protected CreatureAI                 AI;
   protected String                     name;
   

@@ -45,56 +45,93 @@ import de.dakror.liturfaliar.settings.CFG;
 
 public final class Assistant
 {
-  public static void setCursor(Image cursor, Window w)
+  public static boolean charLevelExists(Categories c, String path, String level)
   {
-    if (cursor == null)
-    {
-      cursor = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-    }
-    w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "Cursor"));
+    return Assistant.class.getResource("char/" + c.name().toLowerCase() + "/" + path + "_" + level + ".png") != null;
   }
   
-  public static Image loadImage(String name)
+  public static String ColorToHex(Color c)
   {
-    try
+    return "#" + Integer.toHexString(c.getRed()) + Integer.toHexString(c.getGreen()) + Integer.toHexString(c.getBlue());
+  }
+  
+  public static <T> T[] concat(T[] first, T[] second)
+  {
+    T[] result = Arrays.copyOf(first, first.length + second.length);
+    System.arraycopy(second, 0, result, first.length, second.length);
+    return result;
+  }
+  
+  public static Graphics2D copyGraphics2DAttributes(Graphics2D a, Graphics2D b)
+  {
+    b.setRenderingHints(a.getRenderingHints());
+    b.setFont(a.getFont());
+    b.setColor(a.getColor());
+    return b;
+  }
+  
+  // dir is real dir from image: down = 0, left = 1, right = 2, up = 3
+  public static void drawChar(int x, int y, int w, int h, int dir, int frame, Equipment equip, Graphics2D g, Window window, boolean ch)
+  {
+    if (ch)
     {
-      return ImageIO.read(Assistant.class.getResource("/img/" + name));
-    }
-    catch (Exception e)
-    {
-      return null;
+      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "b"))
+      {
+        CFG.b("cape_b", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_b");
+        Assistant.drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_b", g, window, ch);
+      }
+      
+      if (equip.hasEquipmentItem(Categories.SKIN))
+      {
+        Assistant.drawChar(x, y, w, h, dir, frame, "skin", equip.getEquipmentItem(Categories.SKIN).getCharPath() + "_b", g, window, ch);
+        Assistant.drawChar(x, y, w, h, dir, frame, "skin", equip.getEquipmentItem(Categories.SKIN).getCharPath() + "_f", g, window, ch);
+      }
+      if (equip.hasEquipmentItem(Categories.EYES))
+        Assistant.drawChar(x, y, w, h, dir, frame, "eyes", equip.getEquipmentItem(Categories.EYES).getCharPath(), g, window, ch);
+      
+      if (equip.hasEquipmentItem(Categories.PANTS))
+        Assistant.drawChar(x, y, w, h, dir, frame, "pants", equip.getEquipmentItem(Categories.PANTS).getCharPath(), g, window, ch);
+      
+      if (equip.hasEquipmentItem(Categories.BOOTS))
+        Assistant.drawChar(x, y, w, h, dir, frame, "boots", equip.getEquipmentItem(Categories.BOOTS).getCharPath(), g, window, ch);
+      
+      if (equip.hasEquipmentItem(Categories.SHIRT))
+        Assistant.drawChar(x, y, w, h, dir, frame, "shirt", equip.getEquipmentItem(Categories.SHIRT).getCharPath(), g, window, ch);
+      
+      if (equip.hasEquipmentItem(Categories.HAIR))
+        Assistant.drawChar(x, y, w, h, dir, frame, "hair", equip.getEquipmentItem(Categories.HAIR).getCharPath(), g, window, ch);
+      
+      
+      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "m"))
+        Assistant.drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_m", g, window, ch);
+      
+      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "f"))
+        Assistant.drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_f", g, window, ch);
     }
   }
   
-  public static void openLink(String url)
+  public static void drawChar(int x, int y, int w, int h, int dir, int frame, String type, String image, Graphics2D g, Window window, boolean ch)
   {
-    try
-    {
-      Desktop.getDesktop().browse(new URI(url));
-    }
-    catch (Exception e)
-    {
-      return;
-    }
+    Image i = Viewport.loadScaledImage("char/" + type + "/" + image + ".png", w * 4, h * 4);
+    int iw = i.getWidth(null) / 4;
+    int ih = i.getHeight(null) / 4;
+    if (!ch)
+      g.drawImage(i, x, y, x + w, y + h, dir * iw, (frame % 4) * ih, dir * iw + iw, (frame % 4) * ih + ih, window);
+    else g.drawImage(i, x, y, x + w, y + h, (frame % 4) * iw, dir * ih, (frame % 4) * iw + iw, dir * ih + ih, window);
   }
   
-  public static void drawString(String s, int x, int y, Graphics2D g, Color c)
+  public static int drawHorizontallyCenteredString(String s, int w, int h, Graphics2D g, int size)
   {
-    Color old = g.getColor();
-    g.setColor(c);
-    g.drawString(s, x, y);
-    g.setColor(old);
-  }
-  
-  public static void drawString(String s, int x, int y, Graphics2D g, Color c, Font f)
-  {
-    Color old = g.getColor();
-    Font oldf = g.getFont();
-    g.setFont(f);
-    g.setColor(c);
-    g.drawString(s, x, y);
-    g.setColor(old);
-    g.setFont(oldf);
+    Font old = g.getFont();
+    g.setFont(g.getFont().deriveFont((float) size));
+    FontMetrics fm = g.getFontMetrics();
+    int x = (w - fm.stringWidth(s)) / 2;
+    // int y = (fm.getAscent() + (h - (fm.getAscent() + fm.getDescent())) /
+    // 2);
+    g.drawString(s, x, h);
+    int nx = x + fm.stringWidth(s);
+    g.setFont(old);
+    return nx;
   }
   
   public static int drawHorizontallyCenteredString(String s, int w, int h, Graphics2D g, int size, Color c)
@@ -128,6 +165,30 @@ public final class Assistant
     return x;
   }
   
+  public static void drawMenuBackground(Graphics2D g, Window w)
+  {
+    g.drawImage(Viewport.loadImage("system/menu.jpg"), 0, 0, w.getWidth(), w.getHeight(), w);
+  }
+  
+  public static void drawString(String s, int x, int y, Graphics2D g, Color c)
+  {
+    Color old = g.getColor();
+    g.setColor(c);
+    g.drawString(s, x, y);
+    g.setColor(old);
+  }
+  
+  public static void drawString(String s, int x, int y, Graphics2D g, Color c, Font f)
+  {
+    Color old = g.getColor();
+    Font oldf = g.getFont();
+    g.setFont(f);
+    g.setColor(c);
+    g.drawString(s, x, y);
+    g.setColor(old);
+    g.setFont(oldf);
+  }
+  
   public static int drawVerticallyCenteredString(String s, int x, int y1, int h, Graphics2D g, int theta, int size, Color c)
   {
     AffineTransform at = new AffineTransform();
@@ -145,36 +206,25 @@ public final class Assistant
     return nx;
   }
   
-  public static int drawHorizontallyCenteredString(String s, int w, int h, Graphics2D g, int size)
+  public static String formatBinarySize(long size, int digits)
   {
-    Font old = g.getFont();
-    g.setFont(g.getFont().deriveFont((float) size));
-    FontMetrics fm = g.getFontMetrics();
-    int x = (w - fm.stringWidth(s)) / 2;
-    // int y = (fm.getAscent() + (h - (fm.getAscent() + fm.getDescent())) /
-    // 2);
-    g.drawString(s, x, h);
-    int nx = x + fm.stringWidth(s);
-    g.setFont(old);
-    return nx;
+    final String[] levels = { "", "K", "M", "G", "T" };
+    for (int i = levels.length - 1; i > -1; i--)
+      if (size > (long) Math.pow(1024, i))
+      {
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(digits);
+        df.setMinimumFractionDigits(digits);
+        return df.format(size / Math.pow(1024, i)) + levels[i] + "B";
+      }
+    return null;
   }
   
-  public static String getURLContent(URL u)
+  public static Object[] getArrayFromLimits(int min, int max)
   {
-    String res = "", line = "";
-    try
-    {
-      BufferedReader br = new BufferedReader(new InputStreamReader(u.openStream()));
-      while ((line = br.readLine()) != null)
-      {
-        res += line;
-      }
-      br.close();
-    }
-    catch (IOException e)
-    {
-      return null;
-    }
+    Object[] res = new Object[max - min];
+    for (int i = min; i < max; i++)
+      res[i - min] = i;
     return res;
   }
   
@@ -185,9 +235,7 @@ public final class Assistant
     {
       BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
       while ((line = br.readLine()) != null)
-      {
         res += line;
-      }
       br.close();
     }
     catch (IOException e)
@@ -197,271 +245,12 @@ public final class Assistant
     return res;
   }
   
-  public static void setFileContent(File f, String s)
-  {
-    try
-    {
-      OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(f), "UTF8");
-      osw.write(s);
-      osw.close();
-    }
-    catch (Exception e)
-    {}
-  }
-  
-  public static void stretchTileset(Image img, int x, int y, int w, int h, Graphics2D g, Window win)
-  {
-    // if (w % 32 != 0 || h % 32 != 0)
-    // return;
-    for (int i = 32; i < w - 32; i += 32)
-    {
-      for (int j = 32; j < h - 32; j += 32)
-      {
-        g.drawImage(img, x + i, y + j, x + i + 32, y + j + 32, 32, 32, 64, 64, win);
-      }
-    }
-    // top left
-    g.drawImage(img, x, y, x + 32, y + 32, 0, 0, 32, 32, win);
-    // top right
-    g.drawImage(img, x + w - 32, y, x + w, y + 32, 64, 0, 96, 32, win);
-    // middle left
-    for (int i = 0; i < h - 64; i += 32)
-    {
-      g.drawImage(img, x, y + i + 32, x + 32, y + i + 64, 0, 32, 32, 64, win);
-    }
-    // middle right
-    for (int i = 0; i < h - 64; i += 32)
-    {
-      g.drawImage(img, x + w - 32, y + i + 32, x + w, y + i + 64, 64, 32, 96, 64, win);
-    }
-    // middle top
-    for (int i = 0; i < w - 64; i += 32)
-    {
-      g.drawImage(img, x + i + 32, y, x + i + 64, y + 32, 32, 0, 64, 32, win);
-    }
-    // middle bottom
-    for (int i = 0; i < w - 64; i += 32)
-    {
-      g.drawImage(img, x + i + 32, y + h - 32, x + i + 64, y + h, 32, 64, 64, 96, win);
-    }
-    // bottom left
-    g.drawImage(img, x, y + h - 32, x + 32, y + h, 0, 64, 32, 96, win);
-    // bottom right
-    g.drawImage(img, x + w - 32, y + h - 32, x + w, y + h, 64, 64, 96, 96, win);
-  }
-  
-  // dir is real dir from image: down = 0, left = 1, right = 2, up = 3
-  public static void drawChar(int x, int y, int w, int h, int dir, int frame, Equipment equip, Graphics2D g, Window window, boolean ch)
-  {
-    if (ch)
-    {
-      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "b"))
-      {
-        CFG.b("cape_b", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_b");
-        drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_b", g, window, ch);
-      }
-      
-      if (equip.hasEquipmentItem(Categories.SKIN))
-      {
-        drawChar(x, y, w, h, dir, frame, "skin", equip.getEquipmentItem(Categories.SKIN).getCharPath() + "_b", g, window, ch);
-        drawChar(x, y, w, h, dir, frame, "skin", equip.getEquipmentItem(Categories.SKIN).getCharPath() + "_f", g, window, ch);
-      }
-      if (equip.hasEquipmentItem(Categories.EYES))
-        drawChar(x, y, w, h, dir, frame, "eyes", equip.getEquipmentItem(Categories.EYES).getCharPath(), g, window, ch);
-      
-      if (equip.hasEquipmentItem(Categories.PANTS))
-        drawChar(x, y, w, h, dir, frame, "pants", equip.getEquipmentItem(Categories.PANTS).getCharPath(), g, window, ch);
-      
-      if (equip.hasEquipmentItem(Categories.BOOTS))
-        drawChar(x, y, w, h, dir, frame, "boots", equip.getEquipmentItem(Categories.BOOTS).getCharPath(), g, window, ch);
-      
-      if (equip.hasEquipmentItem(Categories.SHIRT))
-        drawChar(x, y, w, h, dir, frame, "shirt", equip.getEquipmentItem(Categories.SHIRT).getCharPath(), g, window, ch);
-      
-      if (equip.hasEquipmentItem(Categories.HAIR))
-        drawChar(x, y, w, h, dir, frame, "hair", equip.getEquipmentItem(Categories.HAIR).getCharPath(), g, window, ch);
-      
-      
-      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "m"))
-        drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_m", g, window, ch);
-      
-      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "f"))
-        drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_f", g, window, ch);
-    }
-  }
-  
-  private static boolean charLevelExists(Categories c, String path, String level)
-  {
-    return Assistant.class.getResource("char/" + c.name().toLowerCase() + "/" + path + "_" + level + ".png") != null;
-  }
-  
-  public static void drawChar(int x, int y, int w, int h, int dir, int frame, String type, String image, Graphics2D g, Window window, boolean ch)
-  {
-    Image i = Viewport.loadScaledImage("char/" + type + "/" + image + ".png", w * 4, h * 4);
-    int iw = i.getWidth(null) / 4;
-    int ih = i.getHeight(null) / 4;
-    if (!ch)
-      g.drawImage(i, x, y, x + w, y + h, dir * iw, (frame % 4) * ih, dir * iw + iw, (frame % 4) * ih + ih, window);
-    else g.drawImage(i, x, y, x + w, y + h, (frame % 4) * iw, dir * ih, (frame % 4) * iw + iw, dir * ih + ih, window);
-  }
-  
-  public static int round(int i, int step)
-  {
-    if (i % step > step / 2.0f)
-      return i + (step - (i % step));
-    else return i - (i % step);
-  }
-  
-  public static int search(JSONArray array, Object thing)
-  {
-    for (int i = 0; i < array.length(); i++)
-    {
-      try
-      {
-        if (array.get(i).equals(thing))
-          return i;
-      }
-      catch (JSONException e)
-      {
-        e.printStackTrace();
-        return -1;
-      }
-    }
-    return -1;
-  }
-  
-  public static double scale(double d1, double d2, double d3)
-  {
-    return d3 * (d2 / d1);
-  }
-  
-  public static Object[] getArrayFromLimits(int min, int max)
-  {
-    Object[] res = new Object[max - min];
-    for (int i = min; i < max; i++)
-    {
-      res[i - min] = i;
-    }
-    return res;
-  }
-  
-  public static void Rect(int x, int y, int w, int h, Color border, Color fill, Graphics2D g)
-  {
-    Color old = g.getColor();
-    g.setColor(border);
-    g.drawRect(x, y, w, h);
-    if (fill != null)
-    {
-      g.setColor(fill);
-      g.fillRect(x, y, w, h);
-    }
-    g.setColor(old);
-  }
-  
-  private static int rolldie(int minvalue, int maxvalue)
-  {
-    int result;
-    while (true)
-    {
-      result = (int) Math.floor(Math.random() * (maxvalue - minvalue + 1) + minvalue);
-      if ((result >= minvalue) && (result <= maxvalue))
-      {
-        return result;
-      }
-    }
-  }
-  
-  public static String getRandomName()
-  {
-    try
-    {
-      JSONObject cfg = new JSONObject(getURLContent(Assistant.class.getResource("/json/nameConst.json")));
-      JSONArray data = null;
-      String genname = "";
-      int length = rolldie(3, 5);
-      int isvowel = rolldie(0, 1);
-      for (int i = 1; i <= length; i++)
-      {
-        do
-        {
-          {
-            if (isvowel == 1)
-            {
-              data = cfg.getJSONArray("vowels").getJSONArray(rolldie(0, cfg.getJSONArray("vowels").length() - 1));
-            }
-            else
-            {
-              data = cfg.getJSONArray("consonants").getJSONArray(rolldie(0, cfg.getJSONArray("consonants").length() - 1));
-            }
-            if (i == 1)
-            {
-              if ((data.getInt(1) & 2) > 0)
-                break;
-            }
-            else if (i == length)
-            {
-              if ((data.getInt(1) & 1) > 0)
-                break;
-            }
-            else
-            {
-              if ((data.getInt(1) & 4) > 0)
-                break;
-            }
-          }
-        }
-        while (genname == "");
-        if (data != null)
-          genname += data.getString(0);
-        isvowel = 1 - isvowel;
-      }
-      if (genname.length() > 1)
-        genname = (genname.substring(0, 1)).toUpperCase() + genname.substring(1);
-      return genname;
-    }
-    catch (JSONException e)
-    {
-      e.printStackTrace();
-      return null;
-    }
-  }
-  
-  public static String wrap(String in, int len)
-  {
-    in = in.trim();
-    if (in.length() < len)
-      return in;
-    if (in.substring(0, len).contains("\n"))
-      return in.substring(0, in.indexOf("\n")).trim() + "\n\n" + wrap(in.substring(in.indexOf("\n") + 1), len);
-    int place = Math.max(Math.max(in.lastIndexOf(" ", len), in.lastIndexOf("\t", len)), in.lastIndexOf("-", len));
-    return in.substring(0, place).trim() + "\n" + wrap(in.substring(place), len);
-  }
-  
   public static String[] getFileNames(File[] files, boolean ext)
   {
     String[] names = new String[files.length];
     for (int i = 0; i < files.length; i++)
-    {
       names[i] = (ext || files[i].isDirectory()) ? files[i].getName() : files[i].getName().substring(0, files[i].getName().lastIndexOf("."));
-    }
     return names;
-  }
-  
-  public static void Shadow(Shape shape, Color c, float alpha, Graphics2D g)
-  {
-    try
-    {
-      g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-    }
-    catch (IllegalArgumentException e)
-    {
-      return;
-    }
-    Color old = g.getColor();
-    g.setColor(c);
-    g.fill(shape);
-    g.setColor(old);
-    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
   }
   
   @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -479,25 +268,73 @@ public final class Assistant
     return keys.get(keys.size() - 1);
   }
   
-  public static void drawMenuBackground(Graphics2D g, Window w)
+  public static String getRandomName()
   {
-    g.drawImage(Viewport.loadImage("system/menu.jpg"), 0, 0, w.getWidth(), w.getHeight(), w);
+    try
+    {
+      JSONObject cfg = new JSONObject(getURLContent(Assistant.class.getResource("/json/nameConst.json")));
+      JSONArray data = null;
+      String genname = "";
+      int length = rolldie(3, 5);
+      int isvowel = rolldie(0, 1);
+      for (int i = 1; i <= length; i++)
+      {
+        do
+        {
+          if (isvowel == 1)
+            data = cfg.getJSONArray("vowels").getJSONArray(rolldie(0, cfg.getJSONArray("vowels").length() - 1));
+          else data = cfg.getJSONArray("consonants").getJSONArray(rolldie(0, cfg.getJSONArray("consonants").length() - 1));
+          if (i == 1)
+          {
+            if ((data.getInt(1) & 2) > 0)
+              break;
+          }
+          else if (i == length)
+          {
+            if ((data.getInt(1) & 1) > 0)
+              break;
+          }
+          else if ((data.getInt(1) & 4) > 0)
+            break;
+        }
+        while (genname == "");
+        if (data != null)
+          genname += data.getString(0);
+        isvowel = 1 - isvowel;
+      }
+      if (genname.length() > 1)
+        genname = (genname.substring(0, 1)).toUpperCase() + genname.substring(1);
+      return genname;
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+      return null;
+    }
   }
   
-  public static String formatBinarySize(long size, int digits)
+  public static int getSorting(int i)
   {
-    final String[] levels = { "", "K", "M", "G", "T" };
-    for (int i = levels.length - 1; i > -1; i--)
+    if (i > 0)
+      return 1;
+    else return -1;
+  }
+  
+  public static String getURLContent(URL u)
+  {
+    String res = "", line = "";
+    try
     {
-      if (size > (long) Math.pow(1024, i))
-      {
-        DecimalFormat df = new DecimalFormat();
-        df.setMaximumFractionDigits(digits);
-        df.setMinimumFractionDigits(digits);
-        return df.format(size / Math.pow(1024, i)) + levels[i] + "B";
-      }
+      BufferedReader br = new BufferedReader(new InputStreamReader(u.openStream()));
+      while ((line = br.readLine()) != null)
+        res += line;
+      br.close();
     }
-    return null;
+    catch (IOException e)
+    {
+      return null;
+    }
+    return res;
   }
   
   public static boolean isInternetReachable()
@@ -512,28 +349,15 @@ public final class Assistant
     }
   }
   
-  public static String ColorToHex(Color c)
-  {
-    return "#" + Integer.toHexString(c.getRed()) + Integer.toHexString(c.getGreen()) + Integer.toHexString(c.getBlue());
-  }
-  
   public static String joinArray(Object[] o, String glue)
   {
     return Arrays.asList(o).toString().replaceAll("^\\[|\\]$", glue);
-  }
-  
-  public static int getSorting(int i)
-  {
-    if (i > 0)
-      return 1;
-    else return -1;
   }
   
   public static ArrayList<JSONObject> JSONArrayToArray(JSONArray a)
   {
     ArrayList<JSONObject> list = new ArrayList<JSONObject>();
     for (int i = 0; i < a.length(); i++)
-    {
       try
       {
         if (a.get(i) instanceof JSONObject)
@@ -543,23 +367,31 @@ public final class Assistant
       {
         e.printStackTrace();
       }
-    }
     return list;
   }
   
-  public static <T> T[] concat(T[] first, T[] second)
+  public static Image loadImage(String name)
   {
-    T[] result = Arrays.copyOf(first, first.length + second.length);
-    System.arraycopy(second, 0, result, first.length, second.length);
-    return result;
+    try
+    {
+      return ImageIO.read(Assistant.class.getResource("/img/" + name));
+    }
+    catch (Exception e)
+    {
+      return null;
+    }
   }
   
-  public static Graphics2D copyGraphics2DAttributes(Graphics2D a, Graphics2D b)
+  public static void openLink(String url)
   {
-    b.setRenderingHints(a.getRenderingHints());
-    b.setFont(a.getFont());
-    b.setColor(a.getColor());
-    return b;
+    try
+    {
+      Desktop.getDesktop().browse(new URI(url));
+    }
+    catch (Exception e)
+    {
+      return;
+    }
   }
   
   public static Double parseDouble(String s)
@@ -586,6 +418,129 @@ public final class Assistant
     }
   }
   
+  public static void Rect(int x, int y, int w, int h, Color border, Color fill, Graphics2D g)
+  {
+    Color old = g.getColor();
+    g.setColor(border);
+    g.drawRect(x, y, w, h);
+    if (fill != null)
+    {
+      g.setColor(fill);
+      g.fillRect(x, y, w, h);
+    }
+    g.setColor(old);
+  }
+  
+  public static int round(int i, int step)
+  {
+    if (i % step > step / 2.0f)
+      return i + (step - (i % step));
+    else return i - (i % step);
+  }
+  
+  public static double scale(double d1, double d2, double d3)
+  {
+    return d3 * (d2 / d1);
+  }
+  
+  public static int search(JSONArray array, Object thing)
+  {
+    for (int i = 0; i < array.length(); i++)
+      try
+      {
+        if (array.get(i).equals(thing))
+          return i;
+      }
+      catch (JSONException e)
+      {
+        e.printStackTrace();
+        return -1;
+      }
+    return -1;
+  }
+  
+  public static void setCursor(Image cursor, Window w)
+  {
+    if (cursor == null)
+      cursor = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "Cursor"));
+  }
+  
+  public static void setFileContent(File f, String s)
+  {
+    try
+    {
+      OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(f), "UTF8");
+      osw.write(s);
+      osw.close();
+    }
+    catch (Exception e)
+    {}
+  }
+  
+  public static void Shadow(Shape shape, Color c, float alpha, Graphics2D g)
+  {
+    try
+    {
+      g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+    }
+    catch (IllegalArgumentException e)
+    {
+      return;
+    }
+    Color old = g.getColor();
+    g.setColor(c);
+    g.fill(shape);
+    g.setColor(old);
+    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+  }
+  
+  public static void stretchTileset(Image img, int x, int y, int w, int h, Graphics2D g, Window win)
+  {
+    // if (w % 32 != 0 || h % 32 != 0)
+    // return;
+    for (int i = 32; i < w - 32; i += 32)
+      for (int j = 32; j < h - 32; j += 32)
+        g.drawImage(img, x + i, y + j, x + i + 32, y + j + 32, 32, 32, 64, 64, win);
+    // top left
+    g.drawImage(img, x, y, x + 32, y + 32, 0, 0, 32, 32, win);
+    // top right
+    g.drawImage(img, x + w - 32, y, x + w, y + 32, 64, 0, 96, 32, win);
+    // middle left
+    for (int i = 0; i < h - 64; i += 32)
+      g.drawImage(img, x, y + i + 32, x + 32, y + i + 64, 0, 32, 32, 64, win);
+    // middle right
+    for (int i = 0; i < h - 64; i += 32)
+      g.drawImage(img, x + w - 32, y + i + 32, x + w, y + i + 64, 64, 32, 96, 64, win);
+    // middle top
+    for (int i = 0; i < w - 64; i += 32)
+      g.drawImage(img, x + i + 32, y, x + i + 64, y + 32, 32, 0, 64, 32, win);
+    // middle bottom
+    for (int i = 0; i < w - 64; i += 32)
+      g.drawImage(img, x + i + 32, y + h - 32, x + i + 64, y + h, 32, 64, 64, 96, win);
+    // bottom left
+    g.drawImage(img, x, y + h - 32, x + 32, y + h, 0, 64, 32, 96, win);
+    // bottom right
+    g.drawImage(img, x + w - 32, y + h - 32, x + w, y + h, 64, 64, 96, 96, win);
+  }
+  
+  public static Area toArea(Image img)
+  {
+    long time = System.currentTimeMillis();
+    
+    BufferedImage image = Assistant.toBufferedImage(img);
+    
+    Area area = new Area();
+    
+    for (int i = 0; i < image.getHeight(); i++)
+      for (int j = 0; j < image.getWidth(); j++)
+        if (((image.getRGB(j, i) >> 24) & 0xff) == 255)
+          area.add(new Area(new Rectangle2D.Double(j, i, 1, 1)));
+    
+    CFG.p("rendering took: " + (System.currentTimeMillis() - time));
+    return area;
+  }
+  
   public static BufferedImage toBufferedImage(Image img)
   {
     BufferedImage image = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
@@ -594,20 +549,25 @@ public final class Assistant
     return image;
   }
   
-  public static Area toArea(Image img)
+  public static String wrap(String in, int len)
   {
-    BufferedImage image = toBufferedImage(img);
-    
-    Area area = new Area();
-    
-    for (int i = 0; i < image.getHeight(); i++)
+    in = in.trim();
+    if (in.length() < len)
+      return in;
+    if (in.substring(0, len).contains("\n"))
+      return in.substring(0, in.indexOf("\n")).trim() + "\n\n" + wrap(in.substring(in.indexOf("\n") + 1), len);
+    int place = Math.max(Math.max(in.lastIndexOf(" ", len), in.lastIndexOf("\t", len)), in.lastIndexOf("-", len));
+    return in.substring(0, place).trim() + "\n" + wrap(in.substring(place), len);
+  }
+  
+  private static int rolldie(int minvalue, int maxvalue)
+  {
+    int result;
+    while (true)
     {
-      for (int j = 0; j < image.getWidth(); j++)
-      {
-        if (((image.getRGB(j, i) >> 24) & 0xff) == 255)
-          area.add(new Area(new Rectangle2D.Double(j, i, 1, 1)));
-      }
+      result = (int) Math.floor(Math.random() * (maxvalue - minvalue + 1) + minvalue);
+      if ((result >= minvalue) && (result <= maxvalue))
+        return result;
     }
-    return area;
   }
 }
