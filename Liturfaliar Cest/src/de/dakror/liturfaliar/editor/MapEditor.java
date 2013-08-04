@@ -57,6 +57,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
@@ -172,6 +173,8 @@ public class MapEditor
   JButton               selectedtile;
   BufferedImage[][]     autotiles;
   JDialog               bumpPreview;
+  
+  JProgressBar          progress;
   
   // -- modes -- //
   boolean               gridmode;
@@ -335,7 +338,7 @@ public class MapEditor
           JOptionPane.showMessageDialog(w, "Bevor Karten bearbeitet werden können, muss ein Kartenpaket ausgewählt werden!", "", JOptionPane.ERROR_MESSAGE);
           return;
         }
-        JDialog dialog = new JDialog(w, true);
+        final JDialog dialog = new JDialog(w, true);
         dialog.setTitle("Kartengröße ändern");
         dialog.setSize(200, 100);
         dialog.setResizable(false);
@@ -352,7 +355,6 @@ public class MapEditor
         inputs.add(height);
         dialog.add(inputs, BorderLayout.PAGE_START);
         JButton create = new JButton("Speichern");
-        final JDialog d = dialog;
         create.addActionListener(new ActionListener()
         {
           @Override
@@ -368,7 +370,7 @@ public class MapEditor
               JOptionPane.showMessageDialog(w, "Es dürfen nur Zahlen für Breite und Höhe eingegeben werden!", "", JOptionPane.ERROR_MESSAGE);
               return;
             }
-            d.dispose();
+            dialog.dispose();
           }
         });
         dialog.add(create, BorderLayout.PAGE_END);
@@ -588,12 +590,11 @@ public class MapEditor
             
             if (Arrays.asList(CFG.AUTOTILES).contains(tileset)) autotiles[i][j] = bi;
             
-            JButton button = new JButton();
+            final JButton button = new JButton();
             button.setBounds(i * CFG.FIELDSIZE, j * CFG.FIELDSIZE, CFG.FIELDSIZE, CFG.FIELDSIZE);
             button.setBorder(BorderFactory.createEmptyBorder());
             button.setContentAreaFilled(false);
             button.setIcon(new ImageIcon(bi));
-            final JButton copy = button;
             button.addActionListener(new ActionListener()
             {
               @Override
@@ -614,13 +615,13 @@ public class MapEditor
               @Override
               public void mouseEntered(MouseEvent e)
               {
-                copy.setBorder(BorderFactory.createLineBorder(Color.black));
+                button.setBorder(BorderFactory.createLineBorder(Color.black));
               }
               
               @Override
               public void mouseExited(MouseEvent e)
               {
-                copy.setBorder(BorderFactory.createEmptyBorder());
+                button.setBorder(BorderFactory.createEmptyBorder());
               }
             });
             tiles.add(button);
@@ -686,7 +687,7 @@ public class MapEditor
   public void showNewMapPackDialog()
   {
     if (mappackdata != null) return;
-    JDialog dialog = new JDialog(w, true);
+    final JDialog dialog = new JDialog(w, true);
     dialog.setTitle("Kartenpaket erstellen");
     dialog.setSize(400, 170);
     dialog.setResizable(false);
@@ -700,7 +701,6 @@ public class MapEditor
     inputs.add(name);
     dialog.add(inputs, BorderLayout.PAGE_START);
     JButton create = new JButton("Erstellen");
-    final JDialog d = dialog;
     create.addActionListener(new ActionListener()
     {
       @Override
@@ -720,7 +720,7 @@ public class MapEditor
         {
           e1.printStackTrace();
         }
-        d.dispose();
+        dialog.dispose();
         openMapPack(name.getText());
       }
     });
@@ -734,7 +734,7 @@ public class MapEditor
     {
       return;
     }
-    JDialog dialog = new JDialog(w, true);
+    final JDialog dialog = new JDialog(w, true);
     dialog.setTitle("Kartenpaket öffnen");
     dialog.setSize(400, 170);
     dialog.setResizable(false);
@@ -750,7 +750,6 @@ public class MapEditor
     }
     JList<String> list = new JList<String>(mappacks);
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    final JDialog d2 = dialog;
     list.addListSelectionListener(new ListSelectionListener()
     {
       @Override
@@ -761,7 +760,7 @@ public class MapEditor
           return;
         }
         openMapPack((String) ((JList<?>) e.getSource()).getSelectedValue());
-        d2.dispose();
+        dialog.dispose();
       }
     });
     dialog.setContentPane(new JScrollPane(list));
@@ -771,7 +770,7 @@ public class MapEditor
   public void showNewMapDialog()
   {
     if (mappackdata == null) return;
-    JDialog dialog = new JDialog(w, true);
+    final JDialog dialog = new JDialog(w, true);
     dialog.addWindowListener(new WindowAdapter()
     {
       @Override
@@ -826,7 +825,6 @@ public class MapEditor
     
     dialog.add(inputs, BorderLayout.PAGE_START);
     JButton create = new JButton("Erstellen");
-    final JDialog d = dialog;
     create.addActionListener(new ActionListener()
     {
       @Override
@@ -854,7 +852,7 @@ public class MapEditor
         {
           e1.printStackTrace();
         }
-        d.dispose();
+        dialog.dispose();
       }
     });
     dialog.add(create, BorderLayout.PAGE_END);
@@ -864,7 +862,7 @@ public class MapEditor
   public void showOpenMapDialog()
   {
     if (mappackdata == null) return;
-    JDialog dialog = new JDialog(w, true);
+    final JDialog dialog = new JDialog(w, true);
     dialog.setTitle("Karte öffnen");
     dialog.setSize(400, 170);
     dialog.setResizable(false);
@@ -884,18 +882,24 @@ public class MapEditor
     }
     JList<String> list = new JList<String>(maps);
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    final JDialog d2 = dialog;
     list.addListSelectionListener(new ListSelectionListener()
     {
       @Override
       public void valueChanged(final ListSelectionEvent e)
       {
         if (e.getValueIsAdjusting()) return;
+        
+        progress = new JProgressBar(0, 100);
+        progress.setPreferredSize(new Dimension(400, 22));
+        dialog.setContentPane(progress);
+        dialog.pack();
+        dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        
         new Thread()
         {
           public void run()
           {
-            if (openMap((String) ((JList<?>) e.getSource()).getSelectedValue())) d2.dispose();
+            if (openMap((String) ((JList<?>) e.getSource()).getSelectedValue())) dialog.dispose();
           }
         }.start();
       }
@@ -989,6 +993,7 @@ public class MapEditor
       });
       for (int i = 0; i < tiles.size(); i++)
       {
+        progress.setValue((int) ((i + 1) / (double) tiles.size() * 100));
         JSONObject o = tiles.get(i);
         BufferedImage bi = new BufferedImage(CFG.FIELDSIZE, CFG.FIELDSIZE, BufferedImage.TYPE_INT_ARGB);
         bi.getGraphics().drawImage(Viewport.loadImage("Tiles/" + o.getString("tileset") + ".png"), 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, o.getInt("tx") * CFG.FIELDSIZE, o.getInt("ty") * CFG.FIELDSIZE, o.getInt("tx") * CFG.FIELDSIZE + CFG.FIELDSIZE, o.getInt("ty") * CFG.FIELDSIZE + CFG.FIELDSIZE, null);
