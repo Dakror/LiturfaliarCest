@@ -63,6 +63,11 @@ public class TileButton extends JButton
     
   }
   
+  public Image getImage()
+  {
+    return i;
+  }
+  
   public int getX()
   {
     return x;

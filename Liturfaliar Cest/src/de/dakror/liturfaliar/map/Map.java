@@ -155,6 +155,7 @@ public class Map implements Listener
     setPeaceful(data.getBoolean("peaceful"));
     setWidth(w);
     setHeight(h);
+    
     lrender = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
     hrender = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
     ArrayList<Field> cpy = fields;
@@ -323,11 +324,7 @@ public class Map implements Listener
       if (!a.isBelow()) a.draw(this, g, v);
     }
     
-    
-    for (Field field : aboveFields)
-    {
-      g.drawImage(field.getImage(), x + field.getX(), y + field.getY(), v.w);
-    }
+    g.drawImage(hrender, getX(), getY(), v.w);
     
     Area wireFrame = new Area();
     

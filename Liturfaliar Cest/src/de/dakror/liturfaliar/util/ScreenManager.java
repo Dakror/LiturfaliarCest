@@ -36,7 +36,7 @@ public class ScreenManager
     }
     catch (Exception localException)
     {}
-    window.createBufferStrategy(2);
+    window.createBufferStrategy(3);
   }
   
   public Graphics2D getGraphics()

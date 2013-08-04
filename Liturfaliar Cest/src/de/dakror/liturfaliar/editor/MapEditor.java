@@ -26,7 +26,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -73,6 +78,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Equipment;
@@ -303,6 +310,18 @@ public class MapEditor
     });
     msave.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
     fmenu.add(msave);
+    
+    JMenuItem mfree = new JMenuItem(new AbstractAction("Maus freigeben")
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        selectedtile = null;
+      }
+    });
+    fmenu.add(mfree);
     
     JMenuItem madj = new JMenuItem(new AbstractAction("Größe ändern...")
     {
@@ -905,7 +924,7 @@ public class MapEditor
     {
       File dir = new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + mappackdata.getString("name"));
       dir.mkdir();
-      new File(dir, "maps").mkdir();
+      // new File(dir, "maps").mkdir();
       File pack = new File(dir, ".pack");
       if (!pack.exists()) pack.createNewFile();
       Assistant.setFileContent(pack, mappackdata.toString(4));
@@ -1032,6 +1051,24 @@ public class MapEditor
     {
       e.printStackTrace();
     }
+  }
+  
+  public static String writeObjectB64(Object object) throws IOException
+  {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ObjectOutputStream o = new ObjectOutputStream(baos);
+    o.writeObject(object);
+    
+    o.close();
+    return new BASE64Encoder().encodeBuffer(Compressor.compress(baos.toByteArray()));
+  }
+  
+  public static Object readObjectB64(String string) throws Exception
+  {
+    byte[] uncompressed = Compressor.decompress(new BASE64Decoder().decodeBuffer(string));
+    ByteArrayInputStream baos = new ByteArrayInputStream(uncompressed);
+    ObjectInputStream o = new ObjectInputStream(baos);
+    return o.readObject();
   }
   
   public void showNPCDialog(final NPCButton exist)

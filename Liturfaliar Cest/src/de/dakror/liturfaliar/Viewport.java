@@ -487,7 +487,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
    */
   public void stopMusic()
   {
-    ss.stop(MusicID);
+    if(MusicID != null)ss.stop(MusicID);
   }
   
   /**
