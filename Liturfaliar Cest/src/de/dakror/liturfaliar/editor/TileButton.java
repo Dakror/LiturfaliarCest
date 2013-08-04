@@ -36,7 +36,6 @@ public class TileButton extends JButton
   private BufferedImage     image;
   public JSONObject         data;
   
-  
   public TileButton(int x, int y, int tx, int ty, double layer, String tileset, Image i, MapEditor m)
   {
     this.layer = layer;
@@ -63,6 +62,13 @@ public class TileButton extends JButton
     
   }
   
+  public TileButton clone(MapEditor m)
+  {
+    TileButton c = new TileButton(x,y,tx,ty,layer,tileset,i, m);
+    c.data = data;
+    return c;
+  }
+  
   public Image getImage()
   {
     return i;
@@ -76,6 +82,16 @@ public class TileButton extends JButton
   public int getY()
   {
     return y;
+  }
+  
+  public void setX(int x)
+  {
+    this.x = x;
+  }
+  
+  public void setY(int y)
+  {
+    this.y = y;
   }
   
   public double getLayer()
@@ -138,6 +154,11 @@ public class TileButton extends JButton
       e.printStackTrace();
     }
     update = true;
+  }
+  
+  public String toString()
+  {
+    return getSave().toString();
   }
   
   public JSONObject getData()

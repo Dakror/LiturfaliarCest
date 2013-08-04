@@ -16,15 +16,16 @@ public class MapPanel extends JLayeredPane
 {
   private static final long serialVersionUID = 1L;
   
+  public boolean            delSelection;
+  public Point              mouse;
   public Point              mouseDown;
+  
   public Point              mousePos;
   
-  public boolean            delSelection;
-  
+  public int                selH;
+  public int                selW;
   public int                selX;
   public int                selY;
-  public int                selW;
-  public int                selH;
   
   MapEditor                 me;
   
@@ -87,6 +88,11 @@ public class MapPanel extends JLayeredPane
         {
           Assistant.drawVerticallyCenteredString((selH / CFG.FIELDSIZE) + "", selX + 20, selY + 10, selH, g, 270, 20, Color.white);
         }
+      }
+      
+      if (me.cursor != null)
+      {
+        g.drawImage(me.cursor, mouse.x, mouse.y, this);
       }
     }
     catch (Exception e)

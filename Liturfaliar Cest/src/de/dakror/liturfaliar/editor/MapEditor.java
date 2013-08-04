@@ -3,7 +3,6 @@ package de.dakror.liturfaliar.editor;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -26,12 +25,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -79,8 +73,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Categories;
 import de.dakror.liturfaliar.item.Equipment;
@@ -108,6 +100,79 @@ import de.dakror.universion.UniVersion;
 
 public class MapEditor
 {
+  
+  public class SelectionListener implements MouseListener, MouseMotionListener
+  {
+    JComponent component;
+    
+    public SelectionListener(JComponent c)
+    {
+      component = c;
+    }
+    
+    @Override
+    public void mouseClicked(MouseEvent e)
+    {}
+    
+    @Override
+    public void mouseDragged(MouseEvent e)
+    {
+      if (!dragmode) return;
+      
+      if (e.getModifiers() != 16 && e.getModifiers() != 4) return;
+      
+      map.delSelection = e.getModifiers() == 4;
+      
+      if (map.mouseDown == null)
+      {
+        if (gridmode) map.mouseDown = new Point(Assistant.round(e.getPoint().x + ((component != null) ? component.getX() : 0), CFG.FIELDSIZE), Assistant.round(e.getPoint().y + ((component != null) ? component.getY() : 0), CFG.FIELDSIZE));
+        else map.mouseDown = new Point(e.getPoint().x + ((component != null) ? component.getX() : 0), e.getPoint().y + ((component != null) ? component.getY() : 0));
+      }
+      
+      if (gridmode) map.mousePos = new Point(Assistant.round(e.getPoint().x + ((component != null) ? component.getX() : 0), CFG.FIELDSIZE), Assistant.round(e.getPoint().y + ((component != null) ? component.getY() : 0), CFG.FIELDSIZE));
+      else map.mousePos = new Point(Assistant.round(e.getPoint().x + ((component != null) ? component.getX() : 0) - map.mouseDown.x, CFG.FIELDSIZE) + map.mouseDown.x, Assistant.round(e.getPoint().y + ((component != null) ? component.getY() : 0) - map.mouseDown.y, CFG.FIELDSIZE) + map.mouseDown.y);
+      
+      map.repaint();
+    }
+    
+    @Override
+    public void mouseEntered(MouseEvent e)
+    {}
+    
+    @Override
+    public void mouseExited(MouseEvent e)
+    {}
+    
+    @Override
+    public void mouseMoved(MouseEvent e)
+    {
+      if (component == null) map.mouse = new Point(e.getX(), e.getY());
+      else map.mouse = new Point(e.getX() + component.getX(), e.getY() + component.getY());
+      
+      map.repaint();
+    }
+    
+    @Override
+    public void mousePressed(MouseEvent e)
+    {
+      if (!dragmode) return;
+      
+      
+      map.mouseDown = null;
+      map.mousePos = null;
+      map.repaint();
+    }
+    
+    @Override
+    public void mouseReleased(MouseEvent e)
+    {
+      if (!dragmode) return;
+      
+      if (map.mouseDown != null) handleSelectionBox();
+      map.repaint();
+    }
+    
+  }
   
   // -- filterReplace dialog -- //
   JComboBox<String>     FRoldTileset, FRnewTileset;
@@ -176,12 +241,15 @@ public class MapEditor
   
   JProgressBar          progress;
   
+  public BufferedImage  cursor;
+  
   // -- modes -- //
   boolean               gridmode;
   boolean               rasterview;
   boolean               deletemode;
   boolean               autotilemode;
   boolean               dragmode;
+  boolean               importmode;
   
   double                cachelayer;
   
@@ -189,18 +257,23 @@ public class MapEditor
   TileButton[]          lastChangedTiles;
   boolean               tilesWereDeleted;
   
+  // -- Import -- //
+  TileButton[]          importTiles;
+  
   public MapEditor(Viewport viewport)
   {
     ToolTipManager.sharedInstance().setInitialDelay(0);
     this.gridmode = true;
     this.deletemode = false;
     this.rasterview = false;
+    this.importmode = false;
     this.v = viewport;
     new File(FileManager.dir, CFG.MAPEDITORDIR).mkdir();
+    new File(FileManager.dir, CFG.MAPEDITOROBJECTSDIR).mkdir();
     w = new JFrame("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ")");
     w.setSize(Toolkit.getDefaultToolkit().getScreenSize());
     w.setExtendedState(JFrame.MAXIMIZED_BOTH);
-    w.setIconImage(Viewport.loadImage("system/logo.png"));
+    w.setIconImage(Viewport.loadImage("system/editor.png"));
     w.setLocationRelativeTo(null);
     w.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     w.addWindowListener(new WindowAdapter()
@@ -322,9 +395,42 @@ public class MapEditor
       public void actionPerformed(ActionEvent e)
       {
         selectedtile = null;
+        importmode = false;
+        importTiles = null;
+        cursor = null;
       }
     });
     fmenu.add(mfree);
+    
+    fmenu.addSeparator();
+    
+    JMenuItem mexp = new JMenuItem(new AbstractAction("Export")
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        exportObject();
+      }
+    });
+    mexp.setAccelerator(KeyStroke.getKeyStroke("ctrl E"));
+    fmenu.add(mexp);
+    
+    JMenuItem mimp = new JMenuItem(new AbstractAction("Import...")
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        showImportObjectDialog();
+      }
+    });
+    mimp.setAccelerator(KeyStroke.getKeyStroke("ctrl R"));
+    fmenu.add(mimp);
+    
+    fmenu.addSeparator();
     
     JMenuItem madj = new JMenuItem(new AbstractAction("Größe ändern...")
     {
@@ -664,10 +770,14 @@ public class MapEditor
       {
         if (e.getButton() == 1 && !dragmode)
         {
-          if (selectedtile != null && map.mouseDown == null && map.mousePos == null)
+          if (importmode)
+          {
+            placeImportObject(e.getPoint());
+          }
+          else if (selectedtile != null && map.mouseDown == null && map.mousePos == null)
           {
             int round = (gridmode) ? CFG.FIELDSIZE : 1;
-            addTile(((ImageIcon) selectedtile.getIcon()).getImage(), Assistant.round(e.getX() - CFG.FIELDSIZE / 2, round), Assistant.round(e.getY() - CFG.FIELDSIZE / 2, round), tileset, selectedtile.getX() / CFG.FIELDSIZE, selectedtile.getY() / CFG.FIELDSIZE, -1, new JSONObject(), true);
+            addTile(((ImageIcon) selectedtile.getIcon()).getImage(), Assistant.round(e.getX(), round), Assistant.round(e.getY(), round), tileset, selectedtile.getX() / CFG.FIELDSIZE, selectedtile.getY() / CFG.FIELDSIZE, -1, new JSONObject(), true);
           }
           else if (NPCframe != null)
           {
@@ -684,259 +794,709 @@ public class MapEditor
     
   }
   
-  public void showNewMapPackDialog()
-  {
-    if (mappackdata != null) return;
-    final JDialog dialog = new JDialog(w, true);
-    dialog.setTitle("Kartenpaket erstellen");
-    dialog.setSize(400, 170);
-    dialog.setResizable(false);
-    dialog.setLocationRelativeTo(null);
-    dialog.setLayout(new BorderLayout());
-    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    JPanel inputs = new JPanel();
-    inputs.setLayout(new GridLayout(0, 2));
-    inputs.add(new JLabel("Paketname: "));
-    final JTextField name = new JTextField();
-    inputs.add(name);
-    dialog.add(inputs, BorderLayout.PAGE_START);
-    JButton create = new JButton("Erstellen");
-    create.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        try
-        {
-          w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + name.getText());
-          mappackdata = new JSONObject();
-          mappackdata.put("name", name.getText());
-          mappackdata.put("init", new JSONObject());
-          mappackdata.put("version", System.currentTimeMillis());
-          mmenu.setEnabled(true);
-          saveMapPack();
-        }
-        catch (JSONException e1)
-        {
-          e1.printStackTrace();
-        }
-        dialog.dispose();
-        openMapPack(name.getText());
-      }
-    });
-    dialog.add(create, BorderLayout.PAGE_END);
-    dialog.setVisible(true);
-  }
-  
-  public void showOpenMapPackDialog()
-  {
-    if (mappackdata != null)
-    {
-      return;
-    }
-    final JDialog dialog = new JDialog(w, true);
-    dialog.setTitle("Kartenpaket öffnen");
-    dialog.setSize(400, 170);
-    dialog.setResizable(false);
-    dialog.setLocationRelativeTo(null);
-    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    final DefaultListModel<String> mappacks = new DefaultListModel<String>();
-    for (File f : new File(FileManager.dir, CFG.MAPEDITORDIR).listFiles())
-    {
-      if (f.isDirectory() && Arrays.asList(f.list()).contains(".pack"))
-      {
-        mappacks.addElement(f.getName());
-      }
-    }
-    JList<String> list = new JList<String>(mappacks);
-    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    list.addListSelectionListener(new ListSelectionListener()
-    {
-      @Override
-      public void valueChanged(ListSelectionEvent e)
-      {
-        if (e.getValueIsAdjusting())
-        {
-          return;
-        }
-        openMapPack((String) ((JList<?>) e.getSource()).getSelectedValue());
-        dialog.dispose();
-      }
-    });
-    dialog.setContentPane(new JScrollPane(list));
-    dialog.setVisible(true);
-  }
-  
-  public void showNewMapDialog()
-  {
-    if (mappackdata == null) return;
-    final JDialog dialog = new JDialog(w, true);
-    dialog.addWindowListener(new WindowAdapter()
-    {
-      @Override
-      public void windowClosed(WindowEvent e)
-      {
-        v.stopMusic();
-      }
-    });
-    dialog.setTitle("Karte erstellen");
-    dialog.setSize(400, 170);
-    dialog.setResizable(false);
-    dialog.setLocationRelativeTo(null);
-    dialog.setLayout(new BorderLayout());
-    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    JPanel inputs = new JPanel();
-    inputs.setLayout(new GridLayout(0, 2));
-    inputs.add(new JLabel("Kartenname: "));
-    final JTextField name = new JTextField();
-    inputs.add(name);
-    inputs.add(new JLabel("Hintergrundmusik: "));
-    final JComboBox<String> music = new JComboBox<String>();
-    music.addItem("Keine Musik");
-    for (File f : new File(FileManager.dir, "Music").listFiles())
-    {
-      if (f.isFile() && f.getName().endsWith(".wav")) music.addItem(f.getName().replace(".wav", ""));
-    }
-    music.addItemListener(new ItemListener()
-    {
-      @Override
-      public void itemStateChanged(ItemEvent e)
-      {
-        String item = (String) e.getItem();
-        switch (e.getStateChange())
-        {
-          case ItemEvent.DESELECTED:
-          {
-            v.stopMusic();
-            break;
-          }
-          case ItemEvent.SELECTED:
-          {
-            if (!item.equals("Keine Musik")) v.playMusic(item, true, 0.2f);
-            break;
-          }
-        }
-      }
-    });
-    inputs.add(music);
-    inputs.add(new JLabel("Friedlich: "));
-    final JCheckBox peaceful = new JCheckBox();
-    inputs.add(peaceful);
-    
-    dialog.add(inputs, BorderLayout.PAGE_START);
-    JButton create = new JButton("Erstellen");
-    create.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        if (name.getText().length() == 0) return;
-        v.stopMusic();
-        try
-        {
-          w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + mappackdata.getString("name") + "/" + name.getText());
-          mapdata = new JSONObject();
-          map.removeAll();
-          selectedtile = null;
-          msp.setViewportView(map);
-          selectedtile = null;
-          mapdata.put("music", (!music.getSelectedItem().equals("Keine Musik")) ? music.getSelectedItem() : "");
-          mapdata.put("name", name.getText());
-          mapdata.put("tile", new JSONArray());
-          mapdata.put("peaceful", peaceful.isSelected());
-          fmenu.setEnabled(true);
-          omenu.setEnabled(true);
-          saveMap();
-        }
-        catch (JSONException e1)
-        {
-          e1.printStackTrace();
-        }
-        dialog.dispose();
-      }
-    });
-    dialog.add(create, BorderLayout.PAGE_END);
-    dialog.setVisible(true);
-  }
-  
-  public void showOpenMapDialog()
-  {
-    if (mappackdata == null) return;
-    final JDialog dialog = new JDialog(w, true);
-    dialog.setTitle("Karte öffnen");
-    dialog.setSize(400, 170);
-    dialog.setResizable(false);
-    dialog.setLocationRelativeTo(null);
-    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    final DefaultListModel<String> maps = new DefaultListModel<String>();
-    try
-    {
-      for (String s : Map.getMaps(mappackdata.getString("name"), CFG.MAPEDITORDIR))
-      {
-        maps.addElement(s);
-      }
-    }
-    catch (JSONException e1)
-    {
-      e1.printStackTrace();
-    }
-    JList<String> list = new JList<String>(maps);
-    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    list.addListSelectionListener(new ListSelectionListener()
-    {
-      @Override
-      public void valueChanged(final ListSelectionEvent e)
-      {
-        if (e.getValueIsAdjusting()) return;
-        
-        progress = new JProgressBar(0, 100);
-        progress.setPreferredSize(new Dimension(400, 22));
-        dialog.setContentPane(progress);
-        dialog.pack();
-        dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        
-        new Thread()
-        {
-          public void run()
-          {
-            if (openMap((String) ((JList<?>) e.getSource()).getSelectedValue())) dialog.dispose();
-          }
-        }.start();
-      }
-    });
-    dialog.setContentPane(new JScrollPane(list));
-    dialog.setVisible(true);
-  }
-  
-  public void openMapPack(String pack)
+  public NPCButton addNPC(JSONObject data)
   {
     try
     {
-      mappackdata = new JSONObject(Assistant.getFileContent(new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + pack + "/.pack")));
-      w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + mappackdata.getString("name"));
-      mmenu.setEnabled(true);
+      final JPopupMenu jpm = new JPopupMenu();
+      NPCButton npc;
+      if (data == null)
+      {
+        npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getPreferredSize().width - CFG.BOUNDMALUS, NPCpreview.getPreferredSize().height - CFG.BOUNDMALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage(), NPChostile.isSelected(), NPClastID, NPCai.getSelectedItem().toString(), this);
+        npc.attributes = NPCattr;
+      }
+      else
+      {
+        BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + data.getString("char") + ".png");
+        npc = new NPCButton(data.getInt("x"), data.getInt("y"), data.getInt("w"), data.getInt("h"), data.getInt("dir"), data.getString("name"), data.getString("char"), data.getDouble("speed"), data.getJSONObject("random").getBoolean("move"), data.getJSONObject("random").getBoolean("look"), data.getJSONObject("random").getInt("moveT"), data.getJSONObject("random").getInt("lookT"), image.getSubimage(0, data.getInt("dir") * image.getHeight() / 4, image.getWidth() / 4, image.getHeight() / 4), data.getBoolean("hostile"), NPClastID, data.getString("ai"), this);
+        npc.talk = data.getJSONArray("talk");
+        npc.setEquipment(new Equipment(data.getJSONObject("equip")));
+        npc.attributes = new Attributes(data.getJSONObject("attr"));
+      }
+      
+      NPClastID++;
+      
+      final NPCButton fNPC = npc;
+      
+      JMenuItem edit = new JMenuItem(new AbstractAction("Bearbeiten")
+      {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          showNPCDialog(fNPC);
+        }
+      });
+      jpm.add(edit);
+      
+      JMenuItem eedit = new JMenuItem(new AbstractAction("Ausrüstung bearbeiten")
+      {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          showEquipmentDialog(fNPC);
+        }
+      });
+      jpm.add(eedit);
+      
+      JMenuItem tedit = new JMenuItem(new AbstractAction("Talk bearbeiten")
+      {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          showTalkDialog(fNPC);
+        }
+      });
+      jpm.add(tedit);
+      
+      JMenuItem del = new JMenuItem(new AbstractAction("Löschen")
+      {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          map.remove(fNPC);
+          
+          map.repaint();
+        }
+      });
+      jpm.add(del);
+      npc.addMouseListener(new MouseAdapter()
+      {
+        @Override
+        public void mousePressed(MouseEvent e)
+        {
+          if (e.getButton() == 3) jpm.show(e.getComponent(), e.getX(), e.getY());
+        }
+      });
+      map.add(npc, JLayeredPane.PALETTE_LAYER);
+      
+      msp.setViewportView(map);
+      
+      return npc;
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      JOptionPane.showMessageDialog(NPCframe, "Bitte alle Felder korrekt ausfüllen!", "NPC-Ertellung", JOptionPane.ERROR_MESSAGE);
+      return null;
+    }
+  }
+  
+  public TileButton addTile(Image icon, final int x, final int y, String t, int tx, int ty, double l, JSONObject data, boolean undo)
+  {
+    try
+    {
+      if (l == -1)
+      {
+        for (int i = 0; i < map.getComponentCount(); i++)
+        {
+          if (!(map.getComponent(i) instanceof TileButton)) continue;
+          TileButton b = (TileButton) map.getComponent(i);
+          if (b.getBounds().intersects(x, y, CFG.FIELDSIZE, CFG.FIELDSIZE))
+          {
+            l = b.getLayer();
+          }
+        }
+        l++;
+      }
+      final TileButton tile = new TileButton(x, y, tx, ty, l, t, icon, this);
+      tile.data = data;
+      tile.setEnabled(false);
+      final JPopupMenu jpm = new JPopupMenu();
+      JMenuItem init = new JMenuItem("Als Startfeld des Kartenpakets festlegen");
+      init.addActionListener(new ActionListener()
+      {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          JSONObject d = new JSONObject();
+          try
+          {
+            d.put("map", mapdata.getString("name"));
+            d.put("x", tile.getX());
+            d.put("y", tile.getY() - CFG.FIELDSIZE * 3 / 4);
+            mappackdata.put("init", d);
+            saveMapPack();
+          }
+          catch (JSONException e1)
+          {
+            e1.printStackTrace();
+          }
+        }
+      });
+      cachelayer = l + 1;
+      jpm.add(init);
+      JMenuItem lchange = new JMenuItem(new AbstractAction("Layer anpassen")
+      {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+          String result = JOptionPane.showInputDialog(w, "Layer anpassen", tile.getLayer());
+          
+          if (result == null) return;
+          
+          try
+          {
+            double ly = Double.parseDouble(result);
+            cachelayer = ly;
+            tile.setLayer(ly);
+            saveMap();
+            try
+            {
+              openMap(mapdata.getString("name"));
+            }
+            catch (JSONException e1)
+            {
+              e1.printStackTrace();
+            }
+          }
+          catch (Exception e1)
+          {
+            JOptionPane.showMessageDialog(w, "Layerangabe darf nur Zahlen enthalten.", "Fehler!", JOptionPane.ERROR_MESSAGE);
+            return;
+          }
+        }
+      });
+      jpm.add(lchange);
+      JMenu mdata = new JMenu("Feld-Data bearbeiten");
+      for (final String s : FieldData.DATATYPES)
+      {
+        JMenuItem tmp = new JMenuItem(new AbstractAction(s)
+        {
+          private static final long serialVersionUID = 1L;
+          
+          @Override
+          public void actionPerformed(ActionEvent e)
+          {
+            editFieldData(tile, s);
+          }
+        });
+        mdata.add(tmp);
+      }
+      jpm.add(mdata);
+      tile.addMouseListener(new MouseAdapter()
+      {
+        @Override
+        public void mouseEntered(MouseEvent e)
+        {
+          showCustomCursor(true);
+        }
+        
+        @Override
+        public void mouseExited(MouseEvent e)
+        {
+          showCustomCursor(false);
+        }
+        
+        @Override
+        public void mousePressed(MouseEvent e)
+        {}
+        
+        @Override
+        public void mouseReleased(MouseEvent e)
+        {
+          if (e.getButton() == 3 && !deletemode && !dragmode) jpm.show(tile, e.getX(), e.getY());
+          
+          if (e.getButton() == 1)
+          {
+            JButton src = (JButton) e.getSource();
+            if (importmode)
+            {
+              placeImportObject(new Point(e.getX() + src.getX(), e.getY() + src.getY()));
+            }
+            else if (selectedtile != null && map.mouseDown == null && map.mousePos == null)
+            {
+              int round = (gridmode) ? CFG.FIELDSIZE : 1;
+              addTile(((ImageIcon) selectedtile.getIcon()).getImage(), Assistant.round(e.getX() + src.getX(), round), Assistant.round(e.getY() + src.getY(), round), tileset, selectedtile.getX() / CFG.FIELDSIZE, selectedtile.getY() / CFG.FIELDSIZE, -1, new JSONObject(), true);
+            }
+            else if (NPCframe != null)
+            {
+              updateNPCCoords(e.getX() + src.getX(), e.getY() + src.getY());
+            }
+          }
+          if (e.getButton() == 3 && deletemode)
+          {
+            map.remove(tile);
+            msp.setViewportView(map);
+          }
+        }
+      });
+      if (mapdata == null) return null;
+      map.add(tile, JLayeredPane.DEFAULT_LAYER);
+      
+      map.setComponentZOrder(tile, 0);
+      
+      if (undo)
+      {
+        lastChangedTiles = new TileButton[] { tile };
+        mUndo.setEnabled(true);
+      }
+      
+      cachelayer = 0;
+      return tile;
     }
     catch (Exception e1)
     {
-      JOptionPane.showMessageDialog(w, "Kartenpaket konnte nicht geöffnet werden. Beachte, dass du den Ordner auswählen musst,\n" + "der sowohl die Datei \"pack.json\" als auch den Ordner \"maps\" enthält.", "Fehler!", JOptionPane.ERROR_MESSAGE);
+      e1.printStackTrace();
+      return null;
     }
+    
   }
   
-  public void saveMapPack()
+  public void editFieldData(final TileButton field, final String dataType)
   {
     try
     {
-      File dir = new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + mappackdata.getString("name"));
-      dir.mkdir();
-      // new File(dir, "maps").mkdir();
-      File pack = new File(dir, ".pack");
-      if (!pack.exists()) pack.createNewFile();
-      Assistant.setFileContent(pack, mappackdata.toString(4));
+      // -- general setup -- //
+      final JDialog dialog = new JDialog(w, true);
+      dialog.setTitle("Feld-Data bearbeiten");
+      dialog.setIconImage(w.getIconImage());
+      dialog.setSize(400, 300);
+      dialog.setResizable(false);
+      dialog.setLocationRelativeTo(null);
+      dialog.setLayout(new FlowLayout());
+      dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+      JPanel inputs = new JPanel();
+      inputs.setLayout(new FlowLayout());
+      inputs.setPreferredSize(new Dimension(400, 235));
+      JButton delete = new JButton("Löschen");
+      delete.setEnabled(false);
+      delete.setPreferredSize(new Dimension(190, 23));
+      JButton save = new JButton("Speichern");
+      save.setPreferredSize(new Dimension(190, 23));
+      // -- type specific setup -- //
+      JSONObject exist = field.getDataByType(dataType);
+      if (exist != null)
+      {
+        delete.setEnabled(true);
+        delete.addActionListener(new ActionListener()
+        {
+          @Override
+          public void actionPerformed(ActionEvent e)
+          {
+            field.removeDataByType(dataType);
+            dialog.dispose();
+          }
+        });
+      }
+      switch (dataType)
+      {
+        case "Door":
+        {
+          JLabel name = new JLabel("Ziel X-Koordinate:");
+          name.setPreferredSize(new Dimension(190, 23));
+          final JTextField dx = new JTextField("0");
+          dx.setName("int_dx");
+          if (exist != null) dx.setText("" + exist.getInt("dx"));
+          dx.setPreferredSize(new Dimension(190, 23));
+          inputs.add(name);
+          inputs.add(dx);
+          name = new JLabel("Ziel Y-Koordinate:");
+          name.setPreferredSize(new Dimension(190, 23));
+          final JTextField dy = new JTextField("0");
+          dy.setName("int_dy");
+          if (exist != null) dy.setText("" + exist.getInt("dy"));
+          dy.setPreferredSize(new Dimension(190, 23));
+          inputs.add(name);
+          inputs.add(dy);
+          final String[] dirs = new String[] { "Gleiche", "Unten", "Links", "Rechts", "Oben" };
+          name = new JLabel("Zielrichtung:");
+          name.setPreferredSize(new Dimension(190, 23));
+          final JComboBox<String> dir = new JComboBox<String>();
+          dir.setName("int_dir");
+          dir.setPreferredSize(new Dimension(190, 23));
+          for (String s : dirs)
+          {
+            dir.addItem(s);
+          }
+          if (exist != null) dir.setSelectedIndex(exist.getInt("dir") + 1);
+          inputs.add(name);
+          inputs.add(dir);
+          name = new JLabel("Zielkarte:");
+          name.setPreferredSize(new Dimension(190, 23));
+          final JDialog mapCoordSelect = new JDialog(dialog, "", false);
+          mapCoordSelect.setLayout(null);
+          mapCoordSelect.setResizable(false);
+          mapCoordSelect.setLocation(dialog.getX() + dialog.getWidth() + 10, dialog.getY());
+          mapCoordSelect.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+          mapCoordSelect.setVisible(true);
+          final JComboBox<String> map = new JComboBox<String>();
+          map.setName("string_map");
+          map.setPreferredSize(new Dimension(190, 23));
+          for (String s : Map.getMaps(mappackdata.getString("name"), CFG.MAPEDITORDIR))
+          {
+            map.addItem(s);
+          }
+          map.addActionListener(new ActionListener()
+          {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+              try
+              {
+                final String s = (String) map.getSelectedItem();
+                mapCoordSelect.setTitle(s);
+                BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1, v);
+                final JLabel l = new JLabel();
+                l.addMouseListener(new MouseAdapter()
+                {
+                  @Override
+                  public void mousePressed(MouseEvent e)
+                  {
+                    dx.setText("" + (e.getX() - CFG.HUMANBOUNDS[0] / 2));
+                    dy.setText("" + (e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3));
+                    try
+                    {
+                      BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1, v);
+                      int d = Arrays.asList(dirs).indexOf(((String) dir.getSelectedItem())) - 1;
+                      d = (d < 0) ? 0 : d;
+                      Assistant.drawChar(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], d, 0, Equipment.getDefault(true), (Graphics2D) bi.getGraphics(), null, true);// Assistant.Rect(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], Color.cyan, null, (Graphics2D) bi.getGraphics());
+                      l.setIcon(new ImageIcon(bi));
+                    }
+                    catch (JSONException e1)
+                    {
+                      e1.printStackTrace();
+                    }
+                  }
+                });
+                l.setSize(bi.getWidth(), bi.getHeight());
+                l.setIcon(new ImageIcon(bi));
+                mapCoordSelect.setContentPane(l);
+                mapCoordSelect.pack();
+              }
+              catch (JSONException e1)
+              {
+                e1.printStackTrace();
+              }
+            }
+          });
+          map.setSelectedIndex(0);
+          if (exist != null) map.setSelectedItem(exist.getString("map"));
+          inputs.add(name);
+          inputs.add(map);
+          name = new JLabel("Sound:");
+          name.setPreferredSize(new Dimension(190, 23));
+          final JComboBox<String> sound = new JComboBox<String>();
+          sound.setName("string_sound");
+          sound.setPreferredSize(new Dimension(190, 23));
+          sound.addItem("< Leer >");
+          for (String s : CFG.SOUND)
+          {
+            sound.addItem(s);
+          }
+          if (exist != null) sound.setSelectedItem(exist.getString("sound"));
+          sound.addActionListener(new ActionListener()
+          {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+              if (((String) sound.getSelectedItem()).equals("< Leer >")) return;
+              v.playSound((String) sound.getSelectedItem());
+            }
+          });
+          inputs.add(name);
+          inputs.add(sound);
+          name = new JLabel("Animation:");
+          name.setPreferredSize(new Dimension(190, 23));
+          final JComboBox<String> img = new JComboBox<String>();
+          img.setName("string_img");
+          img.setPreferredSize(new Dimension(190, 23));
+          final JLabel preview = new JLabel();
+          preview.setPreferredSize(new Dimension(CFG.FIELDSIZE, CFG.FIELDSIZE));
+          img.addItem("< Leer >");
+          for (int i = 0; i < Door.CHARS.length * 4; i++)
+          {
+            img.addItem(Door.CHARS[(int) Math.floor(i / 4.0)] + ": " + ((i % 4) + 1));
+          }
+          img.addActionListener(new ActionListener()
+          {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+              String s = (String) img.getSelectedItem();
+              if (s.equals("< Leer >"))
+              {
+                preview.setIcon(null);
+                return;
+              }
+              int part = Integer.parseInt(s.substring(s.indexOf(": ") + ": ".length())) - 1;
+              BufferedImage i = (BufferedImage) Viewport.loadImage("char/objects/" + s.substring(0, s.indexOf(": ")) + ".png");
+              preview.setPreferredSize(new Dimension(i.getWidth() / 4, i.getHeight() / 4));
+              preview.setIcon(new ImageIcon(i.getSubimage(i.getWidth() / 4 * part, 0, i.getWidth() / 4, i.getHeight() / 4)));
+            }
+          });
+          if (exist != null && exist.getString("img").length() > 0)
+          {
+            int index = Arrays.asList(Door.CHARS).indexOf(exist.getString("img")) * 4;
+            img.setSelectedIndex(index + exist.getInt("t") + 1);
+          }
+          inputs.add(name);
+          inputs.add(img);
+          inputs.add(preview);
+          save.addActionListener(new ActionListener()
+          {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+              JSONObject o = new JSONObject();
+              try
+              {
+                try
+                {
+                  o.put("dx", Integer.parseInt(dx.getText()));
+                  o.put("dy", Integer.parseInt(dy.getText()));
+                }
+                catch (NumberFormatException e1)
+                {
+                  JOptionPane.showMessageDialog(w, "Koordinaten dürfen nur aus Zahlen bestehen!", "", JOptionPane.ERROR_MESSAGE);
+                  return;
+                }
+                o.put("dir", dir.getSelectedIndex() - 1);
+                o.put("map", (String) map.getSelectedItem());
+                o.put("sound", ((String) sound.getSelectedItem()).replace("< Leer >", ""));
+                String s = (String) img.getSelectedItem();
+                if (!s.equals("< Leer >"))
+                {
+                  o.put("img", s.substring(0, s.indexOf(": ")));
+                  o.put("t", Integer.parseInt(s.substring(s.indexOf(": ") + ": ".length())) - 1);
+                  Image i = Viewport.loadImage("char/objects/" + s.substring(0, s.indexOf(": ")) + ".png");
+                  int w = i.getWidth(null) / 4;
+                  int h = i.getHeight(null) / 4;
+                  o.put("x", (CFG.FIELDSIZE / 2 - w / 2));
+                  o.put("y", (CFG.FIELDSIZE - h / 2));
+                }
+                else
+                {
+                  o.put("img", "");
+                  o.put("t", 0);
+                  o.put("x", 0);
+                  o.put("y", 0);
+                }
+                field.addData(dataType, o);
+                dialog.dispose();
+              }
+              catch (JSONException e2)
+              {
+                e2.printStackTrace();
+                return;
+              }
+            }
+          });
+          break;
+        }
+      }
+      dialog.add(inputs);
+      dialog.add(delete);
+      dialog.add(save);
+      dialog.setVisible(true);
     }
     catch (Exception e)
     {
       e.printStackTrace();
     }
+  }
+  
+  public void exportObject()
+  {
+    if (map.mouseDown == null)
+    {
+      dragmode = true;
+      selectedtile = null;
+      return;
+    }
+    
+    String name = JOptionPane.showInputDialog("Name:");
+    if (name == null || name.length() == 0) return;
+    File f = new File(FileManager.dir, CFG.MAPEDITOROBJECTSDIR + "/" + name + ".object");
+    if (f.exists())
+    {
+      int r = JOptionPane.showConfirmDialog(w, "Ein Objekt mit diesem Namen existiert bereits!\nÜberschreiben?", "Warnung!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+      if (r == JOptionPane.CANCEL_OPTION) return;
+    }
+    
+    ArrayList<TileButton> tiles = new ArrayList<>();
+    for (int i = 0; i < map.selW / CFG.FIELDSIZE; i++)
+    {
+      for (int j = 0; j < map.selH / CFG.FIELDSIZE; j++)
+      {
+        for (Component c : map.getComponents())
+        {
+          if (c instanceof TileButton && c.getX() >= i * CFG.FIELDSIZE + map.selX && c.getX() < (i + 1) * CFG.FIELDSIZE + map.selX && c.getY() >= j * CFG.FIELDSIZE + map.selY && c.getY() < (j + 1) * CFG.FIELDSIZE + map.selY)
+          {
+            tiles.add(((TileButton) c).clone(this));
+          }
+        }
+      }
+    }
+    
+    Collections.sort(tiles, new Comparator<TileButton>()
+    {
+      
+      @Override
+      public int compare(TileButton o1, TileButton o2)
+      {
+        if (o1.getX() == o2.getX())
+        {
+          return (o1.getY() < o1.getY()) ? -1 : ((o1.getY() == o2.getY()) ? 0 : 1);
+        }
+        else
+        {
+          return (o1.getX() < o2.getX()) ? -1 : 1;
+        }
+      }
+    });
+    
+    JSONArray data = new JSONArray();
+    for (TileButton b : tiles)
+    {
+      b.setX(b.getX() - map.selX);
+      b.setY(b.getY() - map.selY);
+      data.put(b.getSave());
+    }
+    
+    Compressor.compressFile(f, tiles.toString());
+    JOptionPane.showMessageDialog(w, "\"" + name + "\" wurde erfolgreich exportiert!", "Erfolg!", JOptionPane.INFORMATION_MESSAGE);
+  }
+  
+  public BufferedImage getTileImage()
+  {
+    BufferedImage bi = new BufferedImage(CFG.FIELDSIZE, CFG.FIELDSIZE, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g = (Graphics2D) bi.getGraphics();
+    g.drawImage(((ImageIcon) selectedtile.getIcon()).getImage(), 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, null);
+    Assistant.Rect(0, 0, CFG.FIELDSIZE - 1, CFG.FIELDSIZE - 1, Color.white, null, g);
+    return bi;
+  }
+  
+  public void handleSelectionBox()
+  {
+    new Thread()
+    {
+      public void run()
+      {
+        int w = map.selW / CFG.FIELDSIZE;
+        int h = map.selH / CFG.FIELDSIZE;
+        
+        if (w + h < 2) return;
+        
+        ArrayList<TileButton> tiles = new ArrayList<TileButton>();
+        
+        if (!map.delSelection && selectedtile == null) return;
+        
+        double layer = 0;
+        
+        if (!map.delSelection)
+        {
+          String inputString = JOptionPane.showInputDialog(MapEditor.this.w, "Layer der einzufügenden Felder angeben");
+          if (inputString == null) return;
+          
+          layer = Double.parseDouble(inputString);
+        }
+        
+        for (int i = 0; i < w; i++)
+        {
+          for (int j = 0; j < h; j++)
+          {
+            if (!map.delSelection)
+            {
+              Image image = ((ImageIcon) selectedtile.getIcon()).getImage();
+              int tx = selectedtile.getX() / CFG.FIELDSIZE;
+              int ty = selectedtile.getY() / CFG.FIELDSIZE;
+              
+              if (Arrays.asList(CFG.AUTOTILES).contains(tileset))
+              {
+                if (i == 0) tx = 0;
+                if (j == 0) ty = 1;
+                
+                if (i > 0 && i < w - 1) tx = 1;
+                if (j > 0 && j < w - 1) ty = 2;
+                
+                if (i == w - 1) tx = 2;
+                if (j == h - 1) ty = 3;
+                
+                image = autotiles[tx][ty];
+              }
+              tiles.add(addTile(image, i * CFG.FIELDSIZE + map.selX, j * CFG.FIELDSIZE + map.selY, tileset, tx, ty, layer, new JSONObject(), false));
+              map.repaint();
+            }
+            else
+            {
+              Component temp;
+              while ((temp = map.getComponentAt(i * CFG.FIELDSIZE + map.selX, j * CFG.FIELDSIZE + map.selY)) != null && temp instanceof TileButton)
+              {
+                map.remove(temp);
+                
+                tiles.add((TileButton) temp);
+                break;
+              }
+              map.repaint();
+            }
+          }
+        }
+        if (tiles.size() > 0)
+        {
+          lastChangedTiles = tiles.toArray(new TileButton[] {});
+          mUndo.setEnabled(true);
+          tilesWereDeleted = map.delSelection;
+        }
+        map.mouseDown = null;
+        map.mousePos = null;
+        
+        map.repaint();
+      }
+      
+    }.start();
+  }
+  
+  public void importObject(String obj)
+  {
+    try
+    {
+      JSONArray array = new JSONArray(Compressor.decompressFile(new File(FileManager.dir, CFG.MAPEDITOROBJECTSDIR + "/" + obj + ".object")));
+      int w = array.getJSONObject(array.length() - 1).getInt("x") + CFG.FIELDSIZE;
+      int h = array.getJSONObject(array.length() - 1).getInt("y") + CFG.FIELDSIZE;
+      cursor = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+      
+      importTiles = new TileButton[array.length()];
+      
+      for (int i = 0; i < array.length(); i++)
+      {
+        JSONObject o = array.getJSONObject(i);
+        BufferedImage fieldImage = new BufferedImage(CFG.FIELDSIZE, CFG.FIELDSIZE, BufferedImage.TYPE_INT_ARGB);
+        fieldImage.getGraphics().drawImage(Viewport.loadImage("Tiles/" + o.getString("tileset") + ".png"), 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, o.getInt("tx") * CFG.FIELDSIZE, o.getInt("ty") * CFG.FIELDSIZE, o.getInt("tx") * CFG.FIELDSIZE + CFG.FIELDSIZE, o.getInt("ty") * CFG.FIELDSIZE + CFG.FIELDSIZE, null);
+        cursor.getGraphics().drawImage(fieldImage, o.getInt("x"), o.getInt("y"), null);
+        
+        importTiles[i] = new TileButton(o.getInt("x"), o.getInt("y"), o.getInt("tx"), o.getInt("ty"), o.getDouble("l"), o.getString("tileset"), fieldImage, this);
+      }
+      
+      dragmode = false;
+      importmode = true;
+    }
+    catch (JSONException e)
+    {
+      e.printStackTrace();
+    }
+  }
+  
+  public void placeImportObject(Point mouse)
+  {
+    for (TileButton tb : importTiles)
+    {
+      int round = (gridmode) ? CFG.FIELDSIZE : 1;
+      addTile(tb.getImage(), Assistant.round(tb.getX() + mouse.x, round), tb.getY() + mouse.y, tb.getTileset(), tb.getTx(), tb.getTy(), tb.getLayer(), tb.getData(), true);
+    }
+    
+    cursor = null;
+    importmode = false;
+    importTiles = null;
   }
   
   public boolean openMap(String m)
@@ -1018,13 +1578,18 @@ public class MapEditor
     }
   }
   
-  public BufferedImage getTileImage()
+  public void openMapPack(String pack)
   {
-    BufferedImage bi = new BufferedImage(CFG.FIELDSIZE, CFG.FIELDSIZE, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g = (Graphics2D) bi.getGraphics();
-    g.drawImage(((ImageIcon) selectedtile.getIcon()).getImage(), 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, null);
-    Assistant.Rect(0, 0, CFG.FIELDSIZE - 1, CFG.FIELDSIZE - 1, Color.white, null, g);
-    return bi;
+    try
+    {
+      mappackdata = new JSONObject(Assistant.getFileContent(new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + pack + "/.pack")));
+      w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + mappackdata.getString("name"));
+      mmenu.setEnabled(true);
+    }
+    catch (Exception e1)
+    {
+      JOptionPane.showMessageDialog(w, "Kartenpaket konnte nicht geöffnet werden. Beachte, dass du den Ordner auswählen musst,\n" + "der sowohl die Datei \"pack.json\" als auch den Ordner \"maps\" enthält.", "Fehler!", JOptionPane.ERROR_MESSAGE);
+    }
   }
   
   public void saveMap()
@@ -1058,225 +1623,21 @@ public class MapEditor
     }
   }
   
-  public static String writeObjectB64(Object object) throws IOException
+  public void saveMapPack()
   {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    ObjectOutputStream o = new ObjectOutputStream(baos);
-    o.writeObject(object);
-    
-    o.close();
-    return new BASE64Encoder().encodeBuffer(Compressor.compress(baos.toByteArray()));
-  }
-  
-  public static Object readObjectB64(String string) throws Exception
-  {
-    byte[] uncompressed = Compressor.decompress(new BASE64Decoder().decodeBuffer(string));
-    ByteArrayInputStream baos = new ByteArrayInputStream(uncompressed);
-    ObjectInputStream o = new ObjectInputStream(baos);
-    return o.readObject();
-  }
-  
-  public void showNPCDialog(final NPCButton exist)
-  {
-    if (NPCframe == null)
+    try
     {
-      NPCframe = new JDialog(w);
-      NPCframe.setTitle("NPC-Bearbeitung" + ((exist != null) ? " - NPC #" + exist.ID : ""));
-      NPCframe.addWindowListener(new WindowAdapter()
-      {
-        @Override
-        public void windowClosed(WindowEvent e)
-        {
-          NPCframe = null;
-          w.setCursor(Cursor.getDefaultCursor());
-        }
-      });
-      NPCframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-      NPCframe.setAlwaysOnTop(true);
-      NPCframe.setResizable(false);
+      File dir = new File(FileManager.dir, CFG.MAPEDITORDIR + "/" + mappackdata.getString("name"));
+      dir.mkdir();
+      // new File(dir, "maps").mkdir();
+      File pack = new File(dir, ".pack");
+      if (!pack.exists()) pack.createNewFile();
+      Assistant.setFileContent(pack, mappackdata.toString(4));
     }
-    
-    if (exist != null) NPCattr = exist.attributes;
-    else NPCattr = new Attributes();
-    
-    JPanel p = new JPanel(new SpringLayout());
-    
-    JLabel label = new JLabel("X-Position: ", JLabel.TRAILING);
-    p.add(label);
-    NPCx = new JTextField(15);
-    if (exist != null) NPCx.setText(exist.x + "");
-    
-    p.add(NPCx);
-    
-    label = new JLabel("Y-Position: ", JLabel.TRAILING);
-    p.add(label);
-    NPCy = new JTextField(15);
-    if (exist != null) NPCy.setText(exist.y + "");
-    
-    p.add(NPCy);
-    
-    label = new JLabel("Blickrichtung: ", JLabel.TRAILING);
-    p.add(label);
-    NPCdir = new JComboBox<String>(new String[] { "Unten", "Links", "Rechts", "Oben" });
-    if (exist != null) NPCdir.setSelectedIndex(exist.dir);
-    
-    NPCdir.addItemListener(new ItemListener()
+    catch (Exception e)
     {
-      
-      @Override
-      public void itemStateChanged(ItemEvent e)
-      {
-        if (e.getStateChange() == ItemEvent.SELECTED) updateNPCDialogPreview();
-      }
-    });
-    p.add(NPCdir);
-    
-    label = new JLabel("Name: ", JLabel.TRAILING);
-    p.add(label);
-    NPCname = new JTextField(15);
-    if (exist != null) NPCname.setText(exist.name);
-    
-    p.add(NPCname);
-    
-    label = new JLabel("Sprite: ", JLabel.TRAILING);
-    p.add(label);
-    NPCsprite = new JComboBox<String>(NPC.CHARS);
-    if (exist != null) NPCsprite.setSelectedItem(exist.sprite);
-    
-    else NPCsprite.setSelectedIndex(0);
-    
-    NPCsprite.addItemListener(new ItemListener()
-    {
-      @Override
-      public void itemStateChanged(ItemEvent e)
-      {
-        if (e.getStateChange() == ItemEvent.SELECTED) updateNPCDialogPreview();
-      }
-    });
-    
-    p.add(NPCsprite);
-    
-    label = new JLabel("Vorschau: ", JLabel.TRAILING);
-    p.add(label);
-    NPCpreview = new JLabel();
-    NPCpreview.setPreferredSize(new Dimension(32, 48));
-    updateNPCDialogPreview();
-    p.add(NPCpreview);
-    
-    label = new JLabel("Bewegungsgeschwindigkeit: ", JLabel.TRAILING);
-    p.add(label);
-    NPCspeed = new JSpinner(new SpinnerNumberModel(1.0, 0, 20, 0.1));
-    if (exist != null) NPCspeed.setValue(exist.speed);
-    
-    p.add(NPCspeed);
-    
-    label = new JLabel("zufällige Bewegung:", JLabel.TRAILING);
-    p.add(label);
-    NPCmove = new JCheckBox();
-    if (exist != null) NPCmove.setSelected(exist.move);
-    
-    NPCmove.addChangeListener(new ChangeListener()
-    {
-      @Override
-      public void stateChanged(ChangeEvent e)
-      {
-        NPCmoveT.setEnabled(((JCheckBox) e.getSource()).isSelected());
-      }
-    });
-    p.add(NPCmove);
-    
-    label = new JLabel("Zufallsbewegung-Interval. (ms):", JLabel.TRAILING);
-    p.add(label);
-    NPCmoveT = new JSpinner(new SpinnerNumberModel(3000, 0, 1000000000, 100));
-    if (exist != null) NPCmoveT.setValue(exist.moveT);
-    
-    NPCmoveT.setEnabled(NPCmove.isSelected());
-    p.add(NPCmoveT);
-    
-    label = new JLabel("zufälliges Blicken:", JLabel.TRAILING);
-    p.add(label);
-    NPClook = new JCheckBox();
-    if (exist != null) NPClook.setSelected(exist.look);
-    
-    NPClook.addChangeListener(new ChangeListener()
-    {
-      
-      @Override
-      public void stateChanged(ChangeEvent e)
-      {
-        NPClookT.setEnabled(((JCheckBox) e.getSource()).isSelected());
-      }
-    });
-    p.add(NPClook);
-    
-    label = new JLabel("Zufallsblicken-Interval. (ms):", JLabel.TRAILING);
-    p.add(label);
-    NPClookT = new JSpinner(new SpinnerNumberModel(3000, 0, 1000000000, 100));
-    if (exist != null) NPClookT.setValue(exist.lookT);
-    
-    NPClookT.setEnabled(NPClook.isSelected());
-    p.add(NPClookT);
-    
-    label = new JLabel("Künstliche Intelligenz:", JLabel.TRAILING);
-    p.add(label);
-    NPCai = new JComboBox<String>(new String[] { "MeleeAI" }); // TODO: Keep in sync
-    if (exist != null) NPCai.setSelectedItem(exist.ai);
-    p.add(NPCai);
-    
-    label = new JLabel("immer feindlich:", JLabel.TRAILING);
-    p.add(label);
-    NPChostile = new JCheckBox();
-    if (exist != null) NPChostile.setSelected(exist.hostile);
-    p.add(NPChostile);
-    
-    label = new JLabel("Attribute:", JLabel.TRAILING);
-    p.add(label);
-    JButton attr = new JButton("Bearbeiten");
-    attr.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        showAttributesDialog(NPCattr, false);
-        NPCattr = tmpAttr;
-      }
-    });
-    p.add(attr);
-    
-    p.add(new JLabel());
-    NPCok = new JButton("Platzieren");
-    NPCok.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        JSONArray talk = null;
-        Equipment equipment = null;
-        if (exist != null)
-        {
-          talk = exist.talk;
-          equipment = exist.getEquipment();
-          
-          if (NPClastID == exist.ID + 1) NPClastID--;
-          
-          map.remove(exist);
-        }
-        NPCButton b = addNPC(null);
-        if (talk != null) b.talk = talk;
-        
-        if (equipment != null) b.setEquipment(equipment);
-        
-        showNPCDialog(b);
-      }
-    });
-    p.add(NPCok);
-    
-    SpringUtilities.makeCompactGrid(p, 15, 2, 6, 6, 6, 6);
-    
-    NPCframe.setContentPane(p);
-    NPCframe.pack();
-    NPCframe.setVisible(true);
-    NPCframe.setLocationRelativeTo(null);
+      e.printStackTrace();
+    }
   }
   
   public void showAttributesDialog(Attributes exist, final boolean range)
@@ -1338,6 +1699,33 @@ public class MapEditor
     attrFrame.pack();
     attrFrame.setLocationRelativeTo(null);
     attrFrame.setVisible(true);
+  }
+  
+  public void showCustomCursor(boolean show)
+  {
+    if (!show && (selectedtile != null || NPCframe != null))
+    {
+      cursor = null;
+      map.repaint();
+      return;
+    }
+    
+    if (selectedtile != null) cursor = getTileImage();
+    
+    
+    if (NPCframe != null)
+    {
+      BufferedImage image = (BufferedImage) ((ImageIcon) NPCpreview.getIcon()).getImage();
+      int x = 0;
+      int y = 0;
+      int width = image.getWidth();
+      int height = image.getHeight();
+      x = (width > 32) ? width - 32 : x;
+      y = (height > 32) ? height - 32 : y;
+      width = (width > 32) ? 32 : width;
+      height = (height > 32) ? 32 : height;
+      cursor = image.getSubimage(x, y, width, height);
+    }
   }
   
   public void showEquipmentDialog(final NPCButton npc)
@@ -1646,176 +2034,230 @@ public class MapEditor
     adjFrame.setVisible(true);
   }
   
-  public void updateEquipDialogPreview()
+  public void showFilterReplaceDialog()
   {
-    int w = EQpreview.getPreferredSize().width;
-    int h = EQpreview.getPreferredSize().height;
-    BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g = (Graphics2D) bi.getGraphics();
+    final JDialog FRframe = new JDialog(w, "Felder per Filter ersetzen");
+    FRframe.setResizable(false);
+    FRframe.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     
-    for (int i = 0; i < 4; i++)
-    {
-      for (int j = 0; j < 4; j++)
-      {
-        Assistant.drawChar(i * w / 4, j * h / 4, w / 4, h / 4, j, i, EQ, g, null, true);
-      }
-    }
-    EQpreview.setIcon(new ImageIcon(bi));
-  }
-  
-  public void showTalkDialog(final NPCButton npc)
-  {
-    final JDialog talkFrame = new JDialog(w);
-    talkFrame.setTitle("Talk-Bearbeitung - NPC #" + npc.ID);
-    talkFrame.setResizable(false);
-    talkFrame.setAlwaysOnTop(true);
-    talkFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    dragmode = true;
+    selectedtile = null;
     
-    JPanel p = new JPanel(new FlowLayout());
-    p.setPreferredSize(new Dimension(600, 500));
-    talkPanel = new JPanel();
-    talkPanel.setPreferredSize(new Dimension(600, 0));
-    talkPanel.setLayout(null);
-    talkScrollPane = new JScrollPane(talkPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    talkScrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.gray));
-    talkScrollPane.setPreferredSize(new Dimension(600, 310));
-    p.add(talkScrollPane);
-    
-    talkColorSlider = new JColorSlider();
-    talkColorSlider.setPreferredSize(new Dimension(600, 150));
-    p.add(talkColorSlider);
-    
-    talkAdd = new JButton("Talk hinzufügen");
-    talkAdd.setPreferredSize(new Dimension(295, 24));
-    talkAdd.addActionListener(new ActionListener()
+    FRframe.addWindowListener(new WindowAdapter()
     {
       @Override
-      public void actionPerformed(ActionEvent e)
+      public void windowClosed(WindowEvent e)
       {
-        addTalkComponent(null);
+        for (Component c : map.getComponents())
+        {
+          if (c instanceof TileButton)
+          {
+            ((TileButton) c).fitsFilter = false;
+            ((TileButton) c).update = true;
+            ((TileButton) c).repaint();
+          }
+        }
+        dragmode = mDrag.isSelected();
+        
+        map.mouseDown = null;
+        map.mousePos = null;
       }
     });
-    p.add(talkAdd);
-    talkOk = new JButton("Speichern");
-    talkOk.setPreferredSize(new Dimension(295, 24));
-    talkOk.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        JSONArray talk = new JSONArray();
-        for (int i = 0; i < talkPanel.getComponentCount(); i++)
-        {
-          JTextField talkCond = (JTextField) ((JPanel) talkPanel.getComponent(i)).getComponent(1);
-          JTextArea talkText = (JTextArea) ((JScrollPane) ((JPanel) talkPanel.getComponent(i)).getComponent(3)).getViewport().getView();
-          
-          if (talkCond.getText().length() == 0 && talkText.getText().length() == 0) continue;
-          
-          JSONArray cond = null;
-          try
-          {
-            cond = new JSONArray("[" + talkCond.getText() + "]");
-          }
-          catch (JSONException e1)
-          {
-            e1.printStackTrace();
-            JOptionPane.showMessageDialog(talkFrame, "Talk #" + (i + 1) + " konnte nicht gespeichert werden!\nDer Text im Konditionsfeld ist ungültig!\nDer Speichervorgang wird abgebrochen.", "Fehler!", JOptionPane.ERROR_MESSAGE);
-            return;
-          }
-          try
-          {
-            JSONObject t = new JSONObject();
-            t.put("cond", cond);
-            t.put("text", talkText.getText());
-            
-            talk.put(t);
-          }
-          catch (JSONException e1)
-          {
-            e1.printStackTrace();
-          }
-        }
-        npc.talk = talk;
-      }
-    });
-    p.add(talkOk);
-    
-    talkFrame.setContentPane(p);
-    talkFrame.pack();
-    talkFrame.setLocationRelativeTo(null);
-    
-    if (npc != null)
-    {
-      for (int i = 0; i < npc.talk.length(); i++)
-      {
-        try
-        {
-          addTalkComponent(npc.talk.getJSONObject(i));
-        }
-        catch (JSONException e1)
-        {
-          e1.printStackTrace();
-        }
-      }
-    }
-    
-    addTalkComponent(null);
-    
-    talkFrame.setVisible(true);
-  }
-  
-  private void addTalkComponent(JSONObject data)
-  {
     
     JPanel p = new JPanel(new SpringLayout());
     
-    if (talkPanel.getComponentCount() > 0) p.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.gray));
+    JPanel oldPanel = new JPanel(new SpringLayout());
+    oldPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), "Finden"));
     
-    JLabel label = new JLabel("Bedingungen: ", JLabel.TRAILING);
-    p.add(label);
-    JTextField talkCond = new JTextField();
-    if (data != null)
+    JLabel label = new JLabel("Tileset:");
+    oldPanel.add(label);
+    FRoldTileset = new JComboBox<String>(Assistant.concat(new String[] { "Ignorieren" }, tilesets));
+    FRoldTileset.setSelectedIndex(0);
+    oldPanel.add(FRoldTileset);
+    
+    label = new JLabel("Layer:");
+    oldPanel.add(label);
+    FRoldLayer = new JTextField();
+    oldPanel.add(FRoldLayer);
+    
+    label = new JLabel("Tileset-X:");
+    oldPanel.add(label);
+    FRoldTX = new JTextField();
+    oldPanel.add(FRoldTX);
+    
+    label = new JLabel("Tileset-Y:");
+    oldPanel.add(label);
+    FRoldTY = new JTextField();
+    oldPanel.add(FRoldTY);
+    
+    SpringUtilities.makeCompactGrid(oldPanel, 4, 2, 6, 6, 6, 6);
+    
+    p.add(oldPanel);
+    
+    JPanel newPanel = new JPanel(new SpringLayout());
+    newPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), "Ersetzen"));
+    
+    label = new JLabel("Tileset:");
+    newPanel.add(label);
+    FRnewTileset = new JComboBox<String>(Assistant.concat(new String[] { "Ignorieren" }, tilesets));
+    FRnewTileset.setSelectedIndex(0);
+    newPanel.add(FRnewTileset);
+    
+    label = new JLabel("Layer:");
+    newPanel.add(label);
+    FRnewLayer = new JTextField();
+    newPanel.add(FRnewLayer);
+    
+    label = new JLabel("Tileset-X:");
+    newPanel.add(label);
+    FRnewTX = new JTextField();
+    newPanel.add(FRnewTX);
+    
+    label = new JLabel("Tileset-Y:");
+    newPanel.add(label);
+    FRnewTY = new JTextField();
+    newPanel.add(FRnewTY);
+    
+    SpringUtilities.makeCompactGrid(newPanel, 4, 2, 6, 6, 6, 6);
+    
+    p.add(newPanel);
+    
+    JButton find = new JButton("Finden");
+    find.addActionListener(new ActionListener()
     {
-      try
+      @Override
+      public void actionPerformed(ActionEvent e)
       {
-        talkCond.setText(data.getJSONArray("cond").toString().replaceAll("(\\[)|(\\])|(\\\")", "").replace(",", ", "));
+        new Thread()
+        {
+          public void run()
+          {
+            Double layer = Assistant.parseDouble(FRoldLayer.getText());
+            Integer tx = Assistant.parseInt(FRoldTX.getText());
+            Integer ty = Assistant.parseInt(FRoldTY.getText());
+            
+            for (int i = 0; i < map.getComponentCount(); i++)
+            {
+              Component c = map.getComponent(i);
+              if (c instanceof TileButton)
+              {
+                ((TileButton) c).fitsFilter = false;
+                ((TileButton) c).update = true;
+              }
+            }
+            map.repaint();
+            
+            if (map.mouseDown == null)
+            {
+              for (Component c : map.getComponents())
+              {
+                if (c instanceof TileButton)
+                {
+                  ((TileButton) c).checkReplaceFilterFits(FRoldTileset.getSelectedItem().toString(), layer, tx, ty);
+                  map.repaint();
+                }
+              }
+            }
+            else
+            {
+              for (int i = 0; i < map.selW / CFG.FIELDSIZE; i++)
+              {
+                for (int j = 0; j < map.selH / CFG.FIELDSIZE; j++)
+                {
+                  for (Component c : map.getComponents())
+                  {
+                    if (c instanceof TileButton && c.getX() >= i * CFG.FIELDSIZE + map.selX && c.getX() < (i + 1) * CFG.FIELDSIZE + map.selX && c.getY() >= j * CFG.FIELDSIZE + map.selY && c.getY() < (j + 1) * CFG.FIELDSIZE + map.selY)
+                    {
+                      ((TileButton) c).checkReplaceFilterFits(FRoldTileset.getSelectedItem().toString(), layer, tx, ty);
+                      map.repaint();
+                    }
+                  }
+                }
+              }
+            }
+            map.repaint();
+          }
+        }.start();
       }
-      catch (JSONException e)
-      {
-        e.printStackTrace();
-      }
-    }
-    p.add(talkCond);
+    });
     
-    label = new JLabel("Text: ", JLabel.TRAILING);
-    p.add(label);
+    p.add(find);
     
-    JTextArea talkText = new JTextArea(4, 0);
-    talkText.setLineWrap(true);
-    talkText.setFont(talkCond.getFont());
-    if (data != null)
+    JButton replace = new JButton("Ersetzen");
+    replace.addActionListener(new ActionListener()
     {
-      try
+      @Override
+      public void actionPerformed(ActionEvent e)
       {
-        talkText.setText(data.getString("text"));
+        Double layer = Assistant.parseDouble(FRnewLayer.getText());
+        Integer tx = Assistant.parseInt(FRnewTX.getText());
+        Integer ty = Assistant.parseInt(FRnewTY.getText());
+        
+        for (Component c : map.getComponents())
+        {
+          if (c instanceof TileButton)
+          {
+            ((TileButton) c).execFilterReplace(FRnewTileset.getSelectedItem().toString(), layer, tx, ty);
+          }
+        }
       }
-      catch (JSONException e)
+    });
+    p.add(replace);
+    
+    p.add(new JLabel("Gefundene Felder: "));
+    p.add(new JButton(new AbstractAction("Entfernen")
+    {
+      private static final long serialVersionUID = 1L;
+      
+      @Override
+      public void actionPerformed(ActionEvent e)
       {
-        e.printStackTrace();
+        for (Component c : map.getComponents())
+        {
+          if (c instanceof TileButton && ((TileButton) c).fitsFilter)
+          {
+            map.remove(c);
+            map.repaint();
+          }
+        }
       }
+    }));
+    
+    SpringUtilities.makeCompactGrid(p, 3, 2, 6, 6, 6, 6);
+    
+    FRframe.setContentPane(p);
+    FRframe.pack();
+    FRframe.setLocationRelativeTo(null);
+    FRframe.setVisible(true);
+  }
+  
+  public void showImportObjectDialog()
+  {
+    final JDialog dialog = new JDialog(w, true);
+    dialog.setTitle("Objekt importieren");
+    dialog.setSize(400, 170);
+    dialog.setResizable(false);
+    dialog.setLocationRelativeTo(null);
+    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    final DefaultListModel<String> maps = new DefaultListModel<String>();
+    for (String s : new File(FileManager.dir, CFG.MAPEDITOROBJECTSDIR).list())
+    {
+      maps.addElement(s.replace(".object", ""));
     }
-    
-    JScrollPane pane = new JScrollPane(talkText, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    
-    p.add(pane);
-    
-    p.setBounds(0, talkPanel.getComponentCount() * talkComponentHeight, talkComponentWidth, talkComponentHeight);
-    SpringUtilities.makeCompactGrid(p, 2, 2, 6, 6, 6, 6);
-    
-    talkPanel.setPreferredSize(new Dimension(600, talkPanel.getPreferredSize().height + talkComponentHeight));
-    talkPanel.add(p);
-    
-    talkScrollPane.setViewportView(talkPanel);
+    JList<String> list = new JList<String>(maps);
+    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    list.addListSelectionListener(new ListSelectionListener()
+    {
+      @Override
+      public void valueChanged(final ListSelectionEvent e)
+      {
+        if (e.getValueIsAdjusting()) return;
+        dialog.dispose();
+        importObject((String) ((JList<?>) e.getSource()).getSelectedValue());
+      }
+    });
+    dialog.setContentPane(new JScrollPane(list));
+    dialog.setVisible(true);
   }
   
   public void showItemDialog(final Item exist)
@@ -2081,632 +2523,533 @@ public class MapEditor
     itemFrame.setVisible(true);
   }
   
-  private void updateNPCDialogPreview()
+  public void showNewMapDialog()
   {
-    String sprite = NPCsprite.getSelectedItem().toString();
-    BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + sprite + ".png");
-    NPCpreview.setPreferredSize(new Dimension(image.getWidth() / 4, image.getHeight() / 4));
-    NPCpreview.setIcon(new ImageIcon(image.getSubimage(0, image.getHeight() / 4 * NPCdir.getSelectedIndex(), image.getWidth() / 4, image.getHeight() / 4)));
-    NPCframe.invalidate();
-    NPCframe.pack();
-  }
-  
-  private void updateNPCCoords(int x, int y)
-  {
-    NPCx.setText(x + "");
-    NPCy.setText((y - 16) + "");
-  }
-  
-  public NPCButton addNPC(JSONObject data)
-  {
-    try
+    if (mappackdata == null) return;
+    final JDialog dialog = new JDialog(w, true);
+    dialog.addWindowListener(new WindowAdapter()
     {
-      final JPopupMenu jpm = new JPopupMenu();
-      NPCButton npc;
-      if (data == null)
+      @Override
+      public void windowClosed(WindowEvent e)
       {
-        npc = new NPCButton(Integer.parseInt(NPCx.getText()), Integer.parseInt(NPCy.getText()), NPCpreview.getPreferredSize().width - CFG.BOUNDMALUS, NPCpreview.getPreferredSize().height - CFG.BOUNDMALUS, NPCdir.getSelectedIndex(), NPCname.getText(), NPCsprite.getSelectedItem().toString(), (double) NPCspeed.getValue(), NPCmove.isSelected(), NPClook.isSelected(), (int) NPCmoveT.getValue(), (int) NPClookT.getValue(), ((ImageIcon) NPCpreview.getIcon()).getImage(), NPChostile.isSelected(), NPClastID, NPCai.getSelectedItem().toString(), this);
-        npc.attributes = NPCattr;
+        v.stopMusic();
       }
-      else
+    });
+    dialog.setTitle("Karte erstellen");
+    dialog.setSize(400, 170);
+    dialog.setResizable(false);
+    dialog.setLocationRelativeTo(null);
+    dialog.setLayout(new BorderLayout());
+    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    JPanel inputs = new JPanel();
+    inputs.setLayout(new GridLayout(0, 2));
+    inputs.add(new JLabel("Kartenname: "));
+    final JTextField name = new JTextField();
+    inputs.add(name);
+    inputs.add(new JLabel("Hintergrundmusik: "));
+    final JComboBox<String> music = new JComboBox<String>();
+    music.addItem("Keine Musik");
+    for (File f : new File(FileManager.dir, "Music").listFiles())
+    {
+      if (f.isFile() && f.getName().endsWith(".wav")) music.addItem(f.getName().replace(".wav", ""));
+    }
+    music.addItemListener(new ItemListener()
+    {
+      @Override
+      public void itemStateChanged(ItemEvent e)
       {
-        BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + data.getString("char") + ".png");
-        npc = new NPCButton(data.getInt("x"), data.getInt("y"), data.getInt("w"), data.getInt("h"), data.getInt("dir"), data.getString("name"), data.getString("char"), data.getDouble("speed"), data.getJSONObject("random").getBoolean("move"), data.getJSONObject("random").getBoolean("look"), data.getJSONObject("random").getInt("moveT"), data.getJSONObject("random").getInt("lookT"), image.getSubimage(0, data.getInt("dir") * image.getHeight() / 4, image.getWidth() / 4, image.getHeight() / 4), data.getBoolean("hostile"), NPClastID, data.getString("ai"), this);
-        npc.talk = data.getJSONArray("talk");
-        npc.setEquipment(new Equipment(data.getJSONObject("equip")));
-        npc.attributes = new Attributes(data.getJSONObject("attr"));
+        String item = (String) e.getItem();
+        switch (e.getStateChange())
+        {
+          case ItemEvent.DESELECTED:
+          {
+            v.stopMusic();
+            break;
+          }
+          case ItemEvent.SELECTED:
+          {
+            if (!item.equals("Keine Musik")) v.playMusic(item, true, 0.2f);
+            break;
+          }
+        }
       }
-      
-      NPClastID++;
-      
-      final NPCButton fNPC = npc;
-      
-      JMenuItem edit = new JMenuItem(new AbstractAction("Bearbeiten")
+    });
+    inputs.add(music);
+    inputs.add(new JLabel("Friedlich: "));
+    final JCheckBox peaceful = new JCheckBox();
+    inputs.add(peaceful);
+    
+    dialog.add(inputs, BorderLayout.PAGE_START);
+    JButton create = new JButton("Erstellen");
+    create.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
       {
-        private static final long serialVersionUID = 1L;
-        
-        @Override
-        public void actionPerformed(ActionEvent e)
+        if (name.getText().length() == 0) return;
+        v.stopMusic();
+        try
         {
-          showNPCDialog(fNPC);
+          w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + mappackdata.getString("name") + "/" + name.getText());
+          mapdata = new JSONObject();
+          map.removeAll();
+          selectedtile = null;
+          msp.setViewportView(map);
+          selectedtile = null;
+          mapdata.put("music", (!music.getSelectedItem().equals("Keine Musik")) ? music.getSelectedItem() : "");
+          mapdata.put("name", name.getText());
+          mapdata.put("tile", new JSONArray());
+          mapdata.put("peaceful", peaceful.isSelected());
+          fmenu.setEnabled(true);
+          omenu.setEnabled(true);
+          saveMap();
         }
-      });
-      jpm.add(edit);
-      
-      JMenuItem eedit = new JMenuItem(new AbstractAction("Ausrüstung bearbeiten")
-      {
-        private static final long serialVersionUID = 1L;
-        
-        @Override
-        public void actionPerformed(ActionEvent e)
+        catch (JSONException e1)
         {
-          showEquipmentDialog(fNPC);
+          e1.printStackTrace();
         }
-      });
-      jpm.add(eedit);
-      
-      JMenuItem tedit = new JMenuItem(new AbstractAction("Talk bearbeiten")
+        dialog.dispose();
+      }
+    });
+    dialog.add(create, BorderLayout.PAGE_END);
+    dialog.setVisible(true);
+  }
+  
+  public void showNewMapPackDialog()
+  {
+    if (mappackdata != null) return;
+    final JDialog dialog = new JDialog(w, true);
+    dialog.setTitle("Kartenpaket erstellen");
+    dialog.setSize(400, 170);
+    dialog.setResizable(false);
+    dialog.setLocationRelativeTo(null);
+    dialog.setLayout(new BorderLayout());
+    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    JPanel inputs = new JPanel();
+    inputs.setLayout(new GridLayout(0, 2));
+    inputs.add(new JLabel("Paketname: "));
+    final JTextField name = new JTextField();
+    inputs.add(name);
+    dialog.add(inputs, BorderLayout.PAGE_START);
+    JButton create = new JButton("Erstellen");
+    create.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
       {
-        private static final long serialVersionUID = 1L;
-        
-        @Override
-        public void actionPerformed(ActionEvent e)
+        try
         {
-          showTalkDialog(fNPC);
+          w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + name.getText());
+          mappackdata = new JSONObject();
+          mappackdata.put("name", name.getText());
+          mappackdata.put("init", new JSONObject());
+          mappackdata.put("version", System.currentTimeMillis());
+          mmenu.setEnabled(true);
+          saveMapPack();
         }
-      });
-      jpm.add(tedit);
-      
-      JMenuItem del = new JMenuItem(new AbstractAction("Löschen")
-      {
-        private static final long serialVersionUID = 1L;
-        
-        @Override
-        public void actionPerformed(ActionEvent e)
+        catch (JSONException e1)
         {
-          map.remove(fNPC);
-          
+          e1.printStackTrace();
+        }
+        dialog.dispose();
+        openMapPack(name.getText());
+      }
+    });
+    dialog.add(create, BorderLayout.PAGE_END);
+    dialog.setVisible(true);
+  }
+  
+  public void showNPCDialog(final NPCButton exist)
+  {
+    if (NPCframe == null)
+    {
+      NPCframe = new JDialog(w);
+      NPCframe.setTitle("NPC-Bearbeitung" + ((exist != null) ? " - NPC #" + exist.ID : ""));
+      NPCframe.addWindowListener(new WindowAdapter()
+      {
+        @Override
+        public void windowClosed(WindowEvent e)
+        {
+          NPCframe = null;
+          cursor = null;
           map.repaint();
         }
       });
-      jpm.add(del);
-      npc.addMouseListener(new MouseAdapter()
-      {
-        @Override
-        public void mousePressed(MouseEvent e)
-        {
-          if (e.getButton() == 3) jpm.show(e.getComponent(), e.getX(), e.getY());
-        }
-      });
-      map.add(npc, JLayeredPane.PALETTE_LAYER);
-      
-      msp.setViewportView(map);
-      
-      return npc;
+      NPCframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+      NPCframe.setAlwaysOnTop(true);
+      NPCframe.setResizable(false);
     }
-    catch (Exception e)
+    
+    if (exist != null) NPCattr = exist.attributes;
+    else NPCattr = new Attributes();
+    
+    JPanel p = new JPanel(new SpringLayout());
+    
+    JLabel label = new JLabel("X-Position: ", JLabel.TRAILING);
+    p.add(label);
+    NPCx = new JTextField(15);
+    if (exist != null) NPCx.setText(exist.x + "");
+    
+    p.add(NPCx);
+    
+    label = new JLabel("Y-Position: ", JLabel.TRAILING);
+    p.add(label);
+    NPCy = new JTextField(15);
+    if (exist != null) NPCy.setText(exist.y + "");
+    
+    p.add(NPCy);
+    
+    label = new JLabel("Blickrichtung: ", JLabel.TRAILING);
+    p.add(label);
+    NPCdir = new JComboBox<String>(new String[] { "Unten", "Links", "Rechts", "Oben" });
+    if (exist != null) NPCdir.setSelectedIndex(exist.dir);
+    
+    NPCdir.addItemListener(new ItemListener()
     {
-      e.printStackTrace();
-      JOptionPane.showMessageDialog(NPCframe, "Bitte alle Felder korrekt ausfüllen!", "NPC-Ertellung", JOptionPane.ERROR_MESSAGE);
-      return null;
-    }
+      
+      @Override
+      public void itemStateChanged(ItemEvent e)
+      {
+        if (e.getStateChange() == ItemEvent.SELECTED) updateNPCDialogPreview();
+      }
+    });
+    p.add(NPCdir);
+    
+    label = new JLabel("Name: ", JLabel.TRAILING);
+    p.add(label);
+    NPCname = new JTextField(15);
+    if (exist != null) NPCname.setText(exist.name);
+    
+    p.add(NPCname);
+    
+    label = new JLabel("Sprite: ", JLabel.TRAILING);
+    p.add(label);
+    NPCsprite = new JComboBox<String>(NPC.CHARS);
+    if (exist != null) NPCsprite.setSelectedItem(exist.sprite);
+    
+    else NPCsprite.setSelectedIndex(0);
+    
+    NPCsprite.addItemListener(new ItemListener()
+    {
+      @Override
+      public void itemStateChanged(ItemEvent e)
+      {
+        if (e.getStateChange() == ItemEvent.SELECTED) updateNPCDialogPreview();
+      }
+    });
+    
+    p.add(NPCsprite);
+    
+    label = new JLabel("Vorschau: ", JLabel.TRAILING);
+    p.add(label);
+    NPCpreview = new JLabel();
+    NPCpreview.setPreferredSize(new Dimension(32, 48));
+    updateNPCDialogPreview();
+    p.add(NPCpreview);
+    
+    label = new JLabel("Bewegungsgeschwindigkeit: ", JLabel.TRAILING);
+    p.add(label);
+    NPCspeed = new JSpinner(new SpinnerNumberModel(1.0, 0, 20, 0.1));
+    if (exist != null) NPCspeed.setValue(exist.speed);
+    
+    p.add(NPCspeed);
+    
+    label = new JLabel("zufällige Bewegung:", JLabel.TRAILING);
+    p.add(label);
+    NPCmove = new JCheckBox();
+    if (exist != null) NPCmove.setSelected(exist.move);
+    
+    NPCmove.addChangeListener(new ChangeListener()
+    {
+      @Override
+      public void stateChanged(ChangeEvent e)
+      {
+        NPCmoveT.setEnabled(((JCheckBox) e.getSource()).isSelected());
+      }
+    });
+    p.add(NPCmove);
+    
+    label = new JLabel("Zufallsbewegung-Interval. (ms):", JLabel.TRAILING);
+    p.add(label);
+    NPCmoveT = new JSpinner(new SpinnerNumberModel(3000, 0, 1000000000, 100));
+    if (exist != null) NPCmoveT.setValue(exist.moveT);
+    
+    NPCmoveT.setEnabled(NPCmove.isSelected());
+    p.add(NPCmoveT);
+    
+    label = new JLabel("zufälliges Blicken:", JLabel.TRAILING);
+    p.add(label);
+    NPClook = new JCheckBox();
+    if (exist != null) NPClook.setSelected(exist.look);
+    
+    NPClook.addChangeListener(new ChangeListener()
+    {
+      
+      @Override
+      public void stateChanged(ChangeEvent e)
+      {
+        NPClookT.setEnabled(((JCheckBox) e.getSource()).isSelected());
+      }
+    });
+    p.add(NPClook);
+    
+    label = new JLabel("Zufallsblicken-Interval. (ms):", JLabel.TRAILING);
+    p.add(label);
+    NPClookT = new JSpinner(new SpinnerNumberModel(3000, 0, 1000000000, 100));
+    if (exist != null) NPClookT.setValue(exist.lookT);
+    
+    NPClookT.setEnabled(NPClook.isSelected());
+    p.add(NPClookT);
+    
+    label = new JLabel("Künstliche Intelligenz:", JLabel.TRAILING);
+    p.add(label);
+    NPCai = new JComboBox<String>(new String[] { "MeleeAI" }); // TODO: Keep in sync
+    if (exist != null) NPCai.setSelectedItem(exist.ai);
+    p.add(NPCai);
+    
+    label = new JLabel("immer feindlich:", JLabel.TRAILING);
+    p.add(label);
+    NPChostile = new JCheckBox();
+    if (exist != null) NPChostile.setSelected(exist.hostile);
+    p.add(NPChostile);
+    
+    label = new JLabel("Attribute:", JLabel.TRAILING);
+    p.add(label);
+    JButton attr = new JButton("Bearbeiten");
+    attr.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        showAttributesDialog(NPCattr, false);
+        NPCattr = tmpAttr;
+      }
+    });
+    p.add(attr);
+    
+    p.add(new JLabel());
+    NPCok = new JButton("Platzieren");
+    NPCok.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        JSONArray talk = null;
+        Equipment equipment = null;
+        if (exist != null)
+        {
+          talk = exist.talk;
+          equipment = exist.getEquipment();
+          
+          if (NPClastID == exist.ID + 1) NPClastID--;
+          
+          map.remove(exist);
+        }
+        NPCButton b = addNPC(null);
+        if (talk != null) b.talk = talk;
+        
+        if (equipment != null) b.setEquipment(equipment);
+        
+        showNPCDialog(b);
+      }
+    });
+    p.add(NPCok);
+    
+    SpringUtilities.makeCompactGrid(p, 15, 2, 6, 6, 6, 6);
+    
+    NPCframe.setContentPane(p);
+    NPCframe.pack();
+    NPCframe.setVisible(true);
+    NPCframe.setLocationRelativeTo(null);
   }
   
-  public TileButton addTile(Image icon, final int x, final int y, String t, int tx, int ty, double l, JSONObject data, boolean undo)
+  public void showOpenMapDialog()
   {
+    if (mappackdata == null) return;
+    final JDialog dialog = new JDialog(w, true);
+    dialog.setTitle("Karte öffnen");
+    dialog.setSize(400, 170);
+    dialog.setResizable(false);
+    dialog.setLocationRelativeTo(null);
+    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    final DefaultListModel<String> maps = new DefaultListModel<String>();
     try
     {
-      if (l == -1)
+      for (String s : Map.getMaps(mappackdata.getString("name"), CFG.MAPEDITORDIR))
       {
-        for (int i = 0; i < map.getComponentCount(); i++)
-        {
-          if (!(map.getComponent(i) instanceof TileButton)) continue;
-          TileButton b = (TileButton) map.getComponent(i);
-          if (b.getBounds().intersects(x, y, CFG.FIELDSIZE, CFG.FIELDSIZE))
-          {
-            l = b.getLayer();
-          }
-        }
-        l++;
+        maps.addElement(s);
       }
-      final TileButton tile = new TileButton(x, y, tx, ty, l, t, icon, this);
-      tile.data = data;
-      tile.setEnabled(false);
-      final JPopupMenu jpm = new JPopupMenu();
-      JMenuItem init = new JMenuItem("Als Startfeld des Kartenpakets festlegen");
-      init.addActionListener(new ActionListener()
+    }
+    catch (JSONException e1)
+    {
+      e1.printStackTrace();
+    }
+    JList<String> list = new JList<String>(maps);
+    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    list.addListSelectionListener(new ListSelectionListener()
+    {
+      @Override
+      public void valueChanged(final ListSelectionEvent e)
       {
-        @Override
-        public void actionPerformed(ActionEvent e)
+        if (e.getValueIsAdjusting()) return;
+        
+        progress = new JProgressBar(0, 100);
+        progress.setPreferredSize(new Dimension(400, 22));
+        dialog.setContentPane(progress);
+        dialog.pack();
+        dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        
+        new Thread()
         {
-          JSONObject d = new JSONObject();
+          public void run()
+          {
+            if (openMap((String) ((JList<?>) e.getSource()).getSelectedValue())) dialog.dispose();
+          }
+        }.start();
+      }
+    });
+    dialog.setContentPane(new JScrollPane(list));
+    dialog.setVisible(true);
+  }
+  
+  public void showOpenMapPackDialog()
+  {
+    if (mappackdata != null)
+    {
+      return;
+    }
+    final JDialog dialog = new JDialog(w, true);
+    dialog.setTitle("Kartenpaket öffnen");
+    dialog.setSize(400, 170);
+    dialog.setResizable(false);
+    dialog.setLocationRelativeTo(null);
+    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    final DefaultListModel<String> mappacks = new DefaultListModel<String>();
+    for (File f : new File(FileManager.dir, CFG.MAPEDITORDIR).listFiles())
+    {
+      if (f.isDirectory() && Arrays.asList(f.list()).contains(".pack"))
+      {
+        mappacks.addElement(f.getName());
+      }
+    }
+    JList<String> list = new JList<String>(mappacks);
+    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    list.addListSelectionListener(new ListSelectionListener()
+    {
+      @Override
+      public void valueChanged(ListSelectionEvent e)
+      {
+        if (e.getValueIsAdjusting())
+        {
+          return;
+        }
+        openMapPack((String) ((JList<?>) e.getSource()).getSelectedValue());
+        dialog.dispose();
+      }
+    });
+    dialog.setContentPane(new JScrollPane(list));
+    dialog.setVisible(true);
+  }
+  
+  public void showTalkDialog(final NPCButton npc)
+  {
+    final JDialog talkFrame = new JDialog(w);
+    talkFrame.setTitle("Talk-Bearbeitung - NPC #" + npc.ID);
+    talkFrame.setResizable(false);
+    talkFrame.setAlwaysOnTop(true);
+    talkFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    
+    JPanel p = new JPanel(new FlowLayout());
+    p.setPreferredSize(new Dimension(600, 500));
+    talkPanel = new JPanel();
+    talkPanel.setPreferredSize(new Dimension(600, 0));
+    talkPanel.setLayout(null);
+    talkScrollPane = new JScrollPane(talkPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    talkScrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.gray));
+    talkScrollPane.setPreferredSize(new Dimension(600, 310));
+    p.add(talkScrollPane);
+    
+    talkColorSlider = new JColorSlider();
+    talkColorSlider.setPreferredSize(new Dimension(600, 150));
+    p.add(talkColorSlider);
+    
+    talkAdd = new JButton("Talk hinzufügen");
+    talkAdd.setPreferredSize(new Dimension(295, 24));
+    talkAdd.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        addTalkComponent(null);
+      }
+    });
+    p.add(talkAdd);
+    talkOk = new JButton("Speichern");
+    talkOk.setPreferredSize(new Dimension(295, 24));
+    talkOk.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        JSONArray talk = new JSONArray();
+        for (int i = 0; i < talkPanel.getComponentCount(); i++)
+        {
+          JTextField talkCond = (JTextField) ((JPanel) talkPanel.getComponent(i)).getComponent(1);
+          JTextArea talkText = (JTextArea) ((JScrollPane) ((JPanel) talkPanel.getComponent(i)).getComponent(3)).getViewport().getView();
+          
+          if (talkCond.getText().length() == 0 && talkText.getText().length() == 0) continue;
+          
+          JSONArray cond = null;
           try
           {
-            d.put("map", mapdata.getString("name"));
-            d.put("x", tile.getX());
-            d.put("y", tile.getY() - CFG.FIELDSIZE * 3 / 4);
-            mappackdata.put("init", d);
-            saveMapPack();
+            cond = new JSONArray("[" + talkCond.getText() + "]");
+          }
+          catch (JSONException e1)
+          {
+            e1.printStackTrace();
+            JOptionPane.showMessageDialog(talkFrame, "Talk #" + (i + 1) + " konnte nicht gespeichert werden!\nDer Text im Konditionsfeld ist ungültig!\nDer Speichervorgang wird abgebrochen.", "Fehler!", JOptionPane.ERROR_MESSAGE);
+            return;
+          }
+          try
+          {
+            JSONObject t = new JSONObject();
+            t.put("cond", cond);
+            t.put("text", talkText.getText());
+            
+            talk.put(t);
           }
           catch (JSONException e1)
           {
             e1.printStackTrace();
           }
         }
-      });
-      cachelayer = l + 1;
-      jpm.add(init);
-      JMenuItem lchange = new JMenuItem(new AbstractAction("Layer anpassen")
-      {
-        private static final long serialVersionUID = 1L;
-        
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-          String result = JOptionPane.showInputDialog(w, "Layer anpassen", tile.getLayer());
-          
-          if (result == null) return;
-          
-          try
-          {
-            double ly = Double.parseDouble(result);
-            cachelayer = ly;
-            tile.setLayer(ly);
-            saveMap();
-            try
-            {
-              openMap(mapdata.getString("name"));
-            }
-            catch (JSONException e1)
-            {
-              e1.printStackTrace();
-            }
-          }
-          catch (Exception e1)
-          {
-            JOptionPane.showMessageDialog(w, "Layerangabe darf nur Zahlen enthalten.", "Fehler!", JOptionPane.ERROR_MESSAGE);
-            return;
-          }
-        }
-      });
-      jpm.add(lchange);
-      JMenu mdata = new JMenu("Feld-Data bearbeiten");
-      for (final String s : FieldData.DATATYPES)
-      {
-        JMenuItem tmp = new JMenuItem(new AbstractAction(s)
-        {
-          private static final long serialVersionUID = 1L;
-          
-          @Override
-          public void actionPerformed(ActionEvent e)
-          {
-            editFieldData(tile, s);
-          }
-        });
-        mdata.add(tmp);
+        npc.talk = talk;
       }
-      jpm.add(mdata);
-      tile.addMouseListener(new MouseAdapter()
-      {
-        @Override
-        public void mousePressed(MouseEvent e)
-        {}
-        
-        @Override
-        public void mouseReleased(MouseEvent e)
-        {
-          if (e.getButton() == 3 && !deletemode && !dragmode) jpm.show(tile, e.getX(), e.getY());
-          
-          if (e.getButton() == 1)
-          {
-            JButton src = (JButton) e.getSource();
-            if (selectedtile != null && map.mouseDown == null && map.mousePos == null)
-            {
-              int round = (gridmode) ? CFG.FIELDSIZE : 1;
-              addTile(((ImageIcon) selectedtile.getIcon()).getImage(), Assistant.round(e.getX() - CFG.FIELDSIZE / 2 + src.getX(), round), Assistant.round(e.getY() - CFG.FIELDSIZE / 2 + src.getY(), round), tileset, selectedtile.getX() / CFG.FIELDSIZE, selectedtile.getY() / CFG.FIELDSIZE, -1, new JSONObject(), true);
-            }
-            else if (NPCframe != null)
-            {
-              updateNPCCoords(e.getX() + src.getX(), e.getY() + src.getY());
-            }
-          }
-          if (e.getButton() == 3 && deletemode)
-          {
-            map.remove(tile);
-            msp.setViewportView(map);
-          }
-        }
-        
-        @Override
-        public void mouseEntered(MouseEvent e)
-        {
-          showCustomCursor(true);
-        }
-        
-        @Override
-        public void mouseExited(MouseEvent e)
-        {
-          showCustomCursor(false);
-        }
-      });
-      if (mapdata == null) return null;
-      map.add(tile, JLayeredPane.DEFAULT_LAYER);
-      
-      map.setComponentZOrder(tile, 0);
-      
-      if (undo)
-      {
-        lastChangedTiles = new TileButton[] { tile };
-        mUndo.setEnabled(true);
-      }
-      
-      cachelayer = 0;
-      return tile;
-    }
-    catch (Exception e1)
+    });
+    p.add(talkOk);
+    
+    talkFrame.setContentPane(p);
+    talkFrame.pack();
+    talkFrame.setLocationRelativeTo(null);
+    
+    if (npc != null)
     {
-      e1.printStackTrace();
-      return null;
+      for (int i = 0; i < npc.talk.length(); i++)
+      {
+        try
+        {
+          addTalkComponent(npc.talk.getJSONObject(i));
+        }
+        catch (JSONException e1)
+        {
+          e1.printStackTrace();
+        }
+      }
     }
     
-  }
-  
-  public void editFieldData(final TileButton field, final String dataType)
-  {
-    try
-    {
-      // -- general setup -- //
-      final JDialog dialog = new JDialog(w, true);
-      dialog.setTitle("Feld-Data bearbeiten");
-      dialog.setIconImage(w.getIconImage());
-      dialog.setSize(400, 300);
-      dialog.setResizable(false);
-      dialog.setLocationRelativeTo(null);
-      dialog.setLayout(new FlowLayout());
-      dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-      JPanel inputs = new JPanel();
-      inputs.setLayout(new FlowLayout());
-      inputs.setPreferredSize(new Dimension(400, 235));
-      JButton delete = new JButton("Löschen");
-      delete.setEnabled(false);
-      delete.setPreferredSize(new Dimension(190, 23));
-      JButton save = new JButton("Speichern");
-      save.setPreferredSize(new Dimension(190, 23));
-      // -- type specific setup -- //
-      JSONObject exist = field.getDataByType(dataType);
-      if (exist != null)
-      {
-        delete.setEnabled(true);
-        delete.addActionListener(new ActionListener()
-        {
-          @Override
-          public void actionPerformed(ActionEvent e)
-          {
-            field.removeDataByType(dataType);
-            dialog.dispose();
-          }
-        });
-      }
-      switch (dataType)
-      {
-        case "Door":
-        {
-          JLabel name = new JLabel("Ziel X-Koordinate:");
-          name.setPreferredSize(new Dimension(190, 23));
-          final JTextField dx = new JTextField("0");
-          dx.setName("int_dx");
-          if (exist != null) dx.setText("" + exist.getInt("dx"));
-          dx.setPreferredSize(new Dimension(190, 23));
-          inputs.add(name);
-          inputs.add(dx);
-          name = new JLabel("Ziel Y-Koordinate:");
-          name.setPreferredSize(new Dimension(190, 23));
-          final JTextField dy = new JTextField("0");
-          dy.setName("int_dy");
-          if (exist != null) dy.setText("" + exist.getInt("dy"));
-          dy.setPreferredSize(new Dimension(190, 23));
-          inputs.add(name);
-          inputs.add(dy);
-          final String[] dirs = new String[] { "Gleiche", "Unten", "Links", "Rechts", "Oben" };
-          name = new JLabel("Zielrichtung:");
-          name.setPreferredSize(new Dimension(190, 23));
-          final JComboBox<String> dir = new JComboBox<String>();
-          dir.setName("int_dir");
-          dir.setPreferredSize(new Dimension(190, 23));
-          for (String s : dirs)
-          {
-            dir.addItem(s);
-          }
-          if (exist != null) dir.setSelectedIndex(exist.getInt("dir") + 1);
-          inputs.add(name);
-          inputs.add(dir);
-          name = new JLabel("Zielkarte:");
-          name.setPreferredSize(new Dimension(190, 23));
-          final JDialog mapCoordSelect = new JDialog(dialog, "", false);
-          mapCoordSelect.setLayout(null);
-          mapCoordSelect.setResizable(false);
-          mapCoordSelect.setLocation(dialog.getX() + dialog.getWidth() + 10, dialog.getY());
-          mapCoordSelect.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-          mapCoordSelect.setVisible(true);
-          final JComboBox<String> map = new JComboBox<String>();
-          map.setName("string_map");
-          map.setPreferredSize(new Dimension(190, 23));
-          for (String s : Map.getMaps(mappackdata.getString("name"), CFG.MAPEDITORDIR))
-          {
-            map.addItem(s);
-          }
-          map.addActionListener(new ActionListener()
-          {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-              try
-              {
-                final String s = (String) map.getSelectedItem();
-                mapCoordSelect.setTitle(s);
-                BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1, v);
-                final JLabel l = new JLabel();
-                l.addMouseListener(new MouseAdapter()
-                {
-                  @Override
-                  public void mousePressed(MouseEvent e)
-                  {
-                    dx.setText("" + (e.getX() - CFG.HUMANBOUNDS[0] / 2));
-                    dy.setText("" + (e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3));
-                    try
-                    {
-                      BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1, v);
-                      int d = Arrays.asList(dirs).indexOf(((String) dir.getSelectedItem())) - 1;
-                      d = (d < 0) ? 0 : d;
-                      Assistant.drawChar(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], d, 0, Equipment.getDefault(true), (Graphics2D) bi.getGraphics(), null, true);// Assistant.Rect(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], Color.cyan, null, (Graphics2D) bi.getGraphics());
-                      l.setIcon(new ImageIcon(bi));
-                    }
-                    catch (JSONException e1)
-                    {
-                      e1.printStackTrace();
-                    }
-                  }
-                });
-                l.setSize(bi.getWidth(), bi.getHeight());
-                l.setIcon(new ImageIcon(bi));
-                mapCoordSelect.setContentPane(l);
-                mapCoordSelect.pack();
-              }
-              catch (JSONException e1)
-              {
-                e1.printStackTrace();
-              }
-            }
-          });
-          map.setSelectedIndex(0);
-          if (exist != null) map.setSelectedItem(exist.getString("map"));
-          inputs.add(name);
-          inputs.add(map);
-          name = new JLabel("Sound:");
-          name.setPreferredSize(new Dimension(190, 23));
-          final JComboBox<String> sound = new JComboBox<String>();
-          sound.setName("string_sound");
-          sound.setPreferredSize(new Dimension(190, 23));
-          sound.addItem("< Leer >");
-          for (String s : CFG.SOUND)
-          {
-            sound.addItem(s);
-          }
-          if (exist != null) sound.setSelectedItem(exist.getString("sound"));
-          sound.addActionListener(new ActionListener()
-          {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-              if (((String) sound.getSelectedItem()).equals("< Leer >")) return;
-              v.playSound((String) sound.getSelectedItem());
-            }
-          });
-          inputs.add(name);
-          inputs.add(sound);
-          name = new JLabel("Animation:");
-          name.setPreferredSize(new Dimension(190, 23));
-          final JComboBox<String> img = new JComboBox<String>();
-          img.setName("string_img");
-          img.setPreferredSize(new Dimension(190, 23));
-          final JLabel preview = new JLabel();
-          preview.setPreferredSize(new Dimension(CFG.FIELDSIZE, CFG.FIELDSIZE));
-          img.addItem("< Leer >");
-          for (int i = 0; i < Door.CHARS.length * 4; i++)
-          {
-            img.addItem(Door.CHARS[(int) Math.floor(i / 4.0)] + ": " + ((i % 4) + 1));
-          }
-          img.addActionListener(new ActionListener()
-          {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-              String s = (String) img.getSelectedItem();
-              if (s.equals("< Leer >"))
-              {
-                preview.setIcon(null);
-                return;
-              }
-              int part = Integer.parseInt(s.substring(s.indexOf(": ") + ": ".length())) - 1;
-              BufferedImage i = (BufferedImage) Viewport.loadImage("char/objects/" + s.substring(0, s.indexOf(": ")) + ".png");
-              preview.setPreferredSize(new Dimension(i.getWidth() / 4, i.getHeight() / 4));
-              preview.setIcon(new ImageIcon(i.getSubimage(i.getWidth() / 4 * part, 0, i.getWidth() / 4, i.getHeight() / 4)));
-            }
-          });
-          if (exist != null && exist.getString("img").length() > 0)
-          {
-            int index = Arrays.asList(Door.CHARS).indexOf(exist.getString("img")) * 4;
-            img.setSelectedIndex(index + exist.getInt("t") + 1);
-          }
-          inputs.add(name);
-          inputs.add(img);
-          inputs.add(preview);
-          save.addActionListener(new ActionListener()
-          {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-              JSONObject o = new JSONObject();
-              try
-              {
-                try
-                {
-                  o.put("dx", Integer.parseInt(dx.getText()));
-                  o.put("dy", Integer.parseInt(dy.getText()));
-                }
-                catch (NumberFormatException e1)
-                {
-                  JOptionPane.showMessageDialog(w, "Koordinaten dürfen nur aus Zahlen bestehen!", "", JOptionPane.ERROR_MESSAGE);
-                  return;
-                }
-                o.put("dir", dir.getSelectedIndex() - 1);
-                o.put("map", (String) map.getSelectedItem());
-                o.put("sound", ((String) sound.getSelectedItem()).replace("< Leer >", ""));
-                String s = (String) img.getSelectedItem();
-                if (!s.equals("< Leer >"))
-                {
-                  o.put("img", s.substring(0, s.indexOf(": ")));
-                  o.put("t", Integer.parseInt(s.substring(s.indexOf(": ") + ": ".length())) - 1);
-                  Image i = Viewport.loadImage("char/objects/" + s.substring(0, s.indexOf(": ")) + ".png");
-                  int w = i.getWidth(null) / 4;
-                  int h = i.getHeight(null) / 4;
-                  o.put("x", (CFG.FIELDSIZE / 2 - w / 2));
-                  o.put("y", (CFG.FIELDSIZE - h / 2));
-                }
-                else
-                {
-                  o.put("img", "");
-                  o.put("t", 0);
-                  o.put("x", 0);
-                  o.put("y", 0);
-                }
-                field.addData(dataType, o);
-                dialog.dispose();
-              }
-              catch (JSONException e2)
-              {
-                e2.printStackTrace();
-                return;
-              }
-            }
-          });
-          break;
-        }
-      }
-      dialog.add(inputs);
-      dialog.add(delete);
-      dialog.add(save);
-      dialog.setVisible(true);
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-    }
-  }
-  
-  public void handleSelectionBox()
-  {
-    new Thread()
-    {
-      public void run()
-      {
-        int w = map.selW / CFG.FIELDSIZE;
-        int h = map.selH / CFG.FIELDSIZE;
-        
-        if (w + h < 2) return;
-        
-        ArrayList<TileButton> tiles = new ArrayList<TileButton>();
-        
-        if (!map.delSelection && selectedtile == null) return;
-        
-        double layer = 0;
-        
-        if (!map.delSelection)
-        {
-          String inputString = JOptionPane.showInputDialog(MapEditor.this.w, "Layer der einzufügenden Felder angeben");
-          if (inputString == null) return;
-          
-          layer = Double.parseDouble(inputString);
-        }
-        
-        for (int i = 0; i < w; i++)
-        {
-          for (int j = 0; j < h; j++)
-          {
-            if (!map.delSelection)
-            {
-              Image image = ((ImageIcon) selectedtile.getIcon()).getImage();
-              int tx = selectedtile.getX() / CFG.FIELDSIZE;
-              int ty = selectedtile.getY() / CFG.FIELDSIZE;
-              
-              if (Arrays.asList(CFG.AUTOTILES).contains(tileset))
-              {
-                if (i == 0) tx = 0;
-                if (j == 0) ty = 1;
-                
-                if (i > 0 && i < w - 1) tx = 1;
-                if (j > 0 && j < w - 1) ty = 2;
-                
-                if (i == w - 1) tx = 2;
-                if (j == h - 1) ty = 3;
-                
-                image = autotiles[tx][ty];
-              }
-              tiles.add(addTile(image, i * CFG.FIELDSIZE + map.selX, j * CFG.FIELDSIZE + map.selY, tileset, tx, ty, layer, new JSONObject(), false));
-              map.repaint();
-            }
-            else
-            {
-              Component temp;
-              while ((temp = map.getComponentAt(i * CFG.FIELDSIZE + map.selX, j * CFG.FIELDSIZE + map.selY)) != null && temp instanceof TileButton)
-              {
-                map.remove(temp);
-                
-                tiles.add((TileButton) temp);
-                break;
-              }
-              map.repaint();
-            }
-          }
-        }
-        if (tiles.size() > 0)
-        {
-          lastChangedTiles = tiles.toArray(new TileButton[] {});
-          mUndo.setEnabled(true);
-          tilesWereDeleted = map.delSelection;
-        }
-        map.mouseDown = null;
-        map.mousePos = null;
-        
-        map.repaint();
-      }
-      
-    }.start();
-  }
-  
-  public void showCustomCursor(boolean show)
-  {
-    if (!show && (selectedtile != null || NPCframe != null))
-    {
-      w.setCursor(Cursor.getDefaultCursor());
-      return;
-    }
+    addTalkComponent(null);
     
-    if (selectedtile != null) w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(getTileImage(), new Point(CFG.FIELDSIZE / 2, CFG.FIELDSIZE / 2), "tile"));
-    
-    if (NPCframe != null)
-    {
-      BufferedImage image = (BufferedImage) ((ImageIcon) NPCpreview.getIcon()).getImage();
-      int x = 0;
-      int y = 0;
-      int width = image.getWidth();
-      int height = image.getHeight();
-      x = (width > 32) ? width - 32 : x;
-      y = (height > 32) ? height - 32 : y;
-      width = (width > 32) ? 32 : width;
-      height = (height > 32) ? 32 : height;
-      w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(image.getSubimage(x, y, width, height), new Point(0, 0), "npc"));
-    }
+    talkFrame.setVisible(true);
   }
   
   public void undo()
@@ -2733,260 +3076,90 @@ public class MapEditor
     }.start();
   }
   
-  public void showFilterReplaceDialog()
+  public void updateEquipDialogPreview()
   {
-    JDialog FRframe = new JDialog(w, "Felder per Filter ersetzen");
-    FRframe.setResizable(false);
-    FRframe.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    int w = EQpreview.getPreferredSize().width;
+    int h = EQpreview.getPreferredSize().height;
+    BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g = (Graphics2D) bi.getGraphics();
     
-    dragmode = true;
-    selectedtile = null;
-    
-    FRframe.addWindowListener(new WindowAdapter()
+    for (int i = 0; i < 4; i++)
     {
-      @Override
-      public void windowClosed(WindowEvent e)
+      for (int j = 0; j < 4; j++)
       {
-        for (Component c : map.getComponents())
-        {
-          if (c instanceof TileButton)
-          {
-            ((TileButton) c).fitsFilter = false;
-            ((TileButton) c).update = true;
-            ((TileButton) c).repaint();
-          }
-        }
-        dragmode = mDrag.isSelected();
-        
-        map.mouseDown = null;
-        map.mousePos = null;
-        
-        map.repaint();
+        Assistant.drawChar(i * w / 4, j * h / 4, w / 4, h / 4, j, i, EQ, g, null, true);
       }
-    });
+    }
+    EQpreview.setIcon(new ImageIcon(bi));
+  }
+  
+  private void addTalkComponent(JSONObject data)
+  {
     
     JPanel p = new JPanel(new SpringLayout());
     
-    JPanel oldPanel = new JPanel(new SpringLayout());
-    oldPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), "Finden"));
+    if (talkPanel.getComponentCount() > 0) p.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.gray));
     
-    JLabel label = new JLabel("Tileset:");
-    oldPanel.add(label);
-    FRoldTileset = new JComboBox<String>(Assistant.concat(new String[] { "Ignorieren" }, tilesets));
-    FRoldTileset.setSelectedIndex(0);
-    oldPanel.add(FRoldTileset);
-    
-    label = new JLabel("Layer:");
-    oldPanel.add(label);
-    FRoldLayer = new JTextField();
-    oldPanel.add(FRoldLayer);
-    
-    label = new JLabel("Tileset-X:");
-    oldPanel.add(label);
-    FRoldTX = new JTextField();
-    oldPanel.add(FRoldTX);
-    
-    label = new JLabel("Tileset-Y:");
-    oldPanel.add(label);
-    FRoldTY = new JTextField();
-    oldPanel.add(FRoldTY);
-    
-    SpringUtilities.makeCompactGrid(oldPanel, 4, 2, 6, 6, 6, 6);
-    
-    p.add(oldPanel);
-    
-    JPanel newPanel = new JPanel(new SpringLayout());
-    newPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), "Ersetzen"));
-    
-    label = new JLabel("Tileset:");
-    newPanel.add(label);
-    FRnewTileset = new JComboBox<String>(Assistant.concat(new String[] { "Ignorieren" }, tilesets));
-    FRnewTileset.setSelectedIndex(0);
-    newPanel.add(FRnewTileset);
-    
-    label = new JLabel("Layer:");
-    newPanel.add(label);
-    FRnewLayer = new JTextField();
-    newPanel.add(FRnewLayer);
-    
-    label = new JLabel("Tileset-X:");
-    newPanel.add(label);
-    FRnewTX = new JTextField();
-    newPanel.add(FRnewTX);
-    
-    label = new JLabel("Tileset-Y:");
-    newPanel.add(label);
-    FRnewTY = new JTextField();
-    newPanel.add(FRnewTY);
-    
-    SpringUtilities.makeCompactGrid(newPanel, 4, 2, 6, 6, 6, 6);
-    
-    p.add(newPanel);
-    
-    JButton find = new JButton("Finden");
-    find.addActionListener(new ActionListener()
+    JLabel label = new JLabel("Bedingungen: ", JLabel.TRAILING);
+    p.add(label);
+    JTextField talkCond = new JTextField();
+    if (data != null)
     {
-      @Override
-      public void actionPerformed(ActionEvent e)
+      try
       {
-        Double layer = Assistant.parseDouble(FRoldLayer.getText());
-        Integer tx = Assistant.parseInt(FRoldTX.getText());
-        Integer ty = Assistant.parseInt(FRoldTY.getText());
-        
-        for (Component c : map.getComponents())
-        {
-          if (c instanceof TileButton)
-          {
-            ((TileButton) c).fitsFilter = false;
-            ((TileButton) c).update = true;
-            ((TileButton) c).repaint();
-          }
-        }
-        
-        if (map.mouseDown == null)
-        {
-          for (Component c : map.getComponents())
-          {
-            if (c instanceof TileButton)
-            {
-              ((TileButton) c).checkReplaceFilterFits(FRoldTileset.getSelectedItem().toString(), layer, tx, ty);
-            }
-          }
-        }
-        else
-        {
-          for (int i = 0; i < map.selW / CFG.FIELDSIZE; i++)
-          {
-            for (int j = 0; j < map.selH / CFG.FIELDSIZE; j++)
-            {
-              for (Component c : map.getComponents())
-              {
-                if (c instanceof TileButton && c.getX() >= i * CFG.FIELDSIZE + map.selX && c.getX() < (i + 1) * CFG.FIELDSIZE + map.selX && c.getY() >= j * CFG.FIELDSIZE + map.selY && c.getY() < (j + 1) * CFG.FIELDSIZE + map.selY)
-                {
-                  ((TileButton) c).checkReplaceFilterFits(FRoldTileset.getSelectedItem().toString(), layer, tx, ty);
-                }
-              }
-            }
-          }
-        }
+        talkCond.setText(data.getJSONArray("cond").toString().replaceAll("(\\[)|(\\])|(\\\")", "").replace(",", ", "));
       }
-    });
+      catch (JSONException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    p.add(talkCond);
     
-    p.add(find);
+    label = new JLabel("Text: ", JLabel.TRAILING);
+    p.add(label);
     
-    JButton replace = new JButton("Ersetzen");
-    replace.addActionListener(new ActionListener()
+    JTextArea talkText = new JTextArea(4, 0);
+    talkText.setLineWrap(true);
+    talkText.setFont(talkCond.getFont());
+    if (data != null)
     {
-      @Override
-      public void actionPerformed(ActionEvent e)
+      try
       {
-        Double layer = Assistant.parseDouble(FRnewLayer.getText());
-        Integer tx = Assistant.parseInt(FRnewTX.getText());
-        Integer ty = Assistant.parseInt(FRnewTY.getText());
-        
-        for (Component c : map.getComponents())
-        {
-          if (c instanceof TileButton)
-          {
-            ((TileButton) c).execFilterReplace(FRnewTileset.getSelectedItem().toString(), layer, tx, ty);
-          }
-        }
+        talkText.setText(data.getString("text"));
       }
-    });
-    p.add(replace);
-    
-    p.add(new JLabel("Gefundene Felder: "));
-    p.add(new JButton(new AbstractAction("Entfernen")
-    {
-      private static final long serialVersionUID = 1L;
-      
-      @Override
-      public void actionPerformed(ActionEvent e)
+      catch (JSONException e)
       {
-        for (Component c : map.getComponents())
-        {
-          if (c instanceof TileButton && ((TileButton) c).fitsFilter)
-          {
-            map.remove(c);
-            map.repaint();
-          }
-        }
+        e.printStackTrace();
       }
-    }));
+    }
     
-    SpringUtilities.makeCompactGrid(p, 3, 2, 6, 6, 6, 6);
+    JScrollPane pane = new JScrollPane(talkText, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     
-    FRframe.setContentPane(p);
-    FRframe.pack();
-    FRframe.setLocationRelativeTo(null);
-    FRframe.setVisible(true);
+    p.add(pane);
+    
+    p.setBounds(0, talkPanel.getComponentCount() * talkComponentHeight, talkComponentWidth, talkComponentHeight);
+    SpringUtilities.makeCompactGrid(p, 2, 2, 6, 6, 6, 6);
+    
+    talkPanel.setPreferredSize(new Dimension(600, talkPanel.getPreferredSize().height + talkComponentHeight));
+    talkPanel.add(p);
+    
+    talkScrollPane.setViewportView(talkPanel);
   }
   
-  public class SelectionListener implements MouseListener, MouseMotionListener
+  private void updateNPCCoords(int x, int y)
   {
-    JComponent component;
-    
-    public SelectionListener(JComponent c)
-    {
-      component = c;
-    }
-    
-    @Override
-    public void mouseDragged(MouseEvent e)
-    {
-      if (!dragmode) return;
-      
-      if (e.getModifiers() != 16 && e.getModifiers() != 4) return;
-      
-      map.delSelection = e.getModifiers() == 4;
-      
-      if (map.mouseDown == null)
-      {
-        if (gridmode) map.mouseDown = new Point(Assistant.round(e.getPoint().x + ((component != null) ? component.getX() : 0), CFG.FIELDSIZE), Assistant.round(e.getPoint().y + ((component != null) ? component.getY() : 0), CFG.FIELDSIZE));
-        else map.mouseDown = new Point(e.getPoint().x + ((component != null) ? component.getX() : 0), e.getPoint().y + ((component != null) ? component.getY() : 0));
-      }
-      
-      if (gridmode) map.mousePos = new Point(Assistant.round(e.getPoint().x + ((component != null) ? component.getX() : 0), CFG.FIELDSIZE), Assistant.round(e.getPoint().y + ((component != null) ? component.getY() : 0), CFG.FIELDSIZE));
-      else map.mousePos = new Point(Assistant.round(e.getPoint().x + ((component != null) ? component.getX() : 0) - map.mouseDown.x, CFG.FIELDSIZE) + map.mouseDown.x, Assistant.round(e.getPoint().y + ((component != null) ? component.getY() : 0) - map.mouseDown.y, CFG.FIELDSIZE) + map.mouseDown.y);
-      
-      map.repaint();
-    }
-    
-    @Override
-    public void mouseMoved(MouseEvent e)
-    {}
-    
-    @Override
-    public void mouseClicked(MouseEvent e)
-    {}
-    
-    @Override
-    public void mousePressed(MouseEvent e)
-    {
-      if (!dragmode) return;
-      
-      
-      map.mouseDown = null;
-      map.mousePos = null;
-      map.repaint();
-    }
-    
-    @Override
-    public void mouseReleased(MouseEvent e)
-    {
-      if (!dragmode) return;
-      
-      if (map.mouseDown != null) handleSelectionBox();
-      map.repaint();
-    }
-    
-    @Override
-    public void mouseEntered(MouseEvent e)
-    {}
-    
-    @Override
-    public void mouseExited(MouseEvent e)
-    {}
-    
+    NPCx.setText(x + "");
+    NPCy.setText((y - 16) + "");
+  }
+  
+  private void updateNPCDialogPreview()
+  {
+    String sprite = NPCsprite.getSelectedItem().toString();
+    BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + sprite + ".png");
+    NPCpreview.setPreferredSize(new Dimension(image.getWidth() / 4, image.getHeight() / 4));
+    NPCpreview.setIcon(new ImageIcon(image.getSubimage(0, image.getHeight() / 4 * NPCdir.getSelectedIndex(), image.getWidth() / 4, image.getHeight() / 4)));
+    NPCframe.invalidate();
+    NPCframe.pack();
   }
 }
