@@ -46,9 +46,9 @@ public class DamageIndicator
     text = new HTMLString(v.toString(), t.getSize(), color, Font.BOLD);
   }
   
-  public void draw(Map m, Graphics2D g, Viewport v)
+  public void draw(Map m, Graphics2D g)
   {
-    if (v.areFramesFrozen()) return;
+    if (Viewport.areFramesFrozen()) return;
     
     if (outline == null)
     {

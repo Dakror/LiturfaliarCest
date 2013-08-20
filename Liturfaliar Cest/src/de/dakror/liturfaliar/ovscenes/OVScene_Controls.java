@@ -32,20 +32,19 @@ public class OVScene_Controls extends OVScene
   {}
   
   @Override
-  public void construct(Viewport v)
+  public void construct()
   {
     Viewport.setSceneEnabled(false);
-    this.v = v;
-    c1 = new Container(0, 0, v.w.getWidth(), 55);
+    c1 = new Container(0, 0, Viewport.w.getWidth(), 55);
     c1.tileset = null;
     
-    label = new HTMLLabel(v.w.getWidth() / 2 - 180, v.w.getHeight() / 2 - 185, 200, 600, "<#888888;30;1>Bewegung[br]<#ffffff;22;0>  Oben[br]  Unten[br]  Links[br]  Rechts[br]  Sprint[br] [br]<#888888;25;1>Hot-Keys[br]<#ffffff;22;0>  Pause[br]  Inventar[br]  Fähigkeiten[br]");
+    label = new HTMLLabel(Viewport.w.getWidth() / 2 - 180, Viewport.w.getHeight() / 2 - 185, 200, 600, "<#888888;30;1>Bewegung[br]<#ffffff;22;0>  Oben[br]  Unten[br]  Links[br]  Rechts[br]  Sprint[br] [br]<#888888;25;1>Hot-Keys[br]<#ffffff;22;0>  Pause[br]  Inventar[br]  Fähigkeiten[br]");
     buttons = new Button[order.length];
     for (int i = 0; i < order.length; i++)
     {
       try
       {
-        Button b = new Button(v.w.getWidth() / 2, v.w.getHeight() / 2 - 130 + i * 29 + ((i > 4) ? 57 : 0), 180, KeyEvent.getKeyText(Keys.class.getField(order[i]).getInt(null)), Color.white, 20);
+        Button b = new Button(Viewport.w.getWidth() / 2, Viewport.w.getHeight() / 2 - 130 + i * 29 + ((i > 4) ? 57 : 0), 180, KeyEvent.getKeyText(Keys.class.getField(order[i]).getInt(null)), Color.white, 20);
         b.hovermod = 0;
         b.clickmod = 0;
         b.soundMOVER = false;
@@ -108,16 +107,16 @@ public class OVScene_Controls extends OVScene
   @Override
   public void draw(Graphics2D g)
   {
-    Assistant.Shadow(v.w.getBounds(), Color.black, 0.6f, g);
-    c1.draw(g, v);
-    Assistant.drawHorizontallyCenteredString("Tastenbelegung", v.w.getWidth(), 43, g, 45, Color.white);
+    Assistant.Shadow(Viewport.w.getBounds(), Color.black, 0.6f, g);
+    c1.draw(g);
+    Assistant.drawHorizontallyCenteredString("Tastenbelegung", Viewport.w.getWidth(), 43, g, 45, Color.white);
     
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 200, v.w.getHeight() / 2 - 190, 400, 380, g, v.w);
-    label.draw(g, v);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), Viewport.w.getWidth() / 2 - 200, Viewport.w.getHeight() / 2 - 190, 400, 380, g);
+    label.draw(g);
     
     for (Button b : buttons)
     {
-      b.draw(g, v);
+      b.draw(g);
     }
   }
   
@@ -126,9 +125,9 @@ public class OVScene_Controls extends OVScene
   {
     if (e.getKeyCode() == KeyEvent.VK_ESCAPE && !waitForInput)
     {
-      v.removeOVScene("Controls");
+      Viewport.removeOVScene("Controls");
       Viewport.setSceneEnabled(true);
-      FileManager.saveOptions(v);
+      FileManager.saveOptions();
     }
     else if (waitForInput)
     {

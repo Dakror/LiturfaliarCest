@@ -2,7 +2,6 @@ package de.dakror.liturfaliar.map.creature;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -58,11 +57,9 @@ public class Player extends Creature
   
   ArrayList<Item>   skills              = new ArrayList<Item>();
   
-  Viewport          v;
-  
   Point             mouse               = new Point(0, 0);
   
-  public Player(JSONObject save, Window w)
+  public Player(JSONObject save)
   {
     super(CFG.MAPCENTER.x, CFG.MAPCENTER.y, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1]);
     
@@ -176,27 +173,34 @@ public class Player extends Creature
         f.onEvent(new Event(Events.fieldTouched, this, m));
       }
     }
+    Vector moved = getMovePos(m);
+    Vector move = moved.sub(relPos);
     
     boolean scrollLeft = m.getX() < 0;
     boolean scrollUp = m.getY() < 0;
-    boolean scrollRight = m.getX() + m.getWidth() > v.w.getWidth();
-    boolean scrollDown = m.getY() + m.getHeight() > v.w.getHeight();
+    boolean scrollRight = m.getX() + m.getWidth() > Viewport.w.getWidth();
+    boolean scrollDown = m.getY() + m.getHeight() > Viewport.w.getHeight();
     
-    Vector moved = move(m);
+    double sx = 0, sy = 0;
     
-    if (scrollLeft | scrollUp | scrollRight | scrollDown) m.move((scrollLeft | scrollRight) ? moved.x : 0, (scrollUp | scrollDown) ? moved.y : 0);
+    Vector absPos = moved.add(new Vector(m.getX(), m.getY()));
+    if ((scrollRight && move.x > 0 && absPos.x >= Viewport.w.getWidth() / 2 - CFG.FIELDSIZE) || (scrollLeft && move.x < 0 && absPos.x <= Viewport.w.getWidth() / 2 + CFG.FIELDSIZE)) sx = -move.x;
+    if ((scrollDown && move.y > 0 && absPos.y >= Viewport.w.getHeight() / 2 - CFG.FIELDSIZE) || (scrollUp && move.y < 0 && absPos.y <= Viewport.w.getHeight() / 2 + CFG.FIELDSIZE)) sy = -move.y;
+    if (sx == 0 && sy == 0) move(m);
+    else
+    {
+      m.move(sx, sy);
+      relPos = moved;
+    }
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v, Map m)
+  public void draw(Graphics2D g, Map m)
   {
-    super.draw(g, v, m);
-    
-    this.v = v;
-    
+    super.draw(g, m);
     frame = 0;
     
-    if ((!relPos.equals(goTo) || !Arrays.equals(dirs, new boolean[] { false, false, false, false })) && !frozen) frame = v.getFrame((sprint) ? 0.3f : 0.5f);
+    if ((!relPos.equals(goTo) || !Arrays.equals(dirs, new boolean[] { false, false, false, false })) && !frozen) frame = Viewport.getFrame((sprint) ? 0.3f : 0.5f);
     
     if (lookingEnabled)
     {
@@ -208,12 +212,12 @@ public class Player extends Creature
     try
     {
       for (SkillAnimation skill : super.skills)
-        skill.drawBelow(g, v, m);
+        skill.drawBelow(g, m);
       
-      Assistant.drawChar((int) relPos.x + m.getX(), (int) relPos.y + m.getY(), w, h, dir, frame, equipment, g, v.w, true);
+      Assistant.drawChar((int) relPos.x + m.getX(), (int) relPos.y + m.getY(), w, h, dir, frame, equipment, g, Viewport.w, true);
       
       for (SkillAnimation skill : super.skills)
-        skill.drawAbove(g, v, m);
+        skill.drawAbove(g, m);
     }
     catch (Exception e)
     {}

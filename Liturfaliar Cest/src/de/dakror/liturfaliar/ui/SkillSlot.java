@@ -63,7 +63,7 @@ public class SkillSlot extends ItemSlot
   public void update()
   {}
   
-  public void drawArrows(Graphics2D g, Viewport v)
+  public void drawArrows(Graphics2D g)
   {
     if (parents != null && drawArrow)
     {
@@ -97,10 +97,10 @@ public class SkillSlot extends ItemSlot
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
     g.drawImage(Viewport.loadImage("tileset/Wood.png"), x, y, SIZE, SIZE, null);
-    item.draw(x + 2, y + 2, g, v);
+    item.draw(x + 2, y + 2, g);
     
     if (!known) Assistant.Shadow(item.getArea(), Colors.DGRAY, 0.6f, g);
   }

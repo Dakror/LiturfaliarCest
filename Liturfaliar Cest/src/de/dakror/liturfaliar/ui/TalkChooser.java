@@ -93,21 +93,21 @@ public class TalkChooser extends Component
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
     if (getX() == 0)
     {
-      setX(v.w.getWidth() / 6 + v.w.getWidth() / 3 * 2 - getWidth());
+      setX(Viewport.w.getWidth() / 6 + Viewport.w.getWidth() / 3 * 2 - getWidth());
       setHeight(raw.split(",").length * 30 + 22);
-      setY(v.w.getHeight() / 16 * 13 - getHeight());
+      setY(Viewport.w.getHeight() / 16 * 13 - getHeight());
       
       parse();
     }
     
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g);
     for (Button b : choices)
     {
-      b.draw(g, v);
+      b.draw(g);
     }
   }
   

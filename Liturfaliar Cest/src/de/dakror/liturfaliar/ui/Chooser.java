@@ -24,7 +24,6 @@ public class Chooser extends Component
   public boolean   alternate;
   public boolean   disabled;
   public boolean   iconrect;
-  Viewport         v;
   
   public Chooser(int x, int y, int w, int h, String title, Object... elem)
   {
@@ -104,9 +103,8 @@ public class Chooser extends Component
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
-    this.v = v;
     if (elem.length == 0) disabled = true;
     if (alternate)
     {
@@ -115,14 +113,14 @@ public class Chooser extends Component
       else c = Colors.DGRAY;
       Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8), c, 0.6f, g);
     }
-    else Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
+    else Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g);
     if (showIndex && elem.length > 0)
     {
       int x = Assistant.drawHorizontallyCenteredString(title + ((selected != -1) ? ((elem[selected] != null) ? elem[selected] : "") : ""), getX(), getWidth(), (int) (getY() + getHeight() / 1.39f), g, (int) (getHeight() / 1.4f), Color.white);
       if (getIcons() != null && getIcons()[selected] != null)
       {
         Image icon = getIcons()[selected];
-        g.drawImage(icon, x + g.getFontMetrics(g.getFont().deriveFont(getHeight() / 1.4f)).stringWidth(title + ((selected != -1) ? ((elem[selected] != null) ? elem[selected] != null : "") : "")) - icon.getWidth(null), getY(), v.w);
+        g.drawImage(icon, x + g.getFontMetrics(g.getFont().deriveFont(getHeight() / 1.4f)).stringWidth(title + ((selected != -1) ? ((elem[selected] != null) ? elem[selected] != null : "") : "")) - icon.getWidth(null), getY(), Viewport.w);
         if (iconrect) Assistant.Rect(x + g.getFontMetrics(g.getFont().deriveFont(getHeight() / 1.4f)).stringWidth(title + ((selected != -1) ? ((elem[selected] != null) ? elem[selected] != null : "") : "")) - icon.getWidth(null), getY(), icon.getWidth(null), icon.getHeight(null), Color.cyan, null, g);
       }
     }
@@ -130,8 +128,8 @@ public class Chooser extends Component
     {
       Assistant.drawHorizontallyCenteredString(title, getX(), getWidth(), (int) (getY() + getHeight() / 1.39f), g, (int) (getHeight() / 1.4f), Color.white);
     }
-    prev.draw(g, v);
-    next.draw(g, v);
+    prev.draw(g);
+    next.draw(g);
     if (disabled)
     {
       Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8), Color.black, 0.6f, g);
@@ -162,12 +160,12 @@ public class Chooser extends Component
     if ((e.getExtendedKeyCode() == KeyEvent.VK_LEFT || e.getExtendedKeyCode() == KeyEvent.VK_A) && selected > 0)
     {
       selected--;
-      v.playSound("182-Click");
+      Viewport.playSound("182-Click");
     }
     if ((e.getExtendedKeyCode() == KeyEvent.VK_RIGHT || e.getExtendedKeyCode() == KeyEvent.VK_D) && selected < elem.length - 1)
     {
       selected++;
-      v.playSound("182-Click");
+      Viewport.playSound("182-Click");
     }
   }
   

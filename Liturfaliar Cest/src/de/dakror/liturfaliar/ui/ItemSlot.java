@@ -55,8 +55,6 @@ public class ItemSlot extends Component
   private long             cooldown;
   private boolean          cooldownFrozen;
   
-  Viewport                 v;
-  
   public ItemSlot(int x, int y)
   {
     super(x, y, SIZE, SIZE);
@@ -136,14 +134,14 @@ public class ItemSlot extends Component
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
-    draw(0, 0, g, v);
+    draw(0, 0, g);
   }
   
-  public void drawLightWeight(Graphics2D g, Viewport v)
+  public void drawLightWeight(Graphics2D g)
   {
-    if (item != null) item.draw(g, v);
+    if (item != null) item.draw(g);
     
     int ax = item.mouse.x - item.width / 2;
     int ay = item.mouse.y - item.height / 2;
@@ -173,10 +171,8 @@ public class ItemSlot extends Component
     }
   }
   
-  public void draw(int x1, int y1, Graphics2D g, Viewport v)
+  public void draw(int x1, int y1, Graphics2D g)
   {
-    this.v = v;
-    
     ax = this.x + x1;
     ay = this.y + y1;
     
@@ -187,7 +183,7 @@ public class ItemSlot extends Component
       g.drawImage(Viewport.loadImage("system/" + categoryFilter.name().toLowerCase() + "ItemSlotFilter.png"), ax + 4, ay + 4, getWidth() - 8, getWidth() - 8, null);
     }
     
-    if (item != null) item.draw(ax, ay, g, v);
+    if (item != null) item.draw(ax, ay, g);
     
     if (keyString != null)
     {
@@ -254,9 +250,9 @@ public class ItemSlot extends Component
     if (hover) Assistant.Shadow(new RoundRectangle2D.Double(ax, ay + getWidth() - height, width, height, 5, 5), Color.WHITE, 0.2f, g);
   }
   
-  public void drawTooltip(Graphics2D g, Viewport v)
+  public void drawTooltip(Graphics2D g)
   {
-    if (item != null) item.tooltip.draw(g, v);
+    if (item != null) item.tooltip.draw(g);
   }
   
   public Item getItem()
@@ -628,17 +624,17 @@ public class ItemSlot extends Component
     cooldown = (long) (item.getAttributes().getAttribute(Attr.cooldown).getMaximum() * 1000) - 1;
   }
   
-  public void triggerAction(Map m, Creature c, Viewport v)
+  public void triggerAction(Map m, Creature c)
   {
     if (item == null) return;
     
     if (cooldown > 0)
     {
-      v.playSound("003-System03");
+      Viewport.playSound("003-System03");
       return;
     }
     
-    item.triggerAction(m, c, v);
+    item.triggerAction(m, c);
   }
   
   @Override

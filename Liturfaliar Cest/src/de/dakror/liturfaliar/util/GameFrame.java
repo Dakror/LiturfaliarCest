@@ -12,7 +12,7 @@ public abstract class GameFrame
 {
   protected boolean running;
   protected boolean frozen;
-  public JFrame     w;
+  public static JFrame     w;
   ScreenManager     s;
   
   public GameFrame()

@@ -26,9 +26,9 @@ public class HelpOverlayContainer extends Component
     this.t = t;
   }
   
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
-    Assistant.stretchTileset(Viewport.loadImage("tileset/HelpOverlay.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/HelpOverlay.png"), getX(), getY(), getWidth(), getHeight(), g);
     String[] lines = Assistant.wrap(this.t, (getWidth() - this.tx) / g.getFontMetrics(g.getFont().deriveFont(22.0f)).stringWidth("S")).split("\n");
     if (this.tx == 0 && this.ty == 0)
     {

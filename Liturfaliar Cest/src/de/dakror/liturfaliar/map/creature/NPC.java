@@ -106,9 +106,9 @@ public class NPC extends Creature
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v, Map m)
+  public void draw(Graphics2D g, Map m)
   {
-    super.draw(g, v, m);
+    super.draw(g, m);
     
     boolean move = false;
     double angle = 0;
@@ -132,16 +132,16 @@ public class NPC extends Creature
     }
     
     for (SkillAnimation skill : skills)
-      skill.drawBelow(g, v, m);
+      skill.drawBelow(g, m);
     
-    if (character != null) Assistant.drawChar((int) getPos().x + m.getX(), (int) getPos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, "chars", character, g, v.w, true);
-    else Assistant.drawChar((int) getPos().x + m.getX(), (int) getPos().y + m.getY(), w, h, dir, (move) ? v.getFrame() % 4 : 0, equipment, g, v.w, true);
+    if (character != null) Assistant.drawChar((int) getPos().x + m.getX(), (int) getPos().y + m.getY(), w, h, dir, (move) ? Viewport.getFrame() % 4 : 0, "chars", character, g, Viewport.w, true);
+    else Assistant.drawChar((int) getPos().x + m.getX(), (int) getPos().y + m.getY(), w, h, dir, (move) ? Viewport.getFrame() % 4 : 0, equipment, g, Viewport.w, true);
     
     if (emoticon != null)
     {
       try
       {
-        emoticon.draw(g, m, v);
+        emoticon.draw(g, m);
         if (emoticon.done && emoticon.getType() != 50) emoticon = null;
       }
       catch (Exception e)
@@ -149,7 +149,7 @@ public class NPC extends Creature
     }
     
     for (SkillAnimation skill : skills)
-      skill.drawAbove(g, v, m);
+      skill.drawAbove(g, m);
   }
   
   @Override

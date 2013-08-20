@@ -27,19 +27,19 @@ public class PlayerHealth extends HUDComponent
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v, Map m)
+  public void draw(Graphics2D g, Map m)
   {
     if (!visible && bar == null)
     {
-      setX(v.w.getWidth() / 2 - ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);
+      setX(Viewport.w.getWidth() / 2 - ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);
       setHeight(32);
-      setY(v.w.getHeight() - height - ItemSlot.SIZE + 5 - 13);
+      setY(Viewport.w.getHeight() - height - ItemSlot.SIZE + 5 - 13);
       setWidth(ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 + 10);
       bar = new ProgressBar(x, y, width, 1, false, "ff3232", null, false);
       bar.setHeight(height);
       visible = true;
     }
     
-    if (visible) bar.draw(g, v);
+    if (visible) bar.draw(g);
   }
 }

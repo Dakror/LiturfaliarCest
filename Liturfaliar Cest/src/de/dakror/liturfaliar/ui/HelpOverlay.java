@@ -48,15 +48,15 @@ public class HelpOverlay
     HelpOverlay.hoc = null;
   }
   
-  public static void draw(Graphics2D g, Viewport v)
+  public static void draw(Graphics2D g)
   {
     if (!HelpOverlay.visible) return;
-    Area shadowed = new Area(v.w.getBounds());
+    Area shadowed = new Area(Viewport.w.getBounds());
     if (HelpOverlay.hoc == null || HelpOverlay.hoc.length == 0) return;
     for (HelpOverlayContainer h : HelpOverlay.hoc)
     {
       shadowed.subtract(h.getArea());
-      if (h != null) h.draw(g, v);
+      if (h != null) h.draw(g);
     }
     Assistant.Shadow(shadowed, Colors.DGRAY, 0.8f, g);
   }

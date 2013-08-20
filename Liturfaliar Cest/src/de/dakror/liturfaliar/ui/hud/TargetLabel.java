@@ -46,7 +46,7 @@ public class TargetLabel extends HUDComponent
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v, Map m)
+  public void draw(Graphics2D g, Map m)
   {
     if (this.target != null)
     {
@@ -62,19 +62,19 @@ public class TargetLabel extends HUDComponent
         
         if (getX() == 0)
         {
-          setX(v.w.getWidth() / 2 - getWidth() / 2);
+          setX(Viewport.w.getWidth() / 2 - getWidth() / 2);
           health = new ProgressBar(getX() + 10, getY() + 25, getWidth() - 20, 1, false, "ff3232", null, false);
         }
-        Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY() - 10, getWidth(), getHeight(), g, v.w);
+        Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY() - 10, getWidth(), getHeight(), g);
         health.value = (float) (target.getAttributes().getAttribute(Attr.health).getValue() / target.getAttributes().getAttribute(Attr.health).getMaximum());
         int ix = Assistant.drawHorizontallyCenteredString(name, getX(), getWidth(), getY() + getHeight() / 3, g, 22, Color.white);
         if (target instanceof NPC && ((NPC) target).isHostile())
         {
           if (hostile == null) hostile = new Icon(ix - 24, getY() + 5, 22, 22, 4, 238);
           
-          hostile.draw(g, v.w);
+          hostile.draw(g);
         }
-        health.draw(g, v);
+        health.draw(g);
       }
       catch (Exception e)
       {}

@@ -138,19 +138,19 @@ public class TextSelect extends Component
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g);
     g.setClip(new Area(new Rectangle2D.Double(getX() + 9, getY() + 8, getWidth() - 18, getHeight() - 16)));
     int sel = -1;
     for (int i = 0; i < this.elements.length; i++)
     {
-      this.elements[i].draw(g, v);
+      this.elements[i].draw(g);
       if (this.elements[i].getState() == 2) sel = i;
     }
     g.setClip(null);
-    if (sel != -1 && this.elements[sel].tooltip != null) this.elements[sel].tooltip.draw(g, v);
-    if (this.v != null) this.v.draw(g, v);
+    if (sel != -1 && this.elements[sel].tooltip != null) this.elements[sel].tooltip.draw(g);
+    if (this.v != null) this.v.draw(g);
   }
   
   @Override

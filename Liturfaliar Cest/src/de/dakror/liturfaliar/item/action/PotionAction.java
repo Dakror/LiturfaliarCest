@@ -39,7 +39,7 @@ public class PotionAction extends ItemAction
   }
   
   @Override
-  public void actionTriggered(Item item, Creature c, Map m, Viewport v)
+  public void actionTriggered(Item item, Creature c, Map m)
   {
     if (item.getItemSlot() == null) return;
     
@@ -73,7 +73,7 @@ public class PotionAction extends ItemAction
     
     if (!hasEffect)
     {
-      v.playSound("003-System03");
+      Viewport.playSound("003-System03");
       return;
     }
     
@@ -96,7 +96,7 @@ public class PotionAction extends ItemAction
       target.dealDamage(c, dmgType, (int) changes.getAttribute(Attr.health).getValue());
     }
     
-    v.playSound("184-DrinkPotion");
+    Viewport.playSound("184-DrinkPotion");
     item.getItemSlot().subItem();
     item.getItemSlot().startCooldown();
   }

@@ -37,8 +37,6 @@ import de.dakror.liturfaliar.util.Database;
 
 public class Scene_Game implements Scene, Listener
 {
-  Viewport              v;
-  
   private MapPack       mappack;
   private Player        player;
   
@@ -52,28 +50,27 @@ public class Scene_Game implements Scene, Listener
   public long           inventoryLastClosed;
   
   @Override
-  public void construct(Viewport v)
+  public void construct()
   {
-    this.v = v;
     Dispatcher.addListener(this);
-    v.setFramesFrozen(false);
-    CFG.MAPCENTER = new Point((v.w.getWidth() / 2 - CFG.FIELDSIZE / 2), (v.w.getHeight() / 2 - CFG.FIELDSIZE * 3 / 4));
+    Viewport.setFramesFrozen(false);
+    CFG.MAPCENTER = new Point((Viewport.w.getWidth() / 2 - CFG.FIELDSIZE / 2), (Viewport.w.getHeight() / 2 - CFG.FIELDSIZE * 3 / 4));
     
-    player = new Player(v.savegame, v.w);
+    player = new Player(Viewport.savegame);
     
     Database.setStringVar("playername", player.getName());
-    setMapPack(new MapPack(CFG.MAPPACK, v.w));
+    setMapPack(new MapPack(CFG.MAPPACK));
     try
     {
-      JSONArray flags = v.savegame.getJSONArray("flags");
+      JSONArray flags = Viewport.savegame.getJSONArray("flags");
       for (int i = 0; i < flags.length(); i++)
       {
         Database.setBooleanVar(flags.getString(i), true);
       }
       
-      mappack.setChangedMaps(v.savegame.getJSONObject("mappack").getJSONObject("cmaps"));
+      mappack.setChangedMaps(Viewport.savegame.getJSONObject("mappack").getJSONObject("cmaps"));
       
-      JSONArray itemDrops = v.savegame.getJSONObject("mappack").getJSONArray("drops");
+      JSONArray itemDrops = Viewport.savegame.getJSONObject("mappack").getJSONArray("drops");
       
       for (int i = 0; i < itemDrops.length(); i++)
       {
@@ -81,7 +78,7 @@ public class Scene_Game implements Scene, Listener
         mappack.addItemDrop(new ItemDrop(new Item(o.getJSONObject("item")), o.getInt("x"), o.getInt("y"), o.getInt("z"), o.getString("map")));
       }
       
-      mappack.setActiveMap(new Map(CFG.MAPPACK, v.savegame.getJSONObject("mappack").getJSONObject("pos").getString("map")));
+      mappack.setActiveMap(new Map(CFG.MAPPACK, Viewport.savegame.getJSONObject("mappack").getJSONObject("pos").getString("map")));
     }
     catch (JSONException e)
     {
@@ -107,14 +104,14 @@ public class Scene_Game implements Scene, Listener
   {
     if (!player.isAlive() && !isPaused())
     {
-      v.addOVScene(new OVScene_Death(this), "Death");
+      Viewport.addOVScene(new OVScene_Death(this), "Death");
       setPaused(true);
-      v.stopMusic();
-      v.playSound("186-Death");
+      Viewport.stopMusic();
+      Viewport.playSound("186-Death");
       Viewport.setSceneEnabled(false);
     }
     
-    if (!v.areFramesFrozen())
+    if (!Viewport.areFramesFrozen())
     {
       mappack.getActiveMap().update(timePassed, this);
       
@@ -127,11 +124,11 @@ public class Scene_Game implements Scene, Listener
   @Override
   public void draw(Graphics2D g)
   {
-    mappack.getActiveMap().draw(g, v);
+    mappack.getActiveMap().draw(g);
     // -- HUD -- //
-    targetLabel.draw(g, v, mappack.getActiveMap());
+    targetLabel.draw(g, mappack.getActiveMap());
     
-    bottomSegment.draw(g, v, mappack.getActiveMap());
+    bottomSegment.draw(g, mappack.getActiveMap());
   }
   
   @Override
@@ -145,9 +142,9 @@ public class Scene_Game implements Scene, Listener
   @Override
   public void keyReleased(KeyEvent e)
   {
-    if (e.equals(v.skipEvent))
+    if (e.equals(Viewport.skipEvent))
     {
-      v.skipEvent = null;
+      Viewport.skipEvent = null;
       return;
     }
     
@@ -157,14 +154,14 @@ public class Scene_Game implements Scene, Listener
     
     else if (e.getKeyCode() == Keys.INVENTORY)
     {
-      v.removeOVScene("Skills");
-      v.toggleOVScene(new OVScene_Inventory(this), "Inventory");
+      Viewport.removeOVScene("Skills");
+      Viewport.toggleOVScene(new OVScene_Inventory(this), "Inventory");
     }
     
     else if (e.getKeyCode() == Keys.SKILLS)
     {
-      v.removeOVScene("Inventory");
-      v.toggleOVScene(new OVScene_Skills(this), "Skills");
+      Viewport.removeOVScene("Inventory");
+      Viewport.toggleOVScene(new OVScene_Skills(this), "Skills");
     }
     
     if (bottomSegment != null) bottomSegment.keyReleased(e, mappack.getActiveMap());
@@ -179,12 +176,12 @@ public class Scene_Game implements Scene, Listener
   
   public void togglePaused()
   {
-    v.toggleOVScene(new OVScene_Pause(this), "Pause");
+    Viewport.toggleOVScene(new OVScene_Pause(this), "Pause");
     
     Viewport.setSceneEnabled(!pause);
     
-    v.setFramesFrozen(isPaused());
-    if (isPaused()) v.playSound("008-System08");
+    Viewport.setFramesFrozen(isPaused());
+    if (isPaused()) Viewport.playSound("008-System08");
   }
   
   public void setPaused(boolean pause)
@@ -195,7 +192,7 @@ public class Scene_Game implements Scene, Listener
     if (bottomSegment != null) bottomSegment.hotbar.frozen = pause;
     
     Viewport.setSceneEnabled(!pause);
-    v.setFramesFrozen(pause);
+    Viewport.setFramesFrozen(pause);
   }
   
   public MapPack getMapPack()
@@ -216,7 +213,7 @@ public class Scene_Game implements Scene, Listener
       Map newmap = (Map) e.getParam("new");
       Dispatcher.removeListener((Map) e.getParam("old"));
       newmap.setPlayer(player);
-      if (!(newmap.getMusic() + ".wav").equals(v.MusicID) && newmap.getMusic().length() > 0) v.playMusic(newmap.getMusic(), true);
+      if (!(newmap.getMusic() + ".wav").equals(Viewport.MusicID) && newmap.getMusic().length() > 0) Viewport.playMusic(newmap.getMusic(), true);
     }
     else if (e.equals(Events.slotTriggered))
     {
@@ -234,12 +231,12 @@ public class Scene_Game implements Scene, Listener
         }
       }
       
-      slot.triggerAction(mappack.getActiveMap(), player, v);
+      slot.triggerAction(mappack.getActiveMap(), player);
       player.getEquipment().setHotbarItem(index, slot.getItem());
     }
     else if (e.equals(Events.levelUp))
     {
-      v.playSound("105-Heal01");
+      Viewport.playSound("105-Heal01");
       mappack.getActiveMap().playAnimation(new Animation(-25, -30, 80, 0, 10, 0.35f, false, "Heal3.png", player));
       player.getAttributes().getAttribute(Attr.skillpoint).increase((int) Math.floor(player.getLevel() / 10.0) + 1);
       Database.setStringVar("player_sp", "" + (int) player.getAttributes().getAttribute(Attr.skillpoint).getValue());
@@ -250,7 +247,7 @@ public class Scene_Game implements Scene, Listener
   @Override
   public void mousePressed(MouseEvent e)
   {
-    if (mappack != null && mappack.getActiveMap() != null) mappack.getActiveMap().mousePressed(e, v);
+    if (mappack != null && mappack.getActiveMap() != null) mappack.getActiveMap().mousePressed(e);
     
     if (bottomSegment != null && mappack.getActiveMap().talk == null) bottomSegment.mousePressed(e, mappack.getActiveMap());
   }

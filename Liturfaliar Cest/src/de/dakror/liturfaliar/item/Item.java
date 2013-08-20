@@ -255,20 +255,20 @@ public class Item extends Component
     }
   }
   
-  public void draw(int x1, int y1, Graphics2D g, Viewport v)
+  public void draw(int x1, int y1, Graphics2D g)
   {
     setX(x1 + SPACING);
     setY(y1 + SPACING);
-    g.drawImage(icon, getX() + (getWidth() / 2 - icon.getWidth(null) / 2) + corrx, getY() + (getHeight() / 2 - icon.getHeight(null) / 2) + corry, icon.getWidth(null), icon.getHeight(null), v.w);
+    g.drawImage(icon, getX() + (getWidth() / 2 - icon.getWidth(null) / 2) + corrx, getY() + (getHeight() / 2 - icon.getHeight(null) / 2) + corry, icon.getWidth(null), icon.getHeight(null), Viewport.w);
     
-    if (tooltip != null) tooltip.draw(g, v);
+    if (tooltip != null) tooltip.draw(g);
   }
   
-  public void drawWithoutTooltip(int x1, int y1, Graphics2D g, Viewport v)
+  public void drawWithoutTooltip(int x1, int y1, Graphics2D g)
   {
     setX(x1 + SPACING);
     setY(y1 + SPACING);
-    g.drawImage(icon, getX() + (getWidth() / 2 - icon.getWidth(null) / 2) + corrx, getY() + (getHeight() / 2 - icon.getHeight(null) / 2) + corry, icon.getWidth(null), icon.getHeight(null), v.w);
+    g.drawImage(icon, getX() + (getWidth() / 2 - icon.getWidth(null) / 2) + corrx, getY() + (getHeight() / 2 - icon.getHeight(null) / 2) + corry, icon.getWidth(null), icon.getHeight(null), Viewport.w);
   }
   
   @Override
@@ -276,9 +276,9 @@ public class Item extends Component
   {}
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
-    g.drawImage(icon, mouse.x - width / 2 + corrx, mouse.y - height / 2 + corry, width, height, v.w);
+    g.drawImage(icon, mouse.x - width / 2 + corrx, mouse.y - height / 2 + corry, width, height, Viewport.w);
   }
   
   @Override
@@ -403,9 +403,9 @@ public class Item extends Component
     return serializeItem().toString();
   }
   
-  public void triggerAction(Map m, Creature c, Viewport v)
+  public void triggerAction(Map m, Creature c)
   {
-    action.actionTriggered(this, c, m, v);
+    action.actionTriggered(this, c, m);
   }
   
   public boolean equals(Item o)

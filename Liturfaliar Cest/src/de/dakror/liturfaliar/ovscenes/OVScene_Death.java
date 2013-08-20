@@ -25,13 +25,12 @@ public class OVScene_Death extends OVScene
   }
   
   @Override
-  public void construct(Viewport v)
+  public void construct()
   {
-    this.v = v;
-    c1 = new Container(0, 0, v.w.getWidth(), 55);
+    c1 = new Container(0, 0, Viewport.w.getWidth(), 55);
     c1.tileset = null;
-    load = new Button(v.w.getWidth() / 4 - 40, v.w.getHeight() / 2 - 60, v.w.getWidth() / 4, "Spiel laden", Color.white, 60f);
-    quit = new Button(v.w.getWidth() / 2 + 40, v.w.getHeight() / 2 - 60, v.w.getWidth() / 4, "zum Hauptmenü", Color.white, 60f);
+    load = new Button(Viewport.w.getWidth() / 4 - 40, Viewport.w.getHeight() / 2 - 60, Viewport.w.getWidth() / 4, "Spiel laden", Color.white, 60f);
+    quit = new Button(Viewport.w.getWidth() / 2 + 40, Viewport.w.getHeight() / 2 - 60, Viewport.w.getWidth() / 4, "zum Hauptmenü", Color.white, 60f);
   }
   
   @Override
@@ -46,23 +45,23 @@ public class OVScene_Death extends OVScene
     
     if (load.getState() == 1)
     {
-      v.setScene(new Scene_LoadGame());
+      Viewport.setScene(new Scene_LoadGame());
     }
     if (quit.getState() == 1)
     {
-      v.setScene(new Scene_MainMenu());
+      Viewport.setScene(new Scene_MainMenu());
     }
   }
   
   @Override
   public void draw(Graphics2D g)
   {
-    Assistant.Shadow(v.w.getBounds(), Color.black, 0.6f, g);
-    c1.draw(g, v);
-    Assistant.drawHorizontallyCenteredString("Du bist tot!", v.w.getWidth(), 43, g, 45, Color.white);
-    g.drawImage(Viewport.loadImage("system/tombstone.png"), v.w.getWidth() / 2 - 16, v.w.getHeight() / 2 - 32, v.w);
-    load.draw(g, v);
-    quit.draw(g, v);
+    Assistant.Shadow(Viewport.w.getBounds(), Color.black, 0.6f, g);
+    c1.draw(g);
+    Assistant.drawHorizontallyCenteredString("Du bist tot!", Viewport.w.getWidth(), 43, g, 45, Color.white);
+    g.drawImage(Viewport.loadImage("system/tombstone.png"), Viewport.w.getWidth() / 2 - 16, Viewport.w.getHeight() / 2 - 32, Viewport.w);
+    load.draw(g);
+    quit.draw(g);
   }
   
   @Override
@@ -78,7 +77,7 @@ public class OVScene_Death extends OVScene
     load.mousePressed(e);
     quit.mousePressed(e);
     
-    construct(v);
+    construct();
   }
   
   @Override

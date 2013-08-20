@@ -278,29 +278,29 @@ public class Map implements Listener
     {}
   }
   
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
-    g.drawImage(lrender, getX(), getY(), v.w);
+    g.drawImage(lrender, getX(), getY(), Viewport.w);
     
     // -- animations -- //
     for (Animation a : animations)
     {
-      if (a.isBelow()) a.draw(this, g, v);
+      if (a.isBelow()) a.draw(this, g);
     }
     
     // -- field data -- //
     for (Field f : this.fields)
     {
-      f.drawData(this, g, v);
+      f.drawData(this, g);
     }
     try
     {
       Collections.sort(itemDrops, ItemDrop.COMPARATOR);
       for (ItemDrop id : itemDrops)
       {
-        if ((hoveredItemDrop != null && id.equals(hoveredItemDrop)) || hoveredItemDrop == null) id.draw(this, g, v);
+        if ((hoveredItemDrop != null && id.equals(hoveredItemDrop)) || hoveredItemDrop == null) id.draw(this, g);
         
-        else id.drawWithoutTooltip(this, g, v);
+        else id.drawWithoutTooltip(this, g);
       }
     }
     catch (Exception e)
@@ -315,16 +315,16 @@ public class Map implements Listener
     Collections.sort(creatures, comp);
     for (Creature c : creatures)
     {
-      if (c.isAlive()) c.draw(g, v, this);
+      if (c.isAlive()) c.draw(g, this);
     }
     
     // -- animations -- //
     for (Animation a : animations)
     {
-      if (!a.isBelow()) a.draw(this, g, v);
+      if (!a.isBelow()) a.draw(this, g);
     }
     
-    g.drawImage(hrender, getX(), getY(), v.w);
+    g.drawImage(hrender, getX(), getY(), Viewport.w);
     
     Area wireFrame = new Area();
     
@@ -346,7 +346,7 @@ public class Map implements Listener
     {
       for (ItemDrop id : itemDrops)
       {
-        if ((hoveredItemDrop != null && id.equals(hoveredItemDrop)) || hoveredItemDrop == null) id.getItem().tooltip.draw(g, v);
+        if ((hoveredItemDrop != null && id.equals(hoveredItemDrop)) || hoveredItemDrop == null) id.getItem().tooltip.draw(g);
       }
     }
     catch (Exception e)
@@ -354,17 +354,17 @@ public class Map implements Listener
     
     if (CFG.UIDEBUG)
     {
-      Assistant.Shadow(v.w.getBounds(), Color.black, 0.4f, g);
+      Assistant.Shadow(Viewport.w.getBounds(), Color.black, 0.4f, g);
       Assistant.Shadow(getBumpMap(), Color.white, 0.4f, g);
       for (Creature c : creatures)
       {
-        c.draw(g, v, this);
+        c.draw(g, this);
       }
     }
     
-    Assistant.Shadow(v.w.getBounds(), Color.black, 1 - alpha, g);
+    Assistant.Shadow(Viewport.w.getBounds(), Color.black, 1 - alpha, g);
     
-    if (talk != null) talk.draw(g, v);
+    if (talk != null) talk.draw(g);
   }
   
   public void setPos(int x, int y)
@@ -393,11 +393,11 @@ public class Map implements Listener
     return (Area) this.bump.clone();
   }
   
-  public BufferedImage getRendered(int size, Viewport v)
+  public BufferedImage getRendered(int size)
   {
     BufferedImage bi = new BufferedImage(size * width, size * height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = (Graphics2D) bi.getGraphics();
-    draw(g, v);
+    draw(g);
     return bi;
   }
   
@@ -547,7 +547,7 @@ public class Map implements Listener
     }
   }
   
-  public void mousePressed(MouseEvent e, Viewport v)
+  public void mousePressed(MouseEvent e)
   {
     for (Creature c : creatures)
     {
@@ -558,7 +558,7 @@ public class Map implements Listener
     {
       for (ItemDrop id : itemDrops)
       {
-        id.mousePressed(e, this, v);
+        id.mousePressed(e, this);
       }
     }
     catch (Exception e1)
@@ -794,5 +794,18 @@ public class Map implements Listener
   public ArrayList<ItemDrop> getItemDrops()
   {
     return itemDrops;
+  }
+  
+  //TODO not fully functional yet - implement handling on huge maps
+  public void centerOnPlayer(Player p)
+  {
+    if (getWidth() > Viewport.w.getWidth())
+    {
+      if (p.getPos().x + x < Viewport.w.getWidth()) x = 0;
+    }
+    if (getHeight() > Viewport.w.getHeight())
+    {
+      if (p.getPos().y + y < Viewport.w.getHeight()) y = 0;
+    }
   }
 }

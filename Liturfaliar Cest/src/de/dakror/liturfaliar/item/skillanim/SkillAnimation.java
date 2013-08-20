@@ -53,34 +53,34 @@ public abstract class SkillAnimation
     }
   }
   
-  protected abstract void draw(Graphics2D g, Viewport v, Map m);
+  protected abstract void draw(Graphics2D g, Map m);
   
   public abstract void dealEffect(Creature c);
   
-  public void drawBelow(Graphics2D g, Viewport v, Map m)
+  public void drawBelow(Graphics2D g, Map m)
   {
     if (!played)
     {
-      v.playSound("064-Swing03");
+      Viewport.playSound("064-Swing03");
       played = true;
     }
     
     if (hit)
     {
-      v.playSound("185-Hit01");
+      Viewport.playSound("185-Hit01");
       hit = false;
     }
     
     if (!below) return;
     
-    draw(g, v, m);
+    draw(g, m);
   }
   
-  public void drawAbove(Graphics2D g, Viewport v, Map m)
+  public void drawAbove(Graphics2D g, Map m)
   {
     if (below) return;
     
-    draw(g, v, m);
+    draw(g, m);
   }
   
   public boolean isDone()

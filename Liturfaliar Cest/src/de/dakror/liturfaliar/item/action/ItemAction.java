@@ -2,14 +2,13 @@ package de.dakror.liturfaliar.item.action;
 
 import org.json.JSONObject;
 
-import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Item;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Creature;
 
 public abstract class ItemAction
 {
-  public abstract void actionTriggered(Item item, Creature c, Map m, Viewport v);
+  public abstract void actionTriggered(Item item, Creature c, Map m);
   
   public abstract JSONObject serializeItemAction();
   

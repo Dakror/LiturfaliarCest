@@ -22,12 +22,12 @@ public class VirtualMouse extends Component
   {}
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
-    g.drawImage(Viewport.loadImage("system/mouse.png"), getX(), getY(), getWidth(), getHeight(), v.w);
-    if (this.mouse1) g.drawImage(Viewport.loadImage("system/mouse1.png"), getX(), getY(), getWidth(), getHeight(), v.w);
-    if (this.mouse2) g.drawImage(Viewport.loadImage("system/mouse2.png"), getX(), getY(), getWidth(), getHeight(), v.w);
-    if (this.mouse3) g.drawImage(Viewport.loadImage("system/mouse3.png"), getX(), getY(), getWidth(), getHeight(), v.w);
+    g.drawImage(Viewport.loadImage("system/mouse.png"), getX(), getY(), getWidth(), getHeight(), Viewport.w);
+    if (this.mouse1) g.drawImage(Viewport.loadImage("system/mouse1.png"), getX(), getY(), getWidth(), getHeight(), Viewport.w);
+    if (this.mouse2) g.drawImage(Viewport.loadImage("system/mouse2.png"), getX(), getY(), getWidth(), getHeight(), Viewport.w);
+    if (this.mouse3) g.drawImage(Viewport.loadImage("system/mouse3.png"), getX(), getY(), getWidth(), getHeight(), Viewport.w);
   }
   
   @Override

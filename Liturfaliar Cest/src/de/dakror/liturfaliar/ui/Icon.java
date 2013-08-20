@@ -1,7 +1,6 @@
 package de.dakror.liturfaliar.ui;
 
 import java.awt.Graphics2D;
-import java.awt.Window;
 import java.awt.image.BufferedImage;
 
 import de.dakror.liturfaliar.Viewport;
@@ -20,8 +19,8 @@ public class Icon
     image = ((BufferedImage) Viewport.loadImage("system/icons.png")).getSubimage(dx * 24, dy * 24, 24, 24);
   }
   
-  public void draw(Graphics2D g, Window w)
+  public void draw(Graphics2D g)
   {
-    g.drawImage(image, x, y, width, height, w);
+    g.drawImage(image, x, y, width, height, Viewport.w);
   }
 }

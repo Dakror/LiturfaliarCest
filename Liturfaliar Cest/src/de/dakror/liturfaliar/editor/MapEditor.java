@@ -229,7 +229,6 @@ public class MapEditor
   JMenu                 mpmenu, mmenu, fmenu, omenu;
   JMenuItem             mUndo;
   JCheckBoxMenuItem     mDrag;
-  Viewport              v;
   JSONObject            mappackdata, mapdata;
   JPanel                tiles;
   MapPanel              map;
@@ -267,7 +266,6 @@ public class MapEditor
     this.deletemode = false;
     this.rasterview = false;
     this.importmode = false;
-    this.v = viewport;
     new File(FileManager.dir, CFG.MAPEDITORDIR).mkdir();
     new File(FileManager.dir, CFG.MAPEDITOROBJECTSDIR).mkdir();
     w = new JFrame("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ")");
@@ -281,11 +279,11 @@ public class MapEditor
       @Override
       public void windowClosing(WindowEvent e)
       {
-        v.w.setVisible(true);
+        Viewport.w.setVisible(true);
       }
     });
     init();
-    viewport.w.setVisible(false);
+    Viewport.w.setVisible(false);
     
     w.setVisible(true);
     
@@ -448,7 +446,7 @@ public class MapEditor
         dialog.setTitle("Kartengröße ändern");
         dialog.setSize(200, 100);
         dialog.setResizable(false);
-        dialog.setLocationRelativeTo(null);
+        dialog.setLocationRelativeTo(w);
         dialog.setLayout(new BorderLayout());
         dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         JPanel inputs = new JPanel();
@@ -744,13 +742,15 @@ public class MapEditor
     tiles.setBounds(0, w.getHeight() / 5, 0, 0);
     JScrollPane tilesScrollPane = new JScrollPane(tiles, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
     tilesScrollPane.setBounds(0, w.getHeight() / 5, w.getWidth() / 8, w.getHeight() / 5 * 3 + 132);
+    tilesScrollPane.getHorizontalScrollBar().setUnitIncrement(CFG.FIELDSIZE / 2);
+    tilesScrollPane.getVerticalScrollBar().setUnitIncrement(CFG.FIELDSIZE / 2);
     tilepanel.add(tilesScrollPane);
     
     map = new MapPanel(this);
     map.setLayout(null);
     map.setOpaque(true);
     map.setBackground(Color.black);
-    map.setPreferredSize(new Dimension(w.getWidth() / 8 * 7, w.getHeight() / 5 * 4 + 132));
+    // map.setPreferredSize(new Dimension(w.getWidth() / 8 * 7, w.getHeight() / 5 * 4 + 132));
     map.addMouseListener(new MouseAdapter()
     {
       @Override
@@ -788,6 +788,8 @@ public class MapEditor
     });
     msp = new JScrollPane(map, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
     msp.setBounds(w.getWidth() / 8, 0, w.getWidth() / 8 * 7, w.getHeight() / 5 * 4 + 132);
+    msp.getHorizontalScrollBar().setUnitIncrement(CFG.FIELDSIZE / 2);
+    msp.getVerticalScrollBar().setUnitIncrement(CFG.FIELDSIZE / 2);
     w.add(msp);
     
     w.add(tilepanel);
@@ -1030,11 +1032,11 @@ public class MapEditor
           }
         }
       });
+      
       if (mapdata == null) return null;
+      
       map.add(tile, JLayeredPane.DEFAULT_LAYER);
-      
       map.setComponentZOrder(tile, 0);
-      
       if (undo)
       {
         lastChangedTiles = new TileButton[] { tile };
@@ -1062,7 +1064,7 @@ public class MapEditor
       dialog.setIconImage(w.getIconImage());
       dialog.setSize(400, 300);
       dialog.setResizable(false);
-      dialog.setLocationRelativeTo(null);
+      dialog.setLocationRelativeTo(this.w);
       dialog.setLayout(new FlowLayout());
       dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
       JPanel inputs = new JPanel();
@@ -1145,7 +1147,7 @@ public class MapEditor
               {
                 final String s = (String) map.getSelectedItem();
                 mapCoordSelect.setTitle(s);
-                BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1, v);
+                BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1);
                 final JLabel l = new JLabel();
                 l.addMouseListener(new MouseAdapter()
                 {
@@ -1156,7 +1158,7 @@ public class MapEditor
                     dy.setText("" + (e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3));
                     try
                     {
-                      BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1, v);
+                      BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1);
                       int d = Arrays.asList(dirs).indexOf(((String) dir.getSelectedItem())) - 1;
                       d = (d < 0) ? 0 : d;
                       Assistant.drawChar(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], d, 0, Equipment.getDefault(true), (Graphics2D) bi.getGraphics(), null, true);// Assistant.Rect(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], Color.cyan, null, (Graphics2D) bi.getGraphics());
@@ -1200,7 +1202,7 @@ public class MapEditor
             public void actionPerformed(ActionEvent e)
             {
               if (((String) sound.getSelectedItem()).equals("< Leer >")) return;
-              v.playSound((String) sound.getSelectedItem());
+              Viewport.playSound((String) sound.getSelectedItem());
             }
           });
           inputs.add(name);
@@ -1508,7 +1510,6 @@ public class MapEditor
       map.repaint();
       
       NPClastID = 0;
-      
       w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + mappackdata.getString("name") + "/" + m);
       map.removeAll();
       msp.setViewportView(map);
@@ -1551,12 +1552,17 @@ public class MapEditor
           }
         }
       });
+      int h = 0, w = 0;
       for (int i = 0; i < tiles.size(); i++)
       {
         progress.setValue((int) ((i + 1) / (double) tiles.size() * 100));
         JSONObject o = tiles.get(i);
         BufferedImage bi = new BufferedImage(CFG.FIELDSIZE, CFG.FIELDSIZE, BufferedImage.TYPE_INT_ARGB);
         bi.getGraphics().drawImage(Viewport.loadImage("Tiles/" + o.getString("tileset") + ".png"), 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, o.getInt("tx") * CFG.FIELDSIZE, o.getInt("ty") * CFG.FIELDSIZE, o.getInt("tx") * CFG.FIELDSIZE + CFG.FIELDSIZE, o.getInt("ty") * CFG.FIELDSIZE + CFG.FIELDSIZE, null);
+        
+        if (o.getInt("x") > w) w = o.getInt("x");
+        if (o.getInt("y") > h) h = o.getInt("y");
+        
         addTile(bi, o.getInt("x"), o.getInt("y"), o.getString("tileset"), o.getInt("tx"), o.getInt("ty"), o.getDouble("l"), o.getJSONObject("data"), false);
       }
       
@@ -1565,10 +1571,11 @@ public class MapEditor
       {
         addNPC(npcs.getJSONObject(i));
       }
+      map.setPreferredSize(new Dimension(w + CFG.FIELDSIZE, h + CFG.FIELDSIZE));
+      
       msp.setViewportView(map);
       fmenu.setEnabled(true);
       omenu.setEnabled(true);
-      
       return true;
     }
     catch (Exception e1)
@@ -1697,7 +1704,7 @@ public class MapEditor
     attrFrame.setContentPane(panel);
     
     attrFrame.pack();
-    attrFrame.setLocationRelativeTo(null);
+    attrFrame.setLocationRelativeTo(this.w);
     attrFrame.setVisible(true);
   }
   
@@ -1796,7 +1803,7 @@ public class MapEditor
     
     viewFrame.setContentPane(p);
     viewFrame.pack();
-    viewFrame.setLocationRelativeTo(null);
+    viewFrame.setLocationRelativeTo(this.w);
     viewFrame.setVisible(true);
     
     JPanel panel = new JPanel(new SpringLayout());
@@ -2227,7 +2234,7 @@ public class MapEditor
     
     FRframe.setContentPane(p);
     FRframe.pack();
-    FRframe.setLocationRelativeTo(null);
+    FRframe.setLocationRelativeTo(this.w);
     FRframe.setVisible(true);
   }
   
@@ -2237,7 +2244,7 @@ public class MapEditor
     dialog.setTitle("Objekt importieren");
     dialog.setSize(400, 170);
     dialog.setResizable(false);
-    dialog.setLocationRelativeTo(null);
+    dialog.setLocationRelativeTo(this.w);
     dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     final DefaultListModel<String> maps = new DefaultListModel<String>();
     for (String s : new File(FileManager.dir, CFG.MAPEDITOROBJECTSDIR).list())
@@ -2519,7 +2526,7 @@ public class MapEditor
     itemFrame.setContentPane(p);
     
     itemFrame.pack();
-    itemFrame.setLocationRelativeTo(null);
+    itemFrame.setLocationRelativeTo(this.w);
     itemFrame.setVisible(true);
   }
   
@@ -2532,13 +2539,13 @@ public class MapEditor
       @Override
       public void windowClosed(WindowEvent e)
       {
-        v.stopMusic();
+        Viewport.stopMusic();
       }
     });
     dialog.setTitle("Karte erstellen");
     dialog.setSize(400, 170);
     dialog.setResizable(false);
-    dialog.setLocationRelativeTo(null);
+    dialog.setLocationRelativeTo(this.w);
     dialog.setLayout(new BorderLayout());
     dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     JPanel inputs = new JPanel();
@@ -2563,12 +2570,12 @@ public class MapEditor
         {
           case ItemEvent.DESELECTED:
           {
-            v.stopMusic();
+            Viewport.stopMusic();
             break;
           }
           case ItemEvent.SELECTED:
           {
-            if (!item.equals("Keine Musik")) v.playMusic(item, true, 0.2f);
+            if (!item.equals("Keine Musik")) Viewport.playMusic(item, true, 0.2f);
             break;
           }
         }
@@ -2587,7 +2594,7 @@ public class MapEditor
       public void actionPerformed(ActionEvent e)
       {
         if (name.getText().length() == 0) return;
-        v.stopMusic();
+        Viewport.stopMusic();
         try
         {
           w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + mappackdata.getString("name") + "/" + name.getText());
@@ -2622,7 +2629,7 @@ public class MapEditor
     dialog.setTitle("Kartenpaket erstellen");
     dialog.setSize(400, 170);
     dialog.setResizable(false);
-    dialog.setLocationRelativeTo(null);
+    dialog.setLocationRelativeTo(this.w);
     dialog.setLayout(new BorderLayout());
     dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     JPanel inputs = new JPanel();
@@ -2860,7 +2867,7 @@ public class MapEditor
     NPCframe.setContentPane(p);
     NPCframe.pack();
     NPCframe.setVisible(true);
-    NPCframe.setLocationRelativeTo(null);
+    NPCframe.setLocationRelativeTo(this.w);
   }
   
   public void showOpenMapDialog()
@@ -2870,7 +2877,7 @@ public class MapEditor
     dialog.setTitle("Karte öffnen");
     dialog.setSize(400, 170);
     dialog.setResizable(false);
-    dialog.setLocationRelativeTo(null);
+    dialog.setLocationRelativeTo(this.w);
     dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     final DefaultListModel<String> maps = new DefaultListModel<String>();
     try
@@ -2922,7 +2929,7 @@ public class MapEditor
     dialog.setTitle("Kartenpaket öffnen");
     dialog.setSize(400, 170);
     dialog.setResizable(false);
-    dialog.setLocationRelativeTo(null);
+    dialog.setLocationRelativeTo(this.w);
     dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     final DefaultListModel<String> mappacks = new DefaultListModel<String>();
     for (File f : new File(FileManager.dir, CFG.MAPEDITORDIR).listFiles())
@@ -3030,7 +3037,7 @@ public class MapEditor
     
     talkFrame.setContentPane(p);
     talkFrame.pack();
-    talkFrame.setLocationRelativeTo(null);
+    talkFrame.setLocationRelativeTo(this.w);
     
     if (npc != null)
     {

@@ -49,43 +49,40 @@ public class Scene_NewGame implements Scene
   Container                    c1;
   Equipment                    equip;
   
-  Viewport                     v;
-  
   @Override
-  public void construct(Viewport v)
+  public void construct()
   {
-    this.v = v;
-    v.playMusic("013-Theme02", false);
+    Viewport.playMusic("013-Theme02", false);
     
-    c1 = new Container(0, 0, v.w.getWidth(), 55);
+    c1 = new Container(0, 0, Viewport.w.getWidth(), 55);
     c1.tileset = null;
     
     equip = Equipment.getDefault(true);
     
-    gender = new Chooser(v.w.getWidth() / 2 + 20, v.w.getHeight() / 2 - 220, 280, 28, "", "Junge", "Mädchen");
+    gender = new Chooser(Viewport.w.getWidth() / 2 + 20, Viewport.w.getHeight() / 2 - 220, 280, 28, "", "Junge", "Mädchen");
     gender.alternate = true;
     gender.showIndex = true;
     
-    name = new InputBar(v.w.getWidth() / 2 + 16, v.w.getHeight() / 2 + 192, 224, 25, "Name", Color.white);
+    name = new InputBar(Viewport.w.getWidth() / 2 + 16, Viewport.w.getHeight() / 2 + 192, 224, 25, "Name", Color.white);
     name.max = 15;
     name.allowed += "_1234567890";
     name.centered = true;
     
-    random = new Button(v.w.getWidth() / 2 + 256, v.w.getHeight() / 2 + 176, 64, 64, "refresh_icon");
+    random = new Button(Viewport.w.getWidth() / 2 + 256, Viewport.w.getHeight() / 2 + 176, 64, 64, "refresh_icon");
     random.soundMOVER = false;
     random.tileset = "Wood";
     random.clickmod = random.hovermod = 0;
     random.iw = random.ih = -44;
     random.tooltip = new Tooltip("<#999999;30;1>Zufall[br]<#ffffff;15;1>Generiere einen[br]zufälligen Namen.", random);
-    random.tooltip.setX(v.w.getWidth() / 2 + 320);
+    random.tooltip.setX(Viewport.w.getWidth() / 2 + 320);
     
-    start = new Button(v.w.getWidth() / 2 - 320, v.w.getHeight() / 2 + 260, 640, "Spiel starten", Color.white, 25.0f);
+    start = new Button(Viewport.w.getWidth() / 2 - 320, Viewport.w.getHeight() / 2 + 260, 640, "Spiel starten", Color.white, 25.0f);
     
     parts = new Chooser[partsDEU.length];
     
     for (int i = 0; i < parts.length; i++)
     {
-      parts[i] = new Chooser(v.w.getWidth() / 2 + 20, v.w.getHeight() / 2 - 220 + 40 * (i + 1), 280, 28, partsDEU[i], (partsENG[i].equals("hair")) ? hair : eyes);
+      parts[i] = new Chooser(Viewport.w.getWidth() / 2 + 20, Viewport.w.getHeight() / 2 - 220 + 40 * (i + 1), 280, 28, partsDEU[i], (partsENG[i].equals("hair")) ? hair : eyes);
       parts[i].alternate = true;
     }
   }
@@ -118,7 +115,7 @@ public class Scene_NewGame implements Scene
         }
         case 1:
         {
-          v.savegame = getSave();
+          Viewport.savegame = getSave();
           openDialog = true;
           break;
         }
@@ -148,12 +145,12 @@ public class Scene_NewGame implements Scene
       if (Viewport.dialog.buttons[0].getState() == 1)
       {
         Viewport.dialog = null;
-        v.setScene(new Scene_Tutorial());
+        Viewport.setScene(new Scene_Tutorial());
       }
       else if (Viewport.dialog.buttons[1].getState() == 1)
       {
         Viewport.dialog = null;
-        v.setScene(new Scene_Game());
+        Viewport.setScene(new Scene_Game());
       }
     }
   }
@@ -165,28 +162,28 @@ public class Scene_NewGame implements Scene
     {
       Viewport.dialog = new Dialog("Tutorial", "Möchtest du kurz in die Steuerung und[br]Benutzeroberfläche eingeführt werden?", Dialog.MESSAGE);
       Viewport.dialog.closeDisabled = true;
-      Viewport.dialog.draw(g, v);
+      Viewport.dialog.draw(g);
       Viewport.dialog.setButtons("Ja", "Nein");
       Viewport.dialog.update();
       openDialog = false;
     }
     
-    Assistant.drawMenuBackground(g, v.w);
-    c1.draw(g, v);
-    Assistant.drawHorizontallyCenteredString("Neues Spiel", v.w.getWidth(), 43, g, 45, Color.white);
+    Assistant.drawMenuBackground(g);
+    c1.draw(g);
+    Assistant.drawHorizontallyCenteredString("Neues Spiel", Viewport.w.getWidth(), 43, g, 45, Color.white);
     
-    if (equip != null) Assistant.drawChar(v.w.getWidth() / 2 - 320, v.w.getHeight() / 2 - 240, 320, 480, 0, v.getFrame(2.5f) % 4, equip, g, v.w, true);
+    if (equip != null) Assistant.drawChar(Viewport.w.getWidth() / 2 - 320, Viewport.w.getHeight() / 2 - 240, 320, 480, 0, Viewport.getFrame(2.5f) % 4, equip, g, Viewport.w, true);
     
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2, v.w.getHeight() / 2 - 240, 320, 416, g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), Viewport.w.getWidth() / 2, Viewport.w.getHeight() / 2 - 240, 320, 416, g);
     
-    gender.draw(g, v);
-    name.draw(g, v);
-    random.draw(g, v);
-    start.draw(g, v);
+    gender.draw(g);
+    name.draw(g);
+    random.draw(g);
+    start.draw(g);
     
     for (Chooser c : parts)
     {
-      c.draw(g, v);
+      c.draw(g);
     }
   }
   
@@ -256,7 +253,7 @@ public class Scene_NewGame implements Scene
       save.put("char", cfg);
       
       // -- map(-pack) -- //
-      MapPack mp = new MapPack(CFG.MAPPACK, v.w);
+      MapPack mp = new MapPack(CFG.MAPPACK);
       JSONObject mappack = new JSONObject();
       mappack.put("name", mp.getName());
       mappack.put("pos", mp.getData().getJSONObject("init"));
@@ -283,8 +280,8 @@ public class Scene_NewGame implements Scene
   {
     if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
     {
-      v.setScene(new Scene_MainMenu());
-      v.playSound("002-System02");
+      Viewport.setScene(new Scene_MainMenu());
+      Viewport.playSound("002-System02");
     }
     
     if (gender != null) gender.keyPressed(e);

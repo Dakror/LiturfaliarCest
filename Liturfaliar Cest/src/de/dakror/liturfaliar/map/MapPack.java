@@ -1,6 +1,5 @@
 package de.dakror.liturfaliar.map;
 
-import java.awt.Window;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public class MapPack
   private ArrayList<ItemDrop> itemDrops   = new ArrayList<ItemDrop>();
   private JSONObject          changedMaps = new JSONObject();
   
-  public MapPack(String name, Window w)
+  public MapPack(String name)
   {
     try
     {

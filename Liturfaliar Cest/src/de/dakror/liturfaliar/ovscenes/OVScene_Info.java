@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.util.Assistant;
 
 public class OVScene_Info extends OVScene
@@ -20,9 +19,8 @@ public class OVScene_Info extends OVScene
   Point mouse;
   
   @Override
-  public void construct(Viewport v)
+  public void construct()
   {
-    this.v = v;
     time = System.currentTimeMillis();
     frames = 0;
     updates = 0;

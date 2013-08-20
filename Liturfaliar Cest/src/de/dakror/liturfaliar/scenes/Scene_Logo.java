@@ -26,23 +26,21 @@ public class Scene_Logo implements Scene
   boolean                 update;
   float                   size;
   int                     fullsize;
-  Viewport                v;
   ProgressBar             progress;
   ArrayList<ZipAssistant> downloader;
   
   @Override
-  public void construct(Viewport v)
+  public void construct()
   {
-    this.v = v;
     time = 0;
     alphas = new float[2];
-    homepageButton = new HandleArea(0, v.w.getHeight() / 2 + 160 - (int) (26 * 1.4f), v.w.getWidth() - 1, (int) (26 * 1.4f));
-    update = CFG.INTERNET && (FileManager.checkMapPackUpdate(v.w) || FileManager.checkMediaUpdate("Sound") || FileManager.checkMediaUpdate("Music") || FileManager.checkMediaUpdate("Animations") || FileManager.checkMediaUpdate("Tiles"));
+    homepageButton = new HandleArea(0, Viewport.w.getHeight() / 2 + 160 - (int) (26 * 1.4f), Viewport.w.getWidth() - 1, (int) (26 * 1.4f));
+    update = CFG.INTERNET && (FileManager.checkMapPackUpdate() || FileManager.checkMediaUpdate("Sound") || FileManager.checkMediaUpdate("Music") || FileManager.checkMediaUpdate("Animations") || FileManager.checkMediaUpdate("Tiles"));
     downloader = new ArrayList<ZipAssistant>();
     if (update)
     {
-      progress = new ProgressBar(9, v.w.getHeight() - 40, v.w.getWidth() - 20, 0, false, "ffc744", null, false);
-      downloader.add(FileManager.onMapPackUpdate(v.w));
+      progress = new ProgressBar(9, Viewport.w.getHeight() - 40, Viewport.w.getWidth() - 20, 0, false, "ffc744", null, false);
+      downloader.add(FileManager.onMapPackUpdate());
       downloader.add(FileManager.onMediaUpdate("Sound"));
       downloader.add(FileManager.onMediaUpdate("Music"));
       downloader.add(FileManager.onMediaUpdate("Animations"));
@@ -97,11 +95,11 @@ public class Scene_Logo implements Scene
       progress.value = prog / (float) fullsize;
       progress.title = Assistant.formatBinarySize(prog, 2) + " / " + Assistant.formatBinarySize(fullsize, 2) + " @ " + Assistant.formatBinarySize((long) ((prog / (float) ((System.currentTimeMillis() - time) / 1000))), 1) + "/s";
       
-      if (progress.value == 1 && (System.currentTimeMillis() - time) > 5000) v.setScene(new Scene_MainMenu());
+      if (progress.value == 1 && (System.currentTimeMillis() - time) > 5000) Viewport.setScene(new Scene_MainMenu());
     }
     else
     {
-      if ((System.currentTimeMillis() - time) > 5000) v.setScene(new Scene_MainMenu());
+      if ((System.currentTimeMillis() - time) > 5000) Viewport.setScene(new Scene_MainMenu());
     }
   }
   
@@ -109,16 +107,16 @@ public class Scene_Logo implements Scene
   public void draw(Graphics2D g)
   {
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphas[0]));
-    g.drawImage(Viewport.loadImage("system/dakror.png"), (v.w.getWidth() - 1000) / 2, (v.w.getHeight() - 305) / 2, 1000, 305, v.w);
+    g.drawImage(Viewport.loadImage("system/dakror.png"), (Viewport.w.getWidth() - 1000) / 2, (Viewport.w.getHeight() - 305) / 2, 1000, 305, Viewport.w);
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphas[1]));
-    Assistant.drawHorizontallyCenteredString("Homepage: www.dakror.de", v.w.getWidth(), v.w.getHeight() / 2 + 155, g, 26);
-    homepageButton.draw(g, v);
+    Assistant.drawHorizontallyCenteredString("Homepage: www.dakror.de", Viewport.w.getWidth(), Viewport.w.getHeight() / 2 + 155, g, 26);
+    homepageButton.draw(g);
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     if (update)
     {
-      new Container(0, v.w.getHeight() - 90, v.w.getWidth(), 90).draw(g, v);
-      if (progress != null) progress.draw(g, v);
-      Assistant.drawHorizontallyCenteredString("Aktualisierung", v.w.getWidth(), v.w.getHeight() - 50, g, 30, Color.white);
+      new Container(0, Viewport.w.getHeight() - 90, Viewport.w.getWidth(), 90).draw(g);
+      if (progress != null) progress.draw(g);
+      Assistant.drawHorizontallyCenteredString("Aktualisierung", Viewport.w.getWidth(), Viewport.w.getHeight() - 50, g, 30, Color.white);
     }
   }
   
@@ -137,9 +135,9 @@ public class Scene_Logo implements Scene
             finished = downloader.get(i).state.equals("Fertig");
           }
         }
-        if (finished) v.setScene(new Scene_MainMenu());
+        if (finished) Viewport.setScene(new Scene_MainMenu());
       }
-      else v.setScene(new Scene_MainMenu());
+      else Viewport.setScene(new Scene_MainMenu());
     }
   }
   

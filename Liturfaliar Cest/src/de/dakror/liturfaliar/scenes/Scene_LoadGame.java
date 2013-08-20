@@ -38,22 +38,19 @@ public class Scene_LoadGame implements Scene
   int          active;
   Area         chars;
   Point        mouse;
-  Viewport     v;
   
   @Override
-  public void construct(Viewport v)
+  public void construct()
   {
-    this.v = v;
-    
-    v.playMusic("013-Theme02", false);
-    c1 = new Container(0, 0, v.w.getWidth(), 55);
+    Viewport.playMusic("013-Theme02", false);
+    c1 = new Container(0, 0, Viewport.w.getWidth(), 55);
     c1.tileset = null;
     datas = FileManager.getSaves();
-    if (datas.length == 0) v.setScene(new Scene_MainMenu());
+    if (datas.length == 0) Viewport.setScene(new Scene_MainMenu());
     
     saves = new Button[datas.length];
     int charsperpage = 5;
-    int fullwidth = v.w.getWidth() / 2;
+    int fullwidth = Viewport.w.getWidth() / 2;
     int space = 25;
     int width = fullwidth / 5 - 27;
     
@@ -65,7 +62,7 @@ public class Scene_LoadGame implements Scene
       {
         BufferedImage bi = new BufferedImage(width, width / 3 * 4, BufferedImage.TYPE_INT_ARGB);
         Assistant.drawChar(0, 0, width, width / 3 * 4, 0, 0, new Equipment(datas[i].getJSONObject("char").getJSONObject("equip")), (Graphics2D) bi.getGraphics(), null, true);
-        saves[i] = new Button(v.w.getWidth() / 4 + (i % charsperpage) * (width + space), v.w.getHeight() / 2 - (width / 3 * 2), width, width / 3 * 4, 0, 0, width, width / 3 * 4, bi);
+        saves[i] = new Button(Viewport.w.getWidth() / 4 + (i % charsperpage) * (width + space), Viewport.w.getHeight() / 2 - (width / 3 * 2), width, width / 3 * 4, 0, 0, width, width / 3 * 4, bi);
         saves[i].tileset = null;
         saves[i].hovermod = 4;
         saves[i].clickmod = 16;
@@ -80,18 +77,18 @@ public class Scene_LoadGame implements Scene
     }
     if (saves.length > 5)
     {
-      chooser = new Chooser(v.w.getWidth() / 2 - 200, v.w.getHeight() / 2 + (width / 3 * 2), 400, 35, "Seite: ", Assistant.getArrayFromLimits(1, Math.round(saves.length / 5.0f + 0.5f) + 1));
+      chooser = new Chooser(Viewport.w.getWidth() / 2 - 200, Viewport.w.getHeight() / 2 + (width / 3 * 2), 400, 35, "Seite: ", Assistant.getArrayFromLimits(1, Math.round(saves.length / 5.0f + 0.5f) + 1));
       chooser.alternate = true;
       chooser.showIndex = true;
     }
-    chars = new Area(new Rectangle2D.Double(v.w.getWidth() / 4, v.w.getHeight() / 2 - (width / 3 * 2), fullwidth, width / 3 * 4));
-    delete = new Button(v.w.getWidth() / 2 - 180, v.w.getHeight() / 2 + (width / 3 * 2) + 50, 360, "Spielstand Löschen", Color.white, 22);
+    chars = new Area(new Rectangle2D.Double(Viewport.w.getWidth() / 4, Viewport.w.getHeight() / 2 - (width / 3 * 2), fullwidth, width / 3 * 4));
+    delete = new Button(Viewport.w.getWidth() / 2 - 180, Viewport.w.getHeight() / 2 + (width / 3 * 2) + 50, 360, "Spielstand Löschen", Color.white, 22);
     delete.clickmod = 0;
     delete.hovermod = 0;
     delete.tileset = null;
     delete.soundMOVER = false;
     delete.disabled = true;
-    start = new Button(v.w.getWidth() / 2 - 200, v.w.getHeight() / 2 + (width / 3 * 2) + 90, 400, "Spiel starten", Color.white, 35);
+    start = new Button(Viewport.w.getWidth() / 2 - 200, Viewport.w.getHeight() / 2 + (width / 3 * 2) + 90, 400, "Spiel starten", Color.white, 35);
     start.clickmod = 0;
     start.disabled = true;
   }
@@ -143,8 +140,8 @@ public class Scene_LoadGame implements Scene
     if (start != null) start.update();
     if (start.getState() == 1)
     {
-      v.savegame = datas[active];
-      v.setScene(new Scene_Game());
+      Viewport.savegame = datas[active];
+      Viewport.setScene(new Scene_Game());
     }
     if (Viewport.dialog != null)
     {
@@ -160,8 +157,8 @@ public class Scene_LoadGame implements Scene
           e.printStackTrace();
         }
         Viewport.dialog.closeRequested = true;
-        if (datas.length - 1 > 0) v.setScene(new Scene_LoadGame());
-        else v.setScene(new Scene_MainMenu());
+        if (datas.length - 1 > 0) Viewport.setScene(new Scene_LoadGame());
+        else Viewport.setScene(new Scene_MainMenu());
       }
       if (Viewport.dialog.buttons[1].getState() == 1) Viewport.dialog.closeRequested = true;
       if (Viewport.dialog.closeRequested)
@@ -177,21 +174,21 @@ public class Scene_LoadGame implements Scene
     if (delete.getState() == 1 && Viewport.dialog == null)
     {
       Viewport.dialog = new Dialog("Spielstand löschen", "Bist du sicher, dass du diesen Spielstand[br]löschen möchtest? Diese Aktion kann nicht[br]rückgängig gemacht werden.", Dialog.MESSAGE);
-      Viewport.dialog.draw(g, v);
+      Viewport.dialog.draw(g);
       Viewport.dialog.setButtons("Ja", "Nein");
       delete.setState(0);
     }
-    Assistant.drawMenuBackground(g, v.w);
-    c1.draw(g, v);
-    Assistant.drawHorizontallyCenteredString("Spiel fortsetzen", v.w.getWidth(), 43, g, 45, Color.white);
+    Assistant.drawMenuBackground(g);
+    c1.draw(g);
+    Assistant.drawHorizontallyCenteredString("Spiel fortsetzen", Viewport.w.getWidth(), 43, g, 45, Color.white);
     int selected = -1;
     if (chooser != null)
     {
-      chooser.draw(g, v);
+      chooser.draw(g);
       for (int i = 5 * ((Integer) chooser.getSelected(false) - 1); i < ((5 * (Integer) chooser.getSelected(false) < saves.length) ? 5 * (Integer) chooser.getSelected(false) : saves.length); i++)
       {
         if (saves[i] == null) continue;
-        saves[i].draw(g, v);
+        saves[i].draw(g);
         if (saves[i].getArea().contains(mouse)) selected = i;
         if (saves[i].getState() == 1) active = i;
       }
@@ -201,7 +198,7 @@ public class Scene_LoadGame implements Scene
       for (int i = 0; i < saves.length; i++)
       {
         if (saves[i] == null) continue;
-        saves[i].draw(g, v);
+        saves[i].draw(g);
         if (saves[i].getArea().contains(mouse)) selected = i;
         if (saves[i].getState() == 1) active = i;
       }
@@ -216,9 +213,9 @@ public class Scene_LoadGame implements Scene
       start.disabled = true;
       delete.disabled = true;
     }
-    if (delete != null) delete.draw(g, v);
-    if (start != null) start.draw(g, v);
-    if (selected != -1) saves[selected].draw(g, v);
+    if (delete != null) delete.draw(g);
+    if (start != null) start.draw(g);
+    if (selected != -1) saves[selected].draw(g);
   }
   
   @Override
@@ -226,8 +223,8 @@ public class Scene_LoadGame implements Scene
   {
     if (e.getExtendedKeyCode() == KeyEvent.VK_ESCAPE)
     {
-      v.setScene(new Scene_MainMenu());
-      v.playSound("002-System02");
+      Viewport.setScene(new Scene_MainMenu());
+      Viewport.playSound("002-System02");
     }
     if (chooser != null) chooser.keyPressed(e);
   }

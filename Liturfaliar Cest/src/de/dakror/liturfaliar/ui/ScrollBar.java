@@ -31,18 +31,18 @@ public class ScrollBar extends Component
     return value / (float) (getHeight() - getWidth());
   }
   
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g);
     if (this.dir == ScrollBar.VERTICAL)
     {
-      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY() + this.value, getWidth(), getWidth(), g, v.w);
+      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY() + this.value, getWidth(), getWidth(), g);
     }
     else
     {
-      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX() + this.value, getY(), getHeight(), getHeight(), g, v.w);
+      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX() + this.value, getY(), getHeight(), getHeight(), g);
     }
-    this.drag.draw(g, v);
+    this.drag.draw(g);
   }
   
   public void mouseDragged(MouseEvent e)

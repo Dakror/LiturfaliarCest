@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 
-import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
 
@@ -31,7 +30,7 @@ public class DragSelect extends Component
     return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
   }
   
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
     int w1 = this.getX() + this.getWidth();
     int h1 = this.getY() + this.getHeight();

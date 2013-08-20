@@ -34,18 +34,18 @@ public class ProgressBar extends Component
     disabled = b;
   }
   
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
     // draw base
-    g.drawImage(Viewport.loadImage("system/BarBase.png"), getX(), getY(), getX() + 6, getY() + getHeight(), 0, 0, 6, 23, v.w);
-    g.drawImage(Viewport.loadImage("system/BarBase.png"), getX() + 6, getY(), getX() + getWidth() - 6, getY() + getHeight(), 6, 0, 7, 23, v.w);
-    g.drawImage(Viewport.loadImage("system/BarBase.png"), getX() + getWidth() - 6, getY(), getX() + getWidth(), getY() + getHeight(), 7, 0, 13, 23, v.w);
+    g.drawImage(Viewport.loadImage("system/BarBase.png"), getX(), getY(), getX() + 6, getY() + getHeight(), 0, 0, 6, 23, Viewport.w);
+    g.drawImage(Viewport.loadImage("system/BarBase.png"), getX() + 6, getY(), getX() + getWidth() - 6, getY() + getHeight(), 6, 0, 7, 23, Viewport.w);
+    g.drawImage(Viewport.loadImage("system/BarBase.png"), getX() + getWidth() - 6, getY(), getX() + getWidth(), getY() + getHeight(), 7, 0, 13, 23, Viewport.w);
     // draw filling
     if (value > 0.0f && !disabled)
     {
-      g.drawImage(filling, getX(), getY(), getX() + 6, getY() + getHeight(), 0, 0, 6, 23, v.w);
-      g.drawImage(filling, getX() + 6, getY(), getX() + 6 + (int) ((getWidth() - 12) * value), getY() + getHeight(), 6, 0, 7, 23, v.w);
-      g.drawImage(filling, getX() + 6 + (int) ((getWidth() - 12) * value), getY(), getX() + 12 + (int) ((getWidth() - 12) * value), getY() + getHeight(), 7, 0, 13, 23, v.w);
+      g.drawImage(filling, getX(), getY(), getX() + 6, getY() + getHeight(), 0, 0, 6, 23, Viewport.w);
+      g.drawImage(filling, getX() + 6, getY(), getX() + 6 + (int) ((getWidth() - 12) * value), getY() + getHeight(), 6, 0, 7, 23, Viewport.w);
+      g.drawImage(filling, getX() + 6 + (int) ((getWidth() - 12) * value), getY(), getX() + 12 + (int) ((getWidth() - 12) * value), getY() + getHeight(), 7, 0, 13, 23, Viewport.w);
     }
     Font oldf = g.getFont();
     g.setFont(new Font("Arial", Font.BOLD, 14));

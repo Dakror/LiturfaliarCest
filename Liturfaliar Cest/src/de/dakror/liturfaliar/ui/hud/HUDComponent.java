@@ -7,7 +7,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 
-import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 
 public abstract class HUDComponent
@@ -27,7 +26,7 @@ public abstract class HUDComponent
   
   public abstract void update(long timePassed, Map m);
   
-  public abstract void draw(Graphics2D g, Viewport v, Map m);
+  public abstract void draw(Graphics2D g, Map m);
   
   public void mouseWheelMoved(MouseWheelEvent e, Map m)
   {}

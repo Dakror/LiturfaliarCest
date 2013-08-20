@@ -64,12 +64,12 @@ public class CheckBox extends Button
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
-    handle.update(v);
+    handle.update();
     if (tileset != null)
     {
-      Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
+      Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), getX(), getY(), getWidth(), getHeight(), g);
       iw = -16;
       ih = -16;
     }
@@ -94,11 +94,11 @@ public class CheckBox extends Button
     {
       int x1 = (iw != 0) ? -iw / 2 : 0;
       int y1 = (ih != 0) ? -ih / 2 : 0;
-      g.drawImage(image, getX() + x1, getY() + y1, getWidth() + iw, getHeight() + ih, v.w);
+      g.drawImage(image, getX() + x1, getY() + y1, getWidth() + iw, getHeight() + ih, Viewport.w);
     }
     else
     {
-      g.drawImage(image, getX(), getY(), getWidth(), getHeight(), v.w);
+      g.drawImage(image, getX(), getY(), getWidth(), getHeight(), Viewport.w);
     }
   }
 }

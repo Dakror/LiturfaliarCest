@@ -52,14 +52,14 @@ public class Animation
     this.c = c;
   }
   
-  public void draw(Map m, Graphics2D g, Viewport v)
+  public void draw(Map m, Graphics2D g)
   {
-    if (!frozen && v.getFrame(time, speed) != 0) frame = v.getFrame(time, speed) % (endFrame - startFrame) + 1;
+    if (!frozen && Viewport.getFrame(time, speed) != 0) frame = Viewport.getFrame(time, speed) % (endFrame - startFrame) + 1;
     
     int x = this.x + ((m == null) ? 0 : m.getX()) + ((c == null) ? 0 : (int) c.getPos().x);
     int y = this.y + ((m == null) ? 0 : m.getY()) + ((c == null) ? 0 : (int) c.getPos().y);
     
-    g.drawImage(image, x, y, x + size, y + size, SIZE * (frame % w), SIZE * (int) Math.floor((frame / (double) w)), SIZE * (frame % w) + SIZE, SIZE * (int) Math.floor((frame / (double) w)) + SIZE, v.w);
+    g.drawImage(image, x, y, x + size, y + size, SIZE * (frame % w), SIZE * (int) Math.floor((frame / (double) w)), SIZE * (frame % w) + SIZE, SIZE * (int) Math.floor((frame / (double) w)) + SIZE, Viewport.w);
   }
   
   public boolean isDone()

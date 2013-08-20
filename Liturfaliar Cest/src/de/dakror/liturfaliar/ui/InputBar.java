@@ -65,7 +65,7 @@ public class InputBar extends Component
    * 
    * @param g Graphics2D from {@link Viewport}.
    */
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
     Font old = g.getFont();
     g.setFont(old.deriveFont(size));
@@ -86,7 +86,7 @@ public class InputBar extends Component
     }
     else
     {
-      Assistant.stretchTileset(Viewport.loadImage(this.tileset), this.getX() - 16, this.getY() - 16, this.getWidth() + 32, g.getFontMetrics().getHeight() + 32, g, v.w);
+      Assistant.stretchTileset(Viewport.loadImage(this.tileset), this.getX() - 16, this.getY() - 16, this.getWidth() + 32, g.getFontMetrics().getHeight() + 32, g);
     }
     // text
     if (!this.centered)
@@ -118,8 +118,8 @@ public class InputBar extends Component
     {
       if (this.disabled) Assistant.Shadow(getArea(), Color.black, 0.6f, g);
     }
-    if (this.info != null) this.info.draw(g, v.w);
-    if (this.tooltip != null) this.tooltip.draw(g, v);
+    if (this.info != null) this.info.draw(g);
+    if (this.tooltip != null) this.tooltip.draw(g);
   }
   
   public void mouseReleased(MouseEvent e)

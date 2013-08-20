@@ -1,6 +1,5 @@
 package de.dakror.liturfaliar.util;
 
-import java.awt.Window;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
@@ -36,13 +35,13 @@ public class FileManager
    * 
    * @param v - {@link Viewport} is needed for a Callback.
    */
-  public static void mk(Viewport v)
+  public static void mk(boolean save)
   {
     dir = new File("C:/Dakror/Liturfaliar Cest");
     saves = new File("C:/Dakror/Liturfaliar Cest/Saves");
     dir.mkdirs();
     saves.mkdirs();
-    if (!new File(dir, "options.json").exists() && v != null) saveOptions(v);
+    if (!new File(dir, "options.json").exists() && save) saveOptions();
   }
   
   public static File getDir()
@@ -169,15 +168,15 @@ public class FileManager
    * 
    * @param v - {@link Viewport} with the fields to save.
    */
-  public static void saveOptions(Viewport v)
+  public static void saveOptions()
   {
     JSONObject o = new JSONObject();
     try
     {
       JSONObject volume = new JSONObject();
-      volume.put("sound", v.fSoundID);
-      volume.put("music", v.fMusicID);
-      volume.put("musiceffect", v.fMusicEffectID);
+      volume.put("sound", Viewport.fSoundID);
+      volume.put("music", Viewport.fMusicID);
+      volume.put("musiceffect", Viewport.fMusicEffectID);
       
       o.put("volume", volume);
       o.put("keys", Keys.saveKeys());
@@ -196,26 +195,26 @@ public class FileManager
    * 
    * @param v - {@link Viewport} with the fields to be set.
    */
-  public static void loadOptions(Viewport v)
+  public static void loadOptions()
   {
     try
     {
       JSONObject o = new JSONObject(Assistant.getFileContent(new File(dir, "options.json")));
       JSONObject volume = o.getJSONObject("volume");
-      v.fSoundID = (float) volume.getDouble("sound");
-      v.fMusicID = (float) volume.getDouble("music");
-      v.fMusicEffectID = (float) volume.getDouble("musiceffect");
+      Viewport.fSoundID = (float) volume.getDouble("sound");
+      Viewport.fMusicID = (float) volume.getDouble("music");
+      Viewport.fMusicEffectID = (float) volume.getDouble("musiceffect");
       
       Keys.loadKeys(o.getJSONObject("keys"));
     }
     catch (Exception e)
     {
-      saveOptions(v);
-      loadOptions(v);
+      saveOptions();
+      loadOptions();
     }
   }
   
-  public static boolean checkMapPackUpdate(Window w)
+  public static boolean checkMapPackUpdate()
   {
     if (!new File(dir, "Maps").exists() || !Arrays.asList(MapPack.getMapPacks("Maps")).contains(CFG.MAPPACK))
     {
@@ -231,12 +230,12 @@ public class FileManager
     {
       return false;
     }
-    return version - new MapPack(CFG.MAPPACK, w).getVersion() > 0;
+    return version - new MapPack(CFG.MAPPACK).getVersion() > 0;
   }
   
-  public static ZipAssistant onMapPackUpdate(Window w)
+  public static ZipAssistant onMapPackUpdate()
   {
-    if (checkMapPackUpdate(w))
+    if (checkMapPackUpdate())
     {
       try
       {

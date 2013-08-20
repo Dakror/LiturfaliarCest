@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.creature.Player;
 
@@ -31,14 +30,14 @@ public class BottomSegment
     hotbar.update(timePassed, m);
   }
   
-  public void draw(Graphics2D g, Viewport v, Map m)
+  public void draw(Graphics2D g, Map m)
   {
     if (m.talk == null)
     {
-      experience.draw(g, v, m);
-      health.draw(g, v, m);
-      stamina.draw(g, v, m);
-      hotbar.draw(g, v, m);
+      experience.draw(g, m);
+      health.draw(g, m);
+      stamina.draw(g, m);
+      hotbar.draw(g, m);
     }
   }
   

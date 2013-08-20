@@ -50,15 +50,15 @@ public class PlayerStamina extends HUDComponent
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v, Map m)
+  public void draw(Graphics2D g, Map m)
   {
     if (!visible && bar == null)
     {
       if (player.getAttributes().getAttribute(Attr.stamina).getMaximum() == -1) return;
       
-      setX(v.w.getWidth() / 2 - ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);
+      setX(Viewport.w.getWidth() / 2 - ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);
       setHeight(32);
-      setY(v.w.getHeight() - height - ItemSlot.SIZE - 25);
+      setY(Viewport.w.getHeight() - height - ItemSlot.SIZE - 25);
       setWidth(ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 + 5);
       bar = new ProgressBar(x, y, width, 1, false, "ffc744", null, false);
       bar.setHeight(height);
@@ -68,7 +68,7 @@ public class PlayerStamina extends HUDComponent
     if (visible)
     {
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-      bar.draw(g, v);
+      bar.draw(g);
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
   }

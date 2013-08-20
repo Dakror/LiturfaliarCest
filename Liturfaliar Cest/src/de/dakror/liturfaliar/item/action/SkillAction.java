@@ -26,13 +26,13 @@ public class SkillAction extends ItemAction
   }
   
   @Override
-  public void actionTriggered(Item item, Creature c, Map m, Viewport v)
+  public void actionTriggered(Item item, Creature c, Map m)
   {
     if (!item.getType().equals(Types.PERKSKILL)) // weapon involved
     {
       if (c.getEquipment().getFirstWeapon() == null && c.getEquipment().getSecondWeapon() == null)
       {
-        v.playSound("003-System03");
+        Viewport.playSound("003-System03");
         return;
       }
     }

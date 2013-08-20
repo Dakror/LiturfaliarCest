@@ -56,7 +56,7 @@ public class Sword0 extends SkillAnimation
   }
   
   @Override
-  protected void draw(Graphics2D g, Viewport v, Map m)
+  protected void draw(Graphics2D g, Map m)
   {
     if (this.hitArea == null) return;
     
@@ -111,7 +111,7 @@ public class Sword0 extends SkillAnimation
     AffineTransform t = AffineTransform.getRotateInstance(Math.toRadians(theta), caster.getPos().x + rx + m.getX() + image.getWidth(null), caster.getPos().y + ry + m.getY() + image.getHeight(null));
     
     g.setTransform(t);
-    g.drawImage(image, (int) caster.getPos().x + rx + m.getX(), (int) caster.getPos().y + ry + m.getY(), v.w);
+    g.drawImage(image, (int) caster.getPos().x + rx + m.getX(), (int) caster.getPos().y + ry + m.getY(), Viewport.w);
     g.setTransform(oldTransform);
   }
   

@@ -72,10 +72,10 @@ public class Flicker extends Component
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), x, y, width, height, g, v.w);
-    Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), x + width / 2 - s / 2 - 11, y, s + 22, height, g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), x, y, width, height, g);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), x + width / 2 - s / 2 - 11, y, s + 22, height, g);
     Shape oldClip = g.getClip();
     g.setClip(x + 10, y, width - 20, height);
     for (int i = 0; i < objects.length; i++)
@@ -87,12 +87,12 @@ public class Flicker extends Component
       
       if (Math.abs((ix + this.s / 2) - (x + width / 2)) < 1) selectedIndex = i;
       
-      g.drawImage(objects[i].getIcon(), ix - (s - this.s) / 2, iy - (s - this.s) / 2, s, s, v.w);
+      g.drawImage(objects[i].getIcon(), ix - (s - this.s) / 2, iy - (s - this.s) / 2, s, s, Viewport.w);
     }
     g.setClip(oldClip);
     
-    Assistant.stretchTileset(Viewport.loadImage("tileset/LFWood.png"), x, y, height, height, g, v.w);
-    Assistant.stretchTileset(Viewport.loadImage("tileset/RFWood.png"), x + width - height, y, height, height, g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/LFWood.png"), x, y, height, height, g);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/RFWood.png"), x + width - height, y, height, height, g);
   }
   
   @Override

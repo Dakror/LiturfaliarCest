@@ -21,7 +21,6 @@ import de.dakror.liturfaliar.util.Assistant;
 
 public class Scene_Tutorial implements Scene
 {
-  Viewport   v;
   Container  c1;
   VirtualKey w;
   Box        move, mouse;
@@ -29,43 +28,42 @@ public class Scene_Tutorial implements Scene
   boolean[]  dirs = { false, false, false, false };
   
   @Override
-  public void construct(Viewport v)
+  public void construct()
   {
-    this.v = v;
-    c1 = new Container(0, 0, v.w.getWidth(), 55, null);
-    move = new Box(v.w.getWidth() / 5, v.w.getHeight() / 2 - v.w.getHeight() / 5, v.w.getWidth() / 5, 270);
-    move.addComponent(new Container(0, 0, v.w.getWidth() / 5, v.w.getWidth() / 5, null), new Label(0, 0, v.w.getWidth() / 5, "Bewegen", 35, Color.white), new HTMLLabel(10, 40, v.w.getWidth() / 5, v.w.getWidth() / 5, "<#aaaaaa;20;0>Mit diesen Tasten kannst du deine Figur bewegen."), new VirtualKey(v.w.getWidth() / 5 / 2 - 35, 110, KeyEvent.VK_W), new VirtualKey(v.w.getWidth() / 5 / 2 - 105, 180, KeyEvent.VK_A), new VirtualKey(v.w.getWidth() / 5 / 2 - 35, 180, KeyEvent.VK_S), new VirtualKey(v.w.getWidth() / 5 / 2 + 35, 180, KeyEvent.VK_D));
-    mouse = new Box(v.w.getWidth() - v.w.getWidth() / 5 * 2, v.w.getHeight() / 2 - v.w.getHeight() / 5, v.w.getWidth() / 5, 270);
-    mouse.addComponent(new Container(0, 0, v.w.getWidth() / 5, v.w.getWidth() / 5, null), new Label(0, 0, v.w.getWidth() / 5, "Interaktionen", 35, Color.white), new HTMLLabel(10, 40, v.w.getWidth() / 5, v.w.getWidth() / 5, "<#aaaaaa;20;0>Mit der linken Maustaste kannst du mit NPCs und Objekten interagieren."), new VirtualMouse(v.w.getWidth() / 5 / 2 - 50, 110));
-    next = new Button(v.w.getWidth() / 2 - 150, v.w.getHeight() / 2 + v.w.getHeight() / 5 * 2, 300, "Weiter", Color.white, 35);
+    c1 = new Container(0, 0, Viewport.w.getWidth(), 55, null);
+    move = new Box(Viewport.w.getWidth() / 5, Viewport.w.getHeight() / 2 - Viewport.w.getHeight() / 5, Viewport.w.getWidth() / 5, 270);
+    move.addComponent(new Container(0, 0, Viewport.w.getWidth() / 5, Viewport.w.getWidth() / 5, null), new Label(0, 0, Viewport.w.getWidth() / 5, "Bewegen", 35, Color.white), new HTMLLabel(10, 40, Viewport.w.getWidth() / 5, Viewport.w.getWidth() / 5, "<#aaaaaa;20;0>Mit diesen Tasten kannst du deine Figur bewegen."), new VirtualKey(Viewport.w.getWidth() / 5 / 2 - 35, 110, KeyEvent.VK_W), new VirtualKey(Viewport.w.getWidth() / 5 / 2 - 105, 180, KeyEvent.VK_A), new VirtualKey(Viewport.w.getWidth() / 5 / 2 - 35, 180, KeyEvent.VK_S), new VirtualKey(Viewport.w.getWidth() / 5 / 2 + 35, 180, KeyEvent.VK_D));
+    mouse = new Box(Viewport.w.getWidth() - Viewport.w.getWidth() / 5 * 2, Viewport.w.getHeight() / 2 - Viewport.w.getHeight() / 5, Viewport.w.getWidth() / 5, 270);
+    mouse.addComponent(new Container(0, 0, Viewport.w.getWidth() / 5, Viewport.w.getWidth() / 5, null), new Label(0, 0, Viewport.w.getWidth() / 5, "Interaktionen", 35, Color.white), new HTMLLabel(10, 40, Viewport.w.getWidth() / 5, Viewport.w.getWidth() / 5, "<#aaaaaa;20;0>Mit der linken Maustaste kannst du mit NPCs und Objekten interagieren."), new VirtualMouse(Viewport.w.getWidth() / 5 / 2 - 50, 110));
+    next = new Button(Viewport.w.getWidth() / 2 - 150, Viewport.w.getHeight() / 2 + Viewport.w.getHeight() / 5 * 2, 300, "Weiter", Color.white, 35);
   }
   
   @Override
   public void update(long timePassed)
   {
     next.update();
-    if (next.getState() == 1) v.setScene(new Scene_Game());
+    if (next.getState() == 1) Viewport.setScene(new Scene_Game());
   }
   
   @Override
   public void draw(Graphics2D g)
   {
-    Assistant.drawMenuBackground(g, v.w);
-    c1.draw(g, v);
-    Assistant.drawHorizontallyCenteredString("Tutorial", v.w.getWidth(), 43, g, 45, Color.white);
-    move.draw(g, v);
-    mouse.draw(g, v);
-    next.draw(g, v);
+    Assistant.drawMenuBackground(g);
+    c1.draw(g);
+    Assistant.drawHorizontallyCenteredString("Tutorial", Viewport.w.getWidth(), 43, g, 45, Color.white);
+    move.draw(g);
+    mouse.draw(g);
+    next.draw(g);
     int frame = 0;
     int dir = 0;
-    if (dirs[0] || dirs[1] || dirs[2] || dirs[3]) frame = v.getFrame();
+    if (dirs[0] || dirs[1] || dirs[2] || dirs[3]) frame = Viewport.getFrame();
     if (dirs[0]) dir = 3;
     if (dirs[1]) dir = 1;
     if (dirs[2]) dir = 2;
     if (dirs[3]) dir = 0;
     try
     {
-      Assistant.drawChar(v.w.getWidth() / 5 * 2, v.w.getHeight() / 2 - v.w.getWidth() / 5 * 3 / 4, v.w.getWidth() / 5, v.w.getWidth() / 5 * 3 / 2, dir, frame, new Equipment(v.savegame.getJSONObject("char").getJSONObject("equip")), g, v.w, true);
+      Assistant.drawChar(Viewport.w.getWidth() / 5 * 2, Viewport.w.getHeight() / 2 - Viewport.w.getWidth() / 5 * 3 / 4, Viewport.w.getWidth() / 5, Viewport.w.getWidth() / 5 * 3 / 2, dir, frame, new Equipment(Viewport.savegame.getJSONObject("char").getJSONObject("equip")), g, Viewport.w, true);
     }
     catch (JSONException e)
     {

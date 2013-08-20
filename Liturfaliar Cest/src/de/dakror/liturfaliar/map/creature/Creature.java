@@ -11,7 +11,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
-import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.Event;
 import de.dakror.liturfaliar.event.Events;
 import de.dakror.liturfaliar.event.Listener;
@@ -58,7 +57,7 @@ public class Creature implements Listener
   protected ArrayList<SkillAnimation>  skills;
   protected ArrayList<DamageIndicator> dmgIndicators;
   protected Area                       hitArea;
-  protected Area[][]                       realAreas;
+  protected Area[][]                   realAreas;
   protected CreatureAI                 AI;
   protected String                     name;
   
@@ -130,40 +129,18 @@ public class Creature implements Listener
     goTo = new Vector(x, y);
   }
   
-  public Vector move(Map map)
+  public void move(Map map)
   {
     if (!frozen)
     {
-      Vector targetVector = relPos.sub(goTo);
-      double distance = targetVector.length;
-      
-      if (targetVector.length >= getSpeed())
-      {
-        distance = getSpeed();
-      }
-      
-      Vector newPos = relPos.sub(targetVector.setLength(distance));
+      Vector newPos = getMovePos(map);
       
       if (!map.getBumpMap().contains(new Rectangle2D.Double(map.getX() + newPos.x + bx, map.getY() + newPos.y + by, bw, bh)))
       {
         resetTarget();
-        return new Vector(0, 0);
+        return;
       }
-      
-      for (Creature c : map.creatures)
-      {
-        if (!c.equals(this) && c.isAlive())
-        {
-          Vector v = getIntersection(newPos, c, map);
-          if (v != null)
-          {
-            if (getIntersection(newPos.sub(v), c, map) != null) newPos = newPos.add(v);
-            
-            else newPos = newPos.sub(v);
-          }
-        }
-      }
-      
+ 
       lastPos = relPos;
       
       if (newPos.equals(relPos))
@@ -178,11 +155,35 @@ public class Creature implements Listener
       }
       
       relPos = newPos;
-      
-      return targetVector.setLength(distance);
+    }
+  }
+  
+  public Vector getMovePos(Map map) {
+    Vector targetVector = relPos.sub(goTo);
+    double distance = targetVector.length;
+    
+    if (targetVector.length >= getSpeed())
+    {
+      distance = getSpeed();
     }
     
-    return new Vector(0, 0);
+    Vector newPos = relPos.sub(targetVector.setLength(distance));
+    
+    for (Creature c : map.creatures)
+    {
+      if (!c.equals(this) && c.isAlive())
+      {
+        Vector v = getIntersection(newPos, c, map);
+        if (v != null)
+        {
+          if (getIntersection(newPos.sub(v), c, map) != null) newPos = newPos.add(v);
+          
+          else newPos = newPos.sub(v);
+        }
+      }
+    }
+    
+    return newPos;
   }
   
   public void setMassive(boolean b)
@@ -232,13 +233,13 @@ public class Creature implements Listener
     {}
   }
   
-  public void draw(Graphics2D g, Viewport v, Map m)
+  public void draw(Graphics2D g, Map m)
   {
     try
     {
       for (DamageIndicator dmgi : dmgIndicators)
       {
-        if (!dmgi.isDone()) dmgi.draw(m, g, v);
+        if (!dmgi.isDone()) dmgi.draw(m, g);
       }
     }
     catch (ConcurrentModificationException e)
@@ -259,9 +260,9 @@ public class Creature implements Listener
     }
   }
   
-  public void drawEmoticon(Graphics2D g, Viewport v, Map m)
+  public void drawEmoticon(Graphics2D g, Map m)
   {
-    if (emoticon != null) emoticon.draw(g, m, v);
+    if (emoticon != null) emoticon.draw(g, m);
   }
   
   public boolean isMassive()

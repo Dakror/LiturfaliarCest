@@ -7,7 +7,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 
-import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.settings.CFG;
 
 public abstract class Component
@@ -80,7 +79,7 @@ public abstract class Component
   
   public abstract void update();
   
-  public abstract void draw(Graphics2D g, Viewport v);
+  public abstract void draw(Graphics2D g);
   
   
   public void mouseWheelMoved(MouseWheelEvent e)

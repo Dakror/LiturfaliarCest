@@ -48,10 +48,9 @@ public class OVScene_Pause extends OVScene
   }
   
   @Override
-  public void construct(Viewport v)
+  public void construct()
   {
-    this.v = v;
-    ts = new TextSelect(v.w.getWidth() / 2 - 150, v.w.getHeight() / 2 - (28 * points.length + 18) / 2, 300, 28 * points.length + 18, (Object[]) points);
+    ts = new TextSelect(Viewport.w.getWidth() / 2 - 150, Viewport.w.getHeight() / 2 - (28 * points.length + 18) / 2, 300, 28 * points.length + 18, (Object[]) points);
     ts.soundCLICK = true;
     ts.soundMOVER = false;
     final String[] tooltips = { null, "<#999999;30;1>Speichern[br]<#ffffff;17;1>Manuelles Speichern deiner Fortschritte.", "<#999999;30;1>Sichern[br]<#ffffff;17;1>Es wird eine Kopie deines aktuellen Spielstands erstellt.", "<#999999;30;1>Laden[br]<#ffffff;17;1>Lade einen älteren Spielstand.[br]<#6666ff;17;2>Deine Fortschritte werden [br]<#ff3333;17;2>NICHT<#6666ff;17;2> gespeichert![br]<#ff3333;17;2>Das aktuelle Spiel wird verlassen!"/* , "<#999999;30;1>Tastenbelegung[br]<#ffffff;17;1>Hier kannst du deine deine[br]Tastenbelegungen ändern." */, "<#999999;30;1>Beenden[br]<#ffffff;17;1>Beende das aktuelle Spiel[br]und kehre zum Hauptmenü zurück.[br]<#6666ff;17;2>Deine Fortschritte werden gespeichert!" };
@@ -64,18 +63,18 @@ public class OVScene_Pause extends OVScene
       }
     }
     
-    c1 = new Container(0, 0, v.w.getWidth(), 55);
+    c1 = new Container(0, 0, Viewport.w.getWidth(), 55);
     c1.tileset = null;
     
-    optionsSliders[0] = new ProgressBar(v.w.getWidth() / 2 - 100, v.w.getHeight() - 90, 200, (float) v.fSoundID, true, "ffc744", "Soundeffekte", true);
-    optionsSliders[1] = new ProgressBar(v.w.getWidth() / 2 - 100, v.w.getHeight() - 68, 200, (float) v.fMusicID, true, "ffc744", "Musik", true);
-    controls = new Button(v.w.getWidth() / 2 - 97, v.w.getHeight() - 43, 195, "Tastenbelegung", Color.white, 18f);
+    optionsSliders[0] = new ProgressBar(Viewport.w.getWidth() / 2 - 100, Viewport.w.getHeight() - 90, 200, (float) Viewport.fSoundID, true, "ffc744", "Soundeffekte", true);
+    optionsSliders[1] = new ProgressBar(Viewport.w.getWidth() / 2 - 100, Viewport.w.getHeight() - 68, 200, (float) Viewport.fMusicID, true, "ffc744", "Musik", true);
+    controls = new Button(Viewport.w.getWidth() / 2 - 97, Viewport.w.getHeight() - 43, 195, "Tastenbelegung", Color.white, 18f);
     controls.tileset = null;
     controls.hovermod = 0;
     controls.clickmod = 0;
     controls.soundMOVER = false;
     optionsToggle = false;
-    optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 48, 192, 64);
+    optionsToggleArea = new HandleArea(Viewport.w.getWidth() / 2 - 96, Viewport.w.getHeight() - 48, 192, 64);
   }
   
   @Override
@@ -92,11 +91,11 @@ public class OVScene_Pause extends OVScene
       case 0:
       {
         sg.setPaused(false);
-        v.setFramesFrozen(false);
+        Viewport.setFramesFrozen(false);
         
         Viewport.setSceneEnabled(true);
         
-        v.removeOVScene("Pause");
+        Viewport.removeOVScene("Pause");
         break;
       }
       case 1:
@@ -113,23 +112,23 @@ public class OVScene_Pause extends OVScene
       }
       case 3:
       {
-        v.setScene(new Scene_LoadGame());
+        Viewport.setScene(new Scene_LoadGame());
         break;
       }
       case 4:
       {
         save();
-        v.setScene(new Scene_MainMenu());
+        Viewport.setScene(new Scene_MainMenu());
         break;
       }
     }
     if (optionsSliders[0] != null)
     {
       double vol = new BigDecimal(optionsSliders[0].value).setScale(2, RoundingMode.HALF_EVEN).doubleValue();
-      if (vol != v.fSoundID)
+      if (vol != Viewport.fSoundID)
       {
-        v.fSoundID = vol;
-        FileManager.saveOptions(v);
+        Viewport.fSoundID = vol;
+        FileManager.saveOptions();
       }
     }
     
@@ -138,8 +137,8 @@ public class OVScene_Pause extends OVScene
       controls.update();
       if (controls.getState() == 1)
       {
-        v.removeOVScene("Pause");
-        v.addOVScene(new OVScene_Controls(), "Controls");
+        Viewport.removeOVScene("Pause");
+        Viewport.addOVScene(new OVScene_Controls(), "Controls");
         controls.setState(0);
       }
     }
@@ -147,15 +146,15 @@ public class OVScene_Pause extends OVScene
     if (optionsSliders[1] != null)
     {
       double vol = new BigDecimal(optionsSliders[1].value).setScale(2, RoundingMode.HALF_EVEN).doubleValue();
-      if (v.fMusicID != vol)
+      if (Viewport.fMusicID != vol)
       {
-        v.fMusicID = vol;
-        v.ss.setVolume(v.MusicID, (float) v.fMusicID);
-        FileManager.saveOptions(v);
+        Viewport.fMusicID = vol;
+        Viewport.ss.setVolume(Viewport.MusicID, (float) Viewport.fMusicID);
+        FileManager.saveOptions();
       }
     }
     
-    optionsToggleArea.update(v);
+    optionsToggleArea.update();
     if (optionsToggleArea != null && optionsToggleArea.state == 1)
     {
       optionsToggle = !optionsToggle;
@@ -167,37 +166,37 @@ public class OVScene_Pause extends OVScene
   @Override
   public void draw(Graphics2D g)
   {
-    Assistant.Shadow(v.w.getBounds(), Color.black, 0.6f, g);
-    c1.draw(g, v);
-    Assistant.drawHorizontallyCenteredString("Spiel pausiert", v.w.getWidth(), 43, g, 45, Color.white);
+    Assistant.Shadow(Viewport.w.getBounds(), Color.black, 0.6f, g);
+    c1.draw(g);
+    Assistant.drawHorizontallyCenteredString("Spiel pausiert", Viewport.w.getWidth(), 43, g, 45, Color.white);
     
-    ts.draw(g, v);
+    ts.draw(g);
     
     // options
     if (optionsToggle)
     {
-      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 96, v.w.getHeight() - 150, 192, 64, g, v.w);
-      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 128, v.w.getHeight() - 102, 256, 96, g, v.w);
-      Assistant.drawHorizontallyCenteredString("Optionen", v.w.getWidth() / 2 - 96, 192, v.w.getHeight() - 110, g, 26, Color.white);
+      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), Viewport.w.getWidth() / 2 - 96, Viewport.w.getHeight() - 150, 192, 64, g);
+      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), Viewport.w.getWidth() / 2 - 128, Viewport.w.getHeight() - 102, 256, 96, g);
+      Assistant.drawHorizontallyCenteredString("Optionen", Viewport.w.getWidth() / 2 - 96, 192, Viewport.w.getHeight() - 110, g, 26, Color.white);
       for (int i = 0; i < optionsSliders.length; i++)
       {
-        optionsSliders[i].draw(g, v);
+        optionsSliders[i].draw(g);
       }
-      controls.draw(g, v);
-      if (optionsToggleArea == null) optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 150, 192, 64);
+      controls.draw(g);
+      if (optionsToggleArea == null) optionsToggleArea = new HandleArea(Viewport.w.getWidth() / 2 - 96, Viewport.w.getHeight() - 150, 192, 64);
       
     }
     else
     {
-      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 96, v.w.getHeight() - 48, 192, 64, g, v.w);
-      Assistant.drawHorizontallyCenteredString("Optionen", v.w.getWidth() / 2 - 96, 192, v.w.getHeight() - 8, g, 26, Color.white);
+      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), Viewport.w.getWidth() / 2 - 96, Viewport.w.getHeight() - 48, 192, 64, g);
+      Assistant.drawHorizontallyCenteredString("Optionen", Viewport.w.getWidth() / 2 - 96, 192, Viewport.w.getHeight() - 8, g, 26, Color.white);
       if (optionsToggleArea == null)
       {
-        optionsToggleArea = new HandleArea(v.w.getWidth() / 2 - 96, v.w.getHeight() - 48, 192, 64);
+        optionsToggleArea = new HandleArea(Viewport.w.getWidth() / 2 - 96, Viewport.w.getHeight() - 48, 192, 64);
       }
     }
     
-    if (notification != null) notification.draw(g, v.w);
+    if (notification != null) notification.draw(g);
   }
   
   public void save()

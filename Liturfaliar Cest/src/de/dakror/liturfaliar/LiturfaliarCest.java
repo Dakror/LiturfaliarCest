@@ -8,7 +8,6 @@ import paulscode.sound.codecs.CodecWav;
 import paulscode.sound.libraries.LibraryJavaSound;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
-import de.dakror.liturfaliar.util.FileManager;
 import de.dakror.universion.UniVersion;
 
 public class LiturfaliarCest
@@ -21,9 +20,7 @@ public class LiturfaliarCest
     
     UniVersion.offline = !CFG.INTERNET;
     UniVersion.init(LiturfaliarCest.class, CFG.VERSION, CFG.PHASE);
-    
-    FileManager.mk(null);
-    
+
     if (!CFG.DEBUG)
     {
       // Reporter.init(new File(FileManager.dir, "Logs"));

@@ -62,12 +62,12 @@ public class PlayerHotbar extends HUDComponent implements Inventory
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v, Map m)
+  public void draw(Graphics2D g, Map m)
   {
     if (!visible)
     {
-      setX(v.w.getWidth() / 2 - width / 2);
-      setY(v.w.getHeight() - ItemSlot.SIZE);
+      setX(Viewport.w.getWidth() / 2 - width / 2);
+      setY(Viewport.w.getHeight() - ItemSlot.SIZE);
       
       slots = ItemSlot.createSlotRow(x, y, 10);
       
@@ -83,12 +83,12 @@ public class PlayerHotbar extends HUDComponent implements Inventory
     if (visible)
     {
       for (int i = 0; i < slots.length; i++)
-        if (slots[i] != null) slots[i].draw(g, v);
+        if (slots[i] != null) slots[i].draw(g);
       
       for (int i = 0; i < slots.length; i++)
-        if (slots[i] != null) slots[i].drawTooltip(g, v);
+        if (slots[i] != null) slots[i].drawTooltip(g);
       
-      if (pickedUp != null) pickedUp.drawLightWeight(g, v);
+      if (pickedUp != null) pickedUp.drawLightWeight(g);
     }
   }
   

@@ -121,9 +121,9 @@ public class Button extends Component
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
-    handle.update(v);
+    handle.update();
     
     if (getHeight() == 1)
     {
@@ -162,16 +162,16 @@ public class Button extends Component
     if (image != null && imagelower)
     {
       if (disabled) g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-      if (tileset != null) Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g, v.w);
+      if (tileset != null) Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g);
       if (iw != 0)
       {
         int x1 = (iw != 0) ? -iw / 2 : 0;
         int y1 = (ih != 0) ? -ih / 2 : 0;
-        g.drawImage(image, x + x1, y + y1, w + iw, h + ih, v.w);
+        g.drawImage(image, x + x1, y + y1, w + iw, h + ih, Viewport.w);
       }
       else
       {
-        g.drawImage(image, x, y, w, h, v.w);
+        g.drawImage(image, x, y, w, h, Viewport.w);
       }
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
@@ -205,7 +205,7 @@ public class Button extends Component
       }
       else
       {
-        Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g, v.w);
+        Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g);
         FontMetrics fm = g.getFontMetrics();
         int y1 = (fm.getAscent() + (h - (fm.getAscent() + fm.getDescent())) / 2) - 40 / 2;
         if (centered)
@@ -222,41 +222,41 @@ public class Button extends Component
     }
     else if (Bicon == true)
     {
-      if (tileset != null && tileset.length() > 0) Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g, v.w);
+      if (tileset != null && tileset.length() > 0) Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g);
       if (handle.state == 2)
       {
-        g.drawImage(Viewport.loadImage("icon/white/" + icon + ".png"), x + ((iw != 0) ? (w / 2 - iw / 2) : 0), y + ((ih != 0) ? (h / 2 - ih / 2) : 0), (iw != 0) ? iw : w, (ih != 0) ? ih : h, v.w);
+        g.drawImage(Viewport.loadImage("icon/white/" + icon + ".png"), x + ((iw != 0) ? (w / 2 - iw / 2) : 0), y + ((ih != 0) ? (h / 2 - ih / 2) : 0), (iw != 0) ? iw : w, (ih != 0) ? ih : h, Viewport.w);
       }
       else
       {
-        g.drawImage(Viewport.loadImage("icon/black/" + icon + ".png"), x + ((iw != 0) ? (w / 2 - iw / 2) : 0), y + ((ih != 0) ? (h / 2 - ih / 2) : 0), (iw != 0) ? iw : w, (ih != 0) ? ih : h, v.w);
+        g.drawImage(Viewport.loadImage("icon/black/" + icon + ".png"), x + ((iw != 0) ? (w / 2 - iw / 2) : 0), y + ((ih != 0) ? (h / 2 - ih / 2) : 0), (iw != 0) ? iw : w, (ih != 0) ? ih : h, Viewport.w);
       }
       if (disabled) Assistant.Shadow(new RoundRectangle2D.Double(x, y, w, h, 8, 8), Color.black, 0.6f, g);
     }
     else
     {
-      if (tileset != null && tileset.length() > 0) Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g, v.w);
+      if (tileset != null && tileset.length() > 0) Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g);
     }
     if (image != null && !imagelower)
     {
       if (disabled) g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-      if (tileset != null) Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g, v.w);
+      if (tileset != null) Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), x, y, w, h, g);
       if (iw != 0)
       {
         int x1 = (iw != 0) ? -iw / 2 : 0;
         int y1 = (ih != 0) ? -ih / 2 : 0;
-        g.drawImage(image, x + x1, y + y1, w + iw, h + ih, v.w);
+        g.drawImage(image, x + x1, y + y1, w + iw, h + ih, Viewport.w);
       }
       else
       {
-        g.drawImage(image.getScaledInstance(w, h, BufferedImage.SCALE_REPLICATE), x, y, w, h, v.w);
+        g.drawImage(image.getScaledInstance(w, h, BufferedImage.SCALE_REPLICATE), x, y, w, h, Viewport.w);
       }
     }
     g.setFont(oldFont);
     g.setColor(oldColor);
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-    handle.draw(g, v);
-    if (tooltip != null) tooltip.draw(g, v);
+    handle.draw(g);
+    if (tooltip != null) tooltip.draw(g);
   }
   
   public Image getIcon()

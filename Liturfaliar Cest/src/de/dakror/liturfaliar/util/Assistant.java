@@ -157,9 +157,9 @@ public final class Assistant
     return x;
   }
   
-  public static void drawMenuBackground(Graphics2D g, Window w)
+  public static void drawMenuBackground(Graphics2D g)
   {
-    g.drawImage(Viewport.loadImage("system/menu.jpg"), 0, 0, w.getWidth(), w.getHeight(), w);
+    g.drawImage(Viewport.loadImage("system/menu.jpg"), 0, 0, Viewport.w.getWidth(), Viewport.w.getHeight(), Viewport.w);
   }
   
   public static void drawString(String s, int x, int y, Graphics2D g, Color c)
@@ -476,33 +476,33 @@ public final class Assistant
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
   }
   
-  public static void stretchTileset(Image img, int x, int y, int w, int h, Graphics2D g, Window win)
+  public static void stretchTileset(Image img, int x, int y, int w, int h, Graphics2D g)
   {
     // if (w % 32 != 0 || h % 32 != 0)
     // return;
     for (int i = 32; i < w - 32; i += 32)
       for (int j = 32; j < h - 32; j += 32)
-        g.drawImage(img, x + i, y + j, x + i + 32, y + j + 32, 32, 32, 64, 64, win);
+        g.drawImage(img, x + i, y + j, x + i + 32, y + j + 32, 32, 32, 64, 64, Viewport.w);
     // top left
-    g.drawImage(img, x, y, x + 32, y + 32, 0, 0, 32, 32, win);
+    g.drawImage(img, x, y, x + 32, y + 32, 0, 0, 32, 32, Viewport.w);
     // top right
-    g.drawImage(img, x + w - 32, y, x + w, y + 32, 64, 0, 96, 32, win);
+    g.drawImage(img, x + w - 32, y, x + w, y + 32, 64, 0, 96, 32, Viewport.w);
     // middle left
     for (int i = 0; i < h - 64; i += 32)
-      g.drawImage(img, x, y + i + 32, x + 32, y + i + 64, 0, 32, 32, 64, win);
+      g.drawImage(img, x, y + i + 32, x + 32, y + i + 64, 0, 32, 32, 64, Viewport.w);
     // middle right
     for (int i = 0; i < h - 64; i += 32)
-      g.drawImage(img, x + w - 32, y + i + 32, x + w, y + i + 64, 64, 32, 96, 64, win);
+      g.drawImage(img, x + w - 32, y + i + 32, x + w, y + i + 64, 64, 32, 96, 64, Viewport.w);
     // middle top
     for (int i = 0; i < w - 64; i += 32)
-      g.drawImage(img, x + i + 32, y, x + i + 64, y + 32, 32, 0, 64, 32, win);
+      g.drawImage(img, x + i + 32, y, x + i + 64, y + 32, 32, 0, 64, 32, Viewport.w);
     // middle bottom
     for (int i = 0; i < w - 64; i += 32)
-      g.drawImage(img, x + i + 32, y + h - 32, x + i + 64, y + h, 32, 64, 64, 96, win);
+      g.drawImage(img, x + i + 32, y + h - 32, x + i + 64, y + h, 32, 64, 64, 96, Viewport.w);
     // bottom left
-    g.drawImage(img, x, y + h - 32, x + 32, y + h, 0, 64, 32, 96, win);
+    g.drawImage(img, x, y + h - 32, x + 32, y + h, 0, 64, 32, 96, Viewport.w);
     // bottom right
-    g.drawImage(img, x + w - 32, y + h - 32, x + w, y + h, 64, 64, 96, 96, win);
+    g.drawImage(img, x + w - 32, y + h - 32, x + w, y + h, 64, 64, 96, 96, Viewport.w);
   }
   
   public static Area toArea(Image img)

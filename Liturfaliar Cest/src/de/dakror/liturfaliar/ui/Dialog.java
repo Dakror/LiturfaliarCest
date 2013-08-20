@@ -69,11 +69,11 @@ public class Dialog extends Component
     }
   }
   
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
-    setX(v.w.getWidth() / 2 - getWidth() / 2);
-    int sy = v.w.getHeight() / 3 - getHeight() / 2;
-    if (getHeight() > v.w.getHeight() / 3) sy = v.w.getHeight() / 2 - getHeight() / 2;
+    setX(Viewport.w.getWidth() / 2 - getWidth() / 2);
+    int sy = Viewport.w.getHeight() / 3 - getHeight() / 2;
+    if (getHeight() > Viewport.w.getHeight() / 3) sy = Viewport.w.getHeight() / 2 - getHeight() / 2;
     if (getY() != sy)
     {
       setY(sy);
@@ -89,13 +89,13 @@ public class Dialog extends Component
     // -- just init stuff -- //
     String[] lines = this.message.split("\\[br\\]");
     if (getHeight() == -1 && this.message.length() > 0) setHeight((int) (lines.length * 20 * 1.4f + 32 + (30 * 1.4f)));
-    Assistant.Shadow(new Rectangle2D.Double(0, 0, v.w.getWidth(), v.w.getHeight()), Colors.DGRAY, 0.8f, g);
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
+    Assistant.Shadow(new Rectangle2D.Double(0, 0, Viewport.w.getWidth(), Viewport.w.getHeight()), Colors.DGRAY, 0.8f, g);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g);
     Assistant.drawHorizontallyCenteredString(this.title, getX() + 16, getWidth(), getY() + (int) (30 * 1.4f), g, 30, Color.decode("#999999"));
     if (this.close != null)
     {
-      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY() - 48, 48, 48, g, v.w);
-      this.close.draw(g, v);
+      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY() - 48, 48, 48, g);
+      this.close.draw(g);
     }
     for (int i = 0; i < lines.length; i++)
     {
@@ -106,7 +106,7 @@ public class Dialog extends Component
     for (int i = 0; i < this.children.size(); i++)
     {
       Component child = this.children.get(i);
-      child.draw(g, v);
+      child.draw(g);
       if (child.getArea() != null && child.getArea().contains(this.mouse)) selected = i;
     }
     if (this.buttons.length > 0)
@@ -114,11 +114,11 @@ public class Dialog extends Component
       for (int i = 0; i < this.buttons.length; i++)
       {
         this.buttons[i].setY(getY() + getHeight());
-        this.buttons[i].draw(g, v);
+        this.buttons[i].draw(g);
       }
-      if (this.selected > -1) this.buttons[this.selected].draw(g, v);
+      if (this.selected > -1) this.buttons[this.selected].draw(g);
     }
-    if (selected > -1) this.children.get(selected).draw(g, v);
+    if (selected > -1) this.children.get(selected).draw(g);
   }
   
   public void mouseReleased(MouseEvent e)

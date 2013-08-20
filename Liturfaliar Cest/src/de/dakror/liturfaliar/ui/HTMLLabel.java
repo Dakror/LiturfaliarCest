@@ -2,7 +2,6 @@ package de.dakror.liturfaliar.ui;
 
 import java.awt.Graphics2D;
 
-import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.Database;
 
@@ -25,7 +24,7 @@ public class HTMLLabel extends Component
   {}
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
     if (update)
     {

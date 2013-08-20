@@ -49,7 +49,7 @@ public class Tooltip extends Component
     }
   }
   
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
     if (getWidth() < 2)
     {
@@ -65,9 +65,9 @@ public class Tooltip extends Component
     int lx = getX();
     int ly = getY();
     
-    if (lx + getWidth() > v.w.getWidth()) lx -= (lx + getWidth()) - v.w.getWidth();
+    if (lx + getWidth() > Viewport.w.getWidth()) lx -= (lx + getWidth()) - Viewport.w.getWidth();
     
-    if (ly + getHeight() > v.w.getHeight()) ly -= (ly + getHeight()) - v.w.getHeight();
+    if (ly + getHeight() > Viewport.w.getHeight()) ly -= (ly + getHeight()) - Viewport.w.getHeight();
     
     Font oldFont = g.getFont();
     g.setFont(new Font("Times New Roman", g.getFont().getStyle(), g.getFont().getSize()));
@@ -77,7 +77,7 @@ public class Tooltip extends Component
       if (tileset != null)
       {
         setHeight(getHeightOfPreviousRows(text.length, g) + 32);
-        Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), lx, ly, getWidth() + 16 - (getWidth() % 16), getHeight(), g, v.w);
+        Assistant.stretchTileset(Viewport.loadImage("tileset/" + tileset + ".png"), lx, ly, getWidth() + 16 - (getWidth() % 16), getHeight(), g);
       }
       else
       {

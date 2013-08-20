@@ -71,11 +71,10 @@ public class OVScene_Inventory extends OVScene implements Inventory
   }
   
   @Override
-  public void construct(Viewport v)
+  public void construct()
   {
-    this.v = v;
     Dispatcher.addListener(this);
-    c1 = new Container(0, 0, v.w.getWidth(), 55);
+    c1 = new Container(0, 0, Viewport.w.getWidth(), 55);
     c1.tileset = null;
     
     for (Attr attr : Attr.values())
@@ -135,9 +134,9 @@ public class OVScene_Inventory extends OVScene implements Inventory
     equipSlots[11].setCategoryFilter(Categories.BOOTS);
     if (sg.getPlayer().getEquipment().hasEquipmentItem(Categories.BOOTS)) equipSlots[11].setItem(sg.getPlayer().getEquipment().getEquipmentItem(Categories.BOOTS));
     
-    inventory = ItemSlot.createSlotGrid(v.w.getWidth() / 2 - 180, v.w.getHeight() / 2 - 350 + 110 - 52, WIDTH, HEIGHT);
+    inventory = ItemSlot.createSlotGrid(Viewport.w.getWidth() / 2 - 180, Viewport.w.getHeight() / 2 - 350 + 110 - 52, WIDTH, HEIGHT);
     
-    hotbar = ItemSlot.createSlotRow(v.w.getWidth() / 2 - PlayerHotbar.SLOTCOUNT * ItemSlot.SIZE / 2, v.w.getHeight() - ItemSlot.SIZE, PlayerHotbar.SLOTCOUNT);
+    hotbar = ItemSlot.createSlotRow(Viewport.w.getWidth() / 2 - PlayerHotbar.SLOTCOUNT * ItemSlot.SIZE / 2, Viewport.w.getHeight() - ItemSlot.SIZE, PlayerHotbar.SLOTCOUNT);
     
     for (ItemSlot is : equipSlots)
     {
@@ -201,7 +200,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
         {
           case USEITEM:
           {
-            contextItemSlot.triggerAction(getMap(), sg.getPlayer(), v);
+            contextItemSlot.triggerAction(getMap(), sg.getPlayer());
             break;
           }
           case TRASHITEM:
@@ -248,77 +247,77 @@ public class OVScene_Inventory extends OVScene implements Inventory
       Viewport.dialog = new Dialog("Verschrotten", "Bist du sicher, dass du diesen Gegenstand verschrotten möchtest?[br]Diese Aktion kann nicht rückgängig gemacht werden!", Dialog.MESSAGE);
       Viewport.dialog.closeDisabled = true;
       Viewport.dialog.freezeOVScene = true;
-      Viewport.dialog.draw(g, v);
+      Viewport.dialog.draw(g);
       Viewport.dialog.setButtons("Ja", "Nein");
       Viewport.dialog.update();
       showTrashDialog = false;
     }
-    Assistant.Shadow(v.w.getBounds(), Color.black, 0.6f, g);
-    c1.draw(g, v);
-    Assistant.drawHorizontallyCenteredString("Inventar", v.w.getWidth(), 43, g, 45, Color.white);
+    Assistant.Shadow(Viewport.w.getBounds(), Color.black, 0.6f, g);
+    c1.draw(g);
+    Assistant.drawHorizontallyCenteredString("Inventar", Viewport.w.getWidth(), 43, g, 45, Color.white);
     
     // -- inventory -- //
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 190, v.w.getHeight() / 2 - 350, ItemSlot.SIZE * WIDTH + 20, 700, g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), Viewport.w.getWidth() / 2 - 190, Viewport.w.getHeight() / 2 - 350, ItemSlot.SIZE * WIDTH + 20, 700, g);
     
     for (ItemSlot is : inventory)
     {
-      is.draw(g, v);
+      is.draw(g);
     }
     
-    invWeight.draw(g, v);
+    invWeight.draw(g);
     
     if (money == null)
     {
       String gold = (int) sg.getPlayer().getAttributes().getAttribute(Attr.gold).getValue() + "";
       int length = g.getFontMetrics(g.getFont().deriveFont(0, 20)).stringWidth(gold);
-      money = new HTMLLabel(v.w.getWidth() / 2 - 175 + ItemSlot.SIZE * WIDTH - 40 - length, v.w.getHeight() / 2 - 350 + 110 - 52 + HEIGHT * ItemSlot.SIZE - 7, length, 30, "<" + Assistant.ColorToHex(Colors.GRAY) + ";20;0>" + gold + "[br]");
+      money = new HTMLLabel(Viewport.w.getWidth() / 2 - 175 + ItemSlot.SIZE * WIDTH - 40 - length, Viewport.w.getHeight() / 2 - 350 + 110 - 52 + HEIGHT * ItemSlot.SIZE - 7, length, 30, "<" + Assistant.ColorToHex(Colors.GRAY) + ";20;0>" + gold + "[br]");
       
-      goldIcon = new Icon(v.w.getWidth() / 2 - 175 + ItemSlot.SIZE * WIDTH - 40, v.w.getHeight() / 2 - 350 + 110 - 52 + HEIGHT * ItemSlot.SIZE - 3, 30, 30, 13, 12);
+      goldIcon = new Icon(Viewport.w.getWidth() / 2 - 175 + ItemSlot.SIZE * WIDTH - 40, Viewport.w.getHeight() / 2 - 350 + 110 - 52 + HEIGHT * ItemSlot.SIZE - 3, 30, 30, 13, 12);
     }
-    money.draw(g, v);
-    goldIcon.draw(g, v.w);
+    money.draw(g);
+    goldIcon.draw(g);
     
     // -- character equip -- //
-    Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350, 410, 550, g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), Viewport.w.getWidth() / 2 - 600, Viewport.w.getHeight() / 2 - 350, 410, 550, g);
     
-    g.drawImage(Viewport.loadScaledImage("system/EquipGuy.png", 292, 390), v.w.getWidth() / 2 - 541, v.w.getHeight() / 2 - 290, v.w);
+    g.drawImage(Viewport.loadScaledImage("system/EquipGuy.png", 292, 390), Viewport.w.getWidth() / 2 - 541, Viewport.w.getHeight() / 2 - 290, Viewport.w);
     
     for (ItemSlot is : equipSlots)
     {
-      is.draw(v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350, g, v);
+      is.draw(Viewport.w.getWidth() / 2 - 600, Viewport.w.getHeight() / 2 - 350, g);
     }
     
     // -- hotbar -- //
     
     for (ItemSlot is : hotbar)
     {
-      is.draw(g, v);
+      is.draw(g);
     }
     
     // -- stats -- //
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 - 600, v.w.getHeight() / 2 - 350 + 550, 410, 150, g, v.w);
-    labels1.draw(g, v);
-    stats1.draw(g, v);
-    labels2.draw(g, v);
-    stats2.draw(g, v);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), Viewport.w.getWidth() / 2 - 600, Viewport.w.getHeight() / 2 - 350 + 550, 410, 150, g);
+    labels1.draw(g);
+    stats1.draw(g);
+    labels2.draw(g);
+    stats2.draw(g);
     
     for (ItemSlot is : inventory)
     {
-      is.drawTooltip(g, v);
+      is.drawTooltip(g);
     }
     
     for (ItemSlot is : equipSlots)
     {
-      is.drawTooltip(g, v);
+      is.drawTooltip(g);
     }
     
     for (ItemSlot is : hotbar)
     {
-      is.drawTooltip(g, v);
+      is.drawTooltip(g);
     }
-    if (pickedUp != null) pickedUp.drawLightWeight(g, v);
+    if (pickedUp != null) pickedUp.drawLightWeight(g);
     
-    if (contextMenu != null) contextMenu.draw(g, v);
+    if (contextMenu != null) contextMenu.draw(g);
   }
   
   public void trashItem()
@@ -373,9 +372,9 @@ public class OVScene_Inventory extends OVScene implements Inventory
       sg.getPlayer().setInventory(ItemSlot.serializeItemSlots(inventory));
       sg.setPaused(false);
       sg.inventoryLastClosed = System.currentTimeMillis();
-      v.setFramesFrozen(false);
-      v.removeOVScene("Inventory");
-      v.skipEvent = e;
+      Viewport.setFramesFrozen(false);
+      Viewport.removeOVScene("Inventory");
+      Viewport.skipEvent = e;
     }
   }
   
@@ -636,8 +635,8 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     String lb2 = "";
     
-    labels1 = new HTMLLabel(v.w.getWidth() / 2 - 590, v.w.getHeight() / 2 - 350 + 546, 130, 150, lb1);
-    labels2 = new HTMLLabel(v.w.getWidth() / 2 - 590 + 205, v.w.getHeight() / 2 - 350 + 546, 130, 150, lb2);
+    labels1 = new HTMLLabel(Viewport.w.getWidth() / 2 - 590, Viewport.w.getHeight() / 2 - 350 + 546, 130, 150, lb1);
+    labels2 = new HTMLLabel(Viewport.w.getWidth() / 2 - 590 + 205, Viewport.w.getHeight() / 2 - 350 + 546, 130, 150, lb2);
     
     String st1 =
     
@@ -654,13 +653,13 @@ public class OVScene_Inventory extends OVScene implements Inventory
     
     String st2 = "";
     
-    if (stats1 == null) stats1 = new HTMLLabel(v.w.getWidth() / 2 - 590 + 125, v.w.getHeight() / 2 - 350 + 546, 97, 150, st1);
+    if (stats1 == null) stats1 = new HTMLLabel(Viewport.w.getWidth() / 2 - 590 + 125, Viewport.w.getHeight() / 2 - 350 + 546, 97, 150, st1);
     else stats1.doUpdate(st1);
     
-    if (stats2 == null) stats2 = new HTMLLabel(v.w.getWidth() / 2 - 590 + 125 + 205, v.w.getHeight() / 2 - 350 + 546, 97, 150, st2);
+    if (stats2 == null) stats2 = new HTMLLabel(Viewport.w.getWidth() / 2 - 590 + 125 + 205, Viewport.w.getHeight() / 2 - 350 + 546, 97, 150, st2);
     else stats2.doUpdate(st2);
     
-    if (invWeight == null) invWeight = new HTMLLabel(v.w.getWidth() / 2 - 175, v.w.getHeight() / 2 - 350 + 110 - 52 + HEIGHT * ItemSlot.SIZE - 7, 160, 30, w + "Gewicht: <#ffffff;20;1>" + Attribute.FORMAT.format(getInventoryWeight()) + " kg[br]");
+    if (invWeight == null) invWeight = new HTMLLabel(Viewport.w.getWidth() / 2 - 175, Viewport.w.getHeight() / 2 - 350 + 110 - 52 + HEIGHT * ItemSlot.SIZE - 7, 160, 30, w + "Gewicht: <#ffffff;20;1>" + Attribute.FORMAT.format(getInventoryWeight()) + " kg[br]");
     else invWeight.doUpdate(w + "Gewicht: <#ffffff;20;1>" + Attribute.FORMAT.format(getInventoryWeight()) + " kg[br]");
     
     for (ItemSlot is : equipSlots)
@@ -739,9 +738,9 @@ public class OVScene_Inventory extends OVScene implements Inventory
     int w = 300;
     int h = 28 * options.length + 18;
     
-    if (lx + w > v.w.getWidth()) lx -= (lx + w) - v.w.getWidth();
+    if (lx + w > Viewport.w.getWidth()) lx -= (lx + w) - Viewport.w.getWidth();
     
-    if (ly + h > v.w.getHeight()) ly -= (ly + h) - v.w.getHeight();
+    if (ly + h > Viewport.w.getHeight()) ly -= (ly + h) - Viewport.w.getHeight();
     
     contextMenu = new TextSelect(lx, ly, w, h, options);
   }

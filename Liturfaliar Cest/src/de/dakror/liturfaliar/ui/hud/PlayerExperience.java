@@ -27,19 +27,19 @@ public class PlayerExperience extends HUDComponent
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v, Map m)
+  public void draw(Graphics2D g, Map m)
   {
     if (!visible && bar == null)
     {
-      setX(v.w.getWidth() / 2 - ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);
+      setX(Viewport.w.getWidth() / 2 - ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);
       setHeight(20);
-      setY(v.w.getHeight() - height - 12 - ItemSlot.SIZE + 5 + 11);
+      setY(Viewport.w.getHeight() - height - 12 - ItemSlot.SIZE + 5 + 11);
       setWidth(ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT + 6);
       bar = new ProgressBar(x, y, width, 0, false, "7dd33c", null, false);
       bar.setHeight(height);
       visible = true;
     }
     
-    if (visible) bar.draw(g, v);
+    if (visible) bar.draw(g);
   }
 }

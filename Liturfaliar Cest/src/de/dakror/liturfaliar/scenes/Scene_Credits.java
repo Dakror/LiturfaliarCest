@@ -18,13 +18,11 @@ public class Scene_Credits implements Scene
   int       height;
   int       lastY;
   JSONArray credits;
-  Viewport  v;
   
   @Override
-  public void construct(Viewport v)
+  public void construct()
   {
-    this.v = v;
-    v.play();
+    Viewport.play();
     try
     {
       credits = new JSONArray(Assistant.getURLContent(getClass().getResource("/json/credits.json")));
@@ -54,7 +52,7 @@ public class Scene_Credits implements Scene
     {
       for (int i = 0; i < credits.length(); i++)
       {
-        int nx = Assistant.drawHorizontallyCenteredString(credits.getJSONObject(i).getString("name"), v.w.getWidth(), lastY + 35, g, 30, Color.decode("#994444"));
+        int nx = Assistant.drawHorizontallyCenteredString(credits.getJSONObject(i).getString("name"), Viewport.w.getWidth(), lastY + 35, g, 30, Color.decode("#994444"));
         Font f = g.getFont();
         g.setFont(f.deriveFont(30.0f));
         Assistant.Rect(nx - g.getFontMetrics().stringWidth(credits.getJSONObject(i).getString("name")), lastY + 40, g.getFontMetrics().stringWidth(credits.getJSONObject(i).getString("name")), 1 / 2, Color.decode("#994444"), Color.decode("#994444"), g);
@@ -62,7 +60,7 @@ public class Scene_Credits implements Scene
         lastY += 40;
         for (int j = 0; j < credits.getJSONObject(i).getJSONArray("list").length(); j++)
         {
-          Assistant.drawHorizontallyCenteredString(credits.getJSONObject(i).getJSONArray("list").getString(j), v.w.getWidth(), lastY + 25, g, 20, Color.white);
+          Assistant.drawHorizontallyCenteredString(credits.getJSONObject(i).getJSONArray("list").getString(j), Viewport.w.getWidth(), lastY + 25, g, 20, Color.white);
           lastY += 25;
         }
       }
@@ -84,8 +82,8 @@ public class Scene_Credits implements Scene
     switch (e.getExtendedKeyCode())
     {
       case KeyEvent.VK_ESCAPE:
-        v.playSound("002-System02");
-        v.setScene(new Scene_MainMenu());
+        Viewport.playSound("002-System02");
+        Viewport.setScene(new Scene_MainMenu());
         break;
     }
   }

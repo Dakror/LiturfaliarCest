@@ -5,11 +5,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-import de.dakror.liturfaliar.Viewport;
-
 public interface Scene
 {
-  public void construct(Viewport v);
+  public void construct();
   
   public void destruct();
   

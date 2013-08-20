@@ -364,14 +364,14 @@ public class Talk extends Component
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
     if (getWidth() == 0)
     {
-      setX(v.w.getWidth() / 6);
-      setY(v.w.getHeight() / 16 * 13);
-      setWidth(v.w.getWidth() / 3 * 2);
-      setHeight(v.w.getHeight() - getY());
+      setX(Viewport.w.getWidth() / 6);
+      setY(Viewport.w.getHeight() / 16 * 13);
+      setWidth(Viewport.w.getWidth() / 3 * 2);
+      setHeight(Viewport.w.getHeight() - getY());
       
       maxCols = (getWidth() - 34) / g.getFontMetrics(g.getFont().deriveFont((float) SIZE)).stringWidth("r");
       
@@ -394,14 +394,14 @@ public class Talk extends Component
       m.getPlayer().setLookingEnabled(false);
     }
     
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX(), getY(), getWidth(), getHeight(), g);
     
     nameLabel.drawString(getX() + 10, getY() + 40, g);
     
     if (speakerFace != null)
     {
-      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX() - 80, getY(), 80, 80, g, v.w);
-      g.drawImage(speakerFace, getX() - 80 + 7, getY() + 13, 70, 75, v.w);
+      Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), getX() - 80, getY(), 80, 80, g);
+      g.drawImage(speakerFace, getX() - 80 + 7, getY() + 13, 70, 75, Viewport.w);
     }
     
     int y = -1;
@@ -433,11 +433,11 @@ public class Talk extends Component
     {
       int size = 2;
       int c = (int) (Math.sin(0.25D * cos) * 5.0D);
-      g.drawImage(Viewport.loadScaledImage("system/Arrow.png", 18 * size, 9 * size), getX() + getWidth() - 18 * size - 10, getY() + getHeight() - 5 - 9 * size + c, v.w);
+      g.drawImage(Viewport.loadScaledImage("system/Arrow.png", 18 * size, 9 * size), getX() + getWidth() - 18 * size - 10, getY() + getHeight() - 5 - 9 * size + c, Viewport.w);
       
     }
     
-    if (activeChooser != null) activeChooser.draw(g, v);
+    if (activeChooser != null) activeChooser.draw(g);
   }
   
   @Override

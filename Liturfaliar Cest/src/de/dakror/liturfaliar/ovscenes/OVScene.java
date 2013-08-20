@@ -5,14 +5,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-import de.dakror.liturfaliar.Viewport;
-
 public abstract class OVScene
 {
   public boolean     consistent = false;
-  protected Viewport v;
   
-  public abstract void construct(Viewport v);
+  public abstract void construct();
   
   public abstract void destruct();
   

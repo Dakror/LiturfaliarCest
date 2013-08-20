@@ -53,14 +53,13 @@ public class OVScene_Skills extends OVScene implements Inventory
   }
   
   @Override
-  public void construct(Viewport v)
+  public void construct()
   {
-    this.v = v;
     Dispatcher.addListener(this);
-    c1 = new Container(0, 0, v.w.getWidth(), 55);
+    c1 = new Container(0, 0, Viewport.w.getWidth(), 55);
     c1.tileset = null;
     
-    hotbar = ItemSlot.createSlotRow(v.w.getWidth() / 2 - PlayerHotbar.SLOTCOUNT * ItemSlot.SIZE / 2, v.w.getHeight() - ItemSlot.SIZE, PlayerHotbar.SLOTCOUNT);
+    hotbar = ItemSlot.createSlotRow(Viewport.w.getWidth() / 2 - PlayerHotbar.SLOTCOUNT * ItemSlot.SIZE / 2, Viewport.w.getHeight() - ItemSlot.SIZE, PlayerHotbar.SLOTCOUNT);
     
     for (int i = 0; i < hotbar.length; i++)
     {
@@ -76,7 +75,7 @@ public class OVScene_Skills extends OVScene implements Inventory
     }
     
     int h = 96 - 36;
-    flicker = new Flicker(v.w.getWidth() / 2 - 400, v.w.getHeight() - 200, 800, 96, new FlickObject(9, 8, h, Types.PERKSKILL.getName()), new FlickObject(1, 0, h, Types.SWORDSKILL.getName()), new FlickObject(0, 253, h, Types.BOWSKILL.getName()));
+    flicker = new Flicker(Viewport.w.getWidth() / 2 - 400, Viewport.w.getHeight() - 200, 800, 96, new FlickObject(9, 8, h, Types.PERKSKILL.getName()), new FlickObject(1, 0, h, Types.SWORDSKILL.getName()), new FlickObject(0, 253, h, Types.BOWSKILL.getName()));
   }
   
   @Override
@@ -100,62 +99,62 @@ public class OVScene_Skills extends OVScene implements Inventory
   @Override
   public void draw(Graphics2D g)
   {
-    Assistant.Shadow(v.w.getBounds(), Color.black, 0.6f, g);
-    c1.draw(g, v);
-    Assistant.drawHorizontallyCenteredString("Fähigkeiten", v.w.getWidth(), 43, g, 45, Color.white);
+    Assistant.Shadow(Viewport.w.getBounds(), Color.black, 0.6f, g);
+    c1.draw(g);
+    Assistant.drawHorizontallyCenteredString("Fähigkeiten", Viewport.w.getWidth(), 43, g, 45, Color.white);
     
     // -- tree area -- //
-    Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), v.w.getWidth() / 2 - 400, 100, 800, v.w.getHeight() - 300, g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), Viewport.w.getWidth() / 2 - 400, 100, 800, Viewport.w.getHeight() - 300, g);
     for (SkillSlot ss : slots)
     {
-      ss.drawArrows(g, v);
+      ss.drawArrows(g);
     }
     
     for (SkillSlot ss : slots)
     {
-      ss.draw(g, v);
+      ss.draw(g);
     }
     
     // -- skillpoints -- //
-    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), v.w.getWidth() / 2 + 400, 100, 192, 96, g, v.w);
+    Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), Viewport.w.getWidth() / 2 + 400, 100, 192, 96, g);
     String string = (int) sg.getPlayer().getAttributes().getAttribute(Attr.skillpoint).getValue() + " SP";
     int size = 70;
     Font oldFont = g.getFont();
     g.setFont(new Font("Times New Roman", 0, 1));
     if (g.getFontMetrics(g.getFont().deriveFont(size)).stringWidth(string) > 50) size -= g.getFontMetrics(g.getFont().deriveFont(size)).stringWidth(string) - 50;
     
-    Assistant.drawHorizontallyCenteredString(string, v.w.getWidth() / 2 + 410, 172, 174, g, size, Color.white);
+    Assistant.drawHorizontallyCenteredString(string, Viewport.w.getWidth() / 2 + 410, 172, 174, g, size, Color.white);
     g.setFont(oldFont);
     // -- type area -- //
-    flicker.draw(g, v);
+    flicker.draw(g);
     
     // -- hotbar -- //
     for (ItemSlot is : hotbar)
     {
-      is.draw(g, v);
+      is.draw(g);
     }
     
     // -- tooltips -- //
     for (SkillSlot is : slots)
     {
-      is.getItem().tooltip.draw(g, v);
+      is.getItem().tooltip.draw(g);
     }
     
     for (ItemSlot is : hotbar)
     {
-      is.drawTooltip(g, v);
+      is.drawTooltip(g);
     }
     
     if (pickedUp != null)
     {
-      if (pickedUp instanceof SkillSlot) ((SkillSlot) pickedUp).getItem().draw(g, v);
-      else pickedUp.drawLightWeight(g, v);
+      if (pickedUp instanceof SkillSlot) ((SkillSlot) pickedUp).getItem().draw(g);
+      else pickedUp.drawLightWeight(g);
     }
   }
   
   public void loadSkillTree()
   {
-    int x = v.w.getWidth() / 2 - 400;
+    int x = Viewport.w.getWidth() / 2 - 400;
     
     int y = 100 + 50;
     int width = 800;
@@ -293,9 +292,9 @@ public class OVScene_Skills extends OVScene implements Inventory
     if (e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == Keys.SKILLS)
     {
       sg.setPaused(false);
-      v.setFramesFrozen(false);
-      v.removeOVScene("Skills");
-      v.skipEvent = e;
+      Viewport.setFramesFrozen(false);
+      Viewport.removeOVScene("Skills");
+      Viewport.skipEvent = e;
     }
   }
   

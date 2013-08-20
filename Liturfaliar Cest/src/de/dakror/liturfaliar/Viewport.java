@@ -56,30 +56,32 @@ import de.dakror.liturfaliar.util.GameFrame;
  */
 public class Viewport extends GameFrame implements WindowListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener
 {
-  private boolean                       initialized    = false;
-  private boolean                       takeScreenshot = false;
-  private boolean                       pausedfromscene;
-  private boolean                       frozenFrames;
-  private long                          time           = 0;
-  static private HashMap<Image, String> REVcache       = new HashMap<Image, String>();
-  static private HashMap<String, Image> cache          = new HashMap<String, Image>();
-  static private HashMap<String, Scale> SCcache        = new HashMap<String, Scale>();
-  public double                         fMusicEffectID = 0.5d;
-  public double                         fMusicID       = 0.3d;
-  public double                         fSoundID       = 1.0d;
-  public HashMap<String, OVScene>       ovscenes       = new HashMap<String, OVScene>();
-  public JSONObject                     savegame;
-  public static Notification            notification;
-  public static Scene                   scene;
-  public SoundSystem                    ss;
-  public String                         MusicEffectID;
-  public String                         MusicID;
-  public String                         SoundID;
+  private static HashMap<Image, String>   REVcache       = new HashMap<Image, String>();
+  private static HashMap<String, Image>   cache          = new HashMap<String, Image>();
+  private static HashMap<String, Scale>   SCcache        = new HashMap<String, Scale>();
+  private static HashMap<String, OVScene> ovscenes       = new HashMap<String, OVScene>();
+  private static boolean                  pausedfromscene;
+  private static boolean                  frozenFrames;
+  private static boolean                  sceneEnabled;
+  private static boolean                         initialized    = false;
+  private static long                     time           = 0;
   
-  public MapEditor                         editor;
-  public InputEvent                     skipEvent;
-  private static boolean                sceneEnabled;
-  public static Dialog                  dialog;
+  public static Notification              notification;
+  public static Scene                     scene;
+  public static SoundSystem               ss;
+  public static String                    MusicEffectID;
+  public static String                    MusicID;
+  public static String                    SoundID;
+  public static Dialog                    dialog;
+  public static InputEvent                       skipEvent;
+  public static JSONObject                       savegame;
+  public static double                    fMusicEffectID = 0.5d;
+  public static double                    fMusicID       = 0.3d;
+  public static double                    fSoundID       = 1.0d;
+  
+  private boolean                         takeScreenshot = false;
+  
+  public MapEditor                        editor;
   
   /**
    * Constructor
@@ -88,7 +90,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
    */
   public Viewport(SoundSystem ss)
   {
-    this.ss = ss;
+    Viewport.ss = ss;
   }
   
   /**
@@ -164,14 +166,14 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     {}
     if (notification != null)
     {
-      notification.draw(g, w);
+      notification.draw(g);
       if (notification.finished) notification = null;
     }
     // static drawers
-    if (dialog != null) dialog.draw(g, this);
+    if (dialog != null) dialog.draw(g);
     
     CursorText.draw(g, w);
-    HelpOverlay.draw(g, this);
+    HelpOverlay.draw(g);
   }
   
   /**
@@ -179,7 +181,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
    * 
    * @param scene - The new {@link Scene} to be the active one.
    */
-  public void setScene(final Scene s)
+  public static void setScene(final Scene s)
   {
     Assistant.setCursor(Viewport.loadImage("system/loading.png"), w);
     initialized = false;
@@ -192,13 +194,13 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     
     HelpOverlay.clear();
     scene = s;
-    scene.construct(Viewport.this);
+    scene.construct();
     initialized = true;
     sceneEnabled = true;
     Assistant.setCursor(Viewport.loadImage("system/cursor.png"), w);
   }
   
-  public void clearOVScenes()
+  public static void clearOVScenes()
   {
     ArrayList<String> keys = new ArrayList<String>(ovscenes.keySet());
     HashMap<String, OVScene> newov = new HashMap<String, OVScene>();
@@ -210,20 +212,20 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     ovscenes = newov;
   }
   
-  public void addOVScene(OVScene scene, String name)
+  public static void addOVScene(OVScene scene, String name)
   {
-    scene.construct(this);
+    scene.construct();
     ovscenes.put(name, scene);
   }
   
-  public void toggleOVScene(OVScene scene, String name)
+  public static void toggleOVScene(OVScene scene, String name)
   {
     if (ovscenes.containsKey(name)) removeOVScene(name);
     
     else addOVScene(scene, name);
   }
   
-  public void removeOVScene(String name)
+  public static void removeOVScene(String name)
   {
     if (ovscenes.containsKey(name))
     {
@@ -293,25 +295,25 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     }
   }
   
-  public int getFrame()
+  public static int getFrame()
   {
     if (areFramesFrozen()) return 0;
     return (int) ((System.currentTimeMillis() - time) / 250);
   }
   
-  public int getFrame(long time)
+  public static int getFrame(long time)
   {
     if (areFramesFrozen()) return 0;
     return (int) Math.round((System.currentTimeMillis() - time) / 250.0);
   }
   
-  public int getFrame(float size)
+  public static int getFrame(float size)
   {
     if (areFramesFrozen()) return 0;
     return (int) ((System.currentTimeMillis() - time) / (250 * size));
   }
   
-  public int getFrame(long time, float size)
+  public static int getFrame(long time, float size)
   {
     if (areFramesFrozen()) return 0;
     return (int) ((System.currentTimeMillis() - time) / (250 * size));
@@ -332,8 +334,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     w.setForeground(Color.white);
     Assistant.setCursor(Viewport.loadImage("system/cursor.png"), w);
     
-    FileManager.mk(this);
-    FileManager.loadOptions(this);
+    FileManager.mk(false);
+    FileManager.loadOptions();
     try
     {
       w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/morpheus.ttf")).deriveFont(20f));
@@ -367,7 +369,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   /**
    * Pauses all played Sounds and BackgroundMusic.
    */
-  public void pause()
+  public static void pause()
   {
     try
     {
@@ -381,7 +383,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   /**
    * Resumes all paused Sounds and BackgroundMusic.
    */
-  public void play()
+  public static void play()
   {
     pausedfromscene = false;
     if (MusicEffectID != null) ss.play(MusicEffectID);
@@ -393,7 +395,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
    * 
    * @param name - Name of the Sound to play
    */
-  public void playSound(String name)
+  public static void playSound(String name)
   {
     if (FileManager.pullMediaFile("Sound", name + ".wav") == null)
     {
@@ -426,7 +428,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     return ((frames + 0.0) / format.getFrameRate()) * 1000;
   }
   
-  public void playSound(String name, float vol)
+  public static void playSound(String name, float vol)
   {
     if (FileManager.pullMediaFile("Sound", name + ".wav") == null)
     {
@@ -441,7 +443,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   /**
    * Stops the played Sound.
    */
-  public void stopSound()
+  public static void stopSound()
   {
     ss.stop(SoundID);
   }
@@ -452,7 +454,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
    * @param name - Name of the Sound to play.
    * @param force - if set to {@code TRUE}, the Music will be played, even if the same is already playing.
    */
-  public void playMusic(String name, boolean force)
+  public static void playMusic(String name, boolean force)
   {
     if (!force && MusicID != null && MusicID.equals(name + ".wav"))
     {
@@ -469,7 +471,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     ss.setVolume(MusicID, (float) fMusicID);
   }
   
-  public void playMusic(String name, boolean force, float vol)
+  public static void playMusic(String name, boolean force, float vol)
   {
     if (!force && MusicID != null && MusicID.equals(name + ".wav"))
     {
@@ -485,9 +487,9 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   /**
    * Stops the played Music.
    */
-  public void stopMusic()
+  public static void stopMusic()
   {
-    if(MusicID != null)ss.stop(MusicID);
+    if (MusicID != null) ss.stop(MusicID);
   }
   
   /**
@@ -495,10 +497,10 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
    * 
    * @param name
    */
-  public void playMusicEffect(String name)
+  public static void playMusicEffect(String name)
   {
     MusicEffectID = name;
-    ss.loadSound(getClass().getResource("/musiceffect/" + name), name);
+    ss.loadSound(Viewport.class.getResource("/musiceffect/" + name), name);
     MusicEffectID = ss.quickPlay(false, name, false, 0.0f, 0.0f, 0.0f, SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
     ss.setVolume(MusicEffectID, (float) fMusicEffectID);
   }
@@ -506,7 +508,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   /**
    * Not used yet.
    */
-  public void stopMusicEffect()
+  public static void stopMusicEffect()
   {
     ss.stop(MusicEffectID);
   }
@@ -515,7 +517,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public void windowClosing(WindowEvent e)
   {
     if (!initialized) return;
-    FileManager.saveOptions(this);
+    FileManager.saveOptions();
     stop();
   }
   
@@ -553,14 +555,14 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     pause();
   }
   
-  public boolean areFramesFrozen()
+  public static boolean areFramesFrozen()
   {
     return frozenFrames;
   }
   
-  public void setFramesFrozen(boolean frozenFrames)
+  public static void setFramesFrozen(boolean frozenFrames)
   {
-    this.frozenFrames = frozenFrames;
+    Viewport.frozenFrames = frozenFrames;
   }
   
   @Override

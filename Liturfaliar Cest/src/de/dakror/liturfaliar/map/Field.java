@@ -51,10 +51,10 @@ public class Field implements Listener
     return area.createTransformedArea(AffineTransform.getTranslateInstance(m.getX() + x, m.getY() + y));
   }
   
-  public void drawData(Map m, Graphics2D g, Viewport v)
+  public void drawData(Map m, Graphics2D g)
   {
     for (FieldData fd : this.datas)
-      fd.draw(m, this, g, v);
+      fd.draw(m, this, g);
   }
   
   public void update(Map m)

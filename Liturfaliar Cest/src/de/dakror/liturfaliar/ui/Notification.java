@@ -4,7 +4,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Window;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -36,13 +35,13 @@ public class Notification
     finished = false;
   }
   
-  public void draw(Graphics2D g, Window w)
+  public void draw(Graphics2D g)
   {
     if (render == null)
     {
       Font old = g.getFont();
       g.setFont(old.deriveFont(28.0f));
-      int width = w.getWidth() / 3;
+      int width = Viewport.w.getWidth() / 3;
       List<String> lines = Arrays.asList(Assistant.wrap(this.info, width / g.getFontMetrics().stringWidth("S")).split("\n\n"));
       lineCount = lines.size();
       render = new BufferedImage(width, (int) (g.getFontMetrics().getHeight() * lines.size()) + 16, BufferedImage.TYPE_INT_ARGB);
@@ -58,10 +57,10 @@ public class Notification
       g.setFont(old);
     }
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) (0.5f * Math.sin(this.cos + 0.5f * Math.PI) + 0.5f)));
-    g.drawImage(render, w.getWidth() / 3, 150, w);
+    g.drawImage(render, Viewport.w.getWidth() / 3, 150, Viewport.w);
     if (type != null)
     {
-      g.drawImage(Viewport.loadImage(type), w.getWidth() / 3 - 32, 168, 64, 64, w);
+      g.drawImage(Viewport.loadImage(type), Viewport.w.getWidth() / 3 - 32, 168, 64, 64, Viewport.w);
     }
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     if (System.currentTimeMillis() - timewait > 1000 * lineCount)

@@ -28,13 +28,13 @@ public class Emoticon
     done = false;
   }
   
-  public void draw(Graphics2D g, Map m, Viewport v)
+  public void draw(Graphics2D g, Map m)
   {
-    int frame = (animate) ? (v.getFrame(0.35f) % 7) * 32 : 0;
+    int frame = (animate) ? (Viewport.getFrame(0.35f) % 7) * 32 : 0;
     
     int size = 32;
     
-    g.drawImage(allemoticons, m.getX() + (int) parent.getPos().x + (int) (parent.getWidth() * 0.3), m.getY() + (int) parent.getPos().y - size, m.getX() + (int) parent.getPos().x + size + (int) (parent.getWidth() * 0.3), m.getY() + (int) parent.getPos().y, frame, getType() * 32, frame + 32, getType() * 32 + 32, v.w);
+    g.drawImage(allemoticons, m.getX() + (int) parent.getPos().x + (int) (parent.getWidth() * 0.3), m.getY() + (int) parent.getPos().y - size, m.getX() + (int) parent.getPos().x + size + (int) (parent.getWidth() * 0.3), m.getY() + (int) parent.getPos().y, frame, getType() * 32, frame + 32, getType() * 32 + 32, Viewport.w);
     if (System.currentTimeMillis() - time > length && length > -1) done = true;
   }
   

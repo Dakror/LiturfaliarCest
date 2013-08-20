@@ -6,7 +6,6 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.text.DecimalFormat;
 
-import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.settings.Colors;
 import de.dakror.liturfaliar.util.Assistant;
 
@@ -82,9 +81,9 @@ public class Spinner extends Component
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
-    this.h.update(v);
+    this.h.update();
     Color c = g.getColor();
     if (this.h.state > 0 && !this.disabled) c = Colors.ORANGE;
     else c = Colors.DGRAY;
@@ -93,8 +92,8 @@ public class Spinner extends Component
     df.setMinimumFractionDigits(this.decDigits);
     df.setMaximumFractionDigits(this.decDigits);
     Assistant.drawHorizontallyCenteredString(((this.title != null) ? title : "") + df.format(this.value), getX(), getWidth(), getY() + 22, g, 22, Color.white);
-    this.down.draw(g, v);
-    this.up.draw(g, v);
+    this.down.draw(g);
+    this.up.draw(g);
     if (this.disabled) Assistant.Shadow(new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), 8, 8), c, 0.6f, g);
   }
   

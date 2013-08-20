@@ -45,7 +45,7 @@ public class Label extends Component
   {}
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     if (this.s != null)
@@ -59,7 +59,7 @@ public class Label extends Component
     }
     else if (this.img != null)
     {
-      g.drawImage(this.getImage(), getX(), getY(), getWidth(), getHeight(), v.w);
+      g.drawImage(this.getImage(), getX(), getY(), getWidth(), getHeight(), Viewport.w);
     }
   }
   

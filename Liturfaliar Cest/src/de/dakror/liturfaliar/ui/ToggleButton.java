@@ -19,16 +19,16 @@ public class ToggleButton extends Button
     this.soundMOVER = false;
   }
   
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
-    this.handle.update(v);
+    this.handle.update();
     if (this.checked)
     {
-      g.drawImage(Viewport.loadImage("icon/white/" + icon + ".png"), x, y, width, height, v.w);
+      g.drawImage(Viewport.loadImage("icon/white/" + icon + ".png"), x, y, width, height, Viewport.w);
     }
     else
     {
-      g.drawImage(Viewport.loadImage("icon/black/" + icon + ".png"), x, y, width, height, v.w);
+      g.drawImage(Viewport.loadImage("icon/black/" + icon + ".png"), x, y, width, height, Viewport.w);
     }
     if (this.disabled)
     {

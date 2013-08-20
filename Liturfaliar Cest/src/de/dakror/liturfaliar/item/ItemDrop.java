@@ -114,14 +114,14 @@ public class ItemDrop
     this.map = map;
   }
   
-  public void draw(Map m, Graphics2D g, Viewport v)
+  public void draw(Map m, Graphics2D g)
   {
-    item.draw(m.getX() + x, m.getY() + y, g, v);
+    item.draw(m.getX() + x, m.getY() + y, g);
   }
   
-  public void drawWithoutTooltip(Map m, Graphics2D g, Viewport v)
+  public void drawWithoutTooltip(Map m, Graphics2D g)
   {
-    item.drawWithoutTooltip(m.getX() + x, m.getY() + y, g, v);
+    item.drawWithoutTooltip(m.getX() + x, m.getY() + y, g);
   }
   
   public Area getArea()
@@ -134,7 +134,7 @@ public class ItemDrop
     item.mouseMoved(e);
   }
   
-  public void mousePressed(MouseEvent e, Map m, Viewport v)
+  public void mousePressed(MouseEvent e, Map m)
   {
     if (m.getPlayer().getPos().getDistance(new Vector(x, y)) < CFG.FIELDSIZE * 2)
     {
@@ -145,7 +145,7 @@ public class ItemDrop
       m.getPlayer().resetTarget();
       m.getPlayer().putItemInFirstInventorySlot(item);
       m.removeItemDrop(this);
-      v.playSound("064-Swing03");
+      Viewport.playSound("064-Swing03");
     }
   }
 }

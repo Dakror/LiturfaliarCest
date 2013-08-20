@@ -6,8 +6,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 
-import de.dakror.liturfaliar.Viewport;
-
 public class Box extends Component
 {
   ArrayList<Component> components = new ArrayList<Component>();
@@ -49,11 +47,11 @@ public class Box extends Component
   }
   
   @Override
-  public void draw(Graphics2D g, Viewport v)
+  public void draw(Graphics2D g)
   {
     for (Component c : components)
     {
-      if (c != null) c.draw(g, v);
+      if (c != null) c.draw(g);
     }
   }
   
