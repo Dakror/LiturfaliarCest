@@ -125,7 +125,7 @@ public class Scene_MainMenu implements Scene
     Assistant.drawMenuBackground(g);
     // title
     g.drawImage(Viewport.loadImage("system/lc.png"), 400, 75, Viewport.w.getWidth() - 800, (int) (((Viewport.w.getWidth() - 800) / (float) Viewport.loadImage("system/lc.png").getWidth(Viewport.w)) * Viewport.loadImage("system/lc.png").getHeight(Viewport.w)), Viewport.w);
-
+    
     // buttons
     int highlighted = -1;
     for (int i = 0; i < buttons.length; i++)
@@ -200,7 +200,7 @@ public class Scene_MainMenu implements Scene
     }
     catch (Exception e2)
     {}
-
+    
     if (optionsToggle && optionsToggleArea.state == 0) controls.mouseMoved(e);
   }
   
@@ -214,7 +214,7 @@ public class Scene_MainMenu implements Scene
     }
     optionsToggleArea.mouseReleased(e);
     credits.mouseReleased(e);
-  
+    
     if (optionsToggle && optionsToggleArea.state == 0) controls.mouseReleased(e);
   }
   

@@ -172,7 +172,7 @@ public class Scene_NewGame implements Scene
     c1.draw(g);
     Assistant.drawHorizontallyCenteredString("Neues Spiel", Viewport.w.getWidth(), 43, g, 45, Color.white);
     
-    if (equip != null) Assistant.drawChar(Viewport.w.getWidth() / 2 - 320, Viewport.w.getHeight() / 2 - 240, 320, 480, 0, Viewport.getFrame(2.5f) % 4, equip, g, Viewport.w, true);
+    if (equip != null) Assistant.drawChar(Viewport.w.getWidth() / 2 - 320, Viewport.w.getHeight() / 2 - 240, 320, 480, 0, Viewport.getFrame(2.5f) % 4, equip, g, true);
     
     Assistant.stretchTileset(Viewport.loadImage("tileset/Wood.png"), Viewport.w.getWidth() / 2, Viewport.w.getHeight() / 2 - 240, 320, 416, g);
     

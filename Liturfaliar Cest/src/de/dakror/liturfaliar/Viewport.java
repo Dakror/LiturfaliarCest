@@ -63,7 +63,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   private static boolean                  pausedfromscene;
   private static boolean                  frozenFrames;
   private static boolean                  sceneEnabled;
-  private static boolean                         initialized    = false;
+  private static boolean                  initialized    = false;
   private static long                     time           = 0;
   
   public static Notification              notification;
@@ -73,8 +73,8 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   public static String                    MusicID;
   public static String                    SoundID;
   public static Dialog                    dialog;
-  public static InputEvent                       skipEvent;
-  public static JSONObject                       savegame;
+  public static InputEvent                skipEvent;
+  public static JSONObject                savegame;
   public static double                    fMusicEffectID = 0.5d;
   public static double                    fMusicID       = 0.3d;
   public static double                    fSoundID       = 1.0d;
@@ -172,7 +172,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     // static drawers
     if (dialog != null) dialog.draw(g);
     
-    CursorText.draw(g, w);
+    CursorText.draw(g);
     HelpOverlay.draw(g);
   }
   
@@ -183,7 +183,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
    */
   public static void setScene(final Scene s)
   {
-    Assistant.setCursor(Viewport.loadImage("system/loading.png"), w);
+    Assistant.setCursor(Viewport.loadImage("system/loading.png"));
     initialized = false;
     pause();
     pausedfromscene = true;
@@ -197,7 +197,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     scene.construct();
     initialized = true;
     sceneEnabled = true;
-    Assistant.setCursor(Viewport.loadImage("system/cursor.png"), w);
+    Assistant.setCursor(Viewport.loadImage("system/cursor.png"));
   }
   
   public static void clearOVScenes()
@@ -332,7 +332,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     w.setIconImage(Assistant.loadImage("system/logo.png"));
     w.setBackground(Color.black);
     w.setForeground(Color.white);
-    Assistant.setCursor(Viewport.loadImage("system/cursor.png"), w);
+    Assistant.setCursor(Viewport.loadImage("system/cursor.png"));
     
     FileManager.mk(false);
     FileManager.loadOptions();

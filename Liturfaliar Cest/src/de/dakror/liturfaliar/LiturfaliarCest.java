@@ -20,7 +20,7 @@ public class LiturfaliarCest
     
     UniVersion.offline = !CFG.INTERNET;
     UniVersion.init(LiturfaliarCest.class, CFG.VERSION, CFG.PHASE);
-
+    
     if (!CFG.DEBUG)
     {
       // Reporter.init(new File(FileManager.dir, "Logs"));

@@ -7,7 +7,7 @@ import java.awt.event.MouseWheelEvent;
 
 public abstract class OVScene
 {
-  public boolean     consistent = false;
+  public boolean consistent = false;
   
   public abstract void construct();
   

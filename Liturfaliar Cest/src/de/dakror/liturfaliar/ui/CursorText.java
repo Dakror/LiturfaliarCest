@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 
@@ -55,7 +54,7 @@ public class CursorText
     }
   }
   
-  public static void draw(Graphics2D g, Window w)
+  public static void draw(Graphics2D g)
   {
     try
     {

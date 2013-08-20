@@ -22,8 +22,7 @@ public class Node
   
   public boolean equals(Object o)
   {
-    if (!(o instanceof Node))
-      return false;
+    if (!(o instanceof Node)) return false;
     return field.equals(((Node) o).field);
   }
   

@@ -63,7 +63,7 @@ public class Scene_Tutorial implements Scene
     if (dirs[3]) dir = 0;
     try
     {
-      Assistant.drawChar(Viewport.w.getWidth() / 5 * 2, Viewport.w.getHeight() / 2 - Viewport.w.getWidth() / 5 * 3 / 4, Viewport.w.getWidth() / 5, Viewport.w.getWidth() / 5 * 3 / 2, dir, frame, new Equipment(Viewport.savegame.getJSONObject("char").getJSONObject("equip")), g, Viewport.w, true);
+      Assistant.drawChar(Viewport.w.getWidth() / 5 * 2, Viewport.w.getHeight() / 2 - Viewport.w.getWidth() / 5 * 3 / 4, Viewport.w.getWidth() / 5, Viewport.w.getWidth() / 5 * 3 / 2, dir, frame, new Equipment(Viewport.savegame.getJSONObject("char").getJSONObject("equip")), g, true);
     }
     catch (JSONException e)
     {

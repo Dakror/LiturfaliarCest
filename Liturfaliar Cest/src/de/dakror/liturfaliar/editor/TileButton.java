@@ -64,7 +64,7 @@ public class TileButton extends JButton
   
   public TileButton clone(MapEditor m)
   {
-    TileButton c = new TileButton(x,y,tx,ty,layer,tileset,i, m);
+    TileButton c = new TileButton(x, y, tx, ty, layer, tileset, i, m);
     c.data = data;
     return c;
   }

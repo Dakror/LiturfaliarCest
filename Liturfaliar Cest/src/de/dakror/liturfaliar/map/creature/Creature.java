@@ -140,7 +140,7 @@ public class Creature implements Listener
         resetTarget();
         return;
       }
- 
+      
       lastPos = relPos;
       
       if (newPos.equals(relPos))
@@ -158,7 +158,8 @@ public class Creature implements Listener
     }
   }
   
-  public Vector getMovePos(Map map) {
+  public Vector getMovePos(Map map)
+  {
     Vector targetVector = relPos.sub(goTo);
     double distance = targetVector.length;
     

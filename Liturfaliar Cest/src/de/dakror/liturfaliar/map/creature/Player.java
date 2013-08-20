@@ -214,7 +214,7 @@ public class Player extends Creature
       for (SkillAnimation skill : super.skills)
         skill.drawBelow(g, m);
       
-      Assistant.drawChar((int) relPos.x + m.getX(), (int) relPos.y + m.getY(), w, h, dir, frame, equipment, g, Viewport.w, true);
+      Assistant.drawChar((int) relPos.x + m.getX(), (int) relPos.y + m.getY(), w, h, dir, frame, equipment, g, true);
       
       for (SkillAnimation skill : super.skills)
         skill.drawAbove(g, m);
@@ -347,7 +347,7 @@ public class Player extends Creature
       for (int j = 0; j < 4; j++)
       {
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        Assistant.drawChar(0, 0, w, h, i, j, equipment, (Graphics2D) img.getGraphics(), null, true);
+        Assistant.drawChar(0, 0, w, h, i, j, equipment, (Graphics2D) img.getGraphics(), true);
         realAreas[i][j] = Assistant.toArea(img);
       }
     }

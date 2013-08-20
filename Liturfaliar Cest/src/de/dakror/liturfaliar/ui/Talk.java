@@ -311,13 +311,13 @@ public class Talk extends Component
       Creature c = m.getCreatureByAccessKey(perspectives[perspective]);
       nameLabel.string = c.getName();
       
-      if (c.getCharacter() != null) Assistant.drawChar(0, 0, 96, 128, 0, 0, "chars", c.getCharacter(), (Graphics2D) g, null, true);
-      else Assistant.drawChar(0, 0, 96, 128, 0, 0, c.getEquipment(), (Graphics2D) g, null, true);
+      if (c.getCharacter() != null) Assistant.drawChar(0, 0, 96, 128, 0, 0, "chars", c.getCharacter(), (Graphics2D) g, true);
+      else Assistant.drawChar(0, 0, 96, 128, 0, 0, c.getEquipment(), (Graphics2D) g, true);
     }
     else if (perspectives[perspective].indexOf("player") > -1)
     {
       nameLabel.string = m.getPlayer().getName();
-      Assistant.drawChar(0, 0, 96, 128, 0, 0, m.getPlayer().getEquipment(), (Graphics2D) g, null, true);
+      Assistant.drawChar(0, 0, 96, 128, 0, 0, m.getPlayer().getEquipment(), (Graphics2D) g, true);
     }
     speakerFace = bi;
     

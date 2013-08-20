@@ -796,7 +796,7 @@ public class Map implements Listener
     return itemDrops;
   }
   
-  //TODO not fully functional yet - implement handling on huge maps
+  // TODO not fully functional yet - implement handling on huge maps
   public void centerOnPlayer(Player p)
   {
     if (getWidth() > Viewport.w.getWidth())

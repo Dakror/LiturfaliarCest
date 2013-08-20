@@ -1161,7 +1161,7 @@ public class MapEditor
                       BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1);
                       int d = Arrays.asList(dirs).indexOf(((String) dir.getSelectedItem())) - 1;
                       d = (d < 0) ? 0 : d;
-                      Assistant.drawChar(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], d, 0, Equipment.getDefault(true), (Graphics2D) bi.getGraphics(), null, true);// Assistant.Rect(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], Color.cyan, null, (Graphics2D) bi.getGraphics());
+                      Assistant.drawChar(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], d, 0, Equipment.getDefault(true), (Graphics2D) bi.getGraphics(), true);// Assistant.Rect(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], Color.cyan, null, (Graphics2D) bi.getGraphics());
                       l.setIcon(new ImageIcon(bi));
                     }
                     catch (JSONException e1)
@@ -3094,7 +3094,7 @@ public class MapEditor
     {
       for (int j = 0; j < 4; j++)
       {
-        Assistant.drawChar(i * w / 4, j * h / 4, w / 4, h / 4, j, i, EQ, g, null, true);
+        Assistant.drawChar(i * w / 4, j * h / 4, w / 4, h / 4, j, i, EQ, g, true);
       }
     }
     EQpreview.setIcon(new ImageIcon(bi));

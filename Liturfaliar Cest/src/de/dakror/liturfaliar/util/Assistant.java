@@ -10,7 +10,6 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
@@ -71,45 +70,45 @@ public final class Assistant
   }
   
   // dir is real dir from image: down = 0, left = 1, right = 2, up = 3
-  public static void drawChar(int x, int y, int w, int h, int dir, int frame, Equipment equip, Graphics2D g, Window window, boolean ch)
+  public static void drawChar(int x, int y, int w, int h, int dir, int frame, Equipment equip, Graphics2D g, boolean ch)
   {
     if (ch)
     {
       if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "b"))
       {
         CFG.b("cape_b", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_b");
-        Assistant.drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_b", g, window, ch);
+        Assistant.drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_b", g, ch);
       }
       
       if (equip.hasEquipmentItem(Categories.SKIN))
       {
-        Assistant.drawChar(x, y, w, h, dir, frame, "skin", equip.getEquipmentItem(Categories.SKIN).getCharPath() + "_b", g, window, ch);
-        Assistant.drawChar(x, y, w, h, dir, frame, "skin", equip.getEquipmentItem(Categories.SKIN).getCharPath() + "_f", g, window, ch);
+        Assistant.drawChar(x, y, w, h, dir, frame, "skin", equip.getEquipmentItem(Categories.SKIN).getCharPath() + "_b", g, ch);
+        Assistant.drawChar(x, y, w, h, dir, frame, "skin", equip.getEquipmentItem(Categories.SKIN).getCharPath() + "_f", g, ch);
       }
-      if (equip.hasEquipmentItem(Categories.EYES)) Assistant.drawChar(x, y, w, h, dir, frame, "eyes", equip.getEquipmentItem(Categories.EYES).getCharPath(), g, window, ch);
+      if (equip.hasEquipmentItem(Categories.EYES)) Assistant.drawChar(x, y, w, h, dir, frame, "eyes", equip.getEquipmentItem(Categories.EYES).getCharPath(), g, ch);
       
-      if (equip.hasEquipmentItem(Categories.PANTS)) Assistant.drawChar(x, y, w, h, dir, frame, "pants", equip.getEquipmentItem(Categories.PANTS).getCharPath(), g, window, ch);
+      if (equip.hasEquipmentItem(Categories.PANTS)) Assistant.drawChar(x, y, w, h, dir, frame, "pants", equip.getEquipmentItem(Categories.PANTS).getCharPath(), g, ch);
       
-      if (equip.hasEquipmentItem(Categories.BOOTS)) Assistant.drawChar(x, y, w, h, dir, frame, "boots", equip.getEquipmentItem(Categories.BOOTS).getCharPath(), g, window, ch);
+      if (equip.hasEquipmentItem(Categories.BOOTS)) Assistant.drawChar(x, y, w, h, dir, frame, "boots", equip.getEquipmentItem(Categories.BOOTS).getCharPath(), g, ch);
       
-      if (equip.hasEquipmentItem(Categories.SHIRT)) Assistant.drawChar(x, y, w, h, dir, frame, "shirt", equip.getEquipmentItem(Categories.SHIRT).getCharPath(), g, window, ch);
+      if (equip.hasEquipmentItem(Categories.SHIRT)) Assistant.drawChar(x, y, w, h, dir, frame, "shirt", equip.getEquipmentItem(Categories.SHIRT).getCharPath(), g, ch);
       
-      if (equip.hasEquipmentItem(Categories.HAIR)) Assistant.drawChar(x, y, w, h, dir, frame, "hair", equip.getEquipmentItem(Categories.HAIR).getCharPath(), g, window, ch);
+      if (equip.hasEquipmentItem(Categories.HAIR)) Assistant.drawChar(x, y, w, h, dir, frame, "hair", equip.getEquipmentItem(Categories.HAIR).getCharPath(), g, ch);
       
       
-      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "m")) Assistant.drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_m", g, window, ch);
+      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "m")) Assistant.drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_m", g, ch);
       
-      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "f")) Assistant.drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_f", g, window, ch);
+      if (equip.hasEquipmentItem(Categories.CAPE) && charLevelExists(Categories.CAPE, equip.getEquipmentItem(Categories.CAPE).getCharPath(), "f")) Assistant.drawChar(x, y, w, h, dir, frame, "cape", equip.getEquipmentItem(Categories.CAPE).getCharPath() + "_f", g, ch);
     }
   }
   
-  public static void drawChar(int x, int y, int w, int h, int dir, int frame, String type, String image, Graphics2D g, Window window, boolean ch)
+  public static void drawChar(int x, int y, int w, int h, int dir, int frame, String type, String image, Graphics2D g, boolean ch)
   {
     Image i = Viewport.loadScaledImage("char/" + type + "/" + image + ".png", w * 4, h * 4);
     int iw = i.getWidth(null) / 4;
     int ih = i.getHeight(null) / 4;
-    if (!ch) g.drawImage(i, x, y, x + w, y + h, dir * iw, (frame % 4) * ih, dir * iw + iw, (frame % 4) * ih + ih, window);
-    else g.drawImage(i, x, y, x + w, y + h, (frame % 4) * iw, dir * ih, (frame % 4) * iw + iw, dir * ih + ih, window);
+    if (!ch) g.drawImage(i, x, y, x + w, y + h, dir * iw, (frame % 4) * ih, dir * iw + iw, (frame % 4) * ih + ih, Viewport.w);
+    else g.drawImage(i, x, y, x + w, y + h, (frame % 4) * iw, dir * ih, (frame % 4) * iw + iw, dir * ih + ih, Viewport.w);
   }
   
   public static int drawHorizontallyCenteredString(String s, int w, int h, Graphics2D g, int size)
@@ -441,10 +440,10 @@ public final class Assistant
     return -1;
   }
   
-  public static void setCursor(Image cursor, Window w)
+  public static void setCursor(Image cursor)
   {
     if (cursor == null) cursor = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-    w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "Cursor"));
+    Viewport.w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "Cursor"));
   }
   
   public static void setFileContent(File f, String s)

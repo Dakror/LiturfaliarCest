@@ -10,10 +10,10 @@ import de.dakror.liturfaliar.settings.CFG;
 
 public abstract class GameFrame
 {
-  protected boolean running;
-  protected boolean frozen;
-  public static JFrame     w;
-  ScreenManager     s;
+  protected boolean    running;
+  protected boolean    frozen;
+  public static JFrame w;
+  ScreenManager        s;
   
   public GameFrame()
   {

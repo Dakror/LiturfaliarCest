@@ -80,8 +80,7 @@ public class AStar
       }
     }
     
-    if (CFG.UIDEBUG)
-      CFG.p("[AStar]: Found path: " + (status == 2));
+    if (CFG.UIDEBUG) CFG.p("[AStar]: Found path: " + (status == 2));
     
     if (status == 2)
     {
@@ -94,8 +93,7 @@ public class AStar
       }
       Collections.reverse(path);
       
-      if (path.size() == 0)
-        return null;
+      if (path.size() == 0) return null;
       
       Path path2 = improvePath(path, m);
       

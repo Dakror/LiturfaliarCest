@@ -61,7 +61,7 @@ public class Scene_LoadGame implements Scene
       try
       {
         BufferedImage bi = new BufferedImage(width, width / 3 * 4, BufferedImage.TYPE_INT_ARGB);
-        Assistant.drawChar(0, 0, width, width / 3 * 4, 0, 0, new Equipment(datas[i].getJSONObject("char").getJSONObject("equip")), (Graphics2D) bi.getGraphics(), null, true);
+        Assistant.drawChar(0, 0, width, width / 3 * 4, 0, 0, new Equipment(datas[i].getJSONObject("char").getJSONObject("equip")), (Graphics2D) bi.getGraphics(), true);
         saves[i] = new Button(Viewport.w.getWidth() / 4 + (i % charsperpage) * (width + space), Viewport.w.getHeight() / 2 - (width / 3 * 2), width, width / 3 * 4, 0, 0, width, width / 3 * 4, bi);
         saves[i].tileset = null;
         saves[i].hovermod = 4;

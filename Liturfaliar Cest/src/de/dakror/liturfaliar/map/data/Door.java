@@ -57,7 +57,7 @@ public class Door implements FieldData
     dest = new Map(CFG.MAPPACK, map);
     ((Player) c).setPos(dx, dy);
     ((Player) c).setTarget(dx, dy);
-dest.centerOnPlayer(((Player) c));//    dest.setPos(CFG.MAPCENTER.x - dx, CFG.MAPCENTER.y - dy);
+    dest.centerOnPlayer(((Player) c));// dest.setPos(CFG.MAPCENTER.x - dx, CFG.MAPCENTER.y - dy);
     m.getMapPack().setActiveMap(dest);
     if (dir != -1) c.setDir(dir);
   }

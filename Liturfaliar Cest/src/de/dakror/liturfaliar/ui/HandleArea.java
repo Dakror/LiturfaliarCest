@@ -19,7 +19,7 @@ public class HandleArea extends Component
   {
     super(x, y, w, h);
   }
-
+  
   public void draw(Graphics2D g)
   {
     if (CFG.UIDEBUG)

@@ -64,14 +64,14 @@ public class NPC extends Creature
     if (equip.isProperlyFilled())
     {
       equipment = equip;
-      Assistant.drawChar(0, 0, w, h, 0, 0, equipment, g, null, true);
+      Assistant.drawChar(0, 0, w, h, 0, 0, equipment, g, true);
     }
     else
     {
       // still setting equipment, may contain weapons
       equipment = equip;
       character = c;
-      Assistant.drawChar(0, 0, w, h, 0, 0, "chars", character, g, null, true);
+      Assistant.drawChar(0, 0, w, h, 0, 0, "chars", character, g, true);
     }
     
     hitArea = Assistant.toArea(chr);
@@ -134,8 +134,8 @@ public class NPC extends Creature
     for (SkillAnimation skill : skills)
       skill.drawBelow(g, m);
     
-    if (character != null) Assistant.drawChar((int) getPos().x + m.getX(), (int) getPos().y + m.getY(), w, h, dir, (move) ? Viewport.getFrame() % 4 : 0, "chars", character, g, Viewport.w, true);
-    else Assistant.drawChar((int) getPos().x + m.getX(), (int) getPos().y + m.getY(), w, h, dir, (move) ? Viewport.getFrame() % 4 : 0, equipment, g, Viewport.w, true);
+    if (character != null) Assistant.drawChar((int) getPos().x + m.getX(), (int) getPos().y + m.getY(), w, h, dir, (move) ? Viewport.getFrame() % 4 : 0, "chars", character, g, true);
+    else Assistant.drawChar((int) getPos().x + m.getX(), (int) getPos().y + m.getY(), w, h, dir, (move) ? Viewport.getFrame() % 4 : 0, equipment, g, true);
     
     if (emoticon != null)
     {
