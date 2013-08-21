@@ -260,28 +260,14 @@ public class FileManager
     new File(FileManager.dir, "Animations").mkdir();
     new File(FileManager.dir, "Tiles").mkdir();
     String checksum = Assistant.getFolderChecksum(new File(FileManager.dir, dir));
-    switch (dir)
+    
+    try
     {
-      case "Sound":
-      {
-        if (!checksum.equals(CFG.SOUND_CS)) return true;
-        break;
-      }
-      case "Music":
-      {
-        if (!checksum.equals(CFG.MUSIC_CS)) return true;
-        break;
-      }
-      case "Tiles":
-      {
-        if (!checksum.equals(CFG.TILES_CS)) return true;
-        break;
-      }
-      case "Animations":
-      {
-        if (!checksum.equals(CFG.ANIMATIONS_CS)) return true;
-        break;
-      }
+      if (!checksum.equals(CFG.class.getField(dir.toUpperCase() + "_CS").get(null))) return true;
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
     }
     
     return false;

@@ -1669,7 +1669,7 @@ public class MapEditor
       // new File(dir, "maps").mkdir();
       File pack = new File(dir, ".pack");
       if (!pack.exists()) pack.createNewFile();
-      Assistant.setFileContent(pack, mappackdata.toString(4));
+      Assistant.setFileContent(pack, mappackdata.toString());
     }
     catch (Exception e)
     {

@@ -257,9 +257,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
           i = ImageIO.read(FileManager.pullMediaFile(path.substring(0, path.indexOf("/")), path.replace(path.substring(0, path.indexOf("/") + 1), "")));
         }
         catch (IOException e)
-        {
-          e.printStackTrace();
-        }
+        {}
       }
       
       else i = Assistant.loadImage(path);
