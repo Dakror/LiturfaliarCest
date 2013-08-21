@@ -51,6 +51,8 @@ public abstract class GameFrame
         catch (Exception e)
         {
           e.printStackTrace();
+          run();
+          return;
         }
         
         mainloop();

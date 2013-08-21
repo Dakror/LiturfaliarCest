@@ -24,6 +24,8 @@ import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +38,8 @@ import javax.imageio.ImageIO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.item.Categories;
@@ -325,7 +329,7 @@ public final class Assistant
   {
     try
     {
-      return InetAddress.getByName("dakror.de").isReachable(0);
+      return InetAddress.getByName("dakror.de").isReachable(60000);
     }
     catch (Exception e)
     {
@@ -541,5 +545,32 @@ public final class Assistant
       result = (int) Math.floor(Math.random() * (maxvalue - minvalue + 1) + minvalue);
       if ((result >= minvalue) && (result <= maxvalue)) return result;
     }
+  }
+  
+  public static String getFolderChecksum(File folder)
+  {
+    if(!folder.exists()) return null;
+    try
+    {
+      MessageDigest md = MessageDigest.getInstance("MD5");
+      String f = folder.getName() + Arrays.toString(folder.list()) + getFolderSize(folder);
+      return HexBin.encode(md.digest(f.getBytes()));
+    }
+    catch (NoSuchAlgorithmException e)
+    {
+      e.printStackTrace();
+      return null;
+    }
+  }
+  
+  public static long getFolderSize(File directory)
+  {
+    long length = 0;
+    for (File file : directory.listFiles())
+    {
+      if (file.isFile()) length += file.length();
+      else length += getFolderSize(file);
+    }
+    return length;
   }
 }

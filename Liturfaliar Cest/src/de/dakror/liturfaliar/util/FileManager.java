@@ -39,6 +39,8 @@ public class FileManager
   {
     dir = new File("C:/Dakror/Liturfaliar Cest");
     saves = new File("C:/Dakror/Liturfaliar Cest/Saves");
+    if (CFG.DEBUG) CFG.ccs();
+    
     dir.mkdirs();
     saves.mkdirs();
     if (!new File(dir, "options.json").exists() && save) saveOptions();
@@ -257,34 +259,31 @@ public class FileManager
     new File(FileManager.dir, "Sound").mkdir();
     new File(FileManager.dir, "Animations").mkdir();
     new File(FileManager.dir, "Tiles").mkdir();
-    if (dir == "Sound")
+    String checksum = Assistant.getFolderChecksum(new File(FileManager.dir, dir));
+    switch (dir)
     {
-      if (new File(FileManager.dir, dir).listFiles().length < CFG.SOUND.length)
+      case "Sound":
       {
-        return true;
+        if (!checksum.equals(CFG.SOUND_CS)) return true;
+        break;
+      }
+      case "Music":
+      {
+        if (!checksum.equals(CFG.MUSIC_CS)) return true;
+        break;
+      }
+      case "Tiles":
+      {
+        if (!checksum.equals(CFG.TILES_CS)) return true;
+        break;
+      }
+      case "Animations":
+      {
+        if (!checksum.equals(CFG.ANIMATIONS_CS)) return true;
+        break;
       }
     }
-    else if (dir == "Music")
-    {
-      if (new File(FileManager.dir, dir).listFiles().length < CFG.MUSIC.length)
-      {
-        return true;
-      }
-    }
-    else if (dir == "Animations")
-    {
-      if (new File(FileManager.dir, dir).listFiles().length < CFG.ANIMATIONS)
-      {
-        return true;
-      }
-    }
-    else if (dir == "Tiles")
-    {
-      if (new File(FileManager.dir, dir).listFiles().length < CFG.TILES)
-      {
-        return true;
-      }
-    }
+    
     return false;
   }
   
@@ -349,5 +348,10 @@ public class FileManager
       e.printStackTrace();
       return null;
     }
+  }
+  
+  public static String[] getMediaFiles(String dir)
+  {
+    return new File(FileManager.dir, dir).list();
   }
 }

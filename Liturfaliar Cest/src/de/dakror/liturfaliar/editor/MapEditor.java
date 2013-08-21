@@ -695,65 +695,73 @@ public class MapEditor
     tilefiles.addListSelectionListener(new ListSelectionListener()
     {
       @Override
-      public void valueChanged(ListSelectionEvent e)
+      public void valueChanged(final ListSelectionEvent e)
       {
-        tileset = (String) ((JList<?>) e.getSource()).getSelectedValue();
-        tiles.removeAll();
-        Image image = Viewport.loadImage("Tiles/" + tileset + ".png");
-        int w = image.getWidth(null) / CFG.FIELDSIZE;
-        int h = image.getHeight(null) / CFG.FIELDSIZE;
-        tiles.setPreferredSize(new Dimension(w * CFG.FIELDSIZE, h * CFG.FIELDSIZE));
-        
-        if (Arrays.asList(CFG.AUTOTILES).contains(tileset)) autotiles = new BufferedImage[w][h];
-        
-        
-        for (int i = 0; i < w; i++)
+        new Thread()
         {
-          for (int j = 0; j < h; j++)
+          public void run()
           {
-            BufferedImage bi = new BufferedImage(CFG.FIELDSIZE, CFG.FIELDSIZE, BufferedImage.TYPE_INT_ARGB);
-            bi.getGraphics().drawImage(image, 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, i * CFG.FIELDSIZE, j * CFG.FIELDSIZE, i * CFG.FIELDSIZE + CFG.FIELDSIZE, j * CFG.FIELDSIZE + CFG.FIELDSIZE, null);
+            tileset = (String) ((JList<?>) e.getSource()).getSelectedValue();
+            tiles.removeAll();
+            Image image = Viewport.loadImage("Tiles/" + tileset + ".png");
+            int w = image.getWidth(null) / CFG.FIELDSIZE;
+            int h = image.getHeight(null) / CFG.FIELDSIZE;
+            tiles.setPreferredSize(new Dimension(w * CFG.FIELDSIZE, h * CFG.FIELDSIZE));
             
-            if (Arrays.asList(CFG.AUTOTILES).contains(tileset)) autotiles[i][j] = bi;
+            if (Arrays.asList(FileManager.getMediaFiles("Tiles")).contains(tileset)) autotiles = new BufferedImage[w][h];
             
-            final JButton button = new JButton();
-            button.setBounds(i * CFG.FIELDSIZE, j * CFG.FIELDSIZE, CFG.FIELDSIZE, CFG.FIELDSIZE);
-            button.setBorder(BorderFactory.createEmptyBorder());
-            button.setContentAreaFilled(false);
-            button.setIcon(new ImageIcon(bi));
-            button.addActionListener(new ActionListener()
+            
+            for (int j = 0; j < h; j++)
             {
-              @Override
-              public void actionPerformed(ActionEvent e)
+              for (int i = 0; i < w; i++)
               {
-                JButton src = (JButton) e.getSource();
-                for (Component c : tiles.getComponents())
-                {
-                  if (c.getClass() == JButton.class) ((JButton) c).setBorder(BorderFactory.createEmptyBorder());
-                }
-                src.setBorder(BorderFactory.createLineBorder(Color.blue));
-                src.setBorderPainted(true);
-                selectedtile = src;
-              }
-            });
-            button.addMouseListener(new MouseAdapter()
-            {
-              @Override
-              public void mouseEntered(MouseEvent e)
-              {
-                button.setBorder(BorderFactory.createLineBorder(Color.black));
-              }
-              
-              @Override
-              public void mouseExited(MouseEvent e)
-              {
+                BufferedImage bi = new BufferedImage(CFG.FIELDSIZE, CFG.FIELDSIZE, BufferedImage.TYPE_INT_ARGB);
+                bi.getGraphics().drawImage(image, 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, i * CFG.FIELDSIZE, j * CFG.FIELDSIZE, i * CFG.FIELDSIZE + CFG.FIELDSIZE, j * CFG.FIELDSIZE + CFG.FIELDSIZE, null);
+                
+                if (Arrays.asList(FileManager.getMediaFiles("Tiles")).contains(tileset)) autotiles[i][j] = bi;
+                
+                final JButton button = new JButton();
+                button.setBounds(i * CFG.FIELDSIZE, j * CFG.FIELDSIZE, CFG.FIELDSIZE, CFG.FIELDSIZE);
                 button.setBorder(BorderFactory.createEmptyBorder());
+                button.setContentAreaFilled(false);
+                button.setIcon(new ImageIcon(bi));
+                button.addActionListener(new ActionListener()
+                {
+                  @Override
+                  public void actionPerformed(ActionEvent e)
+                  {
+                    JButton src = (JButton) e.getSource();
+                    for (Component c : tiles.getComponents())
+                    {
+                      if (c.getClass() == JButton.class) ((JButton) c).setBorder(BorderFactory.createEmptyBorder());
+                    }
+                    src.setBorder(BorderFactory.createLineBorder(Color.blue));
+                    src.setBorderPainted(true);
+                    selectedtile = src;
+                  }
+                });
+                button.addMouseListener(new MouseAdapter()
+                {
+                  @Override
+                  public void mouseEntered(MouseEvent e)
+                  {
+                    button.setBorder(BorderFactory.createLineBorder(Color.black));
+                  }
+                  
+                  @Override
+                  public void mouseExited(MouseEvent e)
+                  {
+                    button.setBorder(BorderFactory.createEmptyBorder());
+                  }
+                });
+                tiles.add(button);
+                tiles.repaint();
+                
+                tiles.revalidate();
               }
-            });
-            tiles.add(button);
+            }
           }
-        }
-        tiles.repaint();
+        }.start();
       }
     });
     JScrollPane jsp = new JScrollPane(tilefiles);
@@ -1213,7 +1221,7 @@ public class MapEditor
           sound.setName("string_sound");
           sound.setPreferredSize(new Dimension(190, 23));
           sound.addItem("< Leer >");
-          for (String s : CFG.SOUND)
+          for (String s : FileManager.getMediaFiles("Sound"))
           {
             sound.addItem(s);
           }
@@ -1435,7 +1443,7 @@ public class MapEditor
               int tx = selectedtile.getX() / CFG.FIELDSIZE;
               int ty = selectedtile.getY() / CFG.FIELDSIZE;
               
-              if (Arrays.asList(CFG.AUTOTILES).contains(tileset))
+              if (Arrays.asList(FileManager.getMediaFiles("Tiles")).contains(tileset))
               {
                 if (i == 0) tx = 0;
                 if (j == 0) ty = 1;
