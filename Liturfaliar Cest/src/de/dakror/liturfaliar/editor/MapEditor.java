@@ -13,6 +13,8 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -23,6 +25,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -230,7 +233,7 @@ public class MapEditor
   JMenuItem             mUndo;
   JCheckBoxMenuItem     mDrag;
   JSONObject            mappackdata, mapdata;
-  JPanel                tiles;
+  JPanel                tiles, tilepanel;
   MapPanel              map;
   JScrollPane           msp;
   String                tileset;
@@ -274,6 +277,25 @@ public class MapEditor
     w.setIconImage(Viewport.loadImage("system/editor.png"));
     w.setLocationRelativeTo(null);
     w.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    w.addComponentListener(new ComponentAdapter()
+    {
+      @Override
+      public void componentResized(ComponentEvent e)
+      {
+        tilepanel.setBounds(0, 0, 240, w.getHeight());
+        msp.setBounds(240, 0, w.getWidth() - 255, w.getHeight() - (w.getInsets().top + w.getInsets().bottom) - menu.getHeight());
+      }
+    });
+    w.addWindowStateListener(new WindowStateListener()
+    {
+      
+      @Override
+      public void windowStateChanged(WindowEvent e)
+      {
+        tilepanel.setBounds(0, 0, 240, w.getHeight());
+        msp.setBounds(240, 0, w.getWidth() - 255, w.getHeight() - (w.getInsets().top + w.getInsets().bottom) - menu.getHeight());
+      }
+    });
     w.addWindowListener(new WindowAdapter()
     {
       @Override
@@ -648,9 +670,9 @@ public class MapEditor
     
     w.setJMenuBar(menu);
     
-    JPanel tilepanel = new JPanel();
+    tilepanel = new JPanel();
     tilepanel.setLayout(null);
-    tilepanel.setBounds(0, 0, w.getWidth() / 8, w.getHeight());
+    tilepanel.setBounds(0, 0, 240, w.getHeight());
     final DefaultListModel<String> dlm = new DefaultListModel<String>();
     
     
@@ -787,7 +809,7 @@ public class MapEditor
       }
     });
     msp = new JScrollPane(map, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-    msp.setBounds(w.getWidth() / 8, 0, w.getWidth() / 8 * 7, w.getHeight() / 5 * 4 + 132);
+    msp.setBounds(240, 0, w.getWidth() - 255, w.getHeight() - (w.getInsets().top + w.getInsets().bottom) - menu.getHeight());
     msp.getHorizontalScrollBar().setUnitIncrement(CFG.FIELDSIZE / 2);
     msp.getVerticalScrollBar().setUnitIncrement(CFG.FIELDSIZE / 2);
     w.add(msp);
