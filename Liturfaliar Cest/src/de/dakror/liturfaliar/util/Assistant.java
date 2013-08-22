@@ -108,7 +108,7 @@ public final class Assistant
   
   public static void drawChar(int x, int y, int w, int h, int dir, int frame, String type, String image, Graphics2D g, boolean ch)
   {
-    Image i = Viewport.loadScaledImage("char/" + type + "/" + image + ".png", w * 4, h * 4);
+    Image i = Viewport.loadScaledImage("char/" + type + "/" + image + ".png", w * 4, h * 4, Image.SCALE_FAST);
     int iw = i.getWidth(null) / 4;
     int ih = i.getHeight(null) / 4;
     if (!ch) g.drawImage(i, x, y, x + w, y + h, dir * iw, (frame % 4) * ih, dir * iw + iw, (frame % 4) * ih + ih, Viewport.w);

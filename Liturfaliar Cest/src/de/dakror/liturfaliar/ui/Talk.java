@@ -3,6 +3,7 @@ package de.dakror.liturfaliar.ui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -433,7 +434,7 @@ public class Talk extends Component
     {
       int size = 2;
       int c = (int) (Math.sin(0.25D * cos) * 5.0D);
-      g.drawImage(Viewport.loadScaledImage("system/Arrow.png", 18 * size, 9 * size), getX() + getWidth() - 18 * size - 10, getY() + getHeight() - 5 - 9 * size + c, Viewport.w);
+      g.drawImage(Viewport.loadScaledImage("system/Arrow.png", 18 * size, 9 * size, Image.SCALE_FAST), getX() + getWidth() - 18 * size - 10, getY() + getHeight() - 5 - 9 * size + c, Viewport.w);
       
     }
     

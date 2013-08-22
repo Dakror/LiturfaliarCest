@@ -2,6 +2,7 @@ package de.dakror.liturfaliar.ovscenes;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -280,7 +281,7 @@ public class OVScene_Inventory extends OVScene implements Inventory
     // -- character equip -- //
     Assistant.stretchTileset(Viewport.loadImage("tileset/EmbededWood.png"), Viewport.w.getWidth() / 2 - 600, Viewport.w.getHeight() / 2 - 350, 410, 550, g);
     
-    g.drawImage(Viewport.loadScaledImage("system/EquipGuy.png", 292, 390), Viewport.w.getWidth() / 2 - 541, Viewport.w.getHeight() / 2 - 290, Viewport.w);
+    g.drawImage(Viewport.loadScaledImage("system/EquipGuy.png", 292, 390, Image.SCALE_FAST), Viewport.w.getWidth() / 2 - 541, Viewport.w.getHeight() / 2 - 290, Viewport.w);
     
     for (ItemSlot is : equipSlots)
     {

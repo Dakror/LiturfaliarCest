@@ -39,8 +39,6 @@ import de.dakror.liturfaliar.util.Vector;
 
 public class Player extends Creature
 {
-  private boolean   init                = true;
-  
   public JSONObject data;
   
   // -- up -- left -- right -- down -- //
@@ -111,13 +109,7 @@ public class Player extends Creature
     }
     catch (ConcurrentModificationException e)
     {}
-    
-    if (init)
-    {
-      m.setPos(CFG.MAPCENTER.x - (int) getPos().x, CFG.MAPCENTER.y - (int) getPos().y);
-      init = false;
-    }
-    
+
     if (!sprint)
     {
       if ((System.currentTimeMillis() - time) > Balance.Player.STAMINAREGEN && attr.getAttribute(Attr.stamina).getValue() < attr.getAttribute(Attr.stamina).getMaximum())

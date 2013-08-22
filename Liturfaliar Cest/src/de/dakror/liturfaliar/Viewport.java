@@ -268,16 +268,16 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     }
   }
   
-  public static Image loadScaledImage(String path, int w, int h)
+  public static Image loadScaledImage(String path, int w, int h, int hints)
   {
     if (SCcache.containsKey(path))
     {
-      return SCcache.get(path).getDimension(w, h);
+      return SCcache.get(path).getDimension(w, h, hints);
     }
     else
     {
       SCcache.put(path, new Scale(path));
-      return SCcache.get(path).getDimension(w, h);
+      return SCcache.get(path).getDimension(w, h, hints);
     }
   }
   
@@ -809,7 +809,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
       image = loadImage(p);
     }
     
-    public Image getDimension(int w, int h)
+    public Image getDimension(int w, int h, int hints)
     {
       Dimension key = new Dimension(w, h);
       
@@ -819,7 +819,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
       }
       else
       {
-        cache.put(key, image.getScaledInstance(w, h, Image.SCALE_FAST));
+        cache.put(key, image.getScaledInstance(w, h, hints));
         return cache.get(key);
       }
     }

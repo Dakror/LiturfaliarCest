@@ -1,7 +1,9 @@
 package de.dakror.liturfaliar.map.data;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
 
 import org.json.JSONObject;
 
@@ -16,22 +18,14 @@ import de.dakror.liturfaliar.settings.CFG;
 
 public class Door implements FieldData
 {
-  public static final String[] ARGS  = { "int_x", "int_y", "int_dx", "int_dy", "int_dir", "int_t", "string_map", "string_img", "string_sound" };
+  public static final String[] ARGS  = { "int_x", "int_y", "int_dx", "int_dy", "int_dir", "int_arr", "int_t", "string_map", "string_img", "string_sound" };
   public static final String[] CHARS = { "170-Door01", "171-Door02", "172-Door03", "173-Door04" };
-  public int                   x;
-  public int                   y;
-  public int                   t;
-  public int                   dir;
-  public int                   dx;
-  public int                   dy;
-  public String                map;
-  public String                img;
-  public String                sound;
+  public int                   x, y, t, dir, arr, dx, dy;
+  private long                 timeStart, soundlength, time;
+  public String                map, img, sound;
   private Image                image;
   private Map                  dest;
-  private long                 timeStart;
   private Creature             c;
-  private long                 soundlength;
   
   @Override
   public void onEvent(Event e)
@@ -54,12 +48,15 @@ public class Door implements FieldData
   
   private void doTeleport(Map m)
   {
-    dest = new Map(CFG.MAPPACK, map);
+    if (!map.equals(m.getName()))
+    {
+      dest = new Map(CFG.MAPPACK, map);
+      m.getMapPack().setActiveMap(dest);
+    }
     ((Player) c).setPos(dx, dy);
     ((Player) c).setTarget(dx, dy);
-    dest.centerOnPlayer(((Player) c));// dest.setPos(CFG.MAPCENTER.x - dx, CFG.MAPCENTER.y - dy);
-    m.getMapPack().setActiveMap(dest);
     if (dir != -1) c.setDir(dir);
+    timeStart = 0;
   }
   
   @Override
@@ -80,7 +77,21 @@ public class Door implements FieldData
   @Override
   public void draw(Map m, Field f, Graphics2D g)
   {
+    if (time == 0 && arr != -1) time = System.currentTimeMillis();
+    
     if (System.currentTimeMillis() == timeStart) Viewport.playSound(sound);
+    if (arr != -1)
+    {
+      // down - left - right - up
+      double tr = 3 * Math.cos((System.currentTimeMillis() - time) / 300.0) + 3;
+      AffineTransform at = AffineTransform.getTranslateInstance(m.getX() + f.getX() - CFG.FIELDSIZE * 0.3 + ((arr == 1 || arr == 2) ? tr : 0), m.getY() + f.getY() - CFG.FIELDSIZE * 0.3 + ((arr == 0 || arr == 3) ? tr : 0));
+      at.rotate(Math.toRadians(new int[] { 0, 90, 270, 180 }[arr]), CFG.FIELDSIZE * 0.7, CFG.FIELDSIZE * 0.7);
+      g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) (0.25f * Math.cos((System.currentTimeMillis() - time) / 300.0) + 0.75f)));
+      g.drawImage(Viewport.loadScaledImage("system/wArrowGlow.png", (int) (CFG.FIELDSIZE * 1.4), (int) (CFG.FIELDSIZE * 1.4), Image.SCALE_SMOOTH), at, Viewport.w);
+      g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+      
+      g.drawImage(Viewport.loadScaledImage("system/wArrow.png", (int) (CFG.FIELDSIZE * 1.4), (int) (CFG.FIELDSIZE * 1.4), Image.SCALE_SMOOTH), at, Viewport.w);
+    }
     if (image == null) return;
     int w = image.getWidth(null) / 4;
     int h = image.getHeight(null) / 4;

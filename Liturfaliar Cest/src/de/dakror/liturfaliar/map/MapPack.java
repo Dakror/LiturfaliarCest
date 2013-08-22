@@ -101,8 +101,6 @@ public class MapPack
   
   public void setActiveMap(Map activeMap)
   {
-    Dispatcher.dispatch(Events.mapChanged, this.activeMap, activeMap);
-    
     if (this.activeMap != null) addChangedMap(this.activeMap);
     
     this.activeMap = activeMap;
@@ -111,6 +109,7 @@ public class MapPack
       activeMap.loadMap(getChangedMap(activeMap.getName()));
     }
     this.activeMap.setMapPack(this);
+    Dispatcher.dispatch(Events.mapChanged, this.activeMap, activeMap);
   }
   
   public void addChangedMap(Map m)

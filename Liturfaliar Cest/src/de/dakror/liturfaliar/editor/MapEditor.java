@@ -64,6 +64,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -242,6 +243,7 @@ public class MapEditor
   JDialog               bumpPreview;
   
   JProgressBar          progress;
+  JLabel                progressLabel;
   
   public BufferedImage  cursor;
   
@@ -1092,14 +1094,13 @@ public class MapEditor
       final JDialog dialog = new JDialog(w, true);
       dialog.setTitle("Feld-Data bearbeiten");
       dialog.setIconImage(w.getIconImage());
-      dialog.setSize(400, 300);
+      dialog.setSize(400, 320);
       dialog.setResizable(false);
       dialog.setLocationRelativeTo(this.w);
       dialog.setLayout(new FlowLayout());
       dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-      JPanel inputs = new JPanel();
-      inputs.setLayout(new FlowLayout());
-      inputs.setPreferredSize(new Dimension(400, 235));
+      JPanel inputs = new JPanel(new SpringLayout());
+      inputs.setPreferredSize(new Dimension(400, 257));
       JButton delete = new JButton("Löschen");
       delete.setEnabled(false);
       delete.setPreferredSize(new Dimension(190, 23));
@@ -1126,100 +1127,102 @@ public class MapEditor
         {
           JLabel name = new JLabel("Ziel X-Koordinate:");
           name.setPreferredSize(new Dimension(190, 23));
+          inputs.add(name);
           final JTextField dx = new JTextField("0");
           dx.setName("int_dx");
           if (exist != null) dx.setText("" + exist.getInt("dx"));
-          dx.setPreferredSize(new Dimension(190, 23));
-          inputs.add(name);
           inputs.add(dx);
-          name = new JLabel("Ziel Y-Koordinate:");
-          name.setPreferredSize(new Dimension(190, 23));
+          
+          inputs.add(new JLabel("Ziel Y-Koordinate:"));
           final JTextField dy = new JTextField("0");
           dy.setName("int_dy");
           if (exist != null) dy.setText("" + exist.getInt("dy"));
-          dy.setPreferredSize(new Dimension(190, 23));
-          inputs.add(name);
           inputs.add(dy);
+          
+          inputs.add(new JLabel("Zielrichtung:"));
           final String[] dirs = new String[] { "Gleiche", "Unten", "Links", "Rechts", "Oben" };
-          name = new JLabel("Zielrichtung:");
-          name.setPreferredSize(new Dimension(190, 23));
-          final JComboBox<String> dir = new JComboBox<String>();
+          final JComboBox<String> dir = new JComboBox<String>(dirs);
           dir.setName("int_dir");
-          dir.setPreferredSize(new Dimension(190, 23));
-          for (String s : dirs)
-          {
-            dir.addItem(s);
-          }
           if (exist != null) dir.setSelectedIndex(exist.getInt("dir") + 1);
-          inputs.add(name);
           inputs.add(dir);
-          name = new JLabel("Zielkarte:");
-          name.setPreferredSize(new Dimension(190, 23));
+          
+          inputs.add(new JLabel("Leucht-Pfeil:"));
+          final String[] arrows = new String[] { "< Leer >", "Unten", "Links", "Rechts", "Oben" };
+          final JComboBox<String> arr = new JComboBox<String>(arrows);
+          arr.setName("int_arr");
+          if (exist != null && exist.has("arr")) arr.setSelectedIndex(exist.getInt("arr") + 1);
+          else arr.setSelectedIndex(0);
+          inputs.add(arr);
+          
+          inputs.add(new JLabel("Zielkarte:"));
           final JDialog mapCoordSelect = new JDialog(dialog, "", false);
           mapCoordSelect.setLayout(null);
           mapCoordSelect.setResizable(false);
           mapCoordSelect.setLocation(dialog.getX() + dialog.getWidth() + 10, dialog.getY());
           mapCoordSelect.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
           mapCoordSelect.setVisible(true);
-          final JComboBox<String> map = new JComboBox<String>();
+          final JComboBox<String> map = new JComboBox<String>(Map.getMaps(mappackdata.getString("name"), CFG.MAPEDITORDIR));
           map.setName("string_map");
-          map.setPreferredSize(new Dimension(190, 23));
-          for (String s : Map.getMaps(mappackdata.getString("name"), CFG.MAPEDITORDIR))
-          {
-            map.addItem(s);
-          }
           map.addActionListener(new ActionListener()
           {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-              try
+              new Thread()
               {
-                final String s = (String) map.getSelectedItem();
-                mapCoordSelect.setTitle(s);
-                BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1);
-                final JLabel l = new JLabel();
-                l.addMouseListener(new MouseAdapter()
+                public void run()
                 {
-                  @Override
-                  public void mousePressed(MouseEvent e)
+                  try
                   {
-                    dx.setText("" + (e.getX() - CFG.HUMANBOUNDS[0] / 2));
-                    dy.setText("" + (e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3));
-                    try
+                    final String s = (String) map.getSelectedItem();
+                    mapCoordSelect.setTitle(s);
+                    BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1);
+                    final JLabel l = new JLabel();
+                    l.addMouseListener(new MouseAdapter()
                     {
-                      BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1);
-                      int d = Arrays.asList(dirs).indexOf(((String) dir.getSelectedItem())) - 1;
-                      d = (d < 0) ? 0 : d;
-                      Assistant.drawChar(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], d, 0, Equipment.getDefault(true), (Graphics2D) bi.getGraphics(), true);// Assistant.Rect(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], Color.cyan, null, (Graphics2D) bi.getGraphics());
-                      l.setIcon(new ImageIcon(bi));
-                    }
-                    catch (JSONException e1)
-                    {
-                      e1.printStackTrace();
-                    }
+                      @Override
+                      public void mousePressed(MouseEvent e)
+                      {
+                        dx.setText("" + (e.getX() - CFG.HUMANBOUNDS[0] / 2));
+                        dy.setText("" + (e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3));
+                        try
+                        {
+                          BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1);
+                          int d = Arrays.asList(dirs).indexOf(((String) dir.getSelectedItem())) - 1;
+                          d = (d < 0) ? 0 : d;
+                          Assistant.drawChar(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], d, 0, Equipment.getDefault(true), (Graphics2D) bi.getGraphics(), true);// Assistant.Rect(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], Color.cyan, null, (Graphics2D) bi.getGraphics());
+                          l.setIcon(new ImageIcon(bi));
+                        }
+                        catch (JSONException e1)
+                        {
+                          e1.printStackTrace();
+                        }
+                      }
+                    });
+                    l.setSize(bi.getWidth(), bi.getHeight());
+                    l.setIcon(new ImageIcon(bi));
+                    JScrollPane jsp = new JScrollPane(l, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                    jsp.getVerticalScrollBar().setUnitIncrement(CFG.FIELDSIZE / 3);
+                    jsp.getHorizontalScrollBar().setUnitIncrement(CFG.FIELDSIZE / 3);
+                    jsp.setPreferredSize(new Dimension(500, 500));
+                    mapCoordSelect.setContentPane(jsp);
+                    mapCoordSelect.pack();
                   }
-                });
-                l.setSize(bi.getWidth(), bi.getHeight());
-                l.setIcon(new ImageIcon(bi));
-                mapCoordSelect.setContentPane(l);
-                mapCoordSelect.pack();
-              }
-              catch (JSONException e1)
-              {
-                e1.printStackTrace();
-              }
+                  catch (JSONException e1)
+                  {
+                    e1.printStackTrace();
+                  }
+                }
+              }.start();
             }
           });
           map.setSelectedIndex(0);
           if (exist != null) map.setSelectedItem(exist.getString("map"));
-          inputs.add(name);
           inputs.add(map);
-          name = new JLabel("Sound:");
-          name.setPreferredSize(new Dimension(190, 23));
+          
+          inputs.add(new JLabel("Sound:"));
           final JComboBox<String> sound = new JComboBox<String>();
           sound.setName("string_sound");
-          sound.setPreferredSize(new Dimension(190, 23));
           sound.addItem("< Leer >");
           for (String s : FileManager.getMediaFiles("Sound"))
           {
@@ -1235,13 +1238,11 @@ public class MapEditor
               Viewport.playSound((String) sound.getSelectedItem());
             }
           });
-          inputs.add(name);
           inputs.add(sound);
-          name = new JLabel("Animation:");
-          name.setPreferredSize(new Dimension(190, 23));
+          
+          inputs.add(new JLabel("Animation:"));
           final JComboBox<String> img = new JComboBox<String>();
           img.setName("string_img");
-          img.setPreferredSize(new Dimension(190, 23));
           final JLabel preview = new JLabel();
           preview.setPreferredSize(new Dimension(CFG.FIELDSIZE, CFG.FIELDSIZE));
           img.addItem("< Leer >");
@@ -1271,8 +1272,9 @@ public class MapEditor
             int index = Arrays.asList(Door.CHARS).indexOf(exist.getString("img")) * 4;
             img.setSelectedIndex(index + exist.getInt("t") + 1);
           }
-          inputs.add(name);
           inputs.add(img);
+          
+          inputs.add(new JLabel());
           inputs.add(preview);
           save.addActionListener(new ActionListener()
           {
@@ -1293,6 +1295,7 @@ public class MapEditor
                   return;
                 }
                 o.put("dir", dir.getSelectedIndex() - 1);
+                o.put("arr", arr.getSelectedIndex() - 1);
                 o.put("map", (String) map.getSelectedItem());
                 o.put("sound", ((String) sound.getSelectedItem()).replace("< Leer >", ""));
                 String s = (String) img.getSelectedItem();
@@ -1323,6 +1326,7 @@ public class MapEditor
               }
             }
           });
+          SpringUtilities.makeCompactGrid(inputs, 8, 2, 6, 6, 6, 6);
           break;
         }
       }
@@ -1586,6 +1590,7 @@ public class MapEditor
       for (int i = 0; i < tiles.size(); i++)
       {
         progress.setValue((int) ((i + 1) / (double) tiles.size() * 100));
+        progressLabel.setText((i + 1) + " / " + tiles.size());
         JSONObject o = tiles.get(i);
         BufferedImage bi = new BufferedImage(CFG.FIELDSIZE, CFG.FIELDSIZE, BufferedImage.TYPE_INT_ARGB);
         bi.getGraphics().drawImage(Viewport.loadImage("Tiles/" + o.getString("tileset") + ".png"), 0, 0, CFG.FIELDSIZE, CFG.FIELDSIZE, o.getInt("tx") * CFG.FIELDSIZE, o.getInt("ty") * CFG.FIELDSIZE, o.getInt("tx") * CFG.FIELDSIZE + CFG.FIELDSIZE, o.getInt("ty") * CFG.FIELDSIZE + CFG.FIELDSIZE, null);
@@ -2930,9 +2935,18 @@ public class MapEditor
       {
         if (e.getValueIsAdjusting()) return;
         
+        JLayeredPane pane = new JLayeredPane();
+        
+        pane.setPreferredSize(new Dimension(400, 22));
         progress = new JProgressBar(0, 100);
-        progress.setPreferredSize(new Dimension(400, 22));
-        dialog.setContentPane(progress);
+        progress.setBounds(0, 0, 400, 22);
+        pane.add(progress, JLayeredPane.DEFAULT_LAYER);
+        progressLabel = new JLabel();
+        progressLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        progressLabel.setVerticalTextPosition(SwingConstants.CENTER);
+        progressLabel.setBounds(0, 0, 400, 22);
+        pane.add(progressLabel, JLayeredPane.MODAL_LAYER);
+        dialog.setContentPane(pane);
         dialog.pack();
         dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         

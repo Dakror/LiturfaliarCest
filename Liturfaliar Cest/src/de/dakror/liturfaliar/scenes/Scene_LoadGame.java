@@ -62,6 +62,8 @@ public class Scene_LoadGame implements Scene
       {
         BufferedImage bi = new BufferedImage(width, width / 3 * 4, BufferedImage.TYPE_INT_ARGB);
         Assistant.drawChar(0, 0, width, width / 3 * 4, 0, 0, new Equipment(datas[i].getJSONObject("char").getJSONObject("equip")), (Graphics2D) bi.getGraphics(), true);
+        if (datas[i].getString("savename").endsWith(" - Sicherung")) bi.getGraphics().drawImage(Viewport.loadImage("system/save.png"), width - 30, 0, 30, 30, null);
+        
         saves[i] = new Button(Viewport.w.getWidth() / 4 + (i % charsperpage) * (width + space), Viewport.w.getHeight() / 2 - (width / 3 * 2), width, width / 3 * 4, 0, 0, width, width / 3 * 4, bi);
         saves[i].tileset = null;
         saves[i].hovermod = 4;

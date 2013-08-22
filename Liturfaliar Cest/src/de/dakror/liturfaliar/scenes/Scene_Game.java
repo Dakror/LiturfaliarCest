@@ -54,7 +54,7 @@ public class Scene_Game implements Scene, Listener
   {
     Dispatcher.addListener(this);
     Viewport.setFramesFrozen(false);
-    CFG.MAPCENTER = new Point((Viewport.w.getWidth() / 2 - CFG.FIELDSIZE / 2), (Viewport.w.getHeight() / 2 - CFG.FIELDSIZE * 3 / 4));
+    CFG.MAPCENTER = new Point((Viewport.w.getWidth() / 2 - CFG.FIELDSIZE / 2), (Viewport.w.getHeight() / 2 ));
     
     player = new Player(Viewport.savegame);
     
@@ -213,6 +213,7 @@ public class Scene_Game implements Scene, Listener
       Map newmap = (Map) e.getParam("new");
       Dispatcher.removeListener((Map) e.getParam("old"));
       newmap.setPlayer(player);
+      mappack.getActiveMap().centerOnPlayer(player);
       if (!(newmap.getMusic() + ".wav").equals(Viewport.MusicID) && newmap.getMusic().length() > 0) Viewport.playMusic(newmap.getMusic(), true);
     }
     else if (e.equals(Events.slotTriggered))
