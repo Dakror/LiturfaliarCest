@@ -72,6 +72,7 @@ import de.dakror.liturfaliar.editor.dialog.NPCDialog;
 import de.dakror.liturfaliar.editor.dialog.NewMapDialog;
 import de.dakror.liturfaliar.editor.dialog.NewMapPackDialog;
 import de.dakror.liturfaliar.editor.dialog.OpenMapDialog;
+import de.dakror.liturfaliar.editor.dialog.OpenMapPackDialog;
 import de.dakror.liturfaliar.editor.dialog.TalkDialog;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.IconSelecter;
@@ -330,7 +331,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        new OpenMapDialog(MapEditor.this);
+        new OpenMapPackDialog(MapEditor.this);
       }
     });
     mpopen.setAccelerator(KeyStroke.getKeyStroke("ctrl O"));
@@ -807,7 +808,7 @@ public class MapEditor
         }
       }
     });
-    msp = new JScrollPane(map, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+    msp = new JScrollPane(map, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     msp.setBounds(240, 0, w.getWidth() - 255, w.getHeight() - (w.getInsets().top + w.getInsets().bottom) - menu.getHeight());
     msp.getHorizontalScrollBar().setUnitIncrement(CFG.FIELDSIZE / 2);
     msp.getVerticalScrollBar().setUnitIncrement(CFG.FIELDSIZE / 2);
