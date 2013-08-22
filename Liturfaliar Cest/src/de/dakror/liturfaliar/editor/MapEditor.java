@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
@@ -15,14 +14,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
@@ -57,42 +52,33 @@ import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerListModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import layout.SpringUtilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
-import de.dakror.liturfaliar.item.Categories;
+import de.dakror.liturfaliar.editor.dialog.EditFieldDataDialog;
+import de.dakror.liturfaliar.editor.dialog.EquipmentDialog;
+import de.dakror.liturfaliar.editor.dialog.FilterReplaceDialog;
+import de.dakror.liturfaliar.editor.dialog.ImportObjectDialog;
+import de.dakror.liturfaliar.editor.dialog.NPCDialog;
+import de.dakror.liturfaliar.editor.dialog.NewMapDialog;
+import de.dakror.liturfaliar.editor.dialog.NewMapPackDialog;
+import de.dakror.liturfaliar.editor.dialog.OpenMapDialog;
+import de.dakror.liturfaliar.editor.dialog.TalkDialog;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.item.IconSelecter;
 import de.dakror.liturfaliar.item.Item;
-import de.dakror.liturfaliar.item.Types;
-import de.dakror.liturfaliar.item.action.EmptyAction;
-import de.dakror.liturfaliar.item.action.ItemAction;
-import de.dakror.liturfaliar.item.action.PotionAction;
-import de.dakror.liturfaliar.item.action.WeaponAction;
 import de.dakror.liturfaliar.map.Map;
-import de.dakror.liturfaliar.map.creature.NPC;
-import de.dakror.liturfaliar.map.data.Door;
 import de.dakror.liturfaliar.map.data.FieldData;
 import de.dakror.liturfaliar.settings.Attributes;
-import de.dakror.liturfaliar.settings.Attributes.Attr;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.DamageType;
 import de.dakror.liturfaliar.ui.swing.JColorSlider;
@@ -179,90 +165,93 @@ public class MapEditor
   }
   
   // -- filterReplace dialog -- //
-  JComboBox<String>     FRoldTileset, FRnewTileset;
-  JTextField            FRoldLayer, FRnewLayer, FRoldTX, FRoldTY, FRnewTX, FRnewTY;
+  public JComboBox<String>     FRoldTileset, FRnewTileset;
+  public JTextField            FRoldLayer, FRnewLayer, FRoldTX, FRoldTY, FRnewTX, FRnewTY;
   
   // -- NPC dialog -- //
-  JComboBox<String>     NPCsprite, NPCdir, NPCai;
-  JDialog               NPCframe;
-  JTextField            NPCx, NPCy, NPCname;
-  JCheckBox             NPCmove, NPClook, NPChostile;
-  JLabel                NPCpreview;
-  JSpinner              NPCspeed, NPCmoveT, NPClookT;
-  JButton               NPCok;
-  Attributes            NPCattr;
+  public JComboBox<String>     NPCsprite, NPCdir, NPCai;
+  public JDialog               NPCframe;
+  public JTextField            NPCx, NPCy, NPCname;
+  public JCheckBox             NPCmove, NPClook, NPChostile;
+  public JLabel                NPCpreview;
+  public JSpinner              NPCspeed, NPCmoveT, NPClookT;
+  public JButton               NPCok;
+  public Attributes            NPCattr;
   
-  int                   NPClastID           = 0;
+  public int                   NPClastID           = 0;
   
   // -- equip dialog -- //
-  JSpinner              EQhair, EQskin, EQeyes;
-  JLabel                EQpreview;
-  Equipment             EQ;
+  public JSpinner              EQhair, EQskin, EQeyes;
+  public JLabel                EQpreview;
+  public Equipment             EQ;
   
   // -- talk dialog -- //
-  JColorSlider          talkColorSlider;
-  JScrollPane           talkScrollPane;
-  JPanel                talkPanel;
-  JButton               talkAdd, talkOk;
-  String[]              tilesets;
-  final int             talkComponentWidth  = 585;
-  final int             talkComponentHeight = 100;
+  public JColorSlider          talkColorSlider;
+  public JScrollPane           talkScrollPane;
+  public JPanel                talkPanel;
+  public JButton               talkAdd, talkOk;
+  public String[]              tilesets;
+  public final int             talkComponentWidth  = 585;
+  public final int             talkComponentHeight = 100;
   
   // -- item dialog -- //
-  Item                  tmpItem;
-  Attributes            tmpAttributes;
-  Attributes            tmpRequires;
+  public Item                  tmpItem;
+  public Attributes            tmpAttributes;
+  public Attributes            tmpRequires;
   
   // -- item dialog actions -- //
-  JPanel                actionSettings;
+  public JPanel                actionSettings;
   
-  JTextField            potionTarget;
-  Attributes            potionAttributes;
-  JComboBox<DamageType> potionDamageType;
+  public JTextField            potionTarget;
+  public Attributes            potionAttributes;
+  public JComboBox<DamageType> potionDamageType;
   
-  Attributes            weaponAttributes;
-  JComboBox<DamageType> weaponDamageType;
+  public Attributes            weaponAttributes;
+  public JComboBox<DamageType> weaponDamageType;
   
   // -- attr dialog -- //
-  Attributes            tmpAttr;
+  public Attributes            tmpAttr;
   
   // -- global stuff -- //
-  public JFrame         w;
+  public JFrame                w;
   
-  JMenuBar              menu;
-  JMenu                 mpmenu, mmenu, fmenu, omenu;
-  JMenuItem             mUndo;
-  JCheckBoxMenuItem     mDrag;
-  JSONObject            mappackdata, mapdata;
-  JPanel                tiles, tilepanel;
-  MapPanel              map;
-  JScrollPane           msp;
-  String                tileset;
-  JButton               selectedtile;
-  BufferedImage[][]     autotiles;
-  JDialog               bumpPreview;
+  public JMenuBar              menu;
+  public JMenu                 mpmenu, mmenu;
+  public JMenu                 fmenu;
+  public JMenu                 omenu;
+  public JMenuItem             mUndo;
+  public JCheckBoxMenuItem     mDrag;
+  public JSONObject            mappackdata;
+  public JSONObject            mapdata;
+  public JPanel                tiles, tilepanel;
+  public MapPanel              map;
+  public JScrollPane           msp;
+  public String                tileset;
+  public JButton               selectedtile;
+  public BufferedImage[][]     autotiles;
+  public JDialog               bumpPreview;
   
-  JProgressBar          progress;
-  JLabel                progressLabel;
+  public JProgressBar          progress;
+  public JLabel                progressLabel;
   
-  public BufferedImage  cursor;
+  public BufferedImage         cursor;
   
   // -- modes -- //
-  boolean               gridmode;
-  boolean               rasterview;
-  boolean               deletemode;
-  boolean               autotilemode;
-  boolean               dragmode;
-  boolean               importmode;
+  public boolean               gridmode;
+  public boolean               rasterview;
+  public boolean               deletemode;
+  public boolean               autotilemode;
+  public boolean               dragmode;
+  public boolean               importmode;
   
-  double                cachelayer;
+  public double                cachelayer;
   
   // -- UNDO -- //
-  TileButton[]          lastChangedTiles;
-  boolean               tilesWereDeleted;
+  TileButton[]                 lastChangedTiles;
+  public boolean               tilesWereDeleted;
   
   // -- Import -- //
-  TileButton[]          importTiles;
+  public TileButton[]          importTiles;
   
   public MapEditor(Viewport viewport)
   {
@@ -328,7 +317,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        showNewMapPackDialog();
+        new NewMapPackDialog(MapEditor.this);
       }
     });
     mpnew.setAccelerator(KeyStroke.getKeyStroke("ctrl N"));
@@ -341,7 +330,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        showOpenMapPackDialog();
+        new OpenMapDialog(MapEditor.this);
       }
     });
     mpopen.setAccelerator(KeyStroke.getKeyStroke("ctrl O"));
@@ -357,7 +346,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        showNewMapDialog();
+        new NewMapDialog(MapEditor.this);
       }
     });
     mnew.setAccelerator(KeyStroke.getKeyStroke("ctrl shift N"));
@@ -370,7 +359,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        showOpenMapDialog();
+        new OpenMapDialog(MapEditor.this);
       }
     });
     mopen.setAccelerator(KeyStroke.getKeyStroke("ctrl shift O"));
@@ -446,7 +435,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        showImportObjectDialog();
+        new ImportObjectDialog(MapEditor.this);
       }
     });
     mimp.setAccelerator(KeyStroke.getKeyStroke("ctrl R"));
@@ -515,7 +504,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        showNPCDialog(null);
+        new NPCDialog(MapEditor.this, null);
       }
     });
     fmenu.add(fnpc);
@@ -540,7 +529,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        showFilterReplaceDialog();
+        new FilterReplaceDialog(MapEditor.this);
       }
     });
     fmenu.add(ffr);
@@ -859,7 +848,7 @@ public class MapEditor
         @Override
         public void actionPerformed(ActionEvent e)
         {
-          showNPCDialog(fNPC);
+          new NPCDialog(MapEditor.this, fNPC);
         }
       });
       jpm.add(edit);
@@ -871,7 +860,7 @@ public class MapEditor
         @Override
         public void actionPerformed(ActionEvent e)
         {
-          showEquipmentDialog(fNPC);
+          new EquipmentDialog(MapEditor.this, fNPC);
         }
       });
       jpm.add(eedit);
@@ -883,7 +872,7 @@ public class MapEditor
         @Override
         public void actionPerformed(ActionEvent e)
         {
-          showTalkDialog(fNPC);
+          new TalkDialog(MapEditor.this, fNPC);
         }
       });
       jpm.add(tedit);
@@ -1011,7 +1000,7 @@ public class MapEditor
           @Override
           public void actionPerformed(ActionEvent e)
           {
-            editFieldData(tile, s);
+            new EditFieldDataDialog(MapEditor.this, tile, s);
           }
         });
         mdata.add(tmp);
@@ -1084,261 +1073,6 @@ public class MapEditor
       return null;
     }
     
-  }
-  
-  public void editFieldData(final TileButton field, final String dataType)
-  {
-    try
-    {
-      // -- general setup -- //
-      final JDialog dialog = new JDialog(w, true);
-      dialog.setTitle("Feld-Data bearbeiten");
-      dialog.setIconImage(w.getIconImage());
-      dialog.setSize(400, 320);
-      dialog.setResizable(false);
-      dialog.setLocationRelativeTo(this.w);
-      dialog.setLayout(new FlowLayout());
-      dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-      JPanel inputs = new JPanel(new SpringLayout());
-      inputs.setPreferredSize(new Dimension(400, 257));
-      JButton delete = new JButton("Löschen");
-      delete.setEnabled(false);
-      delete.setPreferredSize(new Dimension(190, 23));
-      JButton save = new JButton("Speichern");
-      save.setPreferredSize(new Dimension(190, 23));
-      // -- type specific setup -- //
-      JSONObject exist = field.getDataByType(dataType);
-      if (exist != null)
-      {
-        delete.setEnabled(true);
-        delete.addActionListener(new ActionListener()
-        {
-          @Override
-          public void actionPerformed(ActionEvent e)
-          {
-            field.removeDataByType(dataType);
-            dialog.dispose();
-          }
-        });
-      }
-      switch (dataType)
-      {
-        case "Door":
-        {
-          JLabel name = new JLabel("Ziel X-Koordinate:");
-          name.setPreferredSize(new Dimension(190, 23));
-          inputs.add(name);
-          final JTextField dx = new JTextField("0");
-          dx.setName("int_dx");
-          if (exist != null) dx.setText("" + exist.getInt("dx"));
-          inputs.add(dx);
-          
-          inputs.add(new JLabel("Ziel Y-Koordinate:"));
-          final JTextField dy = new JTextField("0");
-          dy.setName("int_dy");
-          if (exist != null) dy.setText("" + exist.getInt("dy"));
-          inputs.add(dy);
-          
-          inputs.add(new JLabel("Zielrichtung:"));
-          final String[] dirs = new String[] { "Gleiche", "Unten", "Links", "Rechts", "Oben" };
-          final JComboBox<String> dir = new JComboBox<String>(dirs);
-          dir.setName("int_dir");
-          if (exist != null) dir.setSelectedIndex(exist.getInt("dir") + 1);
-          inputs.add(dir);
-          
-          inputs.add(new JLabel("Leucht-Pfeil:"));
-          final String[] arrows = new String[] { "< Leer >", "Unten", "Links", "Rechts", "Oben" };
-          final JComboBox<String> arr = new JComboBox<String>(arrows);
-          arr.setName("int_arr");
-          if (exist != null && exist.has("arr")) arr.setSelectedIndex(exist.getInt("arr") + 1);
-          else arr.setSelectedIndex(0);
-          inputs.add(arr);
-          
-          inputs.add(new JLabel("Zielkarte:"));
-          final JDialog mapCoordSelect = new JDialog(dialog, "", false);
-          mapCoordSelect.setLayout(null);
-          mapCoordSelect.setResizable(false);
-          mapCoordSelect.setLocation(dialog.getX() + dialog.getWidth() + 10, dialog.getY());
-          mapCoordSelect.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-          mapCoordSelect.setVisible(true);
-          final JComboBox<String> map = new JComboBox<String>(Map.getMaps(mappackdata.getString("name"), CFG.MAPEDITORDIR));
-          map.setName("string_map");
-          map.addActionListener(new ActionListener()
-          {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-              new Thread()
-              {
-                public void run()
-                {
-                  try
-                  {
-                    final String s = (String) map.getSelectedItem();
-                    mapCoordSelect.setTitle(s);
-                    BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1);
-                    final JLabel l = new JLabel();
-                    l.addMouseListener(new MouseAdapter()
-                    {
-                      @Override
-                      public void mousePressed(MouseEvent e)
-                      {
-                        dx.setText("" + (e.getX() - CFG.HUMANBOUNDS[0] / 2));
-                        dy.setText("" + (e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3));
-                        try
-                        {
-                          BufferedImage bi = new Map(mappackdata.getString("name"), s, CFG.MAPEDITORDIR).getRendered(1);
-                          int d = Arrays.asList(dirs).indexOf(((String) dir.getSelectedItem())) - 1;
-                          d = (d < 0) ? 0 : d;
-                          Assistant.drawChar(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[1] * 2 / 3, CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], d, 0, Equipment.getDefault(true), (Graphics2D) bi.getGraphics(), true);// Assistant.Rect(e.getX() - CFG.HUMANBOUNDS[0] / 2, e.getY() - CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[0], CFG.HUMANBOUNDS[1], Color.cyan, null, (Graphics2D) bi.getGraphics());
-                          l.setIcon(new ImageIcon(bi));
-                        }
-                        catch (JSONException e1)
-                        {
-                          e1.printStackTrace();
-                        }
-                      }
-                    });
-                    l.setSize(bi.getWidth(), bi.getHeight());
-                    l.setIcon(new ImageIcon(bi));
-                    JScrollPane jsp = new JScrollPane(l, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                    jsp.getVerticalScrollBar().setUnitIncrement(CFG.FIELDSIZE / 3);
-                    jsp.getHorizontalScrollBar().setUnitIncrement(CFG.FIELDSIZE / 3);
-                    jsp.setPreferredSize(new Dimension(500, 500));
-                    mapCoordSelect.setContentPane(jsp);
-                    mapCoordSelect.pack();
-                  }
-                  catch (JSONException e1)
-                  {
-                    e1.printStackTrace();
-                  }
-                }
-              }.start();
-            }
-          });
-          map.setSelectedIndex(0);
-          if (exist != null) map.setSelectedItem(exist.getString("map"));
-          inputs.add(map);
-          
-          inputs.add(new JLabel("Sound:"));
-          final JComboBox<String> sound = new JComboBox<String>();
-          sound.setName("string_sound");
-          sound.addItem("< Leer >");
-          for (String s : FileManager.getMediaFiles("Sound"))
-          {
-            sound.addItem(s);
-          }
-          if (exist != null) sound.setSelectedItem(exist.getString("sound"));
-          sound.addActionListener(new ActionListener()
-          {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-              if (((String) sound.getSelectedItem()).equals("< Leer >")) return;
-              Viewport.playSound((String) sound.getSelectedItem());
-            }
-          });
-          inputs.add(sound);
-          
-          inputs.add(new JLabel("Animation:"));
-          final JComboBox<String> img = new JComboBox<String>();
-          img.setName("string_img");
-          final JLabel preview = new JLabel();
-          preview.setPreferredSize(new Dimension(CFG.FIELDSIZE, CFG.FIELDSIZE));
-          img.addItem("< Leer >");
-          for (int i = 0; i < Door.CHARS.length * 4; i++)
-          {
-            img.addItem(Door.CHARS[(int) Math.floor(i / 4.0)] + ": " + ((i % 4) + 1));
-          }
-          img.addActionListener(new ActionListener()
-          {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-              String s = (String) img.getSelectedItem();
-              if (s.equals("< Leer >"))
-              {
-                preview.setIcon(null);
-                return;
-              }
-              int part = Integer.parseInt(s.substring(s.indexOf(": ") + ": ".length())) - 1;
-              BufferedImage i = (BufferedImage) Viewport.loadImage("char/objects/" + s.substring(0, s.indexOf(": ")) + ".png");
-              preview.setPreferredSize(new Dimension(i.getWidth() / 4, i.getHeight() / 4));
-              preview.setIcon(new ImageIcon(i.getSubimage(i.getWidth() / 4 * part, 0, i.getWidth() / 4, i.getHeight() / 4)));
-            }
-          });
-          if (exist != null && exist.getString("img").length() > 0)
-          {
-            int index = Arrays.asList(Door.CHARS).indexOf(exist.getString("img")) * 4;
-            img.setSelectedIndex(index + exist.getInt("t") + 1);
-          }
-          inputs.add(img);
-          
-          inputs.add(new JLabel());
-          inputs.add(preview);
-          save.addActionListener(new ActionListener()
-          {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-              JSONObject o = new JSONObject();
-              try
-              {
-                try
-                {
-                  o.put("dx", Integer.parseInt(dx.getText()));
-                  o.put("dy", Integer.parseInt(dy.getText()));
-                }
-                catch (NumberFormatException e1)
-                {
-                  JOptionPane.showMessageDialog(w, "Koordinaten dürfen nur aus Zahlen bestehen!", "", JOptionPane.ERROR_MESSAGE);
-                  return;
-                }
-                o.put("dir", dir.getSelectedIndex() - 1);
-                o.put("arr", arr.getSelectedIndex() - 1);
-                o.put("map", (String) map.getSelectedItem());
-                o.put("sound", ((String) sound.getSelectedItem()).replace("< Leer >", ""));
-                String s = (String) img.getSelectedItem();
-                if (!s.equals("< Leer >"))
-                {
-                  o.put("img", s.substring(0, s.indexOf(": ")));
-                  o.put("t", Integer.parseInt(s.substring(s.indexOf(": ") + ": ".length())) - 1);
-                  Image i = Viewport.loadImage("char/objects/" + s.substring(0, s.indexOf(": ")) + ".png");
-                  int w = i.getWidth(null) / 4;
-                  int h = i.getHeight(null) / 4;
-                  o.put("x", (CFG.FIELDSIZE / 2 - w / 2));
-                  o.put("y", (CFG.FIELDSIZE - h / 2));
-                }
-                else
-                {
-                  o.put("img", "");
-                  o.put("t", 0);
-                  o.put("x", 0);
-                  o.put("y", 0);
-                }
-                field.addData(dataType, o);
-                dialog.dispose();
-              }
-              catch (JSONException e2)
-              {
-                e2.printStackTrace();
-                return;
-              }
-            }
-          });
-          SpringUtilities.makeCompactGrid(inputs, 8, 2, 6, 6, 6, 6);
-          break;
-        }
-      }
-      dialog.add(inputs);
-      dialog.add(delete);
-      dialog.add(save);
-      dialog.setVisible(true);
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-    }
   }
   
   public void exportObject()
@@ -1682,67 +1416,6 @@ public class MapEditor
     }
   }
   
-  public void showAttributesDialog(Attributes exist, final boolean range)
-  {
-    final JDialog attrFrame = new JDialog(w);
-    attrFrame.setTitle("Attributs-Bearbeitung");
-    attrFrame.setResizable(false);
-    attrFrame.setAlwaysOnTop(true);
-    attrFrame.setModal(true);
-    attrFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    
-    final JSpinner[] spinners = new JSpinner[Attr.values().length * ((range) ? 2 : 1)];
-    
-    JPanel panel = new JPanel(new SpringLayout());
-    
-    for (int i = 0; i < Attr.values().length; i++)
-    {
-      JLabel label = new JLabel(Attr.values()[i].getText() + ":");
-      panel.add(label);
-      
-      JSpinner spinner = new JSpinner(new SpinnerNumberModel(exist.getAttribute(Attr.values()[i]).getValue(), -1000.0, 1000.0, 1.0));
-      spinners[i * ((range) ? 2 : 1)] = spinner;
-      CFG.p(i * ((range) ? 2 : 1));
-      panel.add(spinner);
-      
-      if (range)
-      {
-        spinner = new JSpinner(new SpinnerNumberModel(exist.getAttribute(Attr.values()[i]).getMaximum(), -1000.0, 1000.0, 1.0));
-        spinners[i * ((range) ? 2 : 1) + 1] = spinner;
-        panel.add(spinner);
-      }
-    }
-    
-    panel.add(new JLabel());
-    panel.add(new JLabel());
-    
-    final JButton attrOk = new JButton("OK");
-    attrOk.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        tmpAttr = new Attributes();
-        for (int i = 0; i < Attr.values().length; i++)
-        {
-          tmpAttr.getAttribute(Attr.values()[i]).setValue(Double.valueOf(spinners[i * ((range) ? 2 : 1)].getValue().toString()));
-          if (!range) tmpAttr.getAttribute(Attr.values()[i]).setMaximum(Double.valueOf(spinners[i * ((range) ? 2 : 1)].getValue().toString()));
-          else tmpAttr.getAttribute(Attr.values()[i]).setMaximum(Double.valueOf(spinners[i * ((range) ? 2 : 1) + 1].getValue().toString()));
-        }
-        attrFrame.dispose();
-      }
-    });
-    panel.add(attrOk);
-    
-    SpringUtilities.makeCompactGrid(panel, Attr.values().length + 1, (range) ? 3 : 2, 6, 6, 6, 6);
-    
-    attrFrame.setContentPane(panel);
-    
-    attrFrame.pack();
-    attrFrame.setLocationRelativeTo(this.w);
-    attrFrame.setVisible(true);
-  }
-  
   public void showCustomCursor(boolean show)
   {
     if (!show && (selectedtile != null || NPCframe != null))
@@ -1770,1339 +1443,6 @@ public class MapEditor
     }
   }
   
-  public void showEquipmentDialog(final NPCButton npc)
-  {
-    if (npc != null) EQ = npc.getEquipment();
-    
-    final JDialog adjFrame = new JDialog(w);
-    
-    final JDialog viewFrame = new JDialog(w);
-    
-    adjFrame.setTitle("Ausrüstungs-Bearbeitung");
-    adjFrame.setResizable(false);
-    adjFrame.addWindowListener(new WindowAdapter()
-    {
-      @Override
-      public void windowClosed(WindowEvent e)
-      {
-        viewFrame.dispose();
-      }
-      
-    });
-    adjFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    
-    viewFrame.setTitle("Ausrüstungs-Bearbeitung");
-    viewFrame.setResizable(false);
-    viewFrame.addWindowListener(new WindowAdapter()
-    {
-      @Override
-      public void windowClosed(WindowEvent e)
-      {
-        adjFrame.dispose();
-      }
-      
-    });
-    viewFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    
-    JPanel p = new JPanel(new BorderLayout());
-    
-    EQpreview = new JLabel();
-    EQpreview.setPreferredSize(new Dimension(320, 480));
-    p.add(EQpreview, BorderLayout.NORTH);
-    
-    JPanel buttons = new JPanel(new GridLayout(1, 2));
-    JButton ok = new JButton("Speichern");
-    ok.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        npc.setEquipment(EQ);
-      }
-    });
-    buttons.add(ok);
-    
-    JButton noEquip = new JButton("Ausrüstung entfernen");
-    noEquip.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        EQ = new Equipment();
-        updateEquipDialogPreview();
-      }
-    });
-    buttons.add(noEquip);
-    
-    p.add(buttons, BorderLayout.SOUTH);
-    
-    viewFrame.setContentPane(p);
-    viewFrame.pack();
-    viewFrame.setLocationRelativeTo(this.w);
-    viewFrame.setVisible(true);
-    
-    JPanel panel = new JPanel(new SpringLayout());
-    
-    JLabel l = new JLabel(Categories.HAIR.name());
-    panel.add(l);
-    String[] chars = FileManager.getCharParts(Categories.HAIR.name().toLowerCase());
-    EQhair = new JSpinner();
-    
-    ArrayList<String> list = new ArrayList<String>();
-    for (String part : chars)
-    {
-      if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1) continue;
-      list.add(part.replace("_f.png", "").replace(".png", ""));
-    }
-    EQhair.setModel(new SpinnerListModel(list));
-    
-    EQhair.setPreferredSize(new Dimension(150, 22));
-    if (Arrays.asList(chars).indexOf("none.png") > -1) EQhair.setValue("none");
-    
-    if (npc.getEquipment().hasEquipmentItem(Categories.HAIR)) EQhair.setValue(npc.getEquipment().getEquipmentItem(Categories.HAIR).getCharPath());
-    
-    EQhair.addChangeListener(new ChangeListener()
-    {
-      @Override
-      public void stateChanged(ChangeEvent e)
-      {
-        EQ.setEquipmentItem(Categories.HAIR, new Item(Types.HAIR, EQhair.getValue().toString().replace("_f.png", "").replace(".png", ""), 1));
-        updateEquipDialogPreview();
-      }
-    });
-    
-    EQhair.addMouseWheelListener(new MouseWheelListener()
-    {
-      
-      @Override
-      public void mouseWheelMoved(MouseWheelEvent e)
-      {
-        if (e.getWheelRotation() < 0)
-        {
-          if (EQhair.getModel().getPreviousValue() != null) EQhair.getModel().setValue(EQhair.getModel().getPreviousValue());
-        }
-        else if (EQhair.getModel().getNextValue() != null) EQhair.getModel().setValue(EQhair.getModel().getNextValue());
-      }
-    });
-    panel.add(EQhair);
-    
-    l = new JLabel(Categories.SKIN.name());
-    panel.add(l);
-    chars = FileManager.getCharParts(Categories.SKIN.name().toLowerCase());
-    EQskin = new JSpinner();
-    
-    list = new ArrayList<String>();
-    for (String part : chars)
-    {
-      if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1) continue;
-      list.add(part.replace("_f.png", "").replace(".png", ""));
-    }
-    EQskin.setModel(new SpinnerListModel(list));
-    
-    EQskin.setPreferredSize(new Dimension(150, 22));
-    if (Arrays.asList(chars).indexOf("none.png") > -1) EQskin.setValue("none");
-    
-    if (npc.getEquipment().hasEquipmentItem(Categories.SKIN)) EQskin.setValue(npc.getEquipment().getEquipmentItem(Categories.SKIN).getCharPath());
-    
-    EQskin.addChangeListener(new ChangeListener()
-    {
-      @Override
-      public void stateChanged(ChangeEvent e)
-      {
-        EQ.setEquipmentItem(Categories.SKIN, new Item(Types.SKIN, EQskin.getValue().toString().replace("_f.png", "").replace(".png", ""), 1));
-        updateEquipDialogPreview();
-      }
-    });
-    
-    EQskin.addMouseWheelListener(new MouseWheelListener()
-    {
-      
-      @Override
-      public void mouseWheelMoved(MouseWheelEvent e)
-      {
-        if (e.getWheelRotation() < 0)
-        {
-          if (EQskin.getModel().getPreviousValue() != null) EQskin.getModel().setValue(EQskin.getModel().getPreviousValue());
-        }
-        else if (EQskin.getModel().getNextValue() != null) EQskin.getModel().setValue(EQskin.getModel().getNextValue());
-      }
-    });
-    panel.add(EQskin);
-    
-    l = new JLabel(Categories.EYES.name());
-    panel.add(l);
-    chars = FileManager.getCharParts(Categories.EYES.name().toLowerCase());
-    EQeyes = new JSpinner();
-    
-    list = new ArrayList<String>();
-    for (String part : chars)
-    {
-      if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1) continue;
-      list.add(part.replace("_f.png", "").replace(".png", ""));
-    }
-    EQeyes.setModel(new SpinnerListModel(list));
-    
-    EQeyes.setPreferredSize(new Dimension(150, 22));
-    if (Arrays.asList(chars).indexOf("none.png") > -1) EQeyes.setValue("none");
-    
-    if (npc.getEquipment().hasEquipmentItem(Categories.EYES)) EQeyes.setValue(npc.getEquipment().getEquipmentItem(Categories.EYES).getCharPath());
-    
-    EQeyes.addChangeListener(new ChangeListener()
-    {
-      @Override
-      public void stateChanged(ChangeEvent e)
-      {
-        EQ.setEquipmentItem(Categories.EYES, new Item(Types.EYES, EQeyes.getValue().toString().replace("_f.png", "").replace(".png", ""), 1));
-        updateEquipDialogPreview();
-      }
-    });
-    
-    EQeyes.addMouseWheelListener(new MouseWheelListener()
-    {
-      
-      @Override
-      public void mouseWheelMoved(MouseWheelEvent e)
-      {
-        if (e.getWheelRotation() < 0)
-        {
-          if (EQeyes.getModel().getPreviousValue() != null) EQeyes.getModel().setValue(EQeyes.getModel().getPreviousValue());
-        }
-        else if (EQeyes.getModel().getNextValue() != null) EQeyes.getModel().setValue(EQeyes.getModel().getNextValue());
-      }
-    });
-    panel.add(EQeyes);
-    
-    for (final Categories c : Categories.EQUIPS)
-    {
-      if (Arrays.asList(Categories.NATIVES).contains(c)) continue;
-      
-      l = new JLabel(c.name());
-      panel.add(l);
-      JPanel pnl = new JPanel();
-      JButton btn = new JButton("X");
-      btn.addActionListener(new ActionListener()
-      {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-          EQ.setEquipmentItem(c, null);
-          updateEquipDialogPreview();
-        }
-      });
-      pnl.add(btn);
-      
-      btn = new JButton("Bearbeiten");
-      btn.addActionListener(new ActionListener()
-      {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-          showItemDialog(EQ.getEquipmentItem(c));
-          if (tmpItem != null) EQ.setEquipmentItem(c, tmpItem);
-          updateEquipDialogPreview();
-        }
-      });
-      pnl.add(btn);
-      panel.add(pnl);
-    }
-    
-    // -- weapon1 -- //
-    l = new JLabel("WEAPON 1");
-    panel.add(l);
-    JPanel pnl = new JPanel();
-    JButton btn = new JButton("X");
-    btn.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        EQ.setFirstWeapon(null);
-        updateEquipDialogPreview();
-      }
-    });
-    pnl.add(btn);
-    
-    btn = new JButton("Bearbeiten");
-    btn.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        showItemDialog(EQ.getFirstWeapon());
-        if (tmpItem != null) EQ.setFirstWeapon(tmpItem);
-        updateEquipDialogPreview();
-      }
-    });
-    pnl.add(btn);
-    panel.add(pnl);
-    
-    // -- weapon2 -- //
-    l = new JLabel("WEAPON 2");
-    panel.add(l);
-    pnl = new JPanel();
-    btn = new JButton("X");
-    btn.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        EQ.setSecondWeapon(null);
-        updateEquipDialogPreview();
-      }
-    });
-    pnl.add(btn);
-    
-    btn = new JButton("Bearbeiten");
-    btn.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        showItemDialog(EQ.getSecondWeapon());
-        if (tmpItem != null) EQ.setSecondWeapon(tmpItem);
-        updateEquipDialogPreview();
-      }
-    });
-    pnl.add(btn);
-    panel.add(pnl);
-    
-    updateEquipDialogPreview();
-    
-    SpringUtilities.makeCompactGrid(panel, Categories.EQUIPS.length + 2, 2, 6, 6, 6, 6);
-    
-    adjFrame.setContentPane(panel);
-    adjFrame.pack();
-    adjFrame.setLocation(viewFrame.getX() + viewFrame.getWidth() + 10, viewFrame.getY());
-    adjFrame.setVisible(true);
-  }
-  
-  public void showFilterReplaceDialog()
-  {
-    final JDialog FRframe = new JDialog(w, "Felder per Filter ersetzen");
-    FRframe.setResizable(false);
-    FRframe.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    
-    dragmode = true;
-    selectedtile = null;
-    
-    FRframe.addWindowListener(new WindowAdapter()
-    {
-      @Override
-      public void windowClosed(WindowEvent e)
-      {
-        for (Component c : map.getComponents())
-        {
-          if (c instanceof TileButton)
-          {
-            ((TileButton) c).fitsFilter = false;
-            ((TileButton) c).update = true;
-            ((TileButton) c).repaint();
-          }
-        }
-        dragmode = mDrag.isSelected();
-        
-        map.mouseDown = null;
-        map.mousePos = null;
-      }
-    });
-    
-    JPanel p = new JPanel(new SpringLayout());
-    
-    JPanel oldPanel = new JPanel(new SpringLayout());
-    oldPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), "Finden"));
-    
-    JLabel label = new JLabel("Tileset:");
-    oldPanel.add(label);
-    FRoldTileset = new JComboBox<String>(Assistant.concat(new String[] { "Ignorieren" }, tilesets));
-    FRoldTileset.setSelectedIndex(0);
-    oldPanel.add(FRoldTileset);
-    
-    label = new JLabel("Layer:");
-    oldPanel.add(label);
-    FRoldLayer = new JTextField();
-    oldPanel.add(FRoldLayer);
-    
-    label = new JLabel("Tileset-X:");
-    oldPanel.add(label);
-    FRoldTX = new JTextField();
-    oldPanel.add(FRoldTX);
-    
-    label = new JLabel("Tileset-Y:");
-    oldPanel.add(label);
-    FRoldTY = new JTextField();
-    oldPanel.add(FRoldTY);
-    
-    SpringUtilities.makeCompactGrid(oldPanel, 4, 2, 6, 6, 6, 6);
-    
-    p.add(oldPanel);
-    
-    JPanel newPanel = new JPanel(new SpringLayout());
-    newPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), "Ersetzen"));
-    
-    label = new JLabel("Tileset:");
-    newPanel.add(label);
-    FRnewTileset = new JComboBox<String>(Assistant.concat(new String[] { "Ignorieren" }, tilesets));
-    FRnewTileset.setSelectedIndex(0);
-    newPanel.add(FRnewTileset);
-    
-    label = new JLabel("Layer:");
-    newPanel.add(label);
-    FRnewLayer = new JTextField();
-    newPanel.add(FRnewLayer);
-    
-    label = new JLabel("Tileset-X:");
-    newPanel.add(label);
-    FRnewTX = new JTextField();
-    newPanel.add(FRnewTX);
-    
-    label = new JLabel("Tileset-Y:");
-    newPanel.add(label);
-    FRnewTY = new JTextField();
-    newPanel.add(FRnewTY);
-    
-    SpringUtilities.makeCompactGrid(newPanel, 4, 2, 6, 6, 6, 6);
-    
-    p.add(newPanel);
-    
-    JButton find = new JButton("Finden");
-    find.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        new Thread()
-        {
-          public void run()
-          {
-            Double layer = Assistant.parseDouble(FRoldLayer.getText());
-            Integer tx = Assistant.parseInt(FRoldTX.getText());
-            Integer ty = Assistant.parseInt(FRoldTY.getText());
-            
-            for (int i = 0; i < map.getComponentCount(); i++)
-            {
-              Component c = map.getComponent(i);
-              if (c instanceof TileButton)
-              {
-                ((TileButton) c).fitsFilter = false;
-                ((TileButton) c).update = true;
-              }
-            }
-            map.repaint();
-            
-            if (map.mouseDown == null)
-            {
-              for (Component c : map.getComponents())
-              {
-                if (c instanceof TileButton)
-                {
-                  ((TileButton) c).checkReplaceFilterFits(FRoldTileset.getSelectedItem().toString(), layer, tx, ty);
-                  map.repaint();
-                }
-              }
-            }
-            else
-            {
-              for (int i = 0; i < map.selW / CFG.FIELDSIZE; i++)
-              {
-                for (int j = 0; j < map.selH / CFG.FIELDSIZE; j++)
-                {
-                  for (Component c : map.getComponents())
-                  {
-                    if (c instanceof TileButton && c.getX() >= i * CFG.FIELDSIZE + map.selX && c.getX() < (i + 1) * CFG.FIELDSIZE + map.selX && c.getY() >= j * CFG.FIELDSIZE + map.selY && c.getY() < (j + 1) * CFG.FIELDSIZE + map.selY)
-                    {
-                      ((TileButton) c).checkReplaceFilterFits(FRoldTileset.getSelectedItem().toString(), layer, tx, ty);
-                      map.repaint();
-                    }
-                  }
-                }
-              }
-            }
-            map.repaint();
-          }
-        }.start();
-      }
-    });
-    
-    p.add(find);
-    
-    JButton replace = new JButton("Ersetzen");
-    replace.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        Double layer = Assistant.parseDouble(FRnewLayer.getText());
-        Integer tx = Assistant.parseInt(FRnewTX.getText());
-        Integer ty = Assistant.parseInt(FRnewTY.getText());
-        
-        for (Component c : map.getComponents())
-        {
-          if (c instanceof TileButton)
-          {
-            ((TileButton) c).execFilterReplace(FRnewTileset.getSelectedItem().toString(), layer, tx, ty);
-          }
-        }
-      }
-    });
-    p.add(replace);
-    
-    p.add(new JLabel("Gefundene Felder: "));
-    p.add(new JButton(new AbstractAction("Entfernen")
-    {
-      private static final long serialVersionUID = 1L;
-      
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        for (Component c : map.getComponents())
-        {
-          if (c instanceof TileButton && ((TileButton) c).fitsFilter)
-          {
-            map.remove(c);
-            map.repaint();
-          }
-        }
-      }
-    }));
-    
-    SpringUtilities.makeCompactGrid(p, 3, 2, 6, 6, 6, 6);
-    
-    FRframe.setContentPane(p);
-    FRframe.pack();
-    FRframe.setLocationRelativeTo(this.w);
-    FRframe.setVisible(true);
-  }
-  
-  public void showImportObjectDialog()
-  {
-    final JDialog dialog = new JDialog(w, true);
-    dialog.setTitle("Objekt importieren");
-    dialog.setSize(400, 170);
-    dialog.setResizable(false);
-    dialog.setLocationRelativeTo(this.w);
-    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    final DefaultListModel<String> maps = new DefaultListModel<String>();
-    for (String s : new File(FileManager.dir, CFG.MAPEDITOROBJECTSDIR).list())
-    {
-      maps.addElement(s.replace(".object", ""));
-    }
-    JList<String> list = new JList<String>(maps);
-    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    list.addListSelectionListener(new ListSelectionListener()
-    {
-      @Override
-      public void valueChanged(final ListSelectionEvent e)
-      {
-        if (e.getValueIsAdjusting()) return;
-        dialog.dispose();
-        importObject((String) ((JList<?>) e.getSource()).getSelectedValue());
-      }
-    });
-    dialog.setContentPane(new JScrollPane(list));
-    dialog.setVisible(true);
-  }
-  
-  public void showItemDialog(final Item exist)
-  {
-    if (exist != null)
-    {
-      tmpAttributes = exist.getAttributes();
-      tmpRequires = exist.getRequirements();
-    }
-    
-    final JDialog itemFrame = new JDialog(w, true);
-    itemFrame.setTitle("Item-Bearbeitung");
-    itemFrame.setResizable(false);
-    itemFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    
-    final JPanel p = new JPanel(new SpringLayout());
-    
-    JLabel l = new JLabel("Icon-X:");
-    p.add(l);
-    final JSpinner ix = new JSpinner(new SpinnerNumberModel(0, 0, 16, 1));
-    if (exist != null) ix.setValue(exist.getIconPoint().x);
-    p.add(ix);
-    
-    l = new JLabel("Icon-Y:");
-    p.add(l);
-    final JSpinner iy = new JSpinner(new SpinnerNumberModel(0, 0, 629, 1));
-    if (exist != null) iy.setValue(exist.getIconPoint().y);
-    p.add(iy);
-    
-    l = new JLabel("Korrektur-X:");
-    p.add(l);
-    final JSpinner cx = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-    if (exist != null) cx.setValue(exist.getCorrectionX());
-    p.add(cx);
-    
-    l = new JLabel("Korrektur-Y:");
-    p.add(l);
-    final JSpinner cy = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-    if (exist != null) cy.setValue(exist.getCorrectionY());
-    p.add(cy);
-    
-    l = new JLabel("Name:");
-    p.add(l);
-    final JTextField name = new JTextField(15);
-    if (exist != null) name.setText(exist.getName());
-    p.add(name);
-    
-    final JLabel preview = new JLabel();
-    Image body1 = Viewport.loadImage("char/skin/man_f.png");
-    Image body2 = Viewport.loadImage("char/skin/man_b.png");
-    BufferedImage bi = new BufferedImage(body1.getWidth(null), body1.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-    Graphics g = bi.getGraphics();
-    g.drawImage(body2, 0, 0, null);
-    g.drawImage(body1, 0, 0, null);
-    preview.setIcon(new ImageIcon(bi));
-    preview.setPreferredSize(new Dimension(body1.getWidth(null), body1.getHeight(null)));
-    
-    l = new JLabel("Char-Pfad:");
-    p.add(l);
-    final JComboBox<String> path = new JComboBox<String>();
-    p.add(path);
-    
-    p.add(new JLabel());
-    p.add(preview);
-    
-    l = new JLabel("Typ:");
-    p.add(l);
-    final JComboBox<Types> type = new JComboBox<Types>(Types.values());
-    
-    path.addItemListener(new ItemListener()
-    {
-      @Override
-      public void itemStateChanged(ItemEvent e)
-      {
-        if (e.getStateChange() != ItemEvent.SELECTED) return;
-        
-        Image body1 = Viewport.loadImage("char/skin/man_f.png");
-        Image body2 = Viewport.loadImage("char/skin/man_b.png");
-        Image part = Viewport.loadImage("char/" + type.getSelectedItem().toString().toLowerCase() + "/" + path.getSelectedItem().toString() + ".png");
-        if (part == null) part = Viewport.loadImage("char/" + type.getSelectedItem().toString().toLowerCase() + "/" + path.getSelectedItem().toString() + "_f.png");
-        
-        BufferedImage bi = new BufferedImage(body1.getWidth(null), body1.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        Graphics g = bi.getGraphics();
-        if (!((Types) type.getSelectedItem()).equals(Types.SKIN)) g.drawImage(body2, 0, 0, null);
-        if (!((Types) type.getSelectedItem()).equals(Types.SKIN)) g.drawImage(body1, 0, 0, null);
-        g.drawImage(part, 0, 0, null);
-        preview.setIcon(new ImageIcon(bi));
-      }
-    });
-    
-    
-    type.addItemListener(new ItemListener()
-    {
-      @Override
-      public void itemStateChanged(ItemEvent e)
-      {
-        Types i = (Types) e.getItem();
-        path.removeAllItems();
-        if (Arrays.asList(Categories.EQUIPS).contains(i.getCategory()))
-        {
-          String[] parts = FileManager.getCharParts(i.name().toLowerCase());
-          for (String part : parts)
-          {
-            if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1) continue;
-            path.addItem(part.replace("_f.png", "").replace(".png", ""));
-          }
-          if (exist != null && exist.getCharPath() != null && exist.getType().equals(i)) path.setSelectedItem(exist.getCharPath());
-        }
-      }
-    });
-    if (exist != null) type.setSelectedItem(exist.getType());
-    p.add(type);
-    
-    l = new JLabel("Attribute:");
-    p.add(l);
-    JButton btn = new JButton("Bearbeiten");
-    btn.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        showAttributesDialog((tmpAttributes != null) ? tmpAttributes : new Attributes(), false);
-        tmpAttributes = tmpAttr;
-      }
-    });
-    p.add(btn);
-    
-    l = new JLabel("Requirements:");
-    p.add(l);
-    btn = new JButton("Bearbeiten");
-    btn.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        showAttributesDialog((tmpRequires != null) ? tmpRequires : new Attributes(), false);
-        tmpRequires = tmpAttr;
-      }
-    });
-    p.add(btn);
-    
-    actionSettings = new JPanel(new SpringLayout());
-    
-    final String[] actions = new String[] { "EmptyAction", "PotionAction", "WeaponAction" }; // TODO: Keep in sync with available item actions. SkillAction is excluded, it's only for native purpose
-    l = new JLabel("Action:");
-    p.add(l);
-    final JComboBox<String> action = new JComboBox<String>(actions);
-    action.addItemListener(new ItemListener()
-    {
-      @Override
-      public void itemStateChanged(ItemEvent e)
-      {
-        if (e.getStateChange() != ItemEvent.SELECTED) return;
-        
-        JPanel labels = new JPanel(new SpringLayout());
-        JPanel panel = new JPanel(new SpringLayout());
-        
-        switch (e.getItem().toString())
-        {
-          case "PotionAction":
-          {
-            labels.add(new JLabel("Target:"));
-            potionTarget = new JTextField("CASTER");
-            potionTarget.setColumns(15);
-            if (exist != null && exist.getAction() instanceof PotionAction) potionTarget.setText(((PotionAction) exist.getAction()).getTarget());
-            panel.add(potionTarget);
-            
-            labels.add(new JLabel("Attribute:"));
-            JButton btn = new JButton("Bearbeiten");
-            if (potionAttributes == null && exist != null && exist.getAction() instanceof PotionAction) potionAttributes = ((PotionAction) exist.getAction()).getChanges();
-            btn.addActionListener(new ActionListener()
-            {
-              @Override
-              public void actionPerformed(ActionEvent e)
-              {
-                showAttributesDialog((potionAttributes != null) ? potionAttributes : new Attributes(), false);
-                potionAttributes = tmpAttr;
-              }
-            });
-            panel.add(btn);
-            
-            labels.add(new JLabel("Schadens-Typ:"));
-            potionDamageType = new JComboBox<DamageType>(DamageType.values());
-            panel.add(potionDamageType);
-            
-            SpringUtilities.makeCompactGrid(labels, 3, 1, 6, 12, 6, 12);
-            SpringUtilities.makeCompactGrid(panel, 3, 1, 6, 6, 6, 6);
-            break;
-          }
-          case "WeaponAction":
-          {
-            labels.add(new JLabel("Attribute:"));
-            JButton btn = new JButton("Bearbeiten");
-            if (weaponAttributes == null && exist != null && exist.getAction() instanceof WeaponAction) weaponAttributes = ((WeaponAction) exist.getAction()).getEffect();
-            btn.addActionListener(new ActionListener()
-            {
-              @Override
-              public void actionPerformed(ActionEvent e)
-              {
-                showAttributesDialog((weaponAttributes != null) ? weaponAttributes : new Attributes(), true);
-                weaponAttributes = tmpAttr;
-              }
-            });
-            panel.add(btn);
-            
-            labels.add(new JLabel("Schadens-Typ:"));
-            weaponDamageType = new JComboBox<DamageType>(DamageType.values());
-            if (exist != null && exist.getAction() instanceof WeaponAction) weaponDamageType.setSelectedItem(((WeaponAction) exist.getAction()).getDamageType());
-            panel.add(weaponDamageType);
-            
-            SpringUtilities.makeCompactGrid(labels, 2, 1, 6, 6, 6, 6);
-            SpringUtilities.makeCompactGrid(panel, 2, 1, 6, 6, 6, 6);
-            break;
-          }
-        }
-        p.remove(22);
-        p.remove(actionSettings);
-        SpringUtilities.makeCompactGrid(p, 11, 2, 6, 6, 6, 6);
-        p.add(labels, 22);
-        p.add(panel, 23);
-        actionSettings = panel;
-        SpringUtilities.makeCompactGrid(p, 13, 2, 6, 6, 6, 6);
-        itemFrame.pack();
-      }
-    });
-    
-    p.add(action);
-    
-    p.add(new JLabel());
-    p.add(actionSettings);
-    
-    p.add(new JLabel());
-    JButton ok = new JButton("OK");
-    ok.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        ItemAction ia = new EmptyAction();
-        
-        if (action.getSelectedItem().equals("PotionAction")) ia = new PotionAction(potionTarget.getText(), potionAttributes, (DamageType) potionDamageType.getSelectedItem());
-        
-        else if (action.getSelectedItem().equals("WeaponAction")) ia = new WeaponAction(weaponAttributes, (DamageType) weaponDamageType.getSelectedItem());
-        
-        String charPath = "";
-        if (path.getSelectedItem() != null) charPath = path.getSelectedItem().toString().replace("_f.png", "").replace("_b.png", "").replace("_m.png", "").replace(".png", "");
-        
-        tmpItem = new Item((Types) type.getSelectedItem(), name.getText(), (int) ix.getValue(), (int) iy.getValue(), (int) cx.getValue(), (int) cy.getValue(), charPath, tmpAttributes, tmpRequires, ia, 1);
-        
-        itemFrame.dispose();
-      }
-    });
-    p.add(ok);
-    
-    if (exist != null) action.setSelectedItem(exist.getAction().getClass().getSimpleName());
-    
-    SpringUtilities.makeCompactGrid(p, 13, 2, 6, 6, 6, 6);
-    
-    itemFrame.setContentPane(p);
-    
-    itemFrame.pack();
-    itemFrame.setLocationRelativeTo(this.w);
-    itemFrame.setVisible(true);
-  }
-  
-  public void showNewMapDialog()
-  {
-    if (mappackdata == null) return;
-    final JDialog dialog = new JDialog(w, true);
-    dialog.addWindowListener(new WindowAdapter()
-    {
-      @Override
-      public void windowClosed(WindowEvent e)
-      {
-        Viewport.stopMusic();
-      }
-    });
-    dialog.setTitle("Karte erstellen");
-    dialog.setSize(400, 170);
-    dialog.setResizable(false);
-    dialog.setLocationRelativeTo(this.w);
-    dialog.setLayout(new BorderLayout());
-    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    JPanel inputs = new JPanel();
-    inputs.setLayout(new GridLayout(0, 2));
-    inputs.add(new JLabel("Kartenname: "));
-    final JTextField name = new JTextField();
-    inputs.add(name);
-    inputs.add(new JLabel("Hintergrundmusik: "));
-    final JComboBox<String> music = new JComboBox<String>();
-    music.addItem("Keine Musik");
-    for (File f : new File(FileManager.dir, "Music").listFiles())
-    {
-      if (f.isFile() && f.getName().endsWith(".wav")) music.addItem(f.getName().replace(".wav", ""));
-    }
-    music.addItemListener(new ItemListener()
-    {
-      @Override
-      public void itemStateChanged(ItemEvent e)
-      {
-        String item = (String) e.getItem();
-        switch (e.getStateChange())
-        {
-          case ItemEvent.DESELECTED:
-          {
-            Viewport.stopMusic();
-            break;
-          }
-          case ItemEvent.SELECTED:
-          {
-            if (!item.equals("Keine Musik")) Viewport.playMusic(item, true, 0.2f);
-            break;
-          }
-        }
-      }
-    });
-    inputs.add(music);
-    inputs.add(new JLabel("Friedlich: "));
-    final JCheckBox peaceful = new JCheckBox();
-    inputs.add(peaceful);
-    
-    dialog.add(inputs, BorderLayout.PAGE_START);
-    JButton create = new JButton("Erstellen");
-    create.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        if (name.getText().length() == 0) return;
-        Viewport.stopMusic();
-        try
-        {
-          w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + mappackdata.getString("name") + "/" + name.getText());
-          mapdata = new JSONObject();
-          map.removeAll();
-          selectedtile = null;
-          msp.setViewportView(map);
-          selectedtile = null;
-          mapdata.put("music", (!music.getSelectedItem().equals("Keine Musik")) ? music.getSelectedItem() : "");
-          mapdata.put("name", name.getText());
-          mapdata.put("tile", new JSONArray());
-          mapdata.put("peaceful", peaceful.isSelected());
-          fmenu.setEnabled(true);
-          omenu.setEnabled(true);
-          saveMap();
-        }
-        catch (JSONException e1)
-        {
-          e1.printStackTrace();
-        }
-        dialog.dispose();
-      }
-    });
-    dialog.add(create, BorderLayout.PAGE_END);
-    dialog.setVisible(true);
-  }
-  
-  public void showNewMapPackDialog()
-  {
-    if (mappackdata != null) return;
-    final JDialog dialog = new JDialog(w, true);
-    dialog.setTitle("Kartenpaket erstellen");
-    dialog.setSize(400, 170);
-    dialog.setResizable(false);
-    dialog.setLocationRelativeTo(this.w);
-    dialog.setLayout(new BorderLayout());
-    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    JPanel inputs = new JPanel();
-    inputs.setLayout(new GridLayout(0, 2));
-    inputs.add(new JLabel("Paketname: "));
-    final JTextField name = new JTextField();
-    inputs.add(name);
-    dialog.add(inputs, BorderLayout.PAGE_START);
-    JButton create = new JButton("Erstellen");
-    create.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        try
-        {
-          w.setTitle("Liturfaliar Cest MapEditor (" + UniVersion.prettyVersion() + ") - " + name.getText());
-          mappackdata = new JSONObject();
-          mappackdata.put("name", name.getText());
-          mappackdata.put("init", new JSONObject());
-          mappackdata.put("version", System.currentTimeMillis());
-          mmenu.setEnabled(true);
-          saveMapPack();
-        }
-        catch (JSONException e1)
-        {
-          e1.printStackTrace();
-        }
-        dialog.dispose();
-        openMapPack(name.getText());
-      }
-    });
-    dialog.add(create, BorderLayout.PAGE_END);
-    dialog.setVisible(true);
-  }
-  
-  public void showNPCDialog(final NPCButton exist)
-  {
-    if (NPCframe == null)
-    {
-      NPCframe = new JDialog(w);
-      NPCframe.setTitle("NPC-Bearbeitung" + ((exist != null) ? " - NPC #" + exist.ID : ""));
-      NPCframe.addWindowListener(new WindowAdapter()
-      {
-        @Override
-        public void windowClosed(WindowEvent e)
-        {
-          NPCframe = null;
-          cursor = null;
-          map.repaint();
-        }
-      });
-      NPCframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-      NPCframe.setAlwaysOnTop(true);
-      NPCframe.setResizable(false);
-    }
-    
-    if (exist != null) NPCattr = exist.attributes;
-    else NPCattr = new Attributes();
-    
-    JPanel p = new JPanel(new SpringLayout());
-    
-    JLabel label = new JLabel("X-Position: ", JLabel.TRAILING);
-    p.add(label);
-    NPCx = new JTextField(15);
-    if (exist != null) NPCx.setText(exist.x + "");
-    
-    p.add(NPCx);
-    
-    label = new JLabel("Y-Position: ", JLabel.TRAILING);
-    p.add(label);
-    NPCy = new JTextField(15);
-    if (exist != null) NPCy.setText(exist.y + "");
-    
-    p.add(NPCy);
-    
-    label = new JLabel("Blickrichtung: ", JLabel.TRAILING);
-    p.add(label);
-    NPCdir = new JComboBox<String>(new String[] { "Unten", "Links", "Rechts", "Oben" });
-    if (exist != null) NPCdir.setSelectedIndex(exist.dir);
-    
-    NPCdir.addItemListener(new ItemListener()
-    {
-      
-      @Override
-      public void itemStateChanged(ItemEvent e)
-      {
-        if (e.getStateChange() == ItemEvent.SELECTED) updateNPCDialogPreview();
-      }
-    });
-    p.add(NPCdir);
-    
-    label = new JLabel("Name: ", JLabel.TRAILING);
-    p.add(label);
-    NPCname = new JTextField(15);
-    if (exist != null) NPCname.setText(exist.name);
-    
-    p.add(NPCname);
-    
-    label = new JLabel("Sprite: ", JLabel.TRAILING);
-    p.add(label);
-    NPCsprite = new JComboBox<String>(NPC.CHARS);
-    if (exist != null) NPCsprite.setSelectedItem(exist.sprite);
-    
-    else NPCsprite.setSelectedIndex(0);
-    
-    NPCsprite.addItemListener(new ItemListener()
-    {
-      @Override
-      public void itemStateChanged(ItemEvent e)
-      {
-        if (e.getStateChange() == ItemEvent.SELECTED) updateNPCDialogPreview();
-      }
-    });
-    
-    p.add(NPCsprite);
-    
-    label = new JLabel("Vorschau: ", JLabel.TRAILING);
-    p.add(label);
-    NPCpreview = new JLabel();
-    NPCpreview.setPreferredSize(new Dimension(32, 48));
-    updateNPCDialogPreview();
-    p.add(NPCpreview);
-    
-    label = new JLabel("Bewegungsgeschwindigkeit: ", JLabel.TRAILING);
-    p.add(label);
-    NPCspeed = new JSpinner(new SpinnerNumberModel(1.0, 0, 20, 0.1));
-    if (exist != null) NPCspeed.setValue(exist.speed);
-    
-    p.add(NPCspeed);
-    
-    label = new JLabel("zufällige Bewegung:", JLabel.TRAILING);
-    p.add(label);
-    NPCmove = new JCheckBox();
-    if (exist != null) NPCmove.setSelected(exist.move);
-    
-    NPCmove.addChangeListener(new ChangeListener()
-    {
-      @Override
-      public void stateChanged(ChangeEvent e)
-      {
-        NPCmoveT.setEnabled(((JCheckBox) e.getSource()).isSelected());
-      }
-    });
-    p.add(NPCmove);
-    
-    label = new JLabel("Zufallsbewegung-Interval. (ms):", JLabel.TRAILING);
-    p.add(label);
-    NPCmoveT = new JSpinner(new SpinnerNumberModel(3000, 0, 1000000000, 100));
-    if (exist != null) NPCmoveT.setValue(exist.moveT);
-    
-    NPCmoveT.setEnabled(NPCmove.isSelected());
-    p.add(NPCmoveT);
-    
-    label = new JLabel("zufälliges Blicken:", JLabel.TRAILING);
-    p.add(label);
-    NPClook = new JCheckBox();
-    if (exist != null) NPClook.setSelected(exist.look);
-    
-    NPClook.addChangeListener(new ChangeListener()
-    {
-      
-      @Override
-      public void stateChanged(ChangeEvent e)
-      {
-        NPClookT.setEnabled(((JCheckBox) e.getSource()).isSelected());
-      }
-    });
-    p.add(NPClook);
-    
-    label = new JLabel("Zufallsblicken-Interval. (ms):", JLabel.TRAILING);
-    p.add(label);
-    NPClookT = new JSpinner(new SpinnerNumberModel(3000, 0, 1000000000, 100));
-    if (exist != null) NPClookT.setValue(exist.lookT);
-    
-    NPClookT.setEnabled(NPClook.isSelected());
-    p.add(NPClookT);
-    
-    label = new JLabel("Künstliche Intelligenz:", JLabel.TRAILING);
-    p.add(label);
-    NPCai = new JComboBox<String>(new String[] { "MeleeAI" }); // TODO: Keep in sync
-    if (exist != null) NPCai.setSelectedItem(exist.ai);
-    p.add(NPCai);
-    
-    label = new JLabel("immer feindlich:", JLabel.TRAILING);
-    p.add(label);
-    NPChostile = new JCheckBox();
-    if (exist != null) NPChostile.setSelected(exist.hostile);
-    p.add(NPChostile);
-    
-    label = new JLabel("Attribute:", JLabel.TRAILING);
-    p.add(label);
-    JButton attr = new JButton("Bearbeiten");
-    attr.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        showAttributesDialog(NPCattr, false);
-        NPCattr = tmpAttr;
-      }
-    });
-    p.add(attr);
-    
-    p.add(new JLabel());
-    NPCok = new JButton("Platzieren");
-    NPCok.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        JSONArray talk = null;
-        Equipment equipment = null;
-        if (exist != null)
-        {
-          talk = exist.talk;
-          equipment = exist.getEquipment();
-          
-          if (NPClastID == exist.ID + 1) NPClastID--;
-          
-          map.remove(exist);
-        }
-        NPCButton b = addNPC(null);
-        if (talk != null) b.talk = talk;
-        
-        if (equipment != null) b.setEquipment(equipment);
-        
-        showNPCDialog(b);
-      }
-    });
-    p.add(NPCok);
-    
-    SpringUtilities.makeCompactGrid(p, 15, 2, 6, 6, 6, 6);
-    
-    NPCframe.setContentPane(p);
-    NPCframe.pack();
-    NPCframe.setVisible(true);
-    NPCframe.setLocationRelativeTo(this.w);
-  }
-  
-  public void showOpenMapDialog()
-  {
-    if (mappackdata == null) return;
-    final JDialog dialog = new JDialog(w, true);
-    dialog.setTitle("Karte öffnen");
-    dialog.setSize(400, 170);
-    dialog.setResizable(false);
-    dialog.setLocationRelativeTo(this.w);
-    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    final DefaultListModel<String> maps = new DefaultListModel<String>();
-    try
-    {
-      for (String s : Map.getMaps(mappackdata.getString("name"), CFG.MAPEDITORDIR))
-      {
-        maps.addElement(s);
-      }
-    }
-    catch (JSONException e1)
-    {
-      e1.printStackTrace();
-    }
-    JList<String> list = new JList<String>(maps);
-    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    list.addListSelectionListener(new ListSelectionListener()
-    {
-      @Override
-      public void valueChanged(final ListSelectionEvent e)
-      {
-        if (e.getValueIsAdjusting()) return;
-        
-        JLayeredPane pane = new JLayeredPane();
-        
-        pane.setPreferredSize(new Dimension(400, 22));
-        progress = new JProgressBar(0, 100);
-        progress.setBounds(0, 0, 400, 22);
-        pane.add(progress, JLayeredPane.DEFAULT_LAYER);
-        progressLabel = new JLabel();
-        progressLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        progressLabel.setVerticalTextPosition(SwingConstants.CENTER);
-        progressLabel.setBounds(0, 0, 400, 22);
-        pane.add(progressLabel, JLayeredPane.MODAL_LAYER);
-        dialog.setContentPane(pane);
-        dialog.pack();
-        dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        
-        new Thread()
-        {
-          public void run()
-          {
-            if (openMap((String) ((JList<?>) e.getSource()).getSelectedValue())) dialog.dispose();
-          }
-        }.start();
-      }
-    });
-    dialog.setContentPane(new JScrollPane(list));
-    dialog.setVisible(true);
-  }
-  
-  public void showOpenMapPackDialog()
-  {
-    if (mappackdata != null)
-    {
-      return;
-    }
-    final JDialog dialog = new JDialog(w, true);
-    dialog.setTitle("Kartenpaket öffnen");
-    dialog.setSize(400, 170);
-    dialog.setResizable(false);
-    dialog.setLocationRelativeTo(this.w);
-    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    final DefaultListModel<String> mappacks = new DefaultListModel<String>();
-    for (File f : new File(FileManager.dir, CFG.MAPEDITORDIR).listFiles())
-    {
-      if (f.isDirectory() && Arrays.asList(f.list()).contains(".pack"))
-      {
-        mappacks.addElement(f.getName());
-      }
-    }
-    JList<String> list = new JList<String>(mappacks);
-    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    list.addListSelectionListener(new ListSelectionListener()
-    {
-      @Override
-      public void valueChanged(ListSelectionEvent e)
-      {
-        if (e.getValueIsAdjusting())
-        {
-          return;
-        }
-        openMapPack((String) ((JList<?>) e.getSource()).getSelectedValue());
-        dialog.dispose();
-      }
-    });
-    dialog.setContentPane(new JScrollPane(list));
-    dialog.setVisible(true);
-  }
-  
-  public void showTalkDialog(final NPCButton npc)
-  {
-    final JDialog talkFrame = new JDialog(w);
-    talkFrame.setTitle("Talk-Bearbeitung - NPC #" + npc.ID);
-    talkFrame.setResizable(false);
-    talkFrame.setAlwaysOnTop(true);
-    talkFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    
-    JPanel p = new JPanel(new FlowLayout());
-    p.setPreferredSize(new Dimension(600, 500));
-    talkPanel = new JPanel();
-    talkPanel.setPreferredSize(new Dimension(600, 0));
-    talkPanel.setLayout(null);
-    talkScrollPane = new JScrollPane(talkPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    talkScrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.gray));
-    talkScrollPane.setPreferredSize(new Dimension(600, 310));
-    p.add(talkScrollPane);
-    
-    talkColorSlider = new JColorSlider();
-    talkColorSlider.setPreferredSize(new Dimension(600, 150));
-    p.add(talkColorSlider);
-    
-    talkAdd = new JButton("Talk hinzufügen");
-    talkAdd.setPreferredSize(new Dimension(295, 24));
-    talkAdd.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        addTalkComponent(null);
-      }
-    });
-    p.add(talkAdd);
-    talkOk = new JButton("Speichern");
-    talkOk.setPreferredSize(new Dimension(295, 24));
-    talkOk.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-        JSONArray talk = new JSONArray();
-        for (int i = 0; i < talkPanel.getComponentCount(); i++)
-        {
-          JTextField talkCond = (JTextField) ((JPanel) talkPanel.getComponent(i)).getComponent(1);
-          JTextArea talkText = (JTextArea) ((JScrollPane) ((JPanel) talkPanel.getComponent(i)).getComponent(3)).getViewport().getView();
-          
-          if (talkCond.getText().length() == 0 && talkText.getText().length() == 0) continue;
-          
-          JSONArray cond = null;
-          try
-          {
-            cond = new JSONArray("[" + talkCond.getText() + "]");
-          }
-          catch (JSONException e1)
-          {
-            e1.printStackTrace();
-            JOptionPane.showMessageDialog(talkFrame, "Talk #" + (i + 1) + " konnte nicht gespeichert werden!\nDer Text im Konditionsfeld ist ungültig!\nDer Speichervorgang wird abgebrochen.", "Fehler!", JOptionPane.ERROR_MESSAGE);
-            return;
-          }
-          try
-          {
-            JSONObject t = new JSONObject();
-            t.put("cond", cond);
-            t.put("text", talkText.getText());
-            
-            talk.put(t);
-          }
-          catch (JSONException e1)
-          {
-            e1.printStackTrace();
-          }
-        }
-        npc.talk = talk;
-      }
-    });
-    p.add(talkOk);
-    
-    talkFrame.setContentPane(p);
-    talkFrame.pack();
-    talkFrame.setLocationRelativeTo(this.w);
-    
-    if (npc != null)
-    {
-      for (int i = 0; i < npc.talk.length(); i++)
-      {
-        try
-        {
-          addTalkComponent(npc.talk.getJSONObject(i));
-        }
-        catch (JSONException e1)
-        {
-          e1.printStackTrace();
-        }
-      }
-    }
-    
-    addTalkComponent(null);
-    
-    talkFrame.setVisible(true);
-  }
-  
   public void undo()
   {
     new Thread()
@@ -3127,90 +1467,9 @@ public class MapEditor
     }.start();
   }
   
-  public void updateEquipDialogPreview()
-  {
-    int w = EQpreview.getPreferredSize().width;
-    int h = EQpreview.getPreferredSize().height;
-    BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g = (Graphics2D) bi.getGraphics();
-    
-    for (int i = 0; i < 4; i++)
-    {
-      for (int j = 0; j < 4; j++)
-      {
-        Assistant.drawChar(i * w / 4, j * h / 4, w / 4, h / 4, j, i, EQ, g, true);
-      }
-    }
-    EQpreview.setIcon(new ImageIcon(bi));
-  }
-  
-  private void addTalkComponent(JSONObject data)
-  {
-    
-    JPanel p = new JPanel(new SpringLayout());
-    
-    if (talkPanel.getComponentCount() > 0) p.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.gray));
-    
-    JLabel label = new JLabel("Bedingungen: ", JLabel.TRAILING);
-    p.add(label);
-    JTextField talkCond = new JTextField();
-    if (data != null)
-    {
-      try
-      {
-        talkCond.setText(data.getJSONArray("cond").toString().replaceAll("(\\[)|(\\])|(\\\")", "").replace(",", ", "));
-      }
-      catch (JSONException e)
-      {
-        e.printStackTrace();
-      }
-    }
-    p.add(talkCond);
-    
-    label = new JLabel("Text: ", JLabel.TRAILING);
-    p.add(label);
-    
-    JTextArea talkText = new JTextArea(4, 0);
-    talkText.setLineWrap(true);
-    talkText.setFont(talkCond.getFont());
-    if (data != null)
-    {
-      try
-      {
-        talkText.setText(data.getString("text"));
-      }
-      catch (JSONException e)
-      {
-        e.printStackTrace();
-      }
-    }
-    
-    JScrollPane pane = new JScrollPane(talkText, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    
-    p.add(pane);
-    
-    p.setBounds(0, talkPanel.getComponentCount() * talkComponentHeight, talkComponentWidth, talkComponentHeight);
-    SpringUtilities.makeCompactGrid(p, 2, 2, 6, 6, 6, 6);
-    
-    talkPanel.setPreferredSize(new Dimension(600, talkPanel.getPreferredSize().height + talkComponentHeight));
-    talkPanel.add(p);
-    
-    talkScrollPane.setViewportView(talkPanel);
-  }
-  
   private void updateNPCCoords(int x, int y)
   {
     NPCx.setText(x + "");
     NPCy.setText((y - 16) + "");
-  }
-  
-  private void updateNPCDialogPreview()
-  {
-    String sprite = NPCsprite.getSelectedItem().toString();
-    BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + sprite + ".png");
-    NPCpreview.setPreferredSize(new Dimension(image.getWidth() / 4, image.getHeight() / 4));
-    NPCpreview.setIcon(new ImageIcon(image.getSubimage(0, image.getHeight() / 4 * NPCdir.getSelectedIndex(), image.getWidth() / 4, image.getHeight() / 4)));
-    NPCframe.invalidate();
-    NPCframe.pack();
   }
 }
