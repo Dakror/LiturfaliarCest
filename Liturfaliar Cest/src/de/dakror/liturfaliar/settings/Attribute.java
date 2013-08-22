@@ -31,7 +31,7 @@ public class Attribute
   
   public void increaseValue(double v)
   {
-    if (value + v < maximum) value += v;
+    if (value + v <= maximum) value += v;
   }
   
   public void increaseMaximum(double v)

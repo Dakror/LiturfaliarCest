@@ -52,18 +52,21 @@ public class PlayerStamina extends HUDComponent
   @Override
   public void draw(Graphics2D g, Map m)
   {
+    if(alpha == 0) visible = false;
+    
     if (!visible && bar == null)
     {
       if (player.getAttributes().getAttribute(Attr.stamina).getMaximum() == -1) return;
       
       setX(Viewport.w.getWidth() / 2 - ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 - 3);
       setHeight(32);
-      setY(Viewport.w.getHeight() - height - ItemSlot.SIZE - 25);
-      setWidth(ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 + 5);
+      setY(Viewport.w.getHeight() - height - ItemSlot.SIZE - 30);
+      setWidth(ItemSlot.SIZE * PlayerHotbar.SLOTCOUNT / 2 + 10);
       bar = new ProgressBar(x, y, width, 1, false, "ffc744", null, false);
       bar.setHeight(height);
       visible = true;
     }
+    
     
     if (visible)
     {
