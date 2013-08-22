@@ -45,11 +45,13 @@ public class Map implements Listener
 {
   private boolean              peaceful;
   private int                  x, y, height, width;
+  private long                 time       = 0;
   
   private BufferedImage        lrender;
   private BufferedImage        hrender;
   private Area                 bump;
   private Area                 aboveArea;
+  private Area                 cachedPlayerArea;
   private JSONObject           data;
   private MapPack              mappack;
   private ArrayList<Animation> animations = new ArrayList<Animation>();
@@ -325,23 +327,22 @@ public class Map implements Listener
     }
     
     g.drawImage(hrender, getX(), getY(), Viewport.w);
-    
-    Area wireFrame = new Area();
-    
-    if (getPlayer() != null)
+    if (getPlayer() != null && aboveArea.intersects(getPlayer().getArea().getBounds()))
     {
-      wireFrame = getPlayer().getRealArea(this);
-      wireFrame.intersect(aboveArea.createTransformedArea(AffineTransform.getTranslateInstance(x, y)));
+      if (System.currentTimeMillis() - time > 30)
+      {
+        cachedPlayerArea = getPlayer().getRealArea(this);
+        cachedPlayerArea.intersect(aboveArea.createTransformedArea(AffineTransform.getTranslateInstance(x, y)));
+        time = System.currentTimeMillis();
+      }
+      
+      Color oldColor = g.getColor();
+      g.setColor(Color.black);
+      
+      g.draw(cachedPlayerArea);
+      
+      g.setColor(oldColor);
     }
-    
-    
-    Color oldColor = g.getColor();
-    g.setColor(Color.black);
-    
-    g.draw(wireFrame);
-    
-    g.setColor(oldColor);
-    
     try
     {
       for (ItemDrop id : itemDrops)
@@ -803,9 +804,12 @@ public class Map implements Listener
     {
       if (p.getPos().x + x < Viewport.w.getWidth()) x = 0;
     }
+    else x = CFG.MAPCENTER.x - getWidth() / 2;
+    
     if (getHeight() > Viewport.w.getHeight())
     {
       if (p.getPos().y + y < Viewport.w.getHeight()) y = 0;
     }
+    else y = CFG.MAPCENTER.y - getHeight() / 2;
   }
 }

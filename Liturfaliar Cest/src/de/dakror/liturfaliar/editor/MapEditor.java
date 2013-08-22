@@ -1495,8 +1495,8 @@ public class MapEditor
       JSONArray array = new JSONArray(Compressor.decompressFile(new File(FileManager.dir, CFG.MAPEDITOROBJECTSDIR + "/" + obj + ".object")));
       int w = array.getJSONObject(array.length() - 1).getInt("x") + CFG.FIELDSIZE;
       int h = array.getJSONObject(array.length() - 1).getInt("y") + CFG.FIELDSIZE;
+      selectedtile = null;
       cursor = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-      
       importTiles = new TileButton[array.length()];
       
       for (int i = 0; i < array.length(); i++)
