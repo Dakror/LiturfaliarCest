@@ -20,8 +20,6 @@ public class OpenMapPackDialog
 { 
   public OpenMapPackDialog(final MapEditor me)
   {
-    if (me.mappackdata != null) return;
-    
     final JDialog dialog = new JDialog(me.w, true);
     dialog.setTitle("Kartenpaket öffnen");
     dialog.setSize(400, 170);

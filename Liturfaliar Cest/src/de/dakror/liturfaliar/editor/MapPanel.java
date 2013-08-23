@@ -27,6 +27,10 @@ public class MapPanel extends JLayeredPane
   public int                selX;
   public int                selY;
   
+  public Point              spawnerPos;
+  public int                spawnerRadius;
+  public int                spawnerDistance;
+  
   MapEditor                 me;
   
   public MapPanel(MapEditor m)
@@ -46,6 +50,21 @@ public class MapPanel extends JLayeredPane
       
       Graphics2D g = (Graphics2D) graphics;
       
+      g.draw(getComponentAt(mouse.x, mouse.y).getBounds());
+      
+      if (spawnerPos != null)
+      {
+        Color old = g.getColor();
+        g.setColor(Color.green);
+        g.drawOval(spawnerPos.x - spawnerRadius, spawnerPos.y - spawnerRadius, spawnerRadius * 2, spawnerRadius * 2);
+        g.drawLine(spawnerPos.x - spawnerRadius, spawnerPos.y, spawnerPos.x + spawnerRadius, spawnerPos.y);
+        g.drawLine(spawnerPos.x, spawnerPos.y - spawnerRadius, spawnerPos.x, spawnerPos.y + spawnerRadius);
+        g.setColor(Color.decode("#ff8800"));
+        g.drawOval(spawnerPos.x - spawnerDistance, spawnerPos.y - spawnerDistance, spawnerDistance * 2, spawnerDistance * 2);
+        g.drawLine((int) (spawnerPos.x - spawnerDistance / Math.sqrt(2)), (int) (spawnerPos.y - spawnerDistance / Math.sqrt(2)), (int) (spawnerPos.x + spawnerDistance / Math.sqrt(2)), (int) (spawnerPos.y + spawnerDistance / Math.sqrt(2)));
+        g.drawLine((int) (spawnerPos.x + spawnerDistance / Math.sqrt(2)), (int) (spawnerPos.y - spawnerDistance / Math.sqrt(2)), (int) (spawnerPos.x - spawnerDistance / Math.sqrt(2)), (int) (spawnerPos.y + spawnerDistance / Math.sqrt(2)));
+        g.setColor(old);
+      }
       
       if (me.rasterview)
       {

@@ -165,6 +165,9 @@ public class MapEditor
     
   }
   
+  // -- editFieldData dialog -- //
+  
+  
   // -- filterReplace dialog -- //
   public JComboBox<String>     FRoldTileset, FRnewTileset;
   public JTextField            FRoldLayer, FRnewLayer, FRoldTX, FRoldTY, FRnewTX, FRnewTY;

@@ -22,7 +22,6 @@ public class NewMapPackDialog
 {
   public NewMapPackDialog(final MapEditor me)
   {
-    if (me.mappackdata != null) return;
     final JDialog dialog = new JDialog(me.w, true);
     dialog.setTitle("Kartenpaket erstellen");
     dialog.setSize(400, 170);

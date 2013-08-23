@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -11,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -20,8 +22,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import layout.SpringUtilities;
 
@@ -47,15 +53,16 @@ public class EditFieldDataDialog
       // -- general setup -- //
       final JDialog dialog = new JDialog(me.w, true);
       dialog.setTitle("Feld-Data bearbeiten");
-      dialog.setIconImage(me.w.getIconImage());
       dialog.setSize(400, 320);
       dialog.setResizable(false);
       dialog.setLocationRelativeTo(me.w);
-      dialog.setLayout(new FlowLayout());
+      
+      JPanel cp = new JPanel();
+      cp.setLayout(new BoxLayout(cp, BoxLayout.Y_AXIS));
+      
       dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
       JPanel inputs = new JPanel(new SpringLayout());
-      inputs.setPreferredSize(new Dimension(400, 257));
-      JButton delete = new JButton("Löschen");
+      JButton delete = new JButton("Entfernen");
       delete.setEnabled(false);
       delete.setPreferredSize(new Dimension(190, 23));
       JButton save = new JButton("Speichern");
@@ -83,27 +90,23 @@ public class EditFieldDataDialog
           name.setPreferredSize(new Dimension(190, 23));
           inputs.add(name);
           final JTextField dx = new JTextField("0");
-          dx.setName("int_dx");
           if (exist != null) dx.setText("" + exist.getInt("dx"));
           inputs.add(dx);
           
           inputs.add(new JLabel("Ziel Y-Koordinate:"));
           final JTextField dy = new JTextField("0");
-          dy.setName("int_dy");
           if (exist != null) dy.setText("" + exist.getInt("dy"));
           inputs.add(dy);
           
           inputs.add(new JLabel("Zielrichtung:"));
           final String[] dirs = new String[] { "Gleiche", "Unten", "Links", "Rechts", "Oben" };
           final JComboBox<String> dir = new JComboBox<String>(dirs);
-          dir.setName("int_dir");
           if (exist != null) dir.setSelectedIndex(exist.getInt("dir") + 1);
           inputs.add(dir);
           
           inputs.add(new JLabel("Leucht-Pfeil:"));
           final String[] arrows = new String[] { "< Leer >", "Unten", "Links", "Rechts", "Oben" };
           final JComboBox<String> arr = new JComboBox<String>(arrows);
-          arr.setName("int_arr");
           if (exist != null && exist.has("arr")) arr.setSelectedIndex(exist.getInt("arr") + 1);
           else arr.setSelectedIndex(0);
           inputs.add(arr);
@@ -116,7 +119,6 @@ public class EditFieldDataDialog
           mapCoordSelect.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
           mapCoordSelect.setVisible(true);
           final JComboBox<String> map = new JComboBox<String>(Map.getMaps(me.mappackdata.getString("name"), CFG.MAPEDITORDIR));
-          map.setName("string_map");
           map.addActionListener(new ActionListener()
           {
             @Override
@@ -176,7 +178,6 @@ public class EditFieldDataDialog
           
           inputs.add(new JLabel("Sound:"));
           final JComboBox<String> sound = new JComboBox<String>();
-          sound.setName("string_sound");
           sound.addItem("< Leer >");
           for (String s : FileManager.getMediaFiles("Sound"))
           {
@@ -196,7 +197,6 @@ public class EditFieldDataDialog
           
           inputs.add(new JLabel("Animation:"));
           final JComboBox<String> img = new JComboBox<String>();
-          img.setName("string_img");
           final JLabel preview = new JLabel();
           preview.setPreferredSize(new Dimension(CFG.FIELDSIZE, CFG.FIELDSIZE));
           img.addItem("< Leer >");
@@ -283,11 +283,60 @@ public class EditFieldDataDialog
           SpringUtilities.makeCompactGrid(inputs, 8, 2, 6, 6, 6, 6);
           break;
         }
+        case "Spawner":
+        {
+          me.map.spawnerPos = new Point(field.getX() + field.getWidth() / 2, field.getY() + field.getHeight() / 2);
+          JLabel name = new JLabel("Radius (grün):");
+          name.setPreferredSize(new Dimension(190, 23));
+          inputs.add(name);
+          final JSpinner rad = new JSpinner(new SpinnerNumberModel(me.map.spawnerRadius = 192, 0, Integer.MAX_VALUE, 32));
+
+          rad.addChangeListener(new ChangeListener()
+          {
+            
+            @Override
+            public void stateChanged(ChangeEvent e)
+            {
+              me.map.spawnerRadius = (int) rad.getValue();
+              me.map.repaint();
+            }
+          });
+          inputs.add(rad);
+          
+          inputs.add(new JLabel("Player-Entfernung (orange):"));
+          final JSpinner dst = new JSpinner(new SpinnerNumberModel(me.map.spawnerDistance = 224, 0, Integer.MAX_VALUE, 32));
+          dst.addChangeListener(new ChangeListener()
+          {
+            
+            @Override
+            public void stateChanged(ChangeEvent e)
+            {
+              me.map.spawnerDistance = (int) dst.getValue();
+              me.map.repaint();
+            }
+          });
+          inputs.add(dst);
+          
+          inputs.add(new JLabel("Spawn-Geschwindigkeit (in ms):"));
+          JSpinner spd = new JSpinner(new SpinnerNumberModel(1000, 0, Integer.MAX_VALUE, 500));
+          inputs.add(spd);
+          
+          me.map.repaint();
+          SpringUtilities.makeGrid(inputs, 3, 2, 6, 6, 6, 6);
+          break;
+        }
       }
-      dialog.add(inputs);
-      dialog.add(delete);
-      dialog.add(save);
+      cp.add(inputs);
+      JPanel buttons = new JPanel(new FlowLayout());
+      buttons.add(delete);
+      buttons.add(save);
+      cp.add(buttons);
+      dialog.setContentPane(cp);
+      dialog.pack();
       dialog.setVisible(true);
+      
+      me.map.spawnerPos = null;
+      me.map.repaint();
     }
     catch (Exception e)
     {

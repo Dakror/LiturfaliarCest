@@ -10,7 +10,7 @@ import de.dakror.liturfaliar.map.Map;
 
 public interface FieldData extends Listener
 {
-  public static final String[] DATATYPES = { "Door" };
+  public static final String[] DATATYPES = { "Door", "Spawner" };
   
   public void update(Map m, Field f);
   
