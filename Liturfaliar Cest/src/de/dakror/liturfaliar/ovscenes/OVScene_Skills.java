@@ -224,7 +224,7 @@ public class OVScene_Skills extends OVScene implements Inventory
         s.getItem().updateTooltip();
       }
     }
-    else if (e.equals(Events.slotPressed))
+    else if (e.equals(Events.slotReleased))
     {
       ItemSlot slot = (ItemSlot) e.getParam("slot");
       if (slot instanceof ItemSlot) // hotbar
