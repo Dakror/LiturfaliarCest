@@ -35,6 +35,8 @@ public class Scene_Logo implements Scene
     time = 0;
     alphas = new float[2];
     homepageButton = new HandleArea(0, Viewport.w.getHeight() / 2 + 160 - (int) (26 * 1.4f), Viewport.w.getWidth() - 1, (int) (26 * 1.4f));
+    homepageButton.soundCLICK = false;
+    homepageButton.soundMOVER = false;
     update = CFG.INTERNET && (FileManager.checkMapPackUpdate() || FileManager.checkMediaUpdate("Sound") || FileManager.checkMediaUpdate("Music") || FileManager.checkMediaUpdate("Animations") || FileManager.checkMediaUpdate("Tiles"));
     downloader = new ArrayList<ZipAssistant>();
     if (update)
