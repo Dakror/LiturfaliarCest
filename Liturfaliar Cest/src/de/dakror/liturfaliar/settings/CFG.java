@@ -46,7 +46,6 @@ public final class CFG
   public static final int      ANIMATIONS          = 59;
   public static final int      TILES               = 123;
   
-  public static String         HARDDRIVE           = "C";
   public static boolean        DIRECTDRAW          = false;
   
   public static final int      BOUNDMALUS          = 0;
