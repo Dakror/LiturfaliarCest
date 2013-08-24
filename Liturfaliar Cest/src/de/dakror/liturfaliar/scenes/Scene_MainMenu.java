@@ -201,7 +201,7 @@ public class Scene_MainMenu implements Scene
     catch (Exception e2)
     {}
     
-    if (optionsToggle && optionsToggleArea.state == 0) controls.mouseMoved(e);
+    if (controls != null && optionsToggle && optionsToggleArea.state == 0) controls.mouseMoved(e);
   }
   
   @Override
