@@ -14,7 +14,7 @@ import de.dakror.liturfaliar.util.FileManager;
 public final class CFG
 {
   // -- UniVersion -- //
-  public static final int      VERSION             = 2013082415;
+  public static final int      VERSION             = 2013082416;
   public static final int      PHASE               = 0;
   // -- debug -- //
   public static boolean        UIDEBUG             = false;
@@ -36,9 +36,9 @@ public final class CFG
   public static final String   MAPEDITOROBJECTSDIR = "Objects";
   public static final String[] BODY                = { "skin", "hair", "eyes", "shirt", "trouser", "hat", "gloves", "boots" };
   public static final String   TILES_CS            = "8327E677486AF0642D7580F5220BCDAB";
-  public static final String   SOUND_CS            = "216FC81DAE599EA03612E716CE676ABF";
-  public static final String   MUSIC_CS            = "3B36CF7AD35DE2BC0AB276D32A7D7BBA";
-  public static final String   ANIMATIONS_CS       = "E64DEF386BCA2334CD99ED322A309EB7";
+  public static final String   SOUND_CS            = "30B133DC076F00FE2A68A0356E88B4CC";
+  public static final String   MUSIC_CS            = "7A9B9EB73258EC7FC440E4E3AC9349BA";
+  public static final String   ANIMATIONS_CS       = "A0112873CC9F4037802806D8C384FDDD";
   
   public static final int      MAINMENU_BG         = 37;
   public static final int      FIELDSIZE           = 32;
