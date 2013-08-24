@@ -14,7 +14,7 @@ import de.dakror.liturfaliar.util.FileManager;
 public final class CFG
 {
   // -- UniVersion -- //
-  public static final int      VERSION             = 2013082416;
+  public static final int      VERSION             = 2013082419;
   public static final int      PHASE               = 0;
   // -- debug -- //
   public static boolean        UIDEBUG             = false;
