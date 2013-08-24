@@ -16,6 +16,7 @@ public class LiturfaliarCest
   {
     loadParameters(args);
     
+    System.setProperty("file.encoding", "UTF-8");
     CFG.INTERNET = Assistant.isInternetReachable();
     
     UniVersion.offline = !CFG.INTERNET;

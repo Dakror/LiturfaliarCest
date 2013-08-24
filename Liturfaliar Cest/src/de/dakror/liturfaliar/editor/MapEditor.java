@@ -324,7 +324,7 @@ public class MapEditor
     });
     mpnew.setAccelerator(KeyStroke.getKeyStroke("ctrl N"));
     mpmenu.add(mpnew);
-    
+
     JMenuItem mpopen = new JMenuItem(new AbstractAction("Öffnen...")
     {
       private static final long serialVersionUID = 1L;
