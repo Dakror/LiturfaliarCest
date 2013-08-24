@@ -35,7 +35,7 @@ public final class CFG
   public static final String   MAPEDITORDIR        = "Maps";
   public static final String   MAPEDITOROBJECTSDIR = "Objects";
   public static final String[] BODY                = { "skin", "hair", "eyes", "shirt", "trouser", "hat", "gloves", "boots" };
-  public static final String   TILES_CS            = "2945A19A9BC957F3A9C1BECDC96B59A5";
+  public static final String   TILES_CS            = "99E7D21FAABEE58C16C78B2A705196E1";
   public static final String   SOUND_CS            = "2F317BCB04DF350EAE1EF9057635530C";
   public static final String   MUSIC_CS            = "C579C2DF2CAB07B2C013DA660E30804E";
   public static final String   ANIMATIONS_CS       = "674ED0336A5145A95690D3CB19491209";
