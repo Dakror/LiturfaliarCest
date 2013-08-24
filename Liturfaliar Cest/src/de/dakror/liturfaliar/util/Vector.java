@@ -25,7 +25,8 @@ public class Vector
   
   public Vector add(Vector other)
   {
-    assert (other.dimensions == this.dimensions);
+    if (this.dimensions != other.dimensions) return null; 
+    
     ArrayList<Double> resarray = new ArrayList<Double>();
     for (int index = 0; index < this.dimensions; index++)
     {
@@ -68,7 +69,8 @@ public class Vector
   
   public double getAngle(Vector other)
   {
-    assert (this.dimensions == other.dimensions);
+    if (this.dimensions != other.dimensions) return 0;
+    
     double length = this.length * other.length;
     int ints = 0;
     for (int index = 0; index < this.dimensions; index++)
