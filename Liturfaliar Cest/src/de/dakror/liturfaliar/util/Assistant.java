@@ -553,7 +553,8 @@ public final class Assistant
     try
     {
       MessageDigest md = MessageDigest.getInstance("MD5");
-      String f = /*folder.getName() +*/ Arrays.toString(folder.list()) + getFolderSize(folder);
+      String f = Arrays.toString(folder.list()) + getFolderSize(folder);
+      CFG.p("[getFolderChecksum]: " + f);
       return HexBin.encode(md.digest(f.getBytes()));
     }
     catch (NoSuchAlgorithmException e)
