@@ -78,7 +78,7 @@ public class ZipAssistant extends Thread
   
   public void extractEntry(ZipFile zipFile, ZipEntry entry, String destDir) throws IOException
   {
-    File file = new File(destDir + "/" + entry.getName());
+    File file = new File(destDir + File.pathSeparator + entry.getName());
     if (entry.isDirectory()) file.mkdirs();
     else
     {
