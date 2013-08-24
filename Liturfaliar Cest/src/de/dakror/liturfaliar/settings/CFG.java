@@ -68,15 +68,7 @@ public final class CFG
     for (String f : fs)
     {
       String cs = Assistant.getFolderChecksum(new File(FileManager.dir, f));
-      try
-      {
-        p(f + ": " + cs);
-        if (!cs.equals(CFG.class.getField(f.toUpperCase() + "_CS").get(null))) System.exit(0);
-      }
-      catch (Exception e)
-      {
-        e.printStackTrace();
-      }
+      p(f + ": " + cs);
     }
   }
   
