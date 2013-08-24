@@ -35,10 +35,10 @@ public final class CFG
   public static final String   MAPEDITORDIR        = "Maps";
   public static final String   MAPEDITOROBJECTSDIR = "Objects";
   public static final String[] BODY                = { "skin", "hair", "eyes", "shirt", "trouser", "hat", "gloves", "boots" };
-  public static final String   TILES_CS            = "8327E677486AF0642D7580F5220BCDAB";
-  public static final String   SOUND_CS            = "30B133DC076F00FE2A68A0356E88B4CC";
-  public static final String   MUSIC_CS            = "7A9B9EB73258EC7FC440E4E3AC9349BA";
-  public static final String   ANIMATIONS_CS       = "A0112873CC9F4037802806D8C384FDDD";
+  public static final String   TILES_CS            = "2945A19A9BC957F3A9C1BECDC96B59A5";
+  public static final String   SOUND_CS            = "2F317BCB04DF350EAE1EF9057635530C";
+  public static final String   MUSIC_CS            = "C579C2DF2CAB07B2C013DA660E30804E";
+  public static final String   ANIMATIONS_CS       = "45DEECACA89A5F8FDCA062915DA27F9E";
   
   public static final int      MAINMENU_BG         = 37;
   public static final int      FIELDSIZE           = 32;
