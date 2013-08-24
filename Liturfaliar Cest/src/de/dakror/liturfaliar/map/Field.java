@@ -141,4 +141,9 @@ public class Field implements Listener
   {
     return new Vector(x + CFG.FIELDSIZE / 2, y + CFG.FIELDSIZE / 2);
   }
+  
+  public String uID()
+  {
+    return Assistant.MD5(toString().getBytes());
+  }
 }

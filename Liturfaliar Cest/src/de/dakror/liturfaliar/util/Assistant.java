@@ -550,19 +550,24 @@ public final class Assistant
   public static String getFolderChecksum(File folder)
   {
     if (!folder.exists()) return null;
+    String[] files = folder.list();
+    Arrays.sort(files);
+    String f = Arrays.toString(files) + getFolderSize(folder);
+    return MD5(f.getBytes());
+  }
+  
+  public static String MD5(byte[] b)
+  {
+    MessageDigest md = null;
     try
     {
-      MessageDigest md = MessageDigest.getInstance("MD5");
-      String[] files = folder.list();
-      Arrays.sort(files);
-      String f = Arrays.toString(files) + getFolderSize(folder);
-      return HexBin.encode(md.digest(f.getBytes()));
+      md = MessageDigest.getInstance("MD5");
     }
     catch (NoSuchAlgorithmException e)
     {
       e.printStackTrace();
-      return null;
     }
+    return HexBin.encode(md.digest(b));
   }
   
   public static long getFolderSize(File directory)
