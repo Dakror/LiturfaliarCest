@@ -38,7 +38,7 @@ public final class CFG
   public static final String   TILES_CS            = "2945A19A9BC957F3A9C1BECDC96B59A5";
   public static final String   SOUND_CS            = "2F317BCB04DF350EAE1EF9057635530C";
   public static final String   MUSIC_CS            = "C579C2DF2CAB07B2C013DA660E30804E";
-  public static final String   ANIMATIONS_CS       = "45DEECACA89A5F8FDCA062915DA27F9E";
+  public static final String   ANIMATIONS_CS       = "674ED0336A5145A95690D3CB19491209";
   
   public static final int      MAINMENU_BG         = 37;
   public static final int      FIELDSIZE           = 32;
