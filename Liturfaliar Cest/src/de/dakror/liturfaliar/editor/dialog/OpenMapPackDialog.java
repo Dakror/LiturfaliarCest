@@ -17,7 +17,7 @@ import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.FileManager;
 
 public class OpenMapPackDialog
-{ 
+{
   public OpenMapPackDialog(final MapEditor me)
   {
     final JDialog dialog = new JDialog(me.w, true);

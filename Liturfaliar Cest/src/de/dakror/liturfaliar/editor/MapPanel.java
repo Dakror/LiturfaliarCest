@@ -49,7 +49,6 @@ public class MapPanel extends JLayeredPane
       super.paint(graphics);
       
       Graphics2D g = (Graphics2D) graphics;
-      
       g.draw(getComponentAt(mouse.x, mouse.y).getBounds());
       
       if (spawnerPos != null)

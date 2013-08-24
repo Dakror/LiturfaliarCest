@@ -549,7 +549,7 @@ public final class Assistant
   
   public static String getFolderChecksum(File folder)
   {
-    if(!folder.exists()) return null;
+    if (!folder.exists()) return null;
     try
     {
       MessageDigest md = MessageDigest.getInstance("MD5");

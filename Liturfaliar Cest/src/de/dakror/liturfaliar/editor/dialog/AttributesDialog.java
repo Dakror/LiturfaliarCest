@@ -14,7 +14,6 @@ import javax.swing.SpringLayout;
 import layout.SpringUtilities;
 import de.dakror.liturfaliar.editor.MapEditor;
 import de.dakror.liturfaliar.settings.Attributes;
-import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.settings.Attributes.Attr;
 
 public class AttributesDialog
@@ -39,7 +38,6 @@ public class AttributesDialog
       
       JSpinner spinner = new JSpinner(new SpinnerNumberModel(exist.getAttribute(Attr.values()[i]).getValue(), -1000.0, 1000.0, 1.0));
       spinners[i * ((range) ? 2 : 1)] = spinner;
-      CFG.p(i * ((range) ? 2 : 1));
       panel.add(spinner);
       
       if (range)
@@ -51,7 +49,7 @@ public class AttributesDialog
     }
     
     panel.add(new JLabel());
-    panel.add(new JLabel());
+    if (range) panel.add(new JLabel());
     
     final JButton attrOk = new JButton("OK");
     attrOk.addActionListener(new ActionListener()

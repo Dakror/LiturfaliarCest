@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
+import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -65,7 +66,7 @@ public class EditFieldDataDialog
       JButton delete = new JButton("Entfernen");
       delete.setEnabled(false);
       delete.setPreferredSize(new Dimension(190, 23));
-      JButton save = new JButton("Speichern");
+      final JButton save = new JButton("Speichern");
       save.setPreferredSize(new Dimension(190, 23));
       // -- type specific setup -- //
       JSONObject exist = field.getDataByType(dataType);
@@ -285,12 +286,16 @@ public class EditFieldDataDialog
         }
         case "Spawner":
         {
+          if (exist != null)
+          { 
+            
+          }
           me.map.spawnerPos = new Point(field.getX() + field.getWidth() / 2, field.getY() + field.getHeight() / 2);
           JLabel name = new JLabel("Radius (grün):");
           name.setPreferredSize(new Dimension(190, 23));
           inputs.add(name);
           final JSpinner rad = new JSpinner(new SpinnerNumberModel(me.map.spawnerRadius = 192, 0, Integer.MAX_VALUE, 32));
-
+          
           rad.addChangeListener(new ChangeListener()
           {
             
@@ -321,8 +326,48 @@ public class EditFieldDataDialog
           JSpinner spd = new JSpinner(new SpinnerNumberModel(1000, 0, Integer.MAX_VALUE, 500));
           inputs.add(spd);
           
+          inputs.add(new JLabel("NPC:"));
+          
+          final JButton equ = new JButton(new AbstractAction("Bearbeiten")
+          {
+            private static final long serialVersionUID = 1L;
+            
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+              new EquipmentDialog(me, me.spawnerNPC);
+            }
+          });
+          equ.setEnabled(false);
+          
+          inputs.add(new JButton(new AbstractAction("Bearbeiten")
+          {
+            private static final long serialVersionUID = 1L;
+            
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+              new NPCDialog(me, me.spawnerNPC, true);
+              equ.setEnabled(true);
+              save.setEnabled(true);
+            }
+          }));
+          
+          inputs.add(new JLabel("NPC-Equipment:"));
+          inputs.add(equ);
+          
+          
+          save.addActionListener(new ActionListener()
+          {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+              CFG.p(me.spawnerNPC.getSave().toString());
+            }
+          });
+          save.setEnabled(false);
           me.map.repaint();
-          SpringUtilities.makeGrid(inputs, 3, 2, 6, 6, 6, 6);
+          SpringUtilities.makeGrid(inputs, 5, 2, 6, 6, 6, 6);
           break;
         }
       }

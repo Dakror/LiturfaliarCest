@@ -8,20 +8,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerListModel;
 import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -41,35 +42,15 @@ public class EquipmentDialog
   {
     if (npc != null) me.EQ = npc.getEquipment();
     
-    final JDialog adjFrame = new JDialog(me.w);
+    final JDialog dialog = new JDialog(me.w, true);
     
-    final JDialog viewFrame = new JDialog(me.w);
     
-    adjFrame.setTitle("Ausrüstungs-Bearbeitung");
-    adjFrame.setResizable(false);
-    adjFrame.addWindowListener(new WindowAdapter()
-    {
-      @Override
-      public void windowClosed(WindowEvent e)
-      {
-        viewFrame.dispose();
-      }
-      
-    });
-    adjFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    dialog.setTitle("Ausrüstungs-Bearbeitung");
+    dialog.setResizable(false);
+    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     
-    viewFrame.setTitle("Ausrüstungs-Bearbeitung");
-    viewFrame.setResizable(false);
-    viewFrame.addWindowListener(new WindowAdapter()
-    {
-      @Override
-      public void windowClosed(WindowEvent e)
-      {
-        adjFrame.dispose();
-      }
-      
-    });
-    viewFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    JPanel cp = new JPanel();
+    cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
     
     JPanel p = new JPanel(new BorderLayout());
     
@@ -85,6 +66,7 @@ public class EquipmentDialog
       public void actionPerformed(ActionEvent e)
       {
         npc.setEquipment(me.EQ);
+        dialog.dispose();
       }
     });
     buttons.add(ok);
@@ -103,10 +85,9 @@ public class EquipmentDialog
     
     p.add(buttons, BorderLayout.SOUTH);
     
-    viewFrame.setContentPane(p);
-    viewFrame.pack();
-    viewFrame.setLocationRelativeTo(me.w);
-    viewFrame.setVisible(true);
+    cp.add(p);
+    
+    cp.add(new JSeparator(SwingConstants.VERTICAL));
     
     JPanel panel = new JPanel(new SpringLayout());
     
@@ -334,14 +315,17 @@ public class EquipmentDialog
     pnl.add(btn);
     panel.add(pnl);
     
-    updateEquipDialogPreview(me);
     
     SpringUtilities.makeCompactGrid(panel, Categories.EQUIPS.length + 2, 2, 6, 6, 6, 6);
     
-    adjFrame.setContentPane(panel);
-    adjFrame.pack();
-    adjFrame.setLocation(viewFrame.getX() + viewFrame.getWidth() + 10, viewFrame.getY());
-    adjFrame.setVisible(true);
+    cp.add(panel);
+    
+    dialog.setContentPane(cp);
+    dialog.pack();
+    dialog.setLocationRelativeTo(me.w);
+    updateEquipDialogPreview(me);
+    dialog.setVisible(true);
+    
   }
   
   private void updateEquipDialogPreview(MapEditor me)

@@ -42,8 +42,8 @@ public abstract class GameFrame
         w.setSize(Toolkit.getDefaultToolkit().getScreenSize());
         w.setUndecorated(true);
         this.running = true;
-        init();
         w.setVisible(true);
+        init();
         try
         {
           w.createBufferStrategy(2);

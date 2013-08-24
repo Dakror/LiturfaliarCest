@@ -52,7 +52,7 @@ public class PlayerStamina extends HUDComponent
   @Override
   public void draw(Graphics2D g, Map m)
   {
-    if(alpha == 0) visible = false;
+    if (alpha == 0) visible = false;
     
     if (!visible && bar == null)
     {

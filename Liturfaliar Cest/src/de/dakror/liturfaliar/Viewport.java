@@ -356,7 +356,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     }
     else
     {
-      running = false;
+      w.setVisible(false);
       editor = new MapEditor(this);
     }
     frozenFrames = false;

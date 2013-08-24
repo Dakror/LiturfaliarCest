@@ -54,7 +54,7 @@ public class Scene_Game implements Scene, Listener
   {
     Dispatcher.addListener(this);
     Viewport.setFramesFrozen(false);
-    CFG.MAPCENTER = new Point((Viewport.w.getWidth() / 2 - CFG.FIELDSIZE / 2), (Viewport.w.getHeight() / 2 ));
+    CFG.MAPCENTER = new Point((Viewport.w.getWidth() / 2 - CFG.FIELDSIZE / 2), (Viewport.w.getHeight() / 2));
     
     player = new Player(Viewport.savegame);
     

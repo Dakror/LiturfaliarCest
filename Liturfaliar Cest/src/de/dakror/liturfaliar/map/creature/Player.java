@@ -109,7 +109,7 @@ public class Player extends Creature
     }
     catch (ConcurrentModificationException e)
     {}
-
+    
     if (!sprint)
     {
       if ((System.currentTimeMillis() - time) > Balance.Player.STAMINAREGEN && attr.getAttribute(Attr.stamina).getValue() < attr.getAttribute(Attr.stamina).getMaximum())

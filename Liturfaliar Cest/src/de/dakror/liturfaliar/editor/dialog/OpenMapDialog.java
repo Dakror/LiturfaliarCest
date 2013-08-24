@@ -57,7 +57,7 @@ public class OpenMapDialog
         
         pane.setPreferredSize(new Dimension(400, 22));
         me.progress = new JProgressBar(0, 100);
-        me.progress.setBounds(0, 0, 400, 22);
+        me.progress.setBounds(0, 0, 399, 22);
         pane.add(me.progress, JLayeredPane.DEFAULT_LAYER);
         me.progressLabel = new JLabel();
         me.progressLabel.setHorizontalAlignment(SwingConstants.CENTER);

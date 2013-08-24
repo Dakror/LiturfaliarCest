@@ -34,15 +34,16 @@ import de.dakror.liturfaliar.editor.NPCButton;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.map.creature.NPC;
 import de.dakror.liturfaliar.settings.Attributes;
+import de.dakror.liturfaliar.settings.CFG;
 
 public class NPCDialog
 {
-  public NPCDialog(final MapEditor me, final NPCButton exist)
+  public NPCDialog(final MapEditor me, final NPCButton exist, final boolean spawner)
   {
     if (me.NPCframe == null)
     {
-      me.NPCframe = new JDialog(me.w);
-      me.NPCframe.setTitle("NPC-Bearbeitung" + ((exist != null) ? " - NPC #" + exist.ID : ""));
+      me.NPCframe = new JDialog(me.w, spawner);
+      me.NPCframe.setTitle("NPC-Bearbeitung" + ((exist != null && !spawner) ? " - NPC #" + exist.ID : ""));
       me.NPCframe.addWindowListener(new WindowAdapter()
       {
         @Override
@@ -54,7 +55,7 @@ public class NPCDialog
         }
       });
       me.NPCframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-      me.NPCframe.setAlwaysOnTop(true);
+      if (!spawner) me.NPCframe.setAlwaysOnTop(true);
       me.NPCframe.setResizable(false);
     }
     
@@ -63,45 +64,42 @@ public class NPCDialog
     
     JPanel p = new JPanel(new SpringLayout());
     
-    JLabel label = new JLabel("X-Position: ", JLabel.TRAILING);
-    p.add(label);
-    me.NPCx = new JTextField(15);
-    if (exist != null) me.NPCx.setText(exist.x + "");
-    
-    p.add(me.NPCx);
-    
-    label = new JLabel("Y-Position: ", JLabel.TRAILING);
-    p.add(label);
-    me.NPCy = new JTextField(15);
-    if (exist != null) me.NPCy.setText(exist.y + "");
-    
-    p.add(me.NPCy);
-    
-    label = new JLabel("Blickrichtung: ", JLabel.TRAILING);
-    p.add(label);
-    me.NPCdir = new JComboBox<String>(new String[] { "Unten", "Links", "Rechts", "Oben" });
-    if (exist != null) me.NPCdir.setSelectedIndex(exist.dir);
-    
-    me.NPCdir.addItemListener(new ItemListener()
+    if (!spawner)
     {
+      p.add(new JLabel("X-Position:"));
+      me.NPCx = new JTextField(15);
+      if (exist != null) me.NPCx.setText(exist.x + "");
+      p.add(me.NPCx);
       
-      @Override
-      public void itemStateChanged(ItemEvent e)
+      p.add(new JLabel("Y-Position:"));
+      me.NPCy = new JTextField(15);
+      if (exist != null) me.NPCy.setText(exist.y + "");
+      
+      p.add(me.NPCy);
+      
+      p.add(new JLabel("Blickrichtung:"));
+      me.NPCdir = new JComboBox<String>(new String[] { "Unten", "Links", "Rechts", "Oben" });
+      if (exist != null) me.NPCdir.setSelectedIndex(exist.dir);
+      
+      me.NPCdir.addItemListener(new ItemListener()
       {
-        if (e.getStateChange() == ItemEvent.SELECTED) updateNPCDialogPreview(me);
-      }
-    });
-    p.add(me.NPCdir);
+        
+        @Override
+        public void itemStateChanged(ItemEvent e)
+        {
+          if (e.getStateChange() == ItemEvent.SELECTED) updateNPCDialogPreview(me);
+        }
+      });
+      p.add(me.NPCdir);
+    }
     
-    label = new JLabel("Name: ", JLabel.TRAILING);
-    p.add(label);
+    p.add(new JLabel("Name:"));
     me.NPCname = new JTextField(15);
     if (exist != null) me.NPCname.setText(exist.name);
     
     p.add(me.NPCname);
     
-    label = new JLabel("Sprite: ", JLabel.TRAILING);
-    p.add(label);
+    p.add(new JLabel("Sprite:"));
     me.NPCsprite = new JComboBox<String>(NPC.CHARS);
     if (exist != null) me.NPCsprite.setSelectedItem(exist.sprite);
     
@@ -118,22 +116,19 @@ public class NPCDialog
     
     p.add(me.NPCsprite);
     
-    label = new JLabel("Vorschau: ", JLabel.TRAILING);
-    p.add(label);
+    p.add(new JLabel("Vorschau:"));
     me.NPCpreview = new JLabel();
     me.NPCpreview.setPreferredSize(new Dimension(32, 48));
     updateNPCDialogPreview(me);
     p.add(me.NPCpreview);
     
-    label = new JLabel("Bewegungsgeschwindigkeit: ", JLabel.TRAILING);
-    p.add(label);
+    p.add(new JLabel("Bewegungsgeschwindigkeit:"));
     me.NPCspeed = new JSpinner(new SpinnerNumberModel(1.0, 0, 20, 0.1));
     if (exist != null) me.NPCspeed.setValue(exist.speed);
     
     p.add(me.NPCspeed);
     
-    label = new JLabel("zufällige Bewegung:", JLabel.TRAILING);
-    p.add(label);
+    p.add(new JLabel("zufällige Bewegung:"));
     me.NPCmove = new JCheckBox();
     if (exist != null) me.NPCmove.setSelected(exist.move);
     
@@ -147,16 +142,14 @@ public class NPCDialog
     });
     p.add(me.NPCmove);
     
-    label = new JLabel("Zufallsbewegung-Interval. (ms):", JLabel.TRAILING);
-    p.add(label);
+    p.add(new JLabel("Zufallsbewegung-Interval. (ms):"));
     me.NPCmoveT = new JSpinner(new SpinnerNumberModel(3000, 0, 1000000000, 100));
     if (exist != null) me.NPCmoveT.setValue(exist.moveT);
     
     me.NPCmoveT.setEnabled(me.NPCmove.isSelected());
     p.add(me.NPCmoveT);
     
-    label = new JLabel("zufälliges Blicken:", JLabel.TRAILING);
-    p.add(label);
+    p.add(new JLabel("zufälliges Blicken:"));
     me.NPClook = new JCheckBox();
     if (exist != null) me.NPClook.setSelected(exist.look);
     
@@ -171,28 +164,24 @@ public class NPCDialog
     });
     p.add(me.NPClook);
     
-    label = new JLabel("Zufallsblicken-Interval. (ms):", JLabel.TRAILING);
-    p.add(label);
+    p.add(new JLabel("Zufallsblicken-Interval. (ms):"));
     me.NPClookT = new JSpinner(new SpinnerNumberModel(3000, 0, 1000000000, 100));
     if (exist != null) me.NPClookT.setValue(exist.lookT);
     
     me.NPClookT.setEnabled(me.NPClook.isSelected());
     p.add(me.NPClookT);
     
-    label = new JLabel("Künstliche Intelligenz:", JLabel.TRAILING);
-    p.add(label);
+    p.add(new JLabel("Künstliche Intelligenz:"));
     me.NPCai = new JComboBox<String>(new String[] { "MeleeAI" }); // TODO: Keep in sync
     if (exist != null) me.NPCai.setSelectedItem(exist.ai);
     p.add(me.NPCai);
     
-    label = new JLabel("immer feindlich:", JLabel.TRAILING);
-    p.add(label);
+    p.add(new JLabel("immer feindlich:"));
     me.NPChostile = new JCheckBox();
     if (exist != null) me.NPChostile.setSelected(exist.hostile);
     p.add(me.NPChostile);
     
-    label = new JLabel("Attribute:", JLabel.TRAILING);
-    p.add(label);
+    p.add(new JLabel("Attribute:"));
     JButton attr = new JButton("Bearbeiten");
     attr.addActionListener(new ActionListener()
     {
@@ -206,48 +195,59 @@ public class NPCDialog
     p.add(attr);
     
     p.add(new JLabel());
-    me.NPCok = new JButton("Platzieren");
+    me.NPCok = new JButton((spawner) ? "OK" : "Platzieren");
     me.NPCok.addActionListener(new ActionListener()
     {
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        JSONArray talk = null;
-        Equipment equipment = null;
-        if (exist != null)
+        if (spawner)
         {
-          talk = exist.talk;
-          equipment = exist.getEquipment();
+          Equipment eq = (me.spawnerNPC != null) ? me.spawnerNPC.getEquipment() : new Equipment();
+          me.spawnerNPC = new NPCButton(0, 0, me.NPCpreview.getPreferredSize().width - CFG.BOUNDMALUS, me.NPCpreview.getPreferredSize().height - CFG.BOUNDMALUS, 0, me.NPCname.getText(), me.NPCsprite.getSelectedItem().toString(), (double) me.NPCspeed.getValue(), me.NPCmove.isSelected(), me.NPClook.isSelected(), (int) me.NPCmoveT.getValue(), (int) me.NPClookT.getValue(), ((ImageIcon) me.NPCpreview.getIcon()).getImage(), me.NPChostile.isSelected(), -1, me.NPCai.getSelectedItem().toString(), me);
+          me.spawnerNPC.attributes = me.NPCattr;
+          me.spawnerNPC.setEquipment(eq);
           
-          if (me.NPClastID == exist.ID + 1) me.NPClastID--;
-          
-          me.map.remove(exist);
+          me.NPCframe.dispose();
         }
-        NPCButton b = me.addNPC(null);
-        if (talk != null) b.talk = talk;
-        
-        if (equipment != null) b.setEquipment(equipment);
-        
-        new NPCDialog(me, b);
+        else
+        {
+          JSONArray talk = null;
+          Equipment equipment = null;
+          if (exist != null)
+          {
+            talk = exist.talk;
+            equipment = exist.getEquipment();
+            
+            if (me.NPClastID == exist.ID + 1) me.NPClastID--;
+            
+            me.map.remove(exist);
+          }
+          NPCButton b = me.addNPC(null);
+          if (talk != null) b.talk = talk;
+          
+          if (equipment != null) b.setEquipment(equipment);
+          
+          new NPCDialog(me, b, spawner);
+        }
       }
     });
     p.add(me.NPCok);
     
-    SpringUtilities.makeCompactGrid(p, 15, 2, 6, 6, 6, 6);
+    SpringUtilities.makeCompactGrid(p, 12 + ((!spawner) ? 3 : 0), 2, 6, 6, 6, 6);
     
     me.NPCframe.setContentPane(p);
     me.NPCframe.pack();
-    me.NPCframe.setVisible(true);
     me.NPCframe.setLocationRelativeTo(me.w);
+    me.NPCframe.setVisible(true);
   }
-  
   
   private void updateNPCDialogPreview(MapEditor me)
   {
     String sprite = me.NPCsprite.getSelectedItem().toString();
     BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + sprite + ".png");
     me.NPCpreview.setPreferredSize(new Dimension(image.getWidth() / 4, image.getHeight() / 4));
-    me.NPCpreview.setIcon(new ImageIcon(image.getSubimage(0, image.getHeight() / 4 * me.NPCdir.getSelectedIndex(), image.getWidth() / 4, image.getHeight() / 4)));
+    me.NPCpreview.setIcon(new ImageIcon(image.getSubimage(0, image.getHeight() / 4 * ((me.NPCdir != null) ? me.NPCdir.getSelectedIndex() : 0), image.getWidth() / 4, image.getHeight() / 4)));
     me.NPCframe.invalidate();
     me.NPCframe.pack();
   }

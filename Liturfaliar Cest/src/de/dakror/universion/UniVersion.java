@@ -35,8 +35,7 @@ public class UniVersion
     version = v;
     phase = p;
     
-    if (offline)
-      return;
+    if (offline) return;
     
     try
     {

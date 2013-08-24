@@ -16,8 +16,9 @@ import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.FileManager;
 
 public class ImportObjectDialog
-{ 
-  public ImportObjectDialog(final MapEditor me) {
+{
+  public ImportObjectDialog(final MapEditor me)
+  {
     final JDialog dialog = new JDialog(me.w, true);
     dialog.setTitle("Objekt importieren");
     dialog.setSize(400, 170);

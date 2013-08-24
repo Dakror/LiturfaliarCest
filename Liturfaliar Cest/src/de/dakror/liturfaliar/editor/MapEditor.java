@@ -166,7 +166,7 @@ public class MapEditor
   }
   
   // -- editFieldData dialog -- //
-  
+  public NPCButton             spawnerNPC;
   
   // -- filterReplace dialog -- //
   public JComboBox<String>     FRoldTileset, FRnewTileset;
@@ -300,8 +300,6 @@ public class MapEditor
       }
     });
     init();
-    Viewport.w.setVisible(false);
-    
     w.setVisible(true);
     
     w.toFront();
@@ -508,7 +506,7 @@ public class MapEditor
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        new NPCDialog(MapEditor.this, null);
+        new NPCDialog(MapEditor.this, null, false);
       }
     });
     fmenu.add(fnpc);
@@ -852,7 +850,7 @@ public class MapEditor
         @Override
         public void actionPerformed(ActionEvent e)
         {
-          new NPCDialog(MapEditor.this, fNPC);
+          new NPCDialog(MapEditor.this, fNPC, false);
         }
       });
       jpm.add(edit);
@@ -926,10 +924,7 @@ public class MapEditor
         {
           if (!(map.getComponent(i) instanceof TileButton)) continue;
           TileButton b = (TileButton) map.getComponent(i);
-          if (b.getBounds().intersects(x, y, CFG.FIELDSIZE, CFG.FIELDSIZE))
-          {
-            l = b.getLayer();
-          }
+          if (b.getBounds().intersects(x, y, CFG.FIELDSIZE, CFG.FIELDSIZE)) l = b.getLayer();
         }
         l++;
       }
@@ -1277,6 +1272,7 @@ public class MapEditor
   {
     try
     {
+      map.mouse = null;
       map.mouseDown = null;
       map.mousePos = null;
       map.repaint();
@@ -1431,20 +1427,8 @@ public class MapEditor
     
     if (selectedtile != null) cursor = getTileImage();
     
+    if (NPCframe != null) cursor = (BufferedImage) ((ImageIcon) NPCpreview.getIcon()).getImage();
     
-    if (NPCframe != null)
-    {
-      BufferedImage image = (BufferedImage) ((ImageIcon) NPCpreview.getIcon()).getImage();
-      int x = 0;
-      int y = 0;
-      int width = image.getWidth();
-      int height = image.getHeight();
-      x = (width > 32) ? width - 32 : x;
-      y = (height > 32) ? height - 32 : y;
-      width = (width > 32) ? 32 : width;
-      height = (height > 32) ? 32 : height;
-      cursor = image.getSubimage(x, y, width, height);
-    }
   }
   
   public void undo()
@@ -1474,6 +1458,6 @@ public class MapEditor
   private void updateNPCCoords(int x, int y)
   {
     NPCx.setText(x + "");
-    NPCy.setText((y - 16) + "");
+    NPCy.setText(y + "");
   }
 }

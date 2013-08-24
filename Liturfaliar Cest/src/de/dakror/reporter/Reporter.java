@@ -64,8 +64,7 @@ public class Reporter
       try
       {
         String stacktrace = getFileContents(f);
-        if (stacktrace.length() > MAXLENGTH)
-          stacktrace = stacktrace.substring(0, MAXLENGTH - 3) + "...";
+        if (stacktrace.length() > MAXLENGTH) stacktrace = stacktrace.substring(0, MAXLENGTH - 3) + "...";
         
         new URL("http://dakror.de/ajax/errorreport.php?r=" + URLEncoder.encode("App: " + UniVersion.getFullName() + "\nDate: " + (System.currentTimeMillis() / 1000) + "\nVersion: " + UniVersion.prettyVersion() + " \nError: " + stacktrace, "UTF-8")).openStream().close();
       }
@@ -73,9 +72,8 @@ public class Reporter
       {
         e.printStackTrace();
       }
-      if (f.getName().indexOf(SESSION_START) == -1)
-        while (!f.delete())
-          System.gc();
+      if (f.getName().indexOf(SESSION_START) == -1) while (!f.delete())
+        System.gc();
     }
   }
   
