@@ -16,6 +16,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -37,10 +38,12 @@ import org.json.JSONObject;
 
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.editor.MapEditor;
+import de.dakror.liturfaliar.editor.NPCButton;
 import de.dakror.liturfaliar.editor.TileButton;
 import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.map.Map;
 import de.dakror.liturfaliar.map.data.Door;
+import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.FileManager;
@@ -287,8 +290,17 @@ public class EditFieldDataDialog
         case "Spawner":
         {
           if (exist != null)
-          { 
-            
+          {
+            JSONObject data = exist.getJSONObject("npc");
+            BufferedImage image = (BufferedImage) Viewport.loadImage("char/chars/" + data.getString("char") + ".png");
+            me.spawnerNPC = new NPCButton(data.getInt("x"), data.getInt("y"), data.getInt("w"), data.getInt("h"), data.getInt("dir"), data.getString("name"), data.getString("char"), data.getDouble("speed"), data.getJSONObject("random").getBoolean("move"), data.getJSONObject("random").getBoolean("look"), data.getJSONObject("random").getInt("moveT"), data.getJSONObject("random").getInt("lookT"), image.getSubimage(0, data.getInt("dir") * image.getHeight() / 4, image.getWidth() / 4, image.getHeight() / 4), data.getBoolean("hostile"), -1, data.getString("ai"), me);
+            me.spawnerNPC.talk = data.getJSONArray("talk");
+            me.spawnerNPC.setEquipment(new Equipment(data.getJSONObject("equip")));
+            me.spawnerNPC.attributes = new Attributes(data.getJSONObject("attr"));;
+          }
+          else
+          {
+            me.spawnerNPC = null;
           }
           me.map.spawnerPos = new Point(field.getX() + field.getWidth() / 2, field.getY() + field.getHeight() / 2);
           JLabel name = new JLabel("Radius (grün):");
@@ -323,8 +335,12 @@ public class EditFieldDataDialog
           inputs.add(dst);
           
           inputs.add(new JLabel("Spawn-Geschwindigkeit (in ms):"));
-          JSpinner spd = new JSpinner(new SpinnerNumberModel(1000, 0, Integer.MAX_VALUE, 500));
+          final JSpinner spd = new JSpinner(new SpinnerNumberModel(1000, 0, Integer.MAX_VALUE, 500));
           inputs.add(spd);
+          
+          inputs.add(new JLabel("Respawn nach Neuladen?"));
+          final JCheckBox rsp = new JCheckBox();
+          inputs.add(rsp);
           
           inputs.add(new JLabel("NPC:"));
           
@@ -338,7 +354,7 @@ public class EditFieldDataDialog
               new EquipmentDialog(me, me.spawnerNPC);
             }
           });
-          equ.setEnabled(false);
+          if (me.spawnerNPC == null) equ.setEnabled(false);
           
           inputs.add(new JButton(new AbstractAction("Bearbeiten")
           {
@@ -356,18 +372,31 @@ public class EditFieldDataDialog
           inputs.add(new JLabel("NPC-Equipment:"));
           inputs.add(equ);
           
-          
           save.addActionListener(new ActionListener()
           {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-              CFG.p(me.spawnerNPC.getSave().toString());
+              try
+              {
+                JSONObject o = new JSONObject();
+                o.put("npc", me.spawnerNPC.getSave());
+                o.put("radius", (Integer) rad.getValue());
+                o.put("distance", (Integer) dst.getValue());
+                o.put("speed", (Integer) spd.getValue());
+                o.put("respawn", rsp.isSelected());
+                field.addData(dataType, o);
+                dialog.dispose();
+              }
+              catch (JSONException e1)
+              {
+                e1.printStackTrace();
+              }
             }
           });
-          save.setEnabled(false);
+          if (me.spawnerNPC == null) save.setEnabled(false);
           me.map.repaint();
-          SpringUtilities.makeGrid(inputs, 5, 2, 6, 6, 6, 6);
+          SpringUtilities.makeGrid(inputs, 6, 2, 6, 6, 6, 6);
           break;
         }
       }

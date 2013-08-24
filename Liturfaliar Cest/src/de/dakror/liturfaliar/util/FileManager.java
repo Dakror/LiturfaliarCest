@@ -37,20 +37,15 @@ public class FileManager
    */
   public static void mk(boolean save)
   {
-    dir = new File("C:/Dakror/Liturfaliar Cest");
-    saves = new File("C:/Dakror/Liturfaliar Cest/Saves");
+    dir = new File(System.getProperty("user.home")+"/.dakror/Liturfaliar Cest");
+    saves = new File(dir, "Saves");
     if (CFG.DEBUG) CFG.ccs();
     
     dir.mkdirs();
-    saves.mkdirs();
+    saves.mkdir();
     if (!new File(dir, "options.json").exists() && save) saveOptions();
   }
-  
-  public static File getDir()
-  {
-    return dir;
-  }
-  
+
   /**
    * @param savename
    * @return The loaded savegame as {@link JSONObject}.

@@ -55,9 +55,6 @@ public class LiturfaliarCest
           CFG.p("  All options are optional, listed here:");
           CFG.p("");
           CFG.p("   -editor                           Opens the Editor instead of the game.");
-          CFG.p("   -hd{alternative harddrive-index}  Enter the index of the harddrive where the");
-          CFG.p("                                     game media files are  downloaded to. ");
-          CFG.p("                                     Example: -hdE = Sets the harddrive to E:\\");
           CFG.p("");
           CFG.p("   -d                                When set, the Java-directdraw method is");
           CFG.p("                                     used, which may improve or worsen your");
@@ -70,10 +67,6 @@ public class LiturfaliarCest
         else if (arg.startsWith("-editor"))
         {
           CFG.MAPEDITOR = true;
-        }
-        else if (arg.startsWith("-hd"))
-        {
-          CFG.HARDDRIVE = arg.replace("-hd", "");
         }
         else if (arg.equals("-d"))
         {
