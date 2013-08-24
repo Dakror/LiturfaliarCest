@@ -556,7 +556,6 @@ public final class Assistant
       String[] files = folder.list();
       Arrays.sort(files);
       String f = Arrays.toString(files) + getFolderSize(folder);
-      CFG.p("[getFolderChecksum]: " + f);
       return HexBin.encode(md.digest(f.getBytes()));
     }
     catch (NoSuchAlgorithmException e)

@@ -64,7 +64,7 @@ public class ZipAssistant extends Thread
       }
       for (ZipEntry entry : Collections.list(zipFile.entries()))
       {
-        extractEntry(zipFile, entry, dest.getPath());
+        extractEntry(zipFile, entry, dest.getPath().replace("\\", "/"));
       }
       zipFile.close();
     }
