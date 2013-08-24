@@ -11,10 +11,10 @@ import de.dakror.liturfaliar.map.Map;
 public class Spawner implements FieldData
 {
   public static final String[] ARGS = { "int_radius", "int_distance", "int_speed", "boolean_respawn", "jsonobject_npc" };
-  int                          radius, distance, speed;
-  boolean                      respawn;
+  public int                          radius, distance, speed;
+  public boolean                      respawn;
   
-  JSONObject                   npc;
+  public JSONObject                   npc;
   
   @Override
   public void onEvent(Event e)
