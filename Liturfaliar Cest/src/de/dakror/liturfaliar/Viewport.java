@@ -45,7 +45,6 @@ import de.dakror.liturfaliar.scenes.Scene_Logo;
 import de.dakror.liturfaliar.settings.CFG;
 import de.dakror.liturfaliar.ui.CursorText;
 import de.dakror.liturfaliar.ui.Dialog;
-import de.dakror.liturfaliar.ui.HelpOverlay;
 import de.dakror.liturfaliar.ui.Notification;
 import de.dakror.liturfaliar.util.Assistant;
 import de.dakror.liturfaliar.util.FileManager;
@@ -173,7 +172,6 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     if (dialog != null) dialog.draw(g);
     
     CursorText.draw(g);
-    HelpOverlay.draw(g);
   }
   
   /**
@@ -192,7 +190,6 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     
     if (scene != null) scene.destruct();
     
-    HelpOverlay.clear();
     scene = s;
     scene.construct();
     initialized = true;

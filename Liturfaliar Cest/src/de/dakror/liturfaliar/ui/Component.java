@@ -7,8 +7,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 
-import de.dakror.liturfaliar.settings.CFG;
-
 public abstract class Component
 {
   protected int x;
@@ -67,14 +65,6 @@ public abstract class Component
   public Area getArea()
   {
     return new Area(new Rectangle2D.Double(x, y, width, height));
-  }
-  
-  public void HelpOverlayClicked(MouseEvent e, String desc)
-  {
-    if (CFG.HELPOVERLAYCREATE && getArea().contains(e.getPoint()))
-    {
-      System.out.println("new HelpOverlayContainer(" + getX() + ", " + getY() + ", " + getWidth() + ", " + getHeight() + ", \"" + desc + "\")");
-    }
   }
   
   public abstract void update();

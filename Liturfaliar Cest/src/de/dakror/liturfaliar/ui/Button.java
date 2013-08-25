@@ -287,7 +287,6 @@ public class Button extends Component
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    HelpOverlayClicked(e, (title != null) ? title : "button");
     if (!disabled) handle.mouseReleased(e);
   }
 }

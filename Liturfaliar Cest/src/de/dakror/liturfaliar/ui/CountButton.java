@@ -37,7 +37,6 @@ public class CountButton extends Button
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    HelpOverlayClicked(e, (this.title != null) ? this.title : "countbutton");
     if (!this.disabled)
     {
       this.handle.mouseReleased(e);

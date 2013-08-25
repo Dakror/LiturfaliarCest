@@ -21,8 +21,6 @@ public final class CFG
   public static boolean        DEBUG               = true;
   
   public static boolean        INTERNET;
-  
-  public static boolean        HELPOVERLAYCREATE   = false;
   public static boolean        GAMEUPDATE          = true;
   public static boolean        MAPEDITOR           = false;
   
@@ -43,8 +41,6 @@ public final class CFG
   public static final int      MAINMENU_BG         = 37;
   public static final int      FIELDSIZE           = 32;
   public static final int      DECOSIZE            = 32;
-  public static final int      ANIMATIONS          = 59;
-  public static final int      TILES               = 123;
   
   public static boolean        DIRECTDRAW          = false;
   
