@@ -50,6 +50,8 @@ public class NPC extends Creature
   String                       character;
   Vector[]                     playerTalkTo;
   
+  public String                spawner;
+  
   public NPC(int x, int y, int w, int h, int d, String name, String c, double speed, boolean move, boolean look, int moveT, int lookT, boolean hostile, int id, Attributes attributes, Equipment equip, JSONArray talkdata, String aiName)
   {
     super(x, y, w, h);

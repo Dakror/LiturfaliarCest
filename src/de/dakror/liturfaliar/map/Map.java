@@ -247,6 +247,7 @@ public class Map implements Listener
       JSONObject o = npcs.getJSONObject(i);
       JSONObject random = o.getJSONObject("random");
       NPC npc = new NPC(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"), o.getInt("dir"), o.getString("name"), o.getString("char"), o.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), o.getBoolean("hostile"), o.getInt("id"), new Attributes(o.getJSONObject("attr")), new Equipment(o.getJSONObject("equip")), o.getJSONArray("talk"), o.getString("ai"));
+      npc.spawner = "Map";
       creatures.add(npc);
     }
   }

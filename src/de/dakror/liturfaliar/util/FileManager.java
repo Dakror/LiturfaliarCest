@@ -309,9 +309,9 @@ public class FileManager
   
   public static String[] getCharParts(String dir)
   {
-    
     try
     {
+      CFG.p(dir);
       return new File(FileManager.class.getResource("/img/char/" + dir).toURI()).list(new FilenameFilter()
       {
         

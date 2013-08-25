@@ -306,7 +306,8 @@ public class EditFieldDataDialog
           JLabel name = new JLabel("Radius (grün):");
           name.setPreferredSize(new Dimension(190, 23));
           inputs.add(name);
-          final JSpinner rad = new JSpinner(new SpinnerNumberModel(me.map.spawnerRadius = 192, 0, Integer.MAX_VALUE, 32));
+          final JSpinner rad = new JSpinner(new SpinnerNumberModel(me.map.spawnerRadius = (exist == null) ? 192 : exist.getInt("radius"), 0, Integer.MAX_VALUE, 32));
+          
           
           rad.addChangeListener(new ChangeListener()
           {
@@ -321,7 +322,7 @@ public class EditFieldDataDialog
           inputs.add(rad);
           
           inputs.add(new JLabel("Player-Entfernung (orange):"));
-          final JSpinner dst = new JSpinner(new SpinnerNumberModel(me.map.spawnerDistance = 224, 0, Integer.MAX_VALUE, 32));
+          final JSpinner dst = new JSpinner(new SpinnerNumberModel(me.map.spawnerDistance = (exist == null) ? 224 : exist.getInt("distance"), 0, Integer.MAX_VALUE, 32));
           dst.addChangeListener(new ChangeListener()
           {
             
@@ -335,11 +336,11 @@ public class EditFieldDataDialog
           inputs.add(dst);
           
           inputs.add(new JLabel("Spawn-Geschwindigkeit (in ms):"));
-          final JSpinner spd = new JSpinner(new SpinnerNumberModel(1000, 0, Integer.MAX_VALUE, 500));
+          final JSpinner spd = new JSpinner(new SpinnerNumberModel((exist == null) ? 1000 : exist.getInt("speed"), 0, Integer.MAX_VALUE, 500));
           inputs.add(spd);
           
           inputs.add(new JLabel("Spawncap (-1 = aus):"));
-          final JSpinner spc = new JSpinner(new SpinnerNumberModel(-1, -1, Integer.MAX_VALUE, 10));
+          final JSpinner spc = new JSpinner(new SpinnerNumberModel((exist == null) ? -1 : exist.getInt("cap"), -1, Integer.MAX_VALUE, 10));
           inputs.add(spc);
           
           inputs.add(new JLabel("Respawn nach Neuladen?"));

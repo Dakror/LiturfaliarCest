@@ -5,8 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 
-import org.json.JSONObject;
-
 import de.dakror.liturfaliar.Viewport;
 import de.dakror.liturfaliar.event.Event;
 import de.dakror.liturfaliar.event.Events;
@@ -16,9 +14,8 @@ import de.dakror.liturfaliar.map.creature.Creature;
 import de.dakror.liturfaliar.map.creature.Player;
 import de.dakror.liturfaliar.settings.CFG;
 
-public class Door implements FieldData
+public class Door extends FieldData
 {
-  public static final String[] ARGS  = { "int_x", "int_y", "int_dx", "int_dy", "int_dir", "int_arr", "int_t", "string_map", "string_img", "string_sound" };
   public static final String[] CHARS = { "170-Door01", "171-Door02", "172-Door03", "173-Door04" };
   public int                   x, y, t, dir, arr, dx, dy;
   private long                 timeStart, soundlength, time;
@@ -26,6 +23,15 @@ public class Door implements FieldData
   private Image                image;
   private Map                  dest;
   private Creature             c;
+  
+  @Override
+  public void construct()
+  {
+    timeStart = 0;
+    if (img.length() > 0) image = Viewport.loadImage("char/objects/" + img + ".png");
+    if (sound.length() > 0) soundlength = (long) Viewport.getSoundLength(sound);
+    else soundlength = 0;
+  }
   
   @Override
   public void onEvent(Event e)
@@ -101,18 +107,4 @@ public class Door implements FieldData
     g.drawImage(image, x, y, x + w, y + h, w * t, fr * h, w, fr * h + h, Viewport.w);
   }
   
-  @Override
-  public void loadData(JSONObject data) throws Exception
-  {
-    for (String s : ARGS)
-    {
-      String name = s.substring(s.indexOf("_") + 1);
-      java.lang.reflect.Field f = getClass().getField(name);
-      f.set(this, data.get(name));
-    }
-    timeStart = 0;
-    if (img.length() > 0) image = Viewport.loadImage("char/objects/" + img + ".png");
-    if (sound.length() > 0) soundlength = (long) Viewport.getSoundLength(sound);
-    else soundlength = 0;
-  }
 }

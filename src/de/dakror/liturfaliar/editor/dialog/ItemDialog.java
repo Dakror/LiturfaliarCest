@@ -9,6 +9,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -102,7 +103,16 @@ public class ItemDialog
     
     l = new JLabel("Typ:");
     p.add(l);
-    final JComboBox<Types> type = new JComboBox<Types>(Types.values());
+    Types[] types = Types.values();
+    Arrays.sort(types, new Comparator<Types>()
+    {
+      @Override
+      public int compare(Types o1, Types o2)
+      {
+        return o1.name().compareTo(o2.name());
+      }
+    });
+    final JComboBox<Types> type = new JComboBox<Types>(types);
     
     path.addItemListener(new ItemListener()
     {
@@ -113,8 +123,8 @@ public class ItemDialog
         
         Image body1 = Viewport.loadImage("char/skin/man_f.png");
         Image body2 = Viewport.loadImage("char/skin/man_b.png");
-        Image part = Viewport.loadImage("char/" + type.getSelectedItem().toString().toLowerCase() + "/" + path.getSelectedItem().toString() + ".png");
-        if (part == null) part = Viewport.loadImage("char/" + type.getSelectedItem().toString().toLowerCase() + "/" + path.getSelectedItem().toString() + "_f.png");
+        Image part = Viewport.loadImage("char/" + ((Types) type.getSelectedItem()).getCategory().name().toLowerCase() + "/" + path.getSelectedItem().toString() + ".png");
+        if (part == null) part = Viewport.loadImage("char/" + ((Types) type.getSelectedItem()).getCategory().name().toLowerCase() + "/" + path.getSelectedItem().toString() + "_f.png");
         
         BufferedImage bi = new BufferedImage(body1.getWidth(null), body1.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics g = bi.getGraphics();
@@ -135,7 +145,7 @@ public class ItemDialog
         path.removeAllItems();
         if (Arrays.asList(Categories.EQUIPS).contains(i.getCategory()))
         {
-          String[] parts = FileManager.getCharParts(i.name().toLowerCase());
+          String[] parts = FileManager.getCharParts(i.getCategory().name().toLowerCase());
           for (String part : parts)
           {
             if (part.indexOf("_b.png") > -1 || part.indexOf("_m.png") > -1) continue;
