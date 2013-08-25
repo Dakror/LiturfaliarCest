@@ -74,7 +74,7 @@ public abstract class GameFrame
         this.running = true;
         init();
         mainloop();
-        close();
+        if (!CFG.MAPEDITOR) close();
       }
       finally
       {

@@ -257,7 +257,7 @@ public class MapEditor
   // -- Import -- //
   public TileButton[]          importTiles;
   
-  public MapEditor(Viewport viewport)
+  public MapEditor(final Viewport viewport)
   {
     ToolTipManager.sharedInstance().setInitialDelay(0);
     this.gridmode = true;
@@ -296,7 +296,7 @@ public class MapEditor
       @Override
       public void windowClosing(WindowEvent e)
       {
-        Viewport.w.setVisible(true);
+        viewport.close();
       }
     });
     init();
@@ -324,7 +324,7 @@ public class MapEditor
     });
     mpnew.setAccelerator(KeyStroke.getKeyStroke("ctrl N"));
     mpmenu.add(mpnew);
-
+    
     JMenuItem mpopen = new JMenuItem(new AbstractAction("Öffnen...")
     {
       private static final long serialVersionUID = 1L;

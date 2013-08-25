@@ -338,6 +338,10 @@ public class EditFieldDataDialog
           final JSpinner spd = new JSpinner(new SpinnerNumberModel(1000, 0, Integer.MAX_VALUE, 500));
           inputs.add(spd);
           
+          inputs.add(new JLabel("Spawncap (-1 = aus):"));
+          final JSpinner spc = new JSpinner(new SpinnerNumberModel(-1, -1, Integer.MAX_VALUE, 10));
+          inputs.add(spc);
+          
           inputs.add(new JLabel("Respawn nach Neuladen?"));
           final JCheckBox rsp = new JCheckBox();
           inputs.add(rsp);
@@ -384,6 +388,7 @@ public class EditFieldDataDialog
                 o.put("radius", (Integer) rad.getValue());
                 o.put("distance", (Integer) dst.getValue());
                 o.put("speed", (Integer) spd.getValue());
+                o.put("cap", (Integer) spc.getValue());
                 o.put("respawn", rsp.isSelected());
                 field.addData(dataType, o);
                 dialog.dispose();
@@ -396,7 +401,7 @@ public class EditFieldDataDialog
           });
           if (me.spawnerNPC == null) save.setEnabled(false);
           me.map.repaint();
-          SpringUtilities.makeGrid(inputs, 6, 2, 6, 6, 6, 6);
+          SpringUtilities.makeGrid(inputs, 7, 2, 6, 6, 6, 6);
           break;
         }
       }

@@ -34,7 +34,6 @@ public class LiturfaliarCest
       SoundSystemConfig.setCodec("wav", CodecWav.class);
       SoundSystem ss = new SoundSystem(LibraryJavaSound.class);
       new Viewport(ss).run();
-      ss.cleanup();
     }
     catch (Exception e)
     {

@@ -25,7 +25,7 @@ public class Vector
   
   public Vector add(Vector other)
   {
-    if (this.dimensions != other.dimensions) return null; 
+    if (this.dimensions != other.dimensions) return null;
     
     ArrayList<Double> resarray = new ArrayList<Double>();
     for (int index = 0; index < this.dimensions; index++)

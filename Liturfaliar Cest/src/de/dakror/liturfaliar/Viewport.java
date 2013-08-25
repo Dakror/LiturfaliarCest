@@ -353,7 +353,7 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
     }
     else
     {
-      w.setVisible(false);
+      running = false;
       editor = new MapEditor(this);
     }
     frozenFrames = false;
@@ -522,7 +522,9 @@ public class Viewport extends GameFrame implements WindowListener, KeyListener, 
   
   @Override
   public void close()
-  {}
+  {
+    ss.cleanup();
+  }
   
   @Override
   public void windowClosed(WindowEvent e)

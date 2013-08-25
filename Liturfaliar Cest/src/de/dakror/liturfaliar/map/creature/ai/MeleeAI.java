@@ -24,6 +24,7 @@ public class MeleeAI extends CreatureAI
   @Override
   public boolean canAttack(Creature o)
   {
+    if (creature.getEquipment().getFirstWeapon() == null) return false;
     // attacks with SKILL: Items.SWORD0
     SkillAnimation animation = ((SkillAction) Items.SWORD0.getItemAction()).getAnimation();
     animation.playAnimation(creature.getEquipment().getFirstWeapon(), creature);

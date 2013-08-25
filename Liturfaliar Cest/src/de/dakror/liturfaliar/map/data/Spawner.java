@@ -5,9 +5,13 @@ import java.awt.Graphics2D;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliar.event.Event;
+import de.dakror.liturfaliar.item.Equipment;
 import de.dakror.liturfaliar.map.Field;
 import de.dakror.liturfaliar.map.Map;
+import de.dakror.liturfaliar.map.creature.NPC;
+import de.dakror.liturfaliar.settings.Attributes;
 import de.dakror.liturfaliar.util.Database;
+import de.dakror.liturfaliar.util.Vector;
 
 public class Spawner implements FieldData
 {
@@ -19,6 +23,8 @@ public class Spawner implements FieldData
   
   boolean                      checkedRespawn;
   boolean                      spawn;
+  
+  long                         time;
   
   @Override
   public void onEvent(Event e)
@@ -33,6 +39,33 @@ public class Spawner implements FieldData
       else Database.setBooleanVar("spawner_" + f.uID() + "_respawn", true);
       checkedRespawn = true;
     }
+    
+    if (spawn && System.currentTimeMillis() - time > speed)
+    {
+      if (m.getPlayer().getPos().getDistance(f.getNode()) > distance) // player out of range
+      {
+        try
+        {
+          Vector rp = getRandomPoint();
+          JSONObject random = npc.getJSONObject("random");
+          NPC mob = new NPC((int) Math.round(rp.x + f.getNode().x), (int) Math.round(rp.y + f.getNode().y), npc.getInt("w"), npc.getInt("h"), (int) (Math.random() * 4), npc.getString("name"), npc.getString("char"), npc.getDouble("speed"), random.getBoolean("move"), random.getBoolean("look"), random.getInt("moveT"), random.getInt("lookT"), npc.getBoolean("hostile"), -1, new Attributes(npc.getJSONObject("attr")), new Equipment(npc.getJSONObject("equip")), npc.getJSONArray("talk"), npc.getString("ai"));
+          m.creatures.add(mob);
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+        }
+      }
+      time = System.currentTimeMillis();
+    }
+  }
+  
+  public Vector getRandomPoint()
+  {
+    double rad = Math.random() * radius;
+    double angle = Math.random() * 360;
+    
+    return new Vector(Math.cos(angle) * rad, Math.sin(angle) * rad);
   }
   
   @Override
@@ -50,5 +83,6 @@ public class Spawner implements FieldData
     }
     checkedRespawn = false;
     spawn = true;
+    time = 0;
   }
 }
