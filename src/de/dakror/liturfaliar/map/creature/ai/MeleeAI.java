@@ -9,27 +9,27 @@ import de.dakror.liturfaliar.util.Vector;
 
 public class MeleeAI extends CreatureAI
 {
-  
-  public MeleeAI(Creature c)
-  {
-    super(c);
-  }
-  
-  @Override
-  public Path findPath(Vector target)
-  {
-    return new Path(target);
-  }
-  
-  @Override
-  public boolean canAttack(Creature o)
-  {
-    if (creature.getEquipment().getFirstWeapon() == null) return false;
-    // attacks with SKILL: Items.SWORD0
-    SkillAnimation animation = ((SkillAction) Items.SWORD0.getItemAction()).getAnimation();
-    animation.playAnimation(creature.getEquipment().getFirstWeapon(), creature);
-    int l = animation.getMaximumRange();
-    
-    return creature.getPos().getDistance(o.getPos()) <= l;
-  }
+	
+	public MeleeAI(Creature c)
+	{
+		super(c);
+	}
+	
+	@Override
+	public Path findPath(Vector target)
+	{
+		return new Path(target);
+	}
+	
+	@Override
+	public boolean canAttack(Creature o)
+	{
+		if (creature.getEquipment().getFirstWeapon() == null) return false;
+		// attacks with SKILL: Items.SWORD0
+		SkillAnimation animation = ((SkillAction) Items.SWORD0.getItemAction()).getAnimation();
+		animation.playAnimation(creature.getEquipment().getFirstWeapon(), creature);
+		int l = animation.getMaximumRange();
+		
+		return creature.getPos().getDistance(o.getPos()) <= l;
+	}
 }

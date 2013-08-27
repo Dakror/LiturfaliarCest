@@ -8,20 +8,20 @@ import de.dakror.liturfaliar.map.creature.Creature;
 
 public class EmptyAction extends ItemAction
 {
-  @Override
-  public void actionTriggered(Item item, Creature c, Map m)
-  {}
-  
-  @Override
-  public JSONObject serializeItemAction()
-  {
-    return new JSONObject();
-  }
-  
-  @Override
-  public boolean equals(ItemAction o)
-  {
-    
-    return (o instanceof EmptyAction);
-  }
+	@Override
+	public void actionTriggered(Item item, Creature c, Map m)
+	{}
+	
+	@Override
+	public JSONObject serializeItemAction()
+	{
+		return new JSONObject();
+	}
+	
+	@Override
+	public boolean equals(ItemAction o)
+	{
+		
+		return (o instanceof EmptyAction);
+	}
 }
