@@ -6,5 +6,7 @@
 	<classpathentry kind="lib" path="libs/CodecWav.jar"/>
 	<classpathentry kind="lib" path="libs/LibraryJavaSound.jar"/>
 	<classpathentry kind="lib" path="libs/SoundSystem.jar"/>
+	<classpathentry kind="lib" path="libs/Reporter.jar"/>
+	<classpathentry kind="lib" path="libs/UniVersion.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
