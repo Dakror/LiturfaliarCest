@@ -23,7 +23,7 @@ public abstract class Entity extends Component
 		if (target == null || pos.equals(target) || speed == 0) return;
 		
 		Vector distance = target.clone().sub(pos);
-		if (distance.getLength() > speed) distance.setLength(speed);
+		if (distance.getLength() >= speed) distance.setLength(speed);
 		
 		pos.add(distance);
 		
@@ -33,7 +33,6 @@ public abstract class Entity extends Component
 		if (pos.equals(target))
 		{
 			onReachTarget();
-			target = null;
 		}
 	}
 	
@@ -43,7 +42,6 @@ public abstract class Entity extends Component
 		move();
 		tick(tick);
 	}
-	
 	
 	protected abstract void tick(int tick);
 	
