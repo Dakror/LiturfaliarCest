@@ -3,6 +3,7 @@ package de.dakror.liturfaliarcest.game.entity.creature;
 import java.awt.event.KeyEvent;
 
 import de.dakror.gamesetup.util.Vector;
+import de.dakror.liturfaliarcest.game.Game;
 
 /**
  * @author Dakror
@@ -18,24 +19,31 @@ public class Player extends Creature
 	{
 		super(x, y, 64, 96);
 		tex = "001-Fighter01";
-		speed = 2f;
+		speed = 1.75f;
 	}
 	
 	@Override
 	protected void tick(int tick)
 	{
-		super.tick(tick);
 		if (dirs[0] || dirs[1] || dirs[2] || dirs[3])
 		{
-			target = new Vector(0, 0);
-			target.x += dirs[0] ? -speed : dirs[2] ? speed : 0;
-			target.x *= 2;
-			target.y += dirs[1] ? -speed : dirs[3] ? speed : 0;
-			target.y *= 2;
+			Vector lastPos = pos.clone();
 			
-			target.add(pos);
+			if (dirs[0] && Game.world.getBump().contains(pos.x - speed, pos.y, width, height)) pos.x -= speed;
+			if (dirs[2] && Game.world.getBump().contains(pos.x + speed, pos.y, width, height)) pos.x += speed;
+			
+			if (dirs[1] && Game.world.getBump().contains(pos.x, pos.y - speed, width, height)) pos.y -= speed;
+			if (dirs[3] && Game.world.getBump().contains(pos.x, pos.y + speed, width, height)) pos.y += speed;
+			
+			Vector dist = pos.clone().sub(lastPos);
+			if (dist.getLength() > 1)
+			{
+				dist.setLength(speed);
+				pos = lastPos.add(dist);
+			}
+			
+			if (tick % 15 == 0) frame = (frame + 1) % 4;
 		}
-		else target = null;
 	}
 	
 	@Override

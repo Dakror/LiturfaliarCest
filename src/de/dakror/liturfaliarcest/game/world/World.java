@@ -49,9 +49,6 @@ public class World extends Layer
 		BufferedImage img = Game.getImage("maps/" + name + "/" + name + "-0.png");
 		g.drawImage(img, x, y, img.getWidth() / 32 * TILE_SIZE, img.getHeight() / 32 * TILE_SIZE, Game.w);
 		
-		img = Game.getImage("maps/" + name + "/" + name + "-1.png");
-		g.drawImage(img, x, y, img.getWidth() / 32 * TILE_SIZE, img.getHeight() / 32 * TILE_SIZE, Game.w);
-		
 		Helper.setRenderingHints(g, true);
 		
 		AffineTransform old = g.getTransform();
@@ -62,6 +59,13 @@ public class World extends Layer
 		drawComponents(g);
 		
 		g.setTransform(old);
+		
+		Helper.setRenderingHints(g, false);
+		
+		img = Game.getImage("maps/" + name + "/" + name + "-1.png");
+		g.drawImage(img, x, y, img.getWidth() / 32 * TILE_SIZE, img.getHeight() / 32 * TILE_SIZE, Game.w);
+		
+		Helper.setRenderingHints(g, true);
 	}
 	
 	@Override
@@ -73,5 +77,10 @@ public class World extends Layer
 	public void addEntity(Entity e)
 	{
 		components.add(e);
+	}
+	
+	public Area getBump()
+	{
+		return bump;
 	}
 }

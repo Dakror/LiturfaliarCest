@@ -27,9 +27,6 @@ public abstract class Entity extends Component
 		
 		pos.add(distance);
 		
-		x = (int) pos.x;
-		y = (int) pos.y;
-		
 		if (pos.equals(target))
 		{
 			onReachTarget();
@@ -41,6 +38,9 @@ public abstract class Entity extends Component
 	{
 		move();
 		tick(tick);
+		
+		x = (int) pos.x;
+		y = (int) pos.y;
 	}
 	
 	protected abstract void tick(int tick);

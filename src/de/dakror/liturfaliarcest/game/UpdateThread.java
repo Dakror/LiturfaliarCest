@@ -10,5 +10,4 @@ public class UpdateThread extends Updater
 	@Override
 	public void update()
 	{}
-	
 }
