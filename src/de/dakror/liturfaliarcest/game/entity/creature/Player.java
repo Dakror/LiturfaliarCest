@@ -1,6 +1,7 @@
 package de.dakror.liturfaliarcest.game.entity.creature;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
@@ -19,7 +20,12 @@ public class Player extends Creature
 	{
 		super(x, y, 64, 96);
 		tex = "001-Fighter01";
-		speed = 1.75f;
+		speed = 2f;
+		
+		bumpY = 70;
+		bumpX = 16;
+		bumpWidth = width / 2;
+		bumpHeight = 24;
 	}
 	
 	@Override
@@ -29,11 +35,11 @@ public class Player extends Creature
 		{
 			Vector lastPos = pos.clone();
 			
-			if (dirs[0] && Game.world.getBump().contains(pos.x - speed, pos.y, width, height)) pos.x -= speed;
-			if (dirs[2] && Game.world.getBump().contains(pos.x + speed, pos.y, width, height)) pos.x += speed;
+			if (dirs[0] && clips(-speed, 0)) pos.x -= speed;
+			if (dirs[2] && clips(speed, 0)) pos.x += speed;
 			
-			if (dirs[1] && Game.world.getBump().contains(pos.x, pos.y - speed, width, height)) pos.y -= speed;
-			if (dirs[3] && Game.world.getBump().contains(pos.x, pos.y + speed, width, height)) pos.y += speed;
+			if (dirs[1] && clips(0, -speed)) pos.y -= speed;
+			if (dirs[3] && clips(0, speed)) pos.y += speed;
 			
 			Vector dist = pos.clone().sub(lastPos);
 			if (dist.getLength() > 1)
@@ -44,6 +50,24 @@ public class Player extends Creature
 			
 			if (tick % 15 == 0) frame = (frame + 1) % 4;
 		}
+		else frame = 0;
+		
+		Game.world.x = (int) (Game.getWidth() / 2 - pos.x - width / 2);
+		Game.world.y = (int) (Game.getHeight() / 2 - pos.y - height / 2);
+	}
+	
+	@Override
+	public void mouseMoved(MouseEvent e)
+	{
+		super.mouseMoved(e);
+		
+		float degs = pos.clone().add(new Vector(width / 2, height / 2)).add(new Vector(Game.world.x, Game.world.y)).sub(new Vector(Game.currentGame.mouse)).getAngleOnXAxis();
+		if (degs < 0) degs += 360;
+		
+		if (degs < 45 || degs > 315) dir = 1;
+		else if (degs > 135 && degs < 225) dir = 2;
+		else if (degs > 45 && degs < 135) dir = 3;
+		else dir = 0;
 	}
 	
 	@Override

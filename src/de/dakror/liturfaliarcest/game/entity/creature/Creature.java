@@ -1,6 +1,7 @@
 package de.dakror.liturfaliarcest.game.entity.creature;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import de.dakror.gamesetup.util.Helper;
@@ -13,7 +14,7 @@ import de.dakror.liturfaliarcest.game.entity.Entity;
 public abstract class Creature extends Entity
 {
 	protected String tex;
-	int startTick, frame;
+	int startTick, frame, dir, bumpX, bumpY, bumpWidth, bumpHeight;
 	
 	public Creature(int x, int y, int width, int height)
 	{
@@ -26,9 +27,16 @@ public abstract class Creature extends Entity
 		Helper.setRenderingHints(g, false);
 		
 		BufferedImage img = Game.getImage("char/chars/" + tex + ".png");
-		Helper.drawImage(img, x, y, width, height, frame * img.getWidth() / 4, 0, img.getWidth() / 4, img.getHeight() / 4, g);
+		Helper.drawImage(img, x, y, width, height, frame * img.getWidth() / 4, dir * img.getHeight() / 4, img.getWidth() / 4, img.getHeight() / 4, g);
 		
 		Helper.setRenderingHints(g, true);
+		
+		g.drawRect((int) (pos.x + bumpX), (int) (pos.y + bumpY), bumpWidth, bumpHeight);
+	}
+	
+	public boolean clips(float deltaX, float deltaY)
+	{
+		return Game.world.getBump().contains(new Rectangle((int) (pos.x + bumpX + deltaX), (int) (pos.y + bumpY + deltaY), bumpWidth, bumpHeight));
 	}
 	
 	@Override

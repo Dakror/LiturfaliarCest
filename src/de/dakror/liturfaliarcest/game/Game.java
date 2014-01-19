@@ -21,8 +21,8 @@ public class Game extends GameFrame
 	@Override
 	public void initGame()
 	{
-		world = new World("map0");
-		player = new Player(0, 0);
+		world = new World("map1");
+		player = new Player(0, 128);
 		world.addEntity(player);
 		addLayer(world);
 	}

@@ -16,10 +16,12 @@ public class World extends Layer
 {
 	public static final int TILE_SIZE = 64;
 	
-	int x, y;
+	public int x, y;
 	
 	String name;
 	Area bump;
+	
+	boolean groundLayer, aboveLayer;
 	
 	public World(String name)
 	{
@@ -30,26 +32,33 @@ public class World extends Layer
 	@Override
 	public void init()
 	{
-		Game.getImage("maps/" + name + "/" + name + "-0.png");
-		Game.getImage("maps/" + name + "/" + name + "-1.png");
+		groundLayer = Game.getImage("maps/" + name + "/" + name + "-0.png") != null;
+		aboveLayer = Game.getImage("maps/" + name + "/" + name + "-1.png") != null;
 		
 		// creating bump
+		int size = 4;
+		
 		BufferedImage bumpImage = Game.getImage("maps/" + name + "/" + name + "-2.png");
+		bumpImage = Helper.toBufferedImage(bumpImage.getScaledInstance(bumpImage.getWidth() / 32 * TILE_SIZE, bumpImage.getHeight() / 32 * TILE_SIZE, BufferedImage.SCALE_FAST));
+		
 		bump = new Area();
-		for (int i = 0; i < bumpImage.getWidth(); i++)
-			for (int j = 0; j < bumpImage.getHeight(); j++)
-				if (new Color(bumpImage.getRGB(i, j)).equals(Color.white)) bump.add(new Area(new Rectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)));
+		for (int i = 0; i < bumpImage.getWidth(); i += size)
+			for (int j = 0; j < bumpImage.getHeight(); j += size)
+				if (new Color(bumpImage.getRGB(i, j)).equals(Color.white)) bump.add(new Area(new Rectangle(i, j, size, size)));
 	}
 	
 	@Override
 	public void draw(Graphics2D g)
 	{
-		Helper.setRenderingHints(g, false);
-		
-		BufferedImage img = Game.getImage("maps/" + name + "/" + name + "-0.png");
-		g.drawImage(img, x, y, img.getWidth() / 32 * TILE_SIZE, img.getHeight() / 32 * TILE_SIZE, Game.w);
-		
-		Helper.setRenderingHints(g, true);
+		if (groundLayer)
+		{
+			Helper.setRenderingHints(g, false);
+			
+			BufferedImage img = Game.getImage("maps/" + name + "/" + name + "-0.png");
+			g.drawImage(img, x, y, img.getWidth() / 32 * TILE_SIZE, img.getHeight() / 32 * TILE_SIZE, Game.w);
+			
+			Helper.setRenderingHints(g, true);
+		}
 		
 		AffineTransform old = g.getTransform();
 		AffineTransform at = g.getTransform();
@@ -60,12 +69,15 @@ public class World extends Layer
 		
 		g.setTransform(old);
 		
-		Helper.setRenderingHints(g, false);
-		
-		img = Game.getImage("maps/" + name + "/" + name + "-1.png");
-		g.drawImage(img, x, y, img.getWidth() / 32 * TILE_SIZE, img.getHeight() / 32 * TILE_SIZE, Game.w);
-		
-		Helper.setRenderingHints(g, true);
+		if (aboveLayer)
+		{
+			Helper.setRenderingHints(g, false);
+			
+			BufferedImage img = Game.getImage("maps/" + name + "/" + name + "-1.png");
+			g.drawImage(img, x, y, img.getWidth() / 32 * TILE_SIZE, img.getHeight() / 32 * TILE_SIZE, Game.w);
+			
+			Helper.setRenderingHints(g, true);
+		}
 	}
 	
 	@Override
