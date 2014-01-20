@@ -20,9 +20,14 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -36,6 +41,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,7 +64,7 @@ public class Editor extends JFrame
 	
 	boolean devMode;
 	
-	File entlist;
+	File entlist, map;
 	
 	public Editor()
 	{
@@ -93,15 +99,20 @@ public class Editor extends JFrame
 	{
 		final JTabbedPane cp = new JTabbedPane();
 		
+		JMenuBar jmb = new JMenuBar();
+		jmb.add(new JMenu(""));
+		setJMenuBar(jmb);
+		
 		if (devMode) cp.addTab("Entity Editor", initEntityEditor());
 		
-		cp.addTab("Map Editor", initMapEditor());
+		cp.addTab("Karten-Editor", initMapEditor(devMode));
 		cp.addChangeListener(new ChangeListener()
 		{
 			@Override
 			public void stateChanged(ChangeEvent e)
 			{
-				if (cp.getSelectedIndex() == 1) cp.setComponentAt(1, initMapEditor());
+				if (cp.getSelectedIndex() == 0) cp.setComponentAt(1, initEntityEditor());
+				if (cp.getSelectedIndex() == 1) cp.setComponentAt(1, initMapEditor(false));
 			}
 		});
 		
@@ -110,6 +121,10 @@ public class Editor extends JFrame
 	
 	private JSplitPane initEntityEditor()
 	{
+		JMenu file = (JMenu) getJMenuBar().getSubElements()[0];
+		file.setText("");
+		file.removeAll();
+		
 		JSplitPane p = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		p.setEnabled(false);
 		
@@ -325,8 +340,69 @@ public class Editor extends JFrame
 		return p;
 	}
 	
-	private JSplitPane initMapEditor()
+	private JSplitPane initMapEditor(boolean init)
 	{
+		if (!init)
+		{
+			JMenu file = (JMenu) getJMenuBar().getSubElements()[0];
+			file.setText("Datei");
+			JMenuItem newFile = new JMenuItem(new AbstractAction("Neue Karte...")
+			{
+				private static final long serialVersionUID = 1L;
+				
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
+					jfc.setMultiSelectionEnabled(false);
+					jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					jfc.setFileFilter(new FileNameExtensionFilter("Verzeichis mit Karten-Dateien", "."));
+					jfc.setApproveButtonText("Erstellen");
+					jfc.setDialogTitle("Neue Karte");
+					
+					if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
+					{
+						File f = jfc.getSelectedFile();
+						if (!isValidMapFolder(f))
+						{
+							JOptionPane.showMessageDialog(jfc, "Dieses Verzeichnis enthält keine valide Liturfaliar Cest Karte!", "Fehler: Ungültiges Verzeichnis", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+						
+						map = new File(f, f.getName() + ".map");
+						if (map.exists())
+						{
+							JOptionPane.showMessageDialog(jfc, "Diese Karte existiert bereits!", "Fehler: Karte bereits vorhanden", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+						
+						Helper.setFileContent(map, "[]");
+					}
+				}
+			});
+			file.add(newFile);
+			
+			JMenuItem loadFile = new JMenuItem(new AbstractAction("Karte laden...")
+			{
+				private static final long serialVersionUID = 1L;
+				
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{}
+			});
+			file.add(loadFile);
+			
+			JMenuItem saveFile = new JMenuItem(new AbstractAction("Karte speichern...")
+			{
+				private static final long serialVersionUID = 1L;
+				
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{}
+			});
+			file.add(saveFile);
+		}
+		
 		JSplitPane p = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		p.setEnabled(false);
 		
@@ -399,6 +475,12 @@ public class Editor extends JFrame
 		p.add(map);
 		
 		return p;
+	}
+	
+	public boolean isValidMapFolder(File f)
+	{
+		if (!f.isDirectory()) return false;
+		return new File(f, f.getName() + "-0.png").exists() && new File(f, f.getName() + "-2.png").exists();
 	}
 	
 	public static void main(String[] args)
