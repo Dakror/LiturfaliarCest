@@ -32,13 +32,13 @@ public class World extends Layer
 	@Override
 	public void init()
 	{
-		groundLayer = Game.getImage("maps/" + name + "/" + name + "-0.png") != null;
-		aboveLayer = Game.getImage("maps/" + name + "/" + name + "-1.png") != null;
+		groundLayer = Game.getImage("/maps/" + name + "/" + name + "-0.png") != null;
+		aboveLayer = Game.getImage("/maps/" + name + "/" + name + "-1.png") != null;
 		
 		// creating bump
 		int size = 4;
 		
-		BufferedImage bumpImage = Game.getImage("maps/" + name + "/" + name + "-2.png");
+		BufferedImage bumpImage = Game.getImage("/maps/" + name + "/" + name + "-2.png");
 		bumpImage = Helper.toBufferedImage(bumpImage.getScaledInstance(bumpImage.getWidth() / 32 * TILE_SIZE, bumpImage.getHeight() / 32 * TILE_SIZE, BufferedImage.SCALE_FAST));
 		
 		bump = new Area();
@@ -54,7 +54,7 @@ public class World extends Layer
 		{
 			Helper.setRenderingHints(g, false);
 			
-			BufferedImage img = Game.getImage("maps/" + name + "/" + name + "-0.png");
+			BufferedImage img = Game.getImage("/maps/" + name + "/" + name + "-0.png");
 			g.drawImage(img, x, y, img.getWidth() / 32 * TILE_SIZE, img.getHeight() / 32 * TILE_SIZE, Game.w);
 			
 			Helper.setRenderingHints(g, true);
@@ -73,7 +73,7 @@ public class World extends Layer
 		{
 			Helper.setRenderingHints(g, false);
 			
-			BufferedImage img = Game.getImage("maps/" + name + "/" + name + "-1.png");
+			BufferedImage img = Game.getImage("/maps/" + name + "/" + name + "-1.png");
 			g.drawImage(img, x, y, img.getWidth() / 32 * TILE_SIZE, img.getHeight() / 32 * TILE_SIZE, Game.w);
 			
 			Helper.setRenderingHints(g, true);
