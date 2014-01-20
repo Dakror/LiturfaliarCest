@@ -9,9 +9,8 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -28,12 +27,18 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
+import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.swing.SpringUtilities;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.settings.CFG;
@@ -46,6 +51,12 @@ public class Editor extends JFrame
 	private static final long serialVersionUID = 1L;
 	
 	MapPanel mapPanel;
+	JSONArray entities;
+	Point lt = new Point(-1, -1), rb = new Point(-1, -1);
+	
+	boolean devMode;
+	
+	File entlist;
 	
 	public Editor()
 	{
@@ -53,16 +64,23 @@ public class Editor extends JFrame
 		setSize(1280, 720);
 		setLocationRelativeTo(null);
 		setResizable(false);
-		setAlwaysOnTop(true);
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		addWindowListener(new WindowAdapter()
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		devMode = new File(System.getProperty("user.dir"), "src").exists();
+		
+		try
 		{
-			@Override
-			public void windowClosed(WindowEvent e)
+			if (devMode)
 			{
-				Game.editor = null;
+				entlist = new File(System.getProperty("user.dir"), "src/entities.entlist");
+				entities = new JSONArray(Helper.getFileContent(entlist));
 			}
-		});
+			else entities = new JSONArray(Helper.getURLContent(getClass().getResource("/entities.entlist")));
+		}
+		catch (JSONException e1)
+		{
+			e1.printStackTrace();
+		}
 		
 		initComponents();
 		
@@ -150,9 +168,7 @@ public class Editor extends JFrame
 		final JSpinner bumpY = new JSpinner();
 		final JSpinner bumpWidth = new JSpinner();
 		final JSpinner bumpHeight = new JSpinner();
-		
 		final JPanel settings = new JPanel(new SpringLayout());
-		
 		final AbstractAction update = new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
@@ -160,7 +176,8 @@ public class Editor extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				Point lt = new Point(-1, -1), rb = new Point(-1, -1);
+				lt = new Point(-1, -1);
+				rb = new Point(-1, -1);
 				ArrayList<JLabel> sel = new ArrayList<>();
 				for (Component c : tiles.getComponents())
 				{
@@ -247,8 +264,38 @@ public class Editor extends JFrame
 			}
 		});
 		settings.add(bumpHeight);
+		settings.add(new JButton(new AbstractAction("Speichern")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				try
+				{
+					JSONObject o = new JSONObject();
+					o.put("t", tilesets.getSelectedValue());
+					o.put("x", lt.x);
+					o.put("y", lt.y);
+					o.put("w", rb.x - lt.x);
+					o.put("h", rb.y - lt.y);
+					o.put("bx", bumpX.getValue());
+					o.put("by", bumpY.getValue());
+					o.put("bw", bumpWidth.getValue());
+					o.put("bh", bumpHeight.getValue());
+					entities.put(o);
+					
+					if (devMode) Helper.setFileContent(entlist, entities.toString());
+				}
+				catch (JSONException e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		}));
+		settings.add(new JLabel());
 		
-		SpringUtilities.makeCompactGrid(settings, 5, 2, 0, 0, 0, 0);
+		SpringUtilities.makeCompactGrid(settings, 6, 2, 0, 0, 0, 0);
 		int w = settings.getPreferredSize().width;
 		int h = settings.getPreferredSize().height;
 		settings.setBounds((850 - w) / 2, 60, w, h);
@@ -256,8 +303,24 @@ public class Editor extends JFrame
 		
 		p1.add(right);
 		
-		cp.addTab("Entity Editor", p1);
+		if (devMode) cp.addTab("Entity Editor", p1);
 		
 		setContentPane(cp);
+	}
+	
+	public static void main(String[] args)
+	{
+		try
+		{
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		new Game();
+		
+		new Editor();
 	}
 }
