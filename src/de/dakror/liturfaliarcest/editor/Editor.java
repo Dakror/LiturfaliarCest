@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -12,6 +13,8 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -50,7 +53,6 @@ public class Editor extends JFrame
 {
 	private static final long serialVersionUID = 1L;
 	
-	MapPanel mapPanel;
 	JSONArray entities;
 	Point lt = new Point(-1, -1), rb = new Point(-1, -1);
 	
@@ -89,10 +91,27 @@ public class Editor extends JFrame
 	
 	public void initComponents()
 	{
-		JTabbedPane cp = new JTabbedPane();
+		final JTabbedPane cp = new JTabbedPane();
 		
-		JSplitPane p1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		p1.setEnabled(false);
+		if (devMode) cp.addTab("Entity Editor", initEntityEditor());
+		
+		cp.addTab("Map Editor", initMapEditor());
+		cp.addChangeListener(new ChangeListener()
+		{
+			@Override
+			public void stateChanged(ChangeEvent e)
+			{
+				if (cp.getSelectedIndex() == 1) cp.setComponentAt(1, initMapEditor());
+			}
+		});
+		
+		setContentPane(cp);
+	}
+	
+	private JSplitPane initEntityEditor()
+	{
+		JSplitPane p = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		p.setEnabled(false);
 		
 		JPanel left = new JPanel(new BorderLayout());
 		final JPanel tiles = new JPanel();
@@ -151,13 +170,13 @@ public class Editor extends JFrame
 			}
 		});
 		JScrollPane wrap = new JScrollPane(tilesets);
-		wrap.setPreferredSize(new Dimension(400, 150));
+		wrap.setPreferredSize(new Dimension(300, 150));
 		left.add(wrap, BorderLayout.PAGE_START);
 		wrap = new JScrollPane(tiles);
 		wrap.getVerticalScrollBar().setUnitIncrement(32);
 		wrap.setPreferredSize(new Dimension(200, 512));
 		left.add(wrap, BorderLayout.PAGE_END);
-		p1.add(left);
+		p.add(left);
 		
 		JPanel right = new JPanel(null);
 		final JLabel preview = new JLabel();
@@ -199,7 +218,7 @@ public class Editor extends JFrame
 				g.drawRect((int) bumpX.getValue(), (int) bumpY.getValue(), (int) bumpWidth.getValue(), (int) bumpHeight.getValue());
 				
 				preview.setIcon(new ImageIcon(bi));
-				preview.setBounds((850 - bi.getWidth()) / 2, 50, bi.getWidth(), bi.getHeight());
+				preview.setBounds((950 - bi.getWidth()) / 2, 50, bi.getWidth(), bi.getHeight());
 				
 				bumpX.setModel(new SpinnerNumberModel((int) bumpX.getValue() > bi.getWidth() - 1 ? bi.getWidth() - 1 : (int) bumpX.getValue(), 0, bi.getWidth() - 1, 1));
 				bumpY.setModel(new SpinnerNumberModel((int) bumpY.getValue() > bi.getHeight() - 1 ? bi.getHeight() - 1 : (int) bumpY.getValue(), 0, bi.getHeight() - 1, 1));
@@ -208,7 +227,7 @@ public class Editor extends JFrame
 				
 				int w = settings.getPreferredSize().width;
 				int h = settings.getPreferredSize().height;
-				settings.setBounds((850 - w) / 2, 60 + bi.getHeight(), w, h);
+				settings.setBounds((950 - w) / 2, 60 + bi.getHeight(), w, h);
 			}
 		};
 		
@@ -277,8 +296,8 @@ public class Editor extends JFrame
 					o.put("t", tilesets.getSelectedValue());
 					o.put("x", lt.x);
 					o.put("y", lt.y);
-					o.put("w", rb.x - lt.x);
-					o.put("h", rb.y - lt.y);
+					o.put("w", rb.x - lt.x + 32);
+					o.put("h", rb.y - lt.y + 32);
 					o.put("bx", bumpX.getValue());
 					o.put("by", bumpY.getValue());
 					o.put("bw", bumpWidth.getValue());
@@ -298,14 +317,88 @@ public class Editor extends JFrame
 		SpringUtilities.makeCompactGrid(settings, 6, 2, 0, 0, 0, 0);
 		int w = settings.getPreferredSize().width;
 		int h = settings.getPreferredSize().height;
-		settings.setBounds((850 - w) / 2, 60, w, h);
+		settings.setBounds((950 - w) / 2, 60, w, h);
 		right.add(settings);
 		
-		p1.add(right);
+		p.add(right);
 		
-		if (devMode) cp.addTab("Entity Editor", p1);
+		return p;
+	}
+	
+	private JSplitPane initMapEditor()
+	{
+		JSplitPane p = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		p.setEnabled(false);
 		
-		setContentPane(cp);
+		final JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		left.setPreferredSize(new Dimension(280, 1));
+		
+		ArrayList<JLabel> labels = new ArrayList<>();
+		
+		for (int i = 0; i < entities.length(); i++)
+		{
+			try
+			{
+				JSONObject o = entities.getJSONObject(i);
+				final JLabel l = new JLabel(new ImageIcon(Game.getImage("tiles/" + o.getString("t")).getSubimage(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"))));
+				l.setPreferredSize(new Dimension(o.getInt("w"), o.getInt("h")));
+				l.addMouseListener(new MouseAdapter()
+				{
+					@Override
+					public void mouseEntered(MouseEvent e)
+					{
+						if (l.getBorder() == null || !((LineBorder) l.getBorder()).getLineColor().equals(Color.red)) l.setBorder(BorderFactory.createLineBorder(Color.black));
+					}
+					
+					@Override
+					public void mouseExited(MouseEvent e)
+					{
+						if (l.getBorder() == null || !((LineBorder) l.getBorder()).getLineColor().equals(Color.red)) l.setBorder(null);
+					}
+					
+					@Override
+					public void mousePressed(MouseEvent e)
+					{
+						if (!((LineBorder) l.getBorder()).getLineColor().equals(Color.red))
+						{
+							for (Component c : left.getComponents())
+								((JLabel) c).setBorder(null);
+							
+							l.setBorder(BorderFactory.createLineBorder(Color.red));
+						}
+						else l.setBorder(BorderFactory.createLineBorder(Color.black));
+					}
+				});
+				labels.add(l);
+			}
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		Collections.sort(labels, new Comparator<JLabel>()
+		{
+			@Override
+			public int compare(JLabel o1, JLabel o2)
+			{
+				return Integer.compare(o1.getPreferredSize().width * o1.getPreferredSize().height, o2.getPreferredSize().width * o2.getPreferredSize().height);
+			}
+		});
+		for (JLabel l : labels)
+			left.add(l);
+		
+		if (entities.length() == 0) left.add(new JLabel("Create some entities first!"));
+		
+		JScrollPane wrap = new JScrollPane(left);
+		wrap.setPreferredSize(new Dimension(300, 680));
+		p.add(wrap);
+		
+		MapPanel map = new MapPanel();
+		map.setPreferredSize(new Dimension(900, 680));
+		p.add(map);
+		
+		return p;
 	}
 	
 	public static void main(String[] args)
