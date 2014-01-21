@@ -1,6 +1,7 @@
 package de.dakror.liturfaliarcest.game.entity;
 
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Vector;
@@ -14,7 +15,7 @@ public abstract class Entity extends Component
 	protected Vector pos, target;
 	protected float speed;
 	
-	protected int bumpX, bumpY, bumpWidth, bumpHeight;
+	public int bumpX, bumpY, bumpWidth, bumpHeight;
 	
 	public Entity(int x, int y, int width, int height)
 	{
@@ -50,9 +51,32 @@ public abstract class Entity extends Component
 	
 	protected abstract void tick(int tick);
 	
-	public boolean clips(float deltaX, float deltaY)
+	public boolean isFree(float deltaX, float deltaY)
 	{
-		return Game.world.getBump().contains(new Rectangle((int) (pos.x + bumpX + deltaX), (int) (pos.y + bumpY + deltaY), bumpWidth, bumpHeight));
+		boolean world = Game.world.getBump().contains(new Rectangle((int) (pos.x + bumpX + deltaX), (int) (pos.y + bumpY + deltaY), bumpWidth, bumpHeight));
+		if (!world) return false;
+		
+		for (Component e : Game.world.components)
+		{
+			if (e.equals(this)) continue;
+			
+			if (e instanceof Entity)
+			{
+				if (((Entity) e).getBump().intersects(getBump(deltaX, deltaY))) return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public Rectangle2D getBump()
+	{
+		return new Rectangle2D.Float(x + bumpX, y + bumpY, bumpWidth, bumpHeight);
+	}
+	
+	public Rectangle2D getBump(float deltaX, float deltaY)
+	{
+		return new Rectangle2D.Float(x + bumpX + deltaX, y + bumpY + deltaY, bumpWidth, bumpHeight);
 	}
 	
 	protected void onReachTarget()

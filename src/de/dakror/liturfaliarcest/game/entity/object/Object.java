@@ -21,10 +21,10 @@ public class Object extends Entity
 		
 		this.type = type;
 		
-		bumpX = type.bumpX;
-		bumpY = type.bumpY;
-		bumpWidth = type.bumpWidth;
-		bumpHeight = type.bumpHeight;
+		bumpX = type.bumpX * (World.TILE_SIZE / 32);
+		bumpY = type.bumpY * (World.TILE_SIZE / 32);
+		bumpWidth = type.bumpWidth * (World.TILE_SIZE / 32);
+		bumpHeight = type.bumpHeight * (World.TILE_SIZE / 32);
 	}
 	
 	@Override

@@ -6,12 +6,17 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.gamesetup.layer.Layer;
+import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
@@ -104,6 +109,17 @@ public class World extends Layer
 	public void update(int tick)
 	{
 		updateComponents(tick);
+		
+		ArrayList<Component> c = new ArrayList<>(components);
+		Collections.sort(c, new Comparator<Component>()
+		{
+			@Override
+			public int compare(Component o1, Component o2)
+			{
+				return Integer.compare(o1.getY() + ((Entity) o1).bumpY + ((Entity) o1).bumpHeight, o2.getY() + ((Entity) o2).bumpY + ((Entity) o2).bumpHeight);
+			}
+		});
+		components = new CopyOnWriteArrayList<>(c);
 	}
 	
 	public void addEntity(Entity e)

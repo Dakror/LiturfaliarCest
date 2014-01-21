@@ -35,11 +35,11 @@ public class Player extends Creature
 		{
 			Vector lastPos = pos.clone();
 			
-			if (dirs[0] && clips(-speed, 0)) pos.x -= speed;
-			if (dirs[2] && clips(speed, 0)) pos.x += speed;
+			if (dirs[0] && isFree(-speed, 0)) pos.x -= speed;
+			if (dirs[2] && isFree(speed, 0)) pos.x += speed;
 			
-			if (dirs[1] && clips(0, -speed)) pos.y -= speed;
-			if (dirs[3] && clips(0, speed)) pos.y += speed;
+			if (dirs[1] && isFree(0, -speed)) pos.y -= speed;
+			if (dirs[3] && isFree(0, speed)) pos.y += speed;
 			
 			Vector dist = pos.clone().sub(lastPos);
 			if (dist.getLength() > 1)
