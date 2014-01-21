@@ -2,6 +2,7 @@ package de.dakror.liturfaliarcest.editor;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -12,7 +13,6 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -20,6 +20,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import de.dakror.gamesetup.util.Helper;
+import de.dakror.liturfaliarcest.game.Game;
 
 /**
  * @author Dakror
@@ -42,18 +48,30 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		setLayout(null);
 	}
 	
-	public void openMap(File mapDir)
+	public void openMap(File map)
 	{
 		try
 		{
-			File p = mapDir.getParentFile();
+			File p = map.getParentFile();
 			ground = ImageIO.read(new File(p, p.getName() + "-0.png"));
 			if (new File(p, p.getName() + "-1.png").exists()) above = ImageIO.read(new File(p, p.getName() + "-1.png"));
 			else above = null;
 			
+			JSONArray e = new JSONArray(Helper.getFileContent(map));
+			for (int i = 0; i < e.length(); i++)
+			{
+				JSONObject en = e.getJSONObject(i);
+				JSONObject o = Editor.currentEditor.entities.getJSONObject(en.getInt("i"));
+				JLabel l = new JLabel(new ImageIcon(Game.getImage("tiles/" + o.getString("t")).getSubimage(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"))));
+				l.setPreferredSize(new Dimension(o.getInt("w"), o.getInt("h")));
+				l.setName(en.getInt("i") + "");
+				l.setBounds(en.getInt("x"), en.getInt("y"), o.getInt("w"), o.getInt("h"));
+				addEntity(l);
+			}
+			
 			tx = ty = 0;
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -97,75 +115,73 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		{
 			if (e.getButton() == MouseEvent.BUTTON1 && Editor.currentEditor.selectedEntity != null)
 			{
-				final JLabel l = Editor.currentEditor.selectedEntity;
-				l.addMouseListener(new MouseAdapter()
-				{
-					@Override
-					public void mouseReleased(MouseEvent e)
-					{
-						boolean d = drag == null;
-						drag = null;
-						dragPos = null;
-						
-						if (!d) return;
-						
-						if (!((LineBorder) l.getBorder()).getLineColor().equals(Color.red) && e.getButton() == MouseEvent.BUTTON1)
-						{
-							for (Component c : MapPanel.this.getComponents())
-								((JLabel) c).setBorder(null);
-							
-							l.setBorder(BorderFactory.createLineBorder(Color.red));
-						}
-						else
-						{
-							if (e.getButton() == MouseEvent.BUTTON3)
-							{
-								MapPanel.this.remove(l);
-								repaint();
-							}
-							else l.setBorder(BorderFactory.createLineBorder(Color.black));
-						}
-					}
-					
-					@Override
-					public void mouseEntered(MouseEvent e)
-					{
-						if (l.getBorder() == null || !((LineBorder) l.getBorder()).getLineColor().equals(Color.red)) l.setBorder(BorderFactory.createLineBorder(Color.black));
-					}
-					
-					@Override
-					public void mouseExited(MouseEvent e)
-					{
-						if (l.getBorder() == null || !((LineBorder) l.getBorder()).getLineColor().equals(Color.red)) l.setBorder(null);
-					}
-					
-					@Override
-					public void mousePressed(MouseEvent e)
-					{	
-						
-					}
-				});
-				l.addMouseMotionListener(new MouseMotionAdapter()
-				{
-					@Override
-					public void mouseDragged(MouseEvent e)
-					{
-						if (drag == null)
-						{
-							dragPos = l.getLocation();
-							drag = e.getPoint();
-						}
-						
-						l.setLocation(l.getX() + e.getX() - drag.x, l.getY() + e.getY() - drag.y);
-					}
-				});
-				l.setBounds(mouse.x - l.getPreferredSize().width / 2, mouse.y - l.getPreferredSize().height / 2, l.getPreferredSize().width, l.getPreferredSize().height);
-				add(l);
+				addEntity(Editor.currentEditor.selectedEntity);
 				
 				Editor.currentEditor.selectedEntity = null;
 				Editor.currentEditor.selectedEntityOriginal.setBorder(null);
 			}
 		}
+	}
+	
+	public void addEntity(final JLabel l)
+	{
+		l.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mouseReleased(MouseEvent e)
+			{
+				boolean d = drag == null;
+				drag = null;
+				dragPos = null;
+				
+				if (!d) return;
+				
+				if (!((LineBorder) l.getBorder()).getLineColor().equals(Color.red) && e.getButton() == MouseEvent.BUTTON1)
+				{
+					for (Component c : MapPanel.this.getComponents())
+						((JLabel) c).setBorder(null);
+					
+					l.setBorder(BorderFactory.createLineBorder(Color.red));
+				}
+				else
+				{
+					if (e.getButton() == MouseEvent.BUTTON3)
+					{
+						MapPanel.this.remove(l);
+						repaint();
+					}
+					else l.setBorder(BorderFactory.createLineBorder(Color.black));
+				}
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e)
+			{
+				if (l.getBorder() == null || !((LineBorder) l.getBorder()).getLineColor().equals(Color.red)) l.setBorder(BorderFactory.createLineBorder(Color.black));
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e)
+			{
+				if (l.getBorder() == null || !((LineBorder) l.getBorder()).getLineColor().equals(Color.red)) l.setBorder(null);
+			}
+		});
+		l.addMouseMotionListener(new MouseMotionAdapter()
+		{
+			@Override
+			public void mouseDragged(MouseEvent e)
+			{
+				if (drag == null)
+				{
+					dragPos = l.getLocation();
+					drag = e.getPoint();
+				}
+				
+				l.setLocation(l.getX() + e.getX() - drag.x, l.getY() + e.getY() - drag.y);
+			}
+		});
+		if (mouse != null) l.setBounds(mouse.x - l.getPreferredSize().width / 2, mouse.y - l.getPreferredSize().height / 2, l.getPreferredSize().width, l.getPreferredSize().height);
+		add(l);
 	}
 	
 	@Override

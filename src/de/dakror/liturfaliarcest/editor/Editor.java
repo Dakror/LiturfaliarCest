@@ -33,6 +33,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
 import javax.swing.UIManager;
@@ -389,6 +390,7 @@ public class Editor extends JFrame
 					}
 				}
 			});
+			newFile.setAccelerator(KeyStroke.getKeyStroke("ctrl N"));
 			file.add(newFile);
 			
 			JMenuItem loadFile = new JMenuItem(new AbstractAction("Karte laden...")
@@ -412,6 +414,7 @@ public class Editor extends JFrame
 					}
 				}
 			});
+			loadFile.setAccelerator(KeyStroke.getKeyStroke("ctrl O"));
 			file.add(loadFile);
 			
 			JMenuItem saveFile = new JMenuItem(new AbstractAction("Karte speichern...")
@@ -420,8 +423,11 @@ public class Editor extends JFrame
 				
 				@Override
 				public void actionPerformed(ActionEvent e)
-				{}
+				{
+					if (map != null) saveMap();
+				}
 			});
+			saveFile.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
 			file.add(saveFile);
 		}
 		
@@ -511,6 +517,29 @@ public class Editor extends JFrame
 	{
 		mapPanel.openMap(map);
 		mapPanel.repaint();
+	}
+	
+	public void saveMap()
+	{
+		JSONArray a = new JSONArray();
+		
+		for (Component c : mapPanel.getComponents())
+		{
+			JSONObject o = new JSONObject();
+			try
+			{
+				o.put("i", Integer.parseInt(c.getName()));
+				o.put("x", c.getX());
+				o.put("y", c.getY());
+			}
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
+			a.put(o);
+		}
+		
+		Helper.setFileContent(map, a.toString());
 	}
 	
 	public boolean isValidMapFolder(File f)
