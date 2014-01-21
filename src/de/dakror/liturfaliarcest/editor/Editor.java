@@ -59,16 +59,24 @@ public class Editor extends JFrame
 {
 	private static final long serialVersionUID = 1L;
 	
+	public static Editor currentEditor;
+	
 	JSONArray entities;
 	Point lt = new Point(-1, -1), rb = new Point(-1, -1);
 	
 	boolean devMode;
 	
+	JLabel selectedEntity, selectedEntityOriginal;
 	File entlist, map;
+	
+	MapPanel mapPanel;
 	
 	public Editor()
 	{
 		super("Liturfaliar Cest Editor");
+		
+		currentEditor = this;
+		
 		setSize(1280, 720);
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -377,6 +385,7 @@ public class Editor extends JFrame
 						}
 						
 						Helper.setFileContent(map, "[]");
+						openMap();
 					}
 				}
 			});
@@ -388,7 +397,20 @@ public class Editor extends JFrame
 				
 				@Override
 				public void actionPerformed(ActionEvent e)
-				{}
+				{
+					JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
+					jfc.setMultiSelectionEnabled(false);
+					jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					jfc.setFileFilter(new FileNameExtensionFilter("Liturfaliar Cest Karte (*.map)", "map"));
+					jfc.setDialogTitle("Karte laden");
+					
+					if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
+					{
+						map = jfc.getSelectedFile();
+						
+						openMap();
+					}
+				}
 			});
 			file.add(loadFile);
 			
@@ -418,6 +440,7 @@ public class Editor extends JFrame
 				JSONObject o = entities.getJSONObject(i);
 				final JLabel l = new JLabel(new ImageIcon(Game.getImage("tiles/" + o.getString("t")).getSubimage(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"))));
 				l.setPreferredSize(new Dimension(o.getInt("w"), o.getInt("h")));
+				l.setName(i + "");
 				l.addMouseListener(new MouseAdapter()
 				{
 					@Override
@@ -435,12 +458,19 @@ public class Editor extends JFrame
 					@Override
 					public void mousePressed(MouseEvent e)
 					{
+						if (e.getButton() != MouseEvent.BUTTON1) return;
 						if (!((LineBorder) l.getBorder()).getLineColor().equals(Color.red))
 						{
 							for (Component c : left.getComponents())
 								((JLabel) c).setBorder(null);
 							
 							l.setBorder(BorderFactory.createLineBorder(Color.red));
+							
+							JLabel clone = new JLabel(l.getIcon());
+							clone.setPreferredSize(l.getPreferredSize());
+							clone.setName(l.getName());
+							selectedEntity = clone;
+							selectedEntityOriginal = l;
 						}
 						else l.setBorder(BorderFactory.createLineBorder(Color.black));
 					}
@@ -470,11 +500,17 @@ public class Editor extends JFrame
 		wrap.setPreferredSize(new Dimension(300, 680));
 		p.add(wrap);
 		
-		MapPanel map = new MapPanel();
-		map.setPreferredSize(new Dimension(900, 680));
-		p.add(map);
+		mapPanel = new MapPanel();
+		mapPanel.setPreferredSize(new Dimension(900, 680));
+		p.add(mapPanel);
 		
 		return p;
+	}
+	
+	public void openMap()
+	{
+		mapPanel.openMap(map);
+		mapPanel.repaint();
 	}
 	
 	public boolean isValidMapFolder(File f)
