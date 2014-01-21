@@ -84,13 +84,13 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		
 		super.paintChildren(g);
 		
-		if (above != null) g.drawImage(above, tx, ty, null);
-		
 		if (mouse != null && Editor.currentEditor.selectedEntity != null && Editor.currentEditor.map != null)
 		{
 			Image i = ((ImageIcon) Editor.currentEditor.selectedEntity.getIcon()).getImage();
 			g.drawImage(i, mouse.x - i.getWidth(null) / 2, mouse.y - i.getHeight(null) / 2, null);
 		}
+		
+		if (above != null) g.drawImage(above, tx, ty, null);
 	}
 	
 	@Override
@@ -111,6 +111,14 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
+		if (Editor.currentEditor.selectedEntity != null && e.getButton() == MouseEvent.BUTTON3)
+		{
+			Editor.currentEditor.selectedEntity = null;
+			Editor.currentEditor.selectedEntityOriginal.setBorder(null);
+			mouse = null;
+			return;
+		}
+		
 		if (mouse != null && Editor.currentEditor.map != null)
 		{
 			if (e.getButton() == MouseEvent.BUTTON1 && Editor.currentEditor.selectedEntity != null)

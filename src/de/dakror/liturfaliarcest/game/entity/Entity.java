@@ -1,7 +1,10 @@
 package de.dakror.liturfaliarcest.game.entity;
 
+import java.awt.Rectangle;
+
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Vector;
+import de.dakror.liturfaliarcest.game.Game;
 
 /**
  * @author Dakror
@@ -10,6 +13,8 @@ public abstract class Entity extends Component
 {
 	protected Vector pos, target;
 	protected float speed;
+	
+	protected int bumpX, bumpY, bumpWidth, bumpHeight;
 	
 	public Entity(int x, int y, int width, int height)
 	{
@@ -44,6 +49,11 @@ public abstract class Entity extends Component
 	}
 	
 	protected abstract void tick(int tick);
+	
+	public boolean clips(float deltaX, float deltaY)
+	{
+		return Game.world.getBump().contains(new Rectangle((int) (pos.x + bumpX + deltaX), (int) (pos.y + bumpY + deltaY), bumpWidth, bumpHeight));
+	}
 	
 	protected void onReachTarget()
 	{}

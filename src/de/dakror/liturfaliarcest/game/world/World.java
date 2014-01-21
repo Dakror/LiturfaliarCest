@@ -7,10 +7,16 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
+import de.dakror.liturfaliarcest.game.entity.object.Object;
+import de.dakror.liturfaliarcest.game.entity.object.ObjectType;
 
 public class World extends Layer
 {
@@ -45,6 +51,20 @@ public class World extends Layer
 		for (int i = 0; i < bumpImage.getWidth(); i += size)
 			for (int j = 0; j < bumpImage.getHeight(); j += size)
 				if (new Color(bumpImage.getRGB(i, j)).equals(Color.white)) bump.add(new Area(new Rectangle(i, j, size, size)));
+		
+		try
+		{
+			JSONArray e = new JSONArray(Helper.getURLContent(getClass().getResource("/maps/" + name + "/" + name + ".map")));
+			for (int i = 0; i < e.length(); i++)
+			{
+				JSONObject o = e.getJSONObject(i);
+				addEntity(new Object(o.getInt("x"), o.getInt("y"), ObjectType.objectTypes.get(o.getInt("i"))));
+			}
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
