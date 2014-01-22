@@ -57,6 +57,7 @@ import org.json.JSONObject;
 import de.dakror.gamesetup.util.Compressor;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.swing.SpringUtilities;
+import de.dakror.gamesetup.util.swing.WrapLayout;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.settings.CFG;
 
@@ -387,7 +388,7 @@ public class Editor extends JFrame
 							return;
 						}
 						
-						map = new File(f, f.getName() + ".map");
+						map = new File(f, f.getName() + ".ent");
 						if (map.exists())
 						{
 							JOptionPane.showMessageDialog(jfc, "Diese Karte existiert bereits!", "Fehler: Karte bereits vorhanden", JOptionPane.ERROR_MESSAGE);
@@ -492,8 +493,8 @@ public class Editor extends JFrame
 		JSplitPane p = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		p.setEnabled(false);
 		
-		final JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		left.setPreferredSize(new Dimension(280, 1));
+		final JPanel left = new JPanel(new WrapLayout(FlowLayout.LEFT, 0, 0));
+		left.setSize(new Dimension(280, 1));
 		
 		ArrayList<JLabel> labels = new ArrayList<>();
 		
@@ -560,8 +561,10 @@ public class Editor extends JFrame
 		
 		if (entities.length() == 0) left.add(new JLabel("Create some entities first!"));
 		
+		
 		JScrollPane wrap = new JScrollPane(left);
 		wrap.setPreferredSize(new Dimension(300, 680));
+		wrap.getVerticalScrollBar().setUnitIncrement(32);
 		p.add(wrap);
 		
 		mapPanel = new MapPanel();
