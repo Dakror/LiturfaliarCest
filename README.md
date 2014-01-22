@@ -2,7 +2,7 @@
 
 A 2.5D Fantasy RPG.
 
-Download it: [Liturfaliar Cest.jar](http://dakror.de/download?u=https://github.com/Dakror/LiturfaliarCest/raw/master/LiturfaliarCest.jar)<br>
+Download it: [Liturfaliar Cest.jar](https://github.com/Dakror/LiturfaliarCest/raw/master/LiturfaliarCest.jar)<br>
 
 
 ------------------------
