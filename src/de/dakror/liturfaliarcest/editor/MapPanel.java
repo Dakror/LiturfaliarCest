@@ -69,6 +69,9 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				addEntity(l);
 			}
 			
+			setPreferredSize(new Dimension(ground.getWidth(), ground.getHeight()));
+			getParent().getParent().revalidate();
+			
 			tx = ty = 0;
 		}
 		catch (Exception e)
@@ -189,6 +192,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			}
 		});
 		if (mouse != null) l.setBounds(mouse.x - l.getPreferredSize().width / 2, mouse.y - l.getPreferredSize().height / 2, l.getPreferredSize().width, l.getPreferredSize().height);
+		l.setToolTipText("X: " + l.getX() + ", Y: " + l.getY());
 		add(l);
 	}
 	

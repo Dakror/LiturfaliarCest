@@ -507,8 +507,11 @@ public class Editor extends JFrame
 		p.add(wrap);
 		
 		mapPanel = new MapPanel();
-		mapPanel.setPreferredSize(new Dimension(900, 680));
-		p.add(mapPanel);
+		wrap = new JScrollPane(mapPanel);
+		wrap.getHorizontalScrollBar().setUnitIncrement(32);
+		wrap.getVerticalScrollBar().setUnitIncrement(32);
+		wrap.setPreferredSize(new Dimension(900, 680));
+		p.add(wrap);
 		
 		return p;
 	}
