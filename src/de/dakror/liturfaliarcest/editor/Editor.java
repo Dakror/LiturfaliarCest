@@ -7,15 +7,21 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -48,6 +54,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.dakror.gamesetup.util.Compressor;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.swing.SpringUtilities;
 import de.dakror.liturfaliarcest.game.Game;
@@ -130,9 +137,9 @@ public class Editor extends JFrame
 	
 	private JSplitPane initEntityEditor()
 	{
-		JMenu file = (JMenu) getJMenuBar().getSubElements()[0];
-		file.setText("");
-		file.removeAll();
+		getJMenuBar().removeAll();
+		getJMenuBar().repaint();
+		getJMenuBar().add(new JMenu(""));
 		
 		JSplitPane p = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		p.setEnabled(false);
@@ -246,8 +253,8 @@ public class Editor extends JFrame
 				
 				bumpX.setModel(new SpinnerNumberModel((int) bumpX.getValue() > bi.getWidth() - 1 ? bi.getWidth() - 1 : (int) bumpX.getValue(), 0, bi.getWidth() - 1, 1));
 				bumpY.setModel(new SpinnerNumberModel((int) bumpY.getValue() > bi.getHeight() - 1 ? bi.getHeight() - 1 : (int) bumpY.getValue(), 0, bi.getHeight() - 1, 1));
-				bumpWidth.setModel(new SpinnerNumberModel((int) bumpWidth.getValue() > bi.getWidth() || (int) bumpWidth.getValue() == 0 ? bi.getWidth() : (int) bumpWidth.getValue(), 1, bi.getWidth(), 1));
-				bumpHeight.setModel(new SpinnerNumberModel((int) bumpHeight.getValue() > bi.getHeight() || (int) bumpHeight.getValue() == 0 ? bi.getHeight() : (int) bumpHeight.getValue(), 1, bi.getHeight(), 1));
+				bumpWidth.setModel(new SpinnerNumberModel((int) bumpWidth.getValue() > bi.getWidth() || (int) bumpWidth.getValue() == 0 ? bi.getWidth() : (int) bumpWidth.getValue(), 0, bi.getWidth(), 1));
+				bumpHeight.setModel(new SpinnerNumberModel((int) bumpHeight.getValue() > bi.getHeight() || (int) bumpHeight.getValue() == 0 ? bi.getHeight() : (int) bumpHeight.getValue(), 0, bi.getHeight(), 1));
 				
 				int w = settings.getPreferredSize().width;
 				int h = settings.getPreferredSize().height;
@@ -353,8 +360,10 @@ public class Editor extends JFrame
 	{
 		if (!init)
 		{
-			JMenu file = (JMenu) getJMenuBar().getSubElements()[0];
-			file.setText("Datei");
+			getJMenuBar().removeAll();
+			getJMenuBar().repaint();
+			
+			JMenu file = new JMenu("Datei");
 			JMenuItem newFile = new JMenuItem(new AbstractAction("Neue Karte...")
 			{
 				private static final long serialVersionUID = 1L;
@@ -403,7 +412,7 @@ public class Editor extends JFrame
 					JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
 					jfc.setMultiSelectionEnabled(false);
 					jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-					jfc.setFileFilter(new FileNameExtensionFilter("Liturfaliar Cest Karte (*.map)", "map"));
+					jfc.setFileFilter(new FileNameExtensionFilter("Liturfaliar Cest Entity Karte (*.ent)", "ent"));
 					jfc.setDialogTitle("Karte laden");
 					
 					if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
@@ -429,6 +438,55 @@ public class Editor extends JFrame
 			});
 			saveFile.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
 			file.add(saveFile);
+			
+			getJMenuBar().add(file);
+			
+			JMenu tools = new JMenu("Werkzeuge");
+			tools.add(new JMenuItem(new AbstractAction("Bumpmap Converter")
+			{
+				
+				private static final long serialVersionUID = 1L;
+				
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
+					jfc.setMultiSelectionEnabled(false);
+					jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					jfc.setFileFilter(new FileNameExtensionFilter("Liturfaliar Cest Bumpmap (*.png)", "png"));
+					jfc.setDialogTitle("Bumpmap umwandeln");
+					
+					if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
+					{
+						String s = JOptionPane.showInputDialog("Bitte geben sie die erwünschte Anzahl an PPB ein:", 4);
+						if (s == null) return;
+						
+						try
+						{
+							int ppb = Integer.parseInt(s);
+							
+							Area area = new Area();
+							BufferedImage bi = ImageIO.read(jfc.getSelectedFile());
+							for (int i = 0; i < bi.getWidth(); i += ppb)
+								for (int j = 0; j < bi.getHeight(); j += ppb)
+									if (new Color(bi.getRGB(i, j)).equals(Color.white)) area.add(new Area(new Rectangle(i, j, ppb, ppb)));
+							
+							ByteArrayOutputStream baos = new ByteArrayOutputStream();
+							ObjectOutputStream oos = new ObjectOutputStream(baos);
+							oos.writeObject(AffineTransform.getTranslateInstance(0, 0).createTransformedShape(area));
+							Compressor.compressFile(new File(jfc.getSelectedFile().getPath().replace("-2.png", ".bump")), baos.toByteArray());
+							
+							JOptionPane.showMessageDialog(Editor.this, "Unwandlung abgeschlossen.", "Fertig", JOptionPane.INFORMATION_MESSAGE);
+						}
+						catch (Exception e2)
+						{
+							JOptionPane.showMessageDialog(Editor.this, s + " ist keine Zahl!", "Fehler!", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				}
+			}));
+			
+			getJMenuBar().add(tools);
 		}
 		
 		JSplitPane p = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -548,7 +606,7 @@ public class Editor extends JFrame
 	public boolean isValidMapFolder(File f)
 	{
 		if (!f.isDirectory()) return false;
-		return new File(f, f.getName() + "-0.png").exists() && new File(f, f.getName() + "-2.png").exists();
+		return new File(f, f.getName() + "-0.png").exists() && (new File(f, f.getName() + "-2.png").exists() || new File(f, f.getName() + ".bump").exists());
 	}
 	
 	public static void main(String[] args)
