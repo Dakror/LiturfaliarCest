@@ -8,7 +8,7 @@ Download it: [Liturfaliar Cest.jar](https://github.com/Dakror/LiturfaliarCest/ra
 ------------------------
 Ein 2.5D Fantasie RPG.
 
-Lade es herunter: [Liturfaliar Cest.jar](http://dakror.de/download?u=https://github.com/Dakror/LiturfaliarCest/raw/master/LiturfaliarCest.jar)<br>
+Lade es herunter: [Liturfaliar Cest.jar](https://github.com/Dakror/LiturfaliarCest/raw/master/LiturfaliarCest.jar)<br>
 
 
 
