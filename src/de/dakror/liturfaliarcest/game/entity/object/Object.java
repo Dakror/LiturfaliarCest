@@ -1,5 +1,7 @@
 package de.dakror.liturfaliarcest.game.entity.object;
 
+import java.awt.AlphaComposite;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -32,13 +34,21 @@ public class Object extends Entity
 	{
 		Helper.setRenderingHints(g, false);
 		
+		Composite c = g.getComposite();
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+		
 		BufferedImage img = Game.getImage("tiles/" + type.tileset);
 		Helper.drawImage(img, x, y, width, height, type.tx, type.ty, type.width, type.height, g);
+		
+		g.setComposite(c);
 		
 		Helper.setRenderingHints(g, true);
 	}
 	
 	@Override
 	protected void tick(int tick)
-	{}
+	{
+		if (getArea().intersects(Game.player.getArea()) && Game.player.getY() + Game.player.bumpY + Game.player.bumpHeight < y + bumpY + bumpHeight) alpha = 0.8f;
+		else alpha = 1;
+	}
 }

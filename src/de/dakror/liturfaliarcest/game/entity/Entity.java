@@ -15,6 +15,8 @@ public abstract class Entity extends Component
 	protected Vector pos, target;
 	protected float speed;
 	
+	public float alpha;
+	
 	public int bumpX, bumpY, bumpWidth, bumpHeight;
 	
 	public Entity(int x, int y, int width, int height)
@@ -22,6 +24,7 @@ public abstract class Entity extends Component
 		super(x, y, width, height);
 		pos = new Vector(x, y);
 		speed = 0;
+		alpha = 1;
 	}
 	
 	public void move()
@@ -71,12 +74,17 @@ public abstract class Entity extends Component
 	
 	public Rectangle2D getBump()
 	{
-		return new Rectangle2D.Float(x + bumpX, y + bumpY, bumpWidth, bumpHeight);
+		return getBump(0, 0);
 	}
 	
 	public Rectangle2D getBump(float deltaX, float deltaY)
 	{
-		return new Rectangle2D.Float(x + bumpX + deltaX, y + bumpY + deltaY, bumpWidth, bumpHeight);
+		return new Rectangle2D.Float(pos.x + bumpX + deltaX, pos.y + bumpY + deltaY, bumpWidth, bumpHeight);
+	}
+	
+	public Rectangle2D getArea()
+	{
+		return new Rectangle2D.Float(pos.x, pos.y, width, height);
 	}
 	
 	protected void onReachTarget()

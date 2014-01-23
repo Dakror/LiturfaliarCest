@@ -76,7 +76,9 @@ public class World extends Layer
 				for (int i = 0; i < e.length(); i++)
 				{
 					JSONObject o = e.getJSONObject(i);
-					addEntity(new Object(o.getInt("x"), o.getInt("y"), ObjectType.objectTypes.get(o.getInt("i"))));
+					Object obj = new Object(o.getInt("x"), o.getInt("y"), ObjectType.objectTypes.get(o.getInt("i")));
+					
+					addEntity(obj);
 				}
 			}
 		}

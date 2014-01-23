@@ -24,7 +24,7 @@ public class Game extends GameFrame
 	{
 		ObjectType.init();
 		
-		world = new World("map2");
+		world = new World("map1");
 		player = new Player(0, 128);
 		world.addEntity(player);
 		addLayer(world);
