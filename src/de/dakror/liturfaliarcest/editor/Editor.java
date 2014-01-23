@@ -579,7 +579,7 @@ public class Editor extends JFrame
 	
 	public void openMap()
 	{
-		mapPanel.openMap(map);
+		mapPanel.openMap();
 		mapPanel.repaint();
 	}
 	

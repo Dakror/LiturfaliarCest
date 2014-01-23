@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -13,6 +15,9 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -30,7 +35,7 @@ import de.dakror.liturfaliarcest.game.Game;
 /**
  * @author Dakror
  */
-public class MapPanel extends JPanel implements MouseListener, MouseMotionListener
+public class MapPanel extends JPanel implements MouseListener, MouseMotionListener, KeyListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -48,16 +53,16 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		setLayout(null);
 	}
 	
-	public void openMap(File map)
+	public void openMap()
 	{
 		try
 		{
-			File p = map.getParentFile();
+			File p = Editor.currentEditor.map.getParentFile();
 			ground = ImageIO.read(new File(p, p.getName() + "-0.png"));
 			if (new File(p, p.getName() + "-1.png").exists()) above = ImageIO.read(new File(p, p.getName() + "-1.png"));
 			else above = null;
 			
-			JSONArray e = new JSONArray(Helper.getFileContent(map));
+			JSONArray e = new JSONArray(Helper.getFileContent(Editor.currentEditor.map));
 			for (int i = 0; i < e.length(); i++)
 			{
 				JSONObject en = e.getJSONObject(i);
@@ -85,6 +90,20 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	{
 		g.drawImage(ground, tx, ty, null);
 		
+		Component[] c = getComponents();
+		Arrays.sort(c, new Comparator<Component>()
+		{
+			
+			@Override
+			public int compare(Component o1, Component o2)
+			{
+				return Integer.compare(o2.getY(), o1.getY());
+			}
+		});
+		
+		for (int i = 0; i < c.length; i++)
+			setComponentZOrder(c[i], i);
+		
 		super.paintChildren(g);
 		
 		if (mouse != null && Editor.currentEditor.selectedEntity != null && Editor.currentEditor.map != null)
@@ -104,6 +123,13 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	public void mouseMoved(MouseEvent e)
 	{
 		mouse = e.getPoint();
+		if (e.isControlDown() && Editor.currentEditor.selectedEntity != null)
+		{
+			Image i = ((ImageIcon) Editor.currentEditor.selectedEntity.getIcon()).getImage();
+			
+			mouse.x = Helper.round(mouse.x - i.getWidth(null) / 2, 32) + i.getWidth(null) / 2;
+			mouse.y = Helper.round(mouse.y - i.getHeight(null) / 2, 32) + i.getHeight(null) / 2;
+		}
 		repaint();
 	}
 	
@@ -182,6 +208,8 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			@Override
 			public void mouseDragged(MouseEvent e)
 			{
+				if (e.getModifiers() != 16) return;
+				
 				if (drag == null)
 				{
 					dragPos = l.getLocation();
@@ -210,4 +238,33 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		mouse = null;
 		repaint();
 	}
+	
+	@Override
+	public void keyTyped(KeyEvent e)
+	{}
+	
+	@Override
+	public void keyPressed(KeyEvent e)
+	{
+		if (e.getKeyCode() == KeyEvent.VK_F5 && Editor.currentEditor.map != null)
+		{
+			try
+			{
+				File p = Editor.currentEditor.map.getParentFile();
+				ground = ImageIO.read(new File(p, p.getName() + "-0.png"));
+				if (new File(p, p.getName() + "-1.png").exists()) above = ImageIO.read(new File(p, p.getName() + "-1.png"));
+				else above = null;
+				
+				repaint();
+			}
+			catch (IOException e1)
+			{
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent e)
+	{}
 }
