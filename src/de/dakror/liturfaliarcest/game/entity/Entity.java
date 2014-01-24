@@ -3,9 +3,13 @@ package de.dakror.liturfaliarcest.game.entity;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.util.JSInvoker;
 
 /**
  * @author Dakror
@@ -19,12 +23,16 @@ public abstract class Entity extends Component
 	
 	public int bumpX, bumpY, bumpWidth, bumpHeight;
 	
+	protected JSONObject eventFunctions;
+	
 	public Entity(int x, int y, int width, int height)
 	{
 		super(x, y, width, height);
 		pos = new Vector(x, y);
 		speed = 0;
 		alpha = 1;
+		
+		eventFunctions = new JSONObject();
 	}
 	
 	public void move()
@@ -35,6 +43,7 @@ public abstract class Entity extends Component
 		if (distance.getLength() >= speed) distance.setLength(speed);
 		
 		pos.add(distance);
+		checkForOnEnterEvent();
 		
 		if (pos.equals(target))
 		{
@@ -72,6 +81,11 @@ public abstract class Entity extends Component
 		return true;
 	}
 	
+	public void setEventFunctions(JSONObject o)
+	{
+		eventFunctions = o;
+	}
+	
 	public Rectangle2D getBump()
 	{
 		return getBump(0, 0);
@@ -82,11 +96,55 @@ public abstract class Entity extends Component
 		return new Rectangle2D.Float(pos.x + bumpX + deltaX, pos.y + bumpY + deltaY, bumpWidth, bumpHeight);
 	}
 	
+	public boolean hasBump()
+	{
+		return bumpWidth > 2 && bumpHeight > 2;
+	}
+	
 	public Rectangle2D getArea()
 	{
 		return new Rectangle2D.Float(pos.x, pos.y, width, height);
 	}
 	
+	protected void checkForOnEnterEvent()
+	{
+		for (Component e : Game.world.components)
+		{
+			if (e.equals(this)) continue;
+			Entity e1 = (Entity) e;
+			Rectangle2D is = getBump().createIntersection(e1.hasBump() ? e1.getBump() : e1.getArea());
+			if (is.getWidth() > 8 && is.getHeight() > 8) onEnter(e1);
+		}
+	}
+	
+	// -- events -- //
 	protected void onReachTarget()
-	{}
+	{
+		if (eventFunctions.has("onReachTarget"))
+		{
+			try
+			{
+				JSInvoker.invoke(eventFunctions.getString("onReachTarget"));
+			}
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	protected void onEnter(Entity entity)
+	{
+		if (entity.eventFunctions.has("onEnter"))
+		{
+			try
+			{
+				JSInvoker.invoke(entity.eventFunctions.getString("onEnter"), this);
+			}
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
 }

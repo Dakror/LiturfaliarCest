@@ -77,7 +77,7 @@ public class World extends Layer
 				{
 					JSONObject o = e.getJSONObject(i);
 					Object obj = new Object(o.getInt("x"), o.getInt("y"), ObjectType.objectTypes.get(o.getInt("i")));
-					
+					if (o.has("e")) obj.setEventFunctions(o.getJSONObject("e"));
 					addEntity(obj);
 				}
 			}

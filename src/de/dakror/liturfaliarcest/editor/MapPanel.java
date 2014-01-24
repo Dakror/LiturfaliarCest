@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -40,7 +41,6 @@ import org.json.JSONObject;
 
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
-import de.dakror.liturfaliarcest.settings.CFG;
 
 /**
  * @author Dakror
@@ -77,7 +77,15 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			{
 				JSONObject en = e.getJSONObject(i);
 				JSONObject o = Editor.currentEditor.entities.getJSONObject(en.getInt("i"));
-				Entity l = new Entity(new ImageIcon(Game.getImage("tiles/" + o.getString("t")).getSubimage(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"))));
+				
+				BufferedImage img = (!o.getString("t").equals("black")) ? Game.getImage("tiles/" + o.getString("t")).getSubimage(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h")) : new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+				if (o.getString("t").equals("black"))
+				{
+					Graphics2D g = (Graphics2D) img.getGraphics();
+					g.setColor(Color.black);
+					Helper.drawHorizontallyCenteredString("E", 32, 32, g, 44);
+				}
+				Entity l = new Entity(new ImageIcon(img));
 				l.e = en.has("e") ? en.getJSONObject("e") : new JSONObject();
 				l.setPreferredSize(new Dimension(o.getInt("w"), o.getInt("h")));
 				l.setName(en.getInt("i") + "");
@@ -250,7 +258,6 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			d.setLocation((Editor.currentEditor.getX() + Editor.currentEditor.getWidth() - 400) / 2, (Editor.currentEditor.getY() + Editor.currentEditor.getHeight() - 350) / 2);
 			d.setResizable(false);
 			
-			CFG.p(l.e.toString());
 			final RSyntaxTextArea a = new RSyntaxTextArea(l.e.toString(4).replaceAll("([^\\\\])(\")", "$1").replace("\\\"", "\"").replace(";", ";\n").replace("{", "{\n").replace("}", "}\n"));
 			a.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
 			a.setCodeFoldingEnabled(true);
@@ -276,9 +283,11 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 						t = t.substring(0, t.length() - 1);
 						
 						JSONObject arr = new JSONObject(t);
-						for (String k : JSONObject.getNames(arr))
-							if (!arr.getString(k).startsWith("function")) throw new JSONException("No valid function declaration at event '" + k + "'");
-						
+						if (JSONObject.getNames(arr) != null)
+						{
+							for (String k : JSONObject.getNames(arr))
+								if (!arr.getString(k).startsWith("function")) throw new JSONException("No valid function declaration at event '" + k + "'");
+						}
 						l.e = arr;
 					}
 					catch (JSONException e1)

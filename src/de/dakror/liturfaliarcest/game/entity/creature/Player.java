@@ -48,6 +48,8 @@ public class Player extends Creature
 				pos = lastPos.add(dist);
 			}
 			
+			checkForOnEnterEvent();
+			
 			if (tick % 15 == 0) frame = (frame + 1) % 4;
 		}
 		else frame = 0;
