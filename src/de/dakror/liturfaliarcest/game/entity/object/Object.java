@@ -32,6 +32,8 @@ public class Object extends Entity
 	@Override
 	public void draw(Graphics2D g)
 	{
+		if (type.tileset.equals("black")) return;
+		
 		Helper.setRenderingHints(g, false);
 		
 		Composite c = g.getComposite();
@@ -48,6 +50,8 @@ public class Object extends Entity
 	@Override
 	protected void tick(int tick)
 	{
+		if (type.tileset.equals("black")) return;
+		
 		if (getArea().intersects(Game.player.getArea()) && Game.player.getY() + Game.player.bumpY + Game.player.bumpHeight < y + bumpY + bumpHeight) alpha = 0.8f;
 		else alpha = 1;
 	}

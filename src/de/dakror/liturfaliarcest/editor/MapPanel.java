@@ -13,6 +13,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -22,11 +24,16 @@ import java.util.Comparator;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.gamesetup.util.Helper;
@@ -67,7 +74,8 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			{
 				JSONObject en = e.getJSONObject(i);
 				JSONObject o = Editor.currentEditor.entities.getJSONObject(en.getInt("i"));
-				JLabel l = new JLabel(new ImageIcon(Game.getImage("tiles/" + o.getString("t")).getSubimage(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"))));
+				Entity l = new Entity(new ImageIcon(Game.getImage("tiles/" + o.getString("t")).getSubimage(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"))));
+				l.e = en.has("e") ? en.getJSONArray("e") : new JSONArray();
 				l.setPreferredSize(new Dimension(o.getInt("w"), o.getInt("h")));
 				l.setName(en.getInt("i") + "");
 				l.setBounds(en.getInt("x"), en.getInt("y"), o.getInt("w"), o.getInt("h"));
@@ -93,7 +101,6 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		Component[] c = getComponents();
 		Arrays.sort(c, new Comparator<Component>()
 		{
-			
 			@Override
 			public int compare(Component o1, Component o2)
 			{
@@ -160,10 +167,16 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		}
 	}
 	
-	public void addEntity(final JLabel l)
+	public void addEntity(final Entity l)
 	{
 		l.addMouseListener(new MouseAdapter()
 		{
+			@Override
+			public void mousePressed(MouseEvent e)
+			{
+				if (e.getClickCount() == 2) editEntityEvents(l);
+			}
+			
 			@Override
 			public void mouseReleased(MouseEvent e)
 			{
@@ -173,7 +186,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				
 				if (!d) return;
 				
-				if (!((LineBorder) l.getBorder()).getLineColor().equals(Color.red) && e.getButton() == MouseEvent.BUTTON1)
+				if ((l.getBorder() == null || !((LineBorder) l.getBorder()).getLineColor().equals(Color.red)) && e.getButton() == MouseEvent.BUTTON1)
 				{
 					for (Component c : MapPanel.this.getComponents())
 						((JLabel) c).setBorder(null);
@@ -222,6 +235,45 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		if (mouse != null) l.setBounds(mouse.x - l.getPreferredSize().width / 2, mouse.y - l.getPreferredSize().height / 2, l.getPreferredSize().width, l.getPreferredSize().height);
 		l.setToolTipText("X: " + l.getX() + ", Y: " + l.getY());
 		add(l);
+	}
+	
+	public void editEntityEvents(final Entity l)
+	{
+		try
+		{
+			final JDialog d = new JDialog(Editor.currentEditor, "Entity Events bearbeiten", true);
+			d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			d.setSize(400, 350);
+			d.setLocation((Editor.currentEditor.getX() + Editor.currentEditor.getWidth() - 400) / 2, (Editor.currentEditor.getY() + Editor.currentEditor.getHeight() - 350) / 2);
+			d.setResizable(false);
+			
+			final JTextArea a = new JTextArea(l.e.toString(4));
+			a.setLineWrap(true);
+			JScrollPane jsp = new JScrollPane(a, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			d.setContentPane(jsp);
+			
+			d.addWindowListener(new WindowAdapter()
+			{
+				@Override
+				public void windowClosing(WindowEvent e)
+				{
+					try
+					{
+						l.e = new JSONArray(a.getText());
+					}
+					catch (JSONException e1)
+					{
+						JOptionPane.showMessageDialog(d, "Invalide Eingabe:\n" + e1.getLocalizedMessage(), "Fehler!", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			});
+			
+			d.setVisible(true);
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	@Override

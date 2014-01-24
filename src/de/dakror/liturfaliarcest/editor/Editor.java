@@ -75,7 +75,8 @@ public class Editor extends JFrame
 	
 	boolean devMode;
 	
-	JLabel selectedEntity, selectedEntityOriginal;
+	Entity selectedEntity;
+	JLabel selectedEntityOriginal;
 	File entlist, map;
 	
 	MapPanel mapPanel;
@@ -503,7 +504,14 @@ public class Editor extends JFrame
 			try
 			{
 				JSONObject o = entities.getJSONObject(i);
-				final JLabel l = new JLabel(new ImageIcon(Game.getImage("tiles/" + o.getString("t")).getSubimage(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"))));
+				BufferedImage img = (!o.getString("t").equals("black")) ? Game.getImage("tiles/" + o.getString("t")).getSubimage(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h")) : new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+				if (o.getString("t").equals("black"))
+				{
+					Graphics2D g = (Graphics2D) img.getGraphics();
+					g.setColor(Color.black);
+					Helper.drawHorizontallyCenteredString("E", 32, 32, g, 44);
+				}
+				final JLabel l = new JLabel(new ImageIcon(img));
 				l.setPreferredSize(new Dimension(o.getInt("w"), o.getInt("h")));
 				l.setName(i + "");
 				l.addMouseListener(new MouseAdapter()
@@ -531,7 +539,7 @@ public class Editor extends JFrame
 							
 							l.setBorder(BorderFactory.createLineBorder(Color.red));
 							
-							JLabel clone = new JLabel(l.getIcon());
+							Entity clone = new Entity(l.getIcon());
 							clone.setPreferredSize(l.getPreferredSize());
 							clone.setName(l.getName());
 							selectedEntity = clone;
