@@ -29,15 +29,18 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.RTextScrollPane;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.settings.CFG;
 
 /**
  * @author Dakror
@@ -75,7 +78,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				JSONObject en = e.getJSONObject(i);
 				JSONObject o = Editor.currentEditor.entities.getJSONObject(en.getInt("i"));
 				Entity l = new Entity(new ImageIcon(Game.getImage("tiles/" + o.getString("t")).getSubimage(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h"))));
-				l.e = en.has("e") ? en.getJSONArray("e") : new JSONArray();
+				l.e = en.has("e") ? en.getJSONObject("e") : new JSONObject();
 				l.setPreferredSize(new Dimension(o.getInt("w"), o.getInt("h")));
 				l.setName(en.getInt("i") + "");
 				l.setBounds(en.getInt("x"), en.getInt("y"), o.getInt("w"), o.getInt("h"));
@@ -242,15 +245,25 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		try
 		{
 			final JDialog d = new JDialog(Editor.currentEditor, "Entity Events bearbeiten", true);
-			d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			d.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 			d.setSize(400, 350);
 			d.setLocation((Editor.currentEditor.getX() + Editor.currentEditor.getWidth() - 400) / 2, (Editor.currentEditor.getY() + Editor.currentEditor.getHeight() - 350) / 2);
 			d.setResizable(false);
 			
-			final JTextArea a = new JTextArea(l.e.toString(4));
-			a.setLineWrap(true);
-			JScrollPane jsp = new JScrollPane(a, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			d.setContentPane(jsp);
+			CFG.p(l.e.toString());
+			final RSyntaxTextArea a = new RSyntaxTextArea(l.e.toString(4).replaceAll("([^\\\\])(\")", "$1").replace("\\\"", "\"").replace(";", ";\n").replace("{", "{\n").replace("}", "}\n"));
+			a.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+			a.setCodeFoldingEnabled(true);
+			a.setAutoIndentEnabled(true);
+			a.setTabsEmulated(true);
+			a.setAnimateBracketMatching(false);
+			a.setHighlightCurrentLine(false);
+			a.setTabSize(2);
+			a.setClearWhitespaceLinesEnabled(true);
+			
+			RTextScrollPane tsp = new RTextScrollPane(a);
+			tsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+			d.setContentPane(tsp);
 			
 			d.addWindowListener(new WindowAdapter()
 			{
@@ -259,12 +272,22 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				{
 					try
 					{
-						l.e = new JSONArray(a.getText());
+						String t = a.getText().replace("\"", "\\\"").replace("function", "\"function").replace("}", "}\"").replace("\n", "").replace("  ", " ");
+						t = t.substring(0, t.length() - 1);
+						
+						JSONObject arr = new JSONObject(t);
+						for (String k : JSONObject.getNames(arr))
+							if (!arr.getString(k).startsWith("function")) throw new JSONException("No valid function declaration at event '" + k + "'");
+						
+						l.e = arr;
 					}
 					catch (JSONException e1)
 					{
-						JOptionPane.showMessageDialog(d, "Invalide Eingabe:\n" + e1.getLocalizedMessage(), "Fehler!", JOptionPane.ERROR_MESSAGE);
+						int r = JOptionPane.showConfirmDialog(d, "Fehlerhafte Eingabe:\n" + e1.getMessage() + "\nTrotzdem schließen?", "Fehler!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+						if (r != JOptionPane.OK_OPTION) return;
 					}
+					
+					d.dispose();
 				}
 			});
 			

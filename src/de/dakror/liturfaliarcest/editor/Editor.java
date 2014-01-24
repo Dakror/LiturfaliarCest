@@ -597,16 +597,19 @@ public class Editor extends JFrame
 		
 		for (Component c : mapPanel.getComponents())
 		{
+			if (!(c instanceof Entity)) continue;
+			Entity e = (Entity) c;
 			JSONObject o = new JSONObject();
 			try
 			{
 				o.put("i", Integer.parseInt(c.getName()));
 				o.put("x", c.getX());
 				o.put("y", c.getY());
+				if (e.e.length() > 0) o.put("e", e.e);
 			}
-			catch (JSONException e)
+			catch (JSONException e1)
 			{
-				e.printStackTrace();
+				e1.printStackTrace();
 			}
 			a.put(o);
 		}
