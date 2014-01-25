@@ -54,8 +54,21 @@ public class Player extends Creature
 		}
 		else frame = 0;
 		
-		Game.world.x = (int) (Game.getWidth() / 2 - pos.x - width / 2);
-		Game.world.y = (int) (Game.getHeight() / 2 - pos.y - height / 2);
+		if (Game.world.width > Game.getWidth())
+		{
+			Game.world.x = (int) (Game.getWidth() / 2 - pos.x - width / 2);
+			if (Game.world.x > bumpX) Game.world.x = bumpX;
+			if (Game.world.x + Game.world.width < Game.getWidth()) Game.world.x += Game.getWidth() - (Game.world.x + Game.world.width);
+		}
+		else Game.world.x = (Game.getWidth() - Game.world.width) / 2;
+		
+		if (Game.world.height > Game.getHeight())
+		{
+			Game.world.y = (int) (Game.getHeight() / 2 - pos.y - height / 2);
+			if (Game.world.y > bumpY) Game.world.y = bumpY;
+			if (Game.world.y + Game.world.height < Game.getHeight()) Game.world.y += Game.getHeight() - (Game.world.y + Game.world.height);
+		}
+		else Game.world.y = (Game.getHeight() - Game.world.height) / 2;
 	}
 	
 	@Override

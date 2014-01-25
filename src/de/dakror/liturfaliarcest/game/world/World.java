@@ -2,6 +2,7 @@ package de.dakror.liturfaliarcest.game.world;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -30,7 +31,7 @@ public class World extends Layer
 {
 	public static final int TILE_SIZE = 64;
 	
-	public int x, y;
+	public int x, y, width, height;
 	
 	String name;
 	Area bump;
@@ -50,6 +51,10 @@ public class World extends Layer
 	{
 		groundLayer = Game.getImage("/maps/" + name + "/" + name + "-0.png") != null;
 		aboveLayer = Game.getImage("/maps/" + name + "/" + name + "-1.png") != null;
+		
+		Image img = Game.getImage("/maps/" + name + "/" + name + "-0.png");
+		width = img.getWidth(null) / 32 * TILE_SIZE;
+		height = img.getHeight(null) / 32 * TILE_SIZE;
 		
 		try
 		{
@@ -97,8 +102,7 @@ public class World extends Layer
 		{
 			Helper.setRenderingHints(g, false);
 			
-			BufferedImage img = Game.getImage("/maps/" + name + "/" + name + "-0.png");
-			g.drawImage(img, x, y, img.getWidth() / 32 * TILE_SIZE, img.getHeight() / 32 * TILE_SIZE, Game.w);
+			g.drawImage(Game.getImage("/maps/" + name + "/" + name + "-0.png"), x, y, width, height, Game.w);
 			
 			Helper.setRenderingHints(g, true);
 		}
@@ -116,8 +120,7 @@ public class World extends Layer
 		{
 			Helper.setRenderingHints(g, false);
 			
-			BufferedImage img = Game.getImage("/maps/" + name + "/" + name + "-1.png");
-			g.drawImage(img, x, y, img.getWidth() / 32 * TILE_SIZE, img.getHeight() / 32 * TILE_SIZE, Game.w);
+			g.drawImage(Game.getImage("/maps/" + name + "/" + name + "-1.png"), x, y, width, height, Game.w);
 			
 			Helper.setRenderingHints(g, true);
 		}
