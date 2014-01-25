@@ -466,7 +466,7 @@ public class Editor extends JFrame
 					
 					if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
 					{
-						String s = JOptionPane.showInputDialog("Bitte geben sie die erwünschte Anzahl an PPB ein:", 4);
+						String s = JOptionPane.showInputDialog("Bitte gib die erwünschte Anzahl an PPB ein:", 4);
 						if (s == null) return;
 						
 						try
@@ -491,6 +491,39 @@ public class Editor extends JFrame
 						{
 							JOptionPane.showMessageDialog(Editor.this, s + " ist keine Zahl!", "Fehler!", JOptionPane.ERROR_MESSAGE);
 						}
+					}
+				}
+			}));
+			tools.add(new JMenuItem(new AbstractAction("Karte umbenennen")
+			{
+				private static final long serialVersionUID = 1L;
+				
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
+					jfc.setMultiSelectionEnabled(false);
+					jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					jfc.setFileFilter(new FileNameExtensionFilter("Verzeichis mit Karten-Dateien", "."));
+					jfc.setApproveButtonText("Umbenennen");
+					jfc.setDialogTitle("Karte umbenennen");
+					
+					if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
+					{
+						File f = jfc.getSelectedFile();
+						if (!isValidMapFolder(f))
+						{
+							JOptionPane.showMessageDialog(jfc, "Dieses Verzeichnis enthält keine valide Liturfaliar Cest Karte!", "Fehler: Ungültiges Verzeichnis", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+						
+						String newName = JOptionPane.showInputDialog(Editor.this, "Bitte gib den neuen Namen der Karte ein:", f.getName());
+						if (newName == null || newName.length() == 0) return;
+						
+						for (File file : f.listFiles())
+							file.renameTo(new File(f.getPath() + "/" + file.getName().replace(f.getName(), newName)));
+						
+						f.renameTo(new File(f.getParent() + "/" + f.getName().replace(f.getName(), newName)));
 					}
 				}
 			}));
