@@ -51,7 +51,6 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	
 	BufferedImage ground, above;
 	
-	int tx, ty;
 	Point mouse;
 	Point drag;
 	Point dragPos;
@@ -67,6 +66,8 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	{
 		try
 		{
+			removeAll();
+			
 			File p = Editor.currentEditor.map.getParentFile();
 			ground = ImageIO.read(new File(p, p.getName() + "-0.png"));
 			if (new File(p, p.getName() + "-1.png").exists()) above = ImageIO.read(new File(p, p.getName() + "-1.png"));
@@ -95,8 +96,6 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			
 			setPreferredSize(new Dimension(ground.getWidth(), ground.getHeight()));
 			getParent().getParent().revalidate();
-			
-			tx = ty = 0;
 		}
 		catch (Exception e)
 		{
@@ -107,7 +106,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	@Override
 	protected void paintChildren(Graphics g)
 	{
-		g.drawImage(ground, tx, ty, null);
+		g.drawImage(ground, 0, 0, null);
 		
 		Component[] c = getComponents();
 		Arrays.sort(c, new Comparator<Component>()
@@ -130,7 +129,9 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			g.drawImage(i, mouse.x - i.getWidth(null) / 2, mouse.y - i.getHeight(null) / 2, null);
 		}
 		
-		if (above != null) g.drawImage(above, tx, ty, null);
+		if (above != null) g.drawImage(above, 0, 0, null);
+		
+		if (mouse != null && Editor.currentEditor.map != null) Helper.drawString(mouse.x + " (" + (int) Math.floor(mouse.x / 32f) + ") x " + mouse.y + " (" + (int) Math.floor(mouse.y / 32f) + ")", getX(), 16 - getY(), (Graphics2D) g, 15);
 	}
 	
 	@Override
@@ -229,6 +230,13 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		});
 		l.addMouseMotionListener(new MouseMotionAdapter()
 		{
+			@Override
+			public void mouseMoved(MouseEvent e)
+			{
+				mouse = new Point(e.getX() + l.getX(), e.getY() + l.getY());
+				repaint();
+			}
+			
 			@Override
 			public void mouseDragged(MouseEvent e)
 			{

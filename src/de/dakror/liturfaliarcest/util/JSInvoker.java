@@ -6,6 +6,7 @@ import javax.script.ScriptException;
 
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.world.World;
 
 /**
  * @author Dakror
@@ -23,6 +24,7 @@ public class JSInvoker
 	{
 		ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
 		engine.put("game", Game.currentGame);
+		engine.put("tilesize", World.TILE_SIZE);
 		String p = "";
 		for (int i = 0; i < params.length; i++)
 		{
@@ -34,7 +36,7 @@ public class JSInvoker
 		
 		try
 		{
-			engine.eval("(" + code + ")(" + p + ")");
+			engine.eval(mainjs + "(" + code + ")(" + p + ")");
 		}
 		catch (ScriptException e)
 		{

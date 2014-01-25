@@ -11,6 +11,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
@@ -129,7 +131,11 @@ public class Editor extends JFrame
 			@Override
 			public void stateChanged(ChangeEvent e)
 			{
-				if (cp.getSelectedIndex() == 0) cp.setComponentAt(1, initEntityEditor());
+				if (cp.getSelectedIndex() == 0)
+				{
+					cp.setComponentAt(1, initEntityEditor());
+					map = null;
+				}
 				if (cp.getSelectedIndex() == 1) cp.setComponentAt(1, initMapEditor(false));
 			}
 		});
@@ -479,6 +485,7 @@ public class Editor extends JFrame
 							Compressor.compressFile(new File(jfc.getSelectedFile().getPath().replace("-2.png", ".bump")), baos.toByteArray());
 							
 							JOptionPane.showMessageDialog(Editor.this, "Unwandlung abgeschlossen.", "Fertig", JOptionPane.INFORMATION_MESSAGE);
+							
 						}
 						catch (Exception e2)
 						{
@@ -577,6 +584,14 @@ public class Editor extends JFrame
 		
 		mapPanel = new MapPanel();
 		wrap = new JScrollPane(mapPanel);
+		wrap.addMouseWheelListener(new MouseWheelListener()
+		{
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e)
+			{
+				mapPanel.repaint();
+			}
+		});
 		wrap.getHorizontalScrollBar().setUnitIncrement(32);
 		wrap.getVerticalScrollBar().setUnitIncrement(32);
 		wrap.setPreferredSize(new Dimension(900, 680));

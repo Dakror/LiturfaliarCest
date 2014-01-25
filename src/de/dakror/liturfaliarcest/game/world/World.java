@@ -41,6 +41,8 @@ public class World extends Layer
 	{
 		this.name = name;
 		x = y = 0;
+		
+		Game.worlds.put(name, this);
 	}
 	
 	@Override

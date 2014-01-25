@@ -117,6 +117,20 @@ public abstract class Entity extends Component
 		}
 	}
 	
+	@Override
+	public void setX(int x)
+	{
+		super.setX(x);
+		pos.x = x;
+	}
+	
+	@Override
+	public void setY(int y)
+	{
+		super.setY(y);
+		pos.y = y;
+	}
+	
 	// -- events -- //
 	protected void onReachTarget()
 	{

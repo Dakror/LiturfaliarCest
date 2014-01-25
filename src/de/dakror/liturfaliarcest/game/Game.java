@@ -1,6 +1,7 @@
 package de.dakror.liturfaliarcest.game;
 
 import java.awt.Graphics2D;
+import java.util.HashMap;
 
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.util.Helper;
@@ -14,6 +15,8 @@ public class Game extends GameFrame
 	public static World world;
 	public static Player player;
 	
+	public static HashMap<String, World> worlds;
+	
 	public Game()
 	{
 		currentGame = this;
@@ -24,10 +27,21 @@ public class Game extends GameFrame
 	{
 		ObjectType.init();
 		
+		worlds = new HashMap<>();
 		world = new World("map2");
 		player = new Player(0, 128);
 		world.addEntity(player);
 		addLayer(world);
+	}
+	
+	public void setWorld(String map)
+	{
+		int index = layers.indexOf(world);
+		world = worlds.containsKey(map) ? worlds.get(map) : new World(map);
+		world.components.clear();
+		world.init();
+		layers.set(index, world);
+		world.addEntity(player);
 	}
 	
 	@Override
