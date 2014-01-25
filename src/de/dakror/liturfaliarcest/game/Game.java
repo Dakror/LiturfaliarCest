@@ -30,8 +30,8 @@ public class Game extends GameFrame
 		ObjectType.init();
 		
 		worlds = new HashMap<>();
-		world = new World("map2");
-		player = new Player(0, 128);
+		world = new World("Zu Hause");
+		player = new Player(90, 400);
 		world.addEntity(player);
 		addLayer(world);
 	}
