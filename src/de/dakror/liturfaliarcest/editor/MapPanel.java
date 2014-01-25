@@ -88,6 +88,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				}
 				Entity l = new Entity(new ImageIcon(img));
 				l.e = en.has("e") ? en.getJSONObject("e") : new JSONObject();
+				l.m = en.has("m") ? en.getJSONObject("m") : new JSONObject();
 				l.setPreferredSize(new Dimension(o.getInt("w"), o.getInt("h")));
 				l.setName(en.getInt("i") + "");
 				l.setBounds(en.getInt("x"), en.getInt("y"), o.getInt("w"), o.getInt("h"));
@@ -266,7 +267,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			d.setLocation((Editor.currentEditor.getX() + Editor.currentEditor.getWidth() - 400) / 2, (Editor.currentEditor.getY() + Editor.currentEditor.getHeight() - 350) / 2);
 			d.setResizable(false);
 			
-			final RSyntaxTextArea a = new RSyntaxTextArea(l.e.toString(4).replaceAll("([^\\\\])(\")", "$1").replace("\\\"", "\"").replace(";", ";\n").replace("{", "{\n").replace("}", "}\n"));
+			final RSyntaxTextArea a = new RSyntaxTextArea("e: " + fmt(l.e) + ",/*END*/\nm: " + fmt(l.m));
 			a.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
 			a.setCodeFoldingEnabled(true);
 			a.setAutoIndentEnabled(true);
@@ -287,19 +288,29 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				{
 					try
 					{
-						String t = a.getText().replace("\"", "\\\"").replace("function", "\"function").replace("}", "}\"").replace("\n", "").replace("  ", " ");
-						t = t.substring(0, t.length() - 1);
+						String t = a.getText();
 						
-						JSONObject arr = new JSONObject(t);
+						// -- events -- //
+						String evts = t.substring(t.indexOf("{"), t.indexOf(",/*END*/"));
+						evts = evts.replace("\"", "\\\"").replace("function", "\"function").replace("}", "}\"").replace("\n", "").replace("  ", " ");
+						evts = evts.substring(0, evts.length() - 1);
+						
+						JSONObject arr = new JSONObject(evts);
 						if (JSONObject.getNames(arr) != null)
 						{
 							for (String k : JSONObject.getNames(arr))
 								if (!arr.getString(k).startsWith("function")) throw new JSONException("No valid function declaration at event '" + k + "'");
 						}
 						l.e = arr;
+						
+						// -- meta -- //
+						String meta = t.substring(t.indexOf("m: ") + "m: ".length());
+						JSONObject o = new JSONObject(meta);
+						l.m = o;
 					}
 					catch (JSONException e1)
 					{
+						e1.printStackTrace();
 						int r = JOptionPane.showConfirmDialog(d, "Fehlerhafte Eingabe:\n" + e1.getMessage() + "\nTrotzdem schließen?", "Fehler!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 						if (r != JOptionPane.OK_OPTION) return;
 					}
@@ -314,6 +325,11 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	private String fmt(JSONObject i) throws JSONException
+	{
+		return i.toString(4).replaceAll("([^\\\\])(\")", "$1").replace("\\\"", "\"").replace(";", ";\n").replace("{", "{\n").replace("}", "\n}");
 	}
 	
 	@Override

@@ -654,6 +654,7 @@ public class Editor extends JFrame
 				o.put("x", c.getX());
 				o.put("y", c.getY());
 				if (e.e.length() > 0) o.put("e", e.e);
+				if (e.m.length() > 0) o.put("m", e.m);
 			}
 			catch (JSONException e1)
 			{
