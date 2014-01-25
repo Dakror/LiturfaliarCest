@@ -6,6 +6,6 @@ function teleport(e, x, y, bumpPos)
 
 function teleportMap(x, y, map, bumpPos)
 {
-	game.setWorld(map);
-	teleport(game.player, x, y, bumpPos);
+	game.fadeTo(1.0, 0.05);
+	game.actionOnFade = "function() {game.setWorld('" + map + "'); teleport(game.player, " + x + ", " + y + ", " + bumpPos + ");game.fadeTo(0, 0.05);}";
 }

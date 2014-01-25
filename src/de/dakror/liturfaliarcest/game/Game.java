@@ -17,6 +17,8 @@ public class Game extends GameFrame
 	
 	public static HashMap<String, World> worlds;
 	
+	public String actionOnFade;
+	
 	public Game()
 	{
 		currentGame = this;

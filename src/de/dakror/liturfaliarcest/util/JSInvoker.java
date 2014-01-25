@@ -32,7 +32,7 @@ public class JSInvoker
 			engine.put("p" + i, params[i]);
 		}
 		
-		p = p.substring(0, p.length() - 1);
+		if (p.length() > 0) p = p.substring(0, p.length() - 1);
 		
 		try
 		{
