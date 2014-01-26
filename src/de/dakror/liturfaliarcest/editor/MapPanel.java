@@ -32,6 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 
+import org.fife.rsta.ac.LanguageSupportFactory;
+import org.fife.rsta.ac.java.JarManager;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -41,6 +43,7 @@ import org.json.JSONObject;
 
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.util.RhinoJavaScriptLanguageSupport;
 
 /**
  * @author Dakror
@@ -267,8 +270,12 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			d.setLocation((Editor.currentEditor.getX() + Editor.currentEditor.getWidth() - 400) / 2, (Editor.currentEditor.getY() + Editor.currentEditor.getHeight() - 350) / 2);
 			d.setResizable(false);
 			
-			final RSyntaxTextArea a = new RSyntaxTextArea("e: " + fmt(l.e) + ",/*END*/\nm: " + fmt(l.m));
+			final RSyntaxTextArea a = new RSyntaxTextArea("e: " + l.e.toString(2).replaceAll("([^\\\\])(\")", "$1").replace("\\\"", "\"").replace(";", ";\n").replace("{", "{\n").replace("}", "}\n") + ",/*END*/\nm: " + fmt(l.m));
+			LanguageSupportFactory lsf = LanguageSupportFactory.get();
+			lsf.register(a);
 			a.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+			configureLanguageSupport(a);
+			
 			a.setCodeFoldingEnabled(true);
 			a.setAutoIndentEnabled(true);
 			a.setTabsEmulated(true);
@@ -306,9 +313,9 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 						// -- meta -- //
 						String meta = t.substring(t.indexOf("m: ") + "m: ".length());
 						JSONObject o = new JSONObject(meta);
-						l.m = o;
+						l.setM(o);
 					}
-					catch (JSONException e1)
+					catch (Exception e1)
 					{
 						e1.printStackTrace();
 						int r = JOptionPane.showConfirmDialog(d, "Fehlerhafte Eingabe:\n" + e1.getMessage() + "\nTrotzdem schließen?", "Fehler!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
@@ -321,15 +328,23 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			
 			d.setVisible(true);
 		}
-		catch (JSONException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
 	}
 	
-	private String fmt(JSONObject i) throws JSONException
+	private void configureLanguageSupport(RSyntaxTextArea textArea) throws IOException
 	{
-		return i.toString(4).replaceAll("([^\\\\])(\")", "$1").replace("\\\"", "\"").replace(";", ";\n").replace("{", "{\n").replace("}", "\n}");
+		RhinoJavaScriptLanguageSupport support1 = new RhinoJavaScriptLanguageSupport();
+		JarManager jarManager = support1.getJarManager();
+		jarManager.addCurrentJreClassFileSource();
+		support1.install(textArea);
+	}
+	
+	private String fmt(JSONObject m) throws JSONException
+	{
+		return m.toString(2).replaceAll("(\n)( {0,})(\")", "\n$2").replace("{\"", "{").replace("\":", ":").replace("{", "{\n").replace("}", "\n}\n").replace("\n\n", "\n");
 	}
 	
 	@Override

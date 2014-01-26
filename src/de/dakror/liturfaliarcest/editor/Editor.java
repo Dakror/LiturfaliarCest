@@ -213,7 +213,7 @@ public class Editor extends JFrame
 		left.add(wrap, BorderLayout.PAGE_START);
 		wrap = new JScrollPane(tiles);
 		wrap.getVerticalScrollBar().setUnitIncrement(32);
-		wrap.setPreferredSize(new Dimension(200, 512));
+		wrap.setPreferredSize(new Dimension(200, 490));
 		left.add(wrap, BorderLayout.PAGE_END);
 		p.add(left);
 		

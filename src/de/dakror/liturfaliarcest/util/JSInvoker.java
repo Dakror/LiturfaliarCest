@@ -13,7 +13,7 @@ import de.dakror.liturfaliarcest.game.world.World;
  */
 public class JSInvoker
 {
-	static String mainjs;
+	public static String mainjs;
 	
 	static
 	{
