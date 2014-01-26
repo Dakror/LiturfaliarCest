@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
 
@@ -44,5 +45,16 @@ public abstract class Creature extends Entity
 		}
 		
 		if (target != null && (tick - startTick) % 15 == 0) frame = (frame + 1) % 4;
+		
+		if (target != null)
+		{
+			float degs = pos.clone().add(new Vector(width / 2, height / 2)).sub(target.clone().add(new Vector(width / 2, height / 2))).getAngleOnXAxis();
+			if (degs < 0) degs += 360;
+			
+			if (degs < 45 || degs > 315) dir = 1;
+			else if (degs > 135 && degs < 225) dir = 2;
+			else if (degs > 45 && degs < 135) dir = 3;
+			else dir = 0;
+		}
 	}
 }

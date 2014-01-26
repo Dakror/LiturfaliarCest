@@ -268,7 +268,6 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			d.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 			d.setSize(400, 350);
 			d.setLocation((Editor.currentEditor.getX() + Editor.currentEditor.getWidth() - 400) / 2, (Editor.currentEditor.getY() + Editor.currentEditor.getHeight() - 350) / 2);
-			d.setResizable(false);
 			
 			final RSyntaxTextArea a = new RSyntaxTextArea("e: " + l.e.toString(2).replaceAll("([^\\\\])(\")", "$1").replace("\\\"", "\"").replace(";", ";\n").replace("{", "{\n").replace("}", "}\n") + ",/*END*/\nm: " + fmt(l.m));
 			LanguageSupportFactory lsf = LanguageSupportFactory.get();
