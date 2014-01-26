@@ -21,12 +21,16 @@ function teleport(e, x, y, bumpPos)
 /**
  * Teleports the player to a given location on a different map
  * 
- * @param x
- * @param y
- * @param map
- * @param bumpPos
+ * @param x -
+ *          new X Position
+ * @param y -
+ *          new Y Position
+ * @param map -
+ *          name of new map
+ * @param bumpPos -
+ *          if position should be set for bumpRectangle or for top-left Corner of e
  */
-function teleportMap(x, y, map, bumpPos)
+function teleport(x, y, map, bumpPos)
 {
 	game.fadeTo(1.0, 0.05);
 	game.actionOnFade = "function() {game.setWorld('" + map + "'); teleport(game.player, " + x + ", " + y + ", " + bumpPos + ");game.fadeTo(0, 0.05);}";
