@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.util.Assistant;
 import de.dakror.liturfaliarcest.util.JSInvoker;
 
 /**
@@ -18,6 +19,8 @@ public abstract class Entity extends Component
 {
 	protected Vector pos, target;
 	protected float speed;
+	
+	public int uid;
 	
 	public float alpha;
 	
@@ -129,6 +132,15 @@ public abstract class Entity extends Component
 	{
 		super.setY(y);
 		pos.y = y;
+	}
+	
+	public JSONObject getData() throws JSONException
+	{
+		JSONObject o = new JSONObject();
+		o.put("uid", uid);
+		o.put("pos", Assistant.serializeVector(pos));
+		if (target != null) o.put("target", Assistant.serializeVector(target));
+		return o;
 	}
 	
 	// -- events -- //

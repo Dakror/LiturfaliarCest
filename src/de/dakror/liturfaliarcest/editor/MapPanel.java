@@ -95,6 +95,8 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				l.setPreferredSize(new Dimension(o.getInt("w"), o.getInt("h")));
 				l.setBounds(en.getInt("x"), en.getInt("y"), o.getInt("w"), o.getInt("h"));
 				l.setM(en.has("m") ? en.getJSONObject("m") : new JSONObject());
+				l.uid = en.has("uid") ? en.getInt("uid") : createUID();
+				
 				addEntity(l);
 			}
 			
@@ -175,6 +177,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		{
 			if (e.getButton() == MouseEvent.BUTTON1 && Editor.currentEditor.selectedEntity != null)
 			{
+				Editor.currentEditor.selectedEntity.uid = createUID();
 				addEntity(Editor.currentEditor.selectedEntity);
 				
 				Editor.currentEditor.selectedEntity = null;
@@ -258,6 +261,20 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		if (mouse != null) l.setBounds(mouse.x - l.getPreferredSize().width / 2, mouse.y - l.getPreferredSize().height / 2, l.getPreferredSize().width, l.getPreferredSize().height);
 		l.setToolTipText("X: " + l.getX() + ", Y: " + l.getY());
 		add(l);
+	}
+	
+	public int createUID()
+	{
+		int uid = (int) (Math.random() * (Integer.MAX_VALUE - 1)) + 1;
+		for (Component c : getComponents())
+		{
+			if (((Entity) c).uid == uid)
+			{
+				return createUID();
+			}
+		}
+		
+		return uid;
 	}
 	
 	public void editEntityEvents(final Entity l)

@@ -654,6 +654,7 @@ public class Editor extends JFrame
 				o.put("i", Integer.parseInt(c.getName()));
 				o.put("x", c.getX());
 				o.put("y", c.getY());
+				o.put("uid", ((Entity) c).uid);
 				if (e.e.length() > 0) o.put("e", e.e);
 				if (e.m.length() > 0) o.put("m", e.m);
 			}

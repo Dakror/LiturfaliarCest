@@ -18,6 +18,8 @@ public class Entity extends JLabel
 	public JSONObject e; // events
 	public JSONObject m; // meta
 	
+	public int uid;
+	
 	Icon defaultIcon;
 	
 	public Entity(Icon i)

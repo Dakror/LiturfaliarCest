@@ -56,4 +56,5 @@ public class Object extends Entity
 		if (getArea().intersects(Game.player.getArea()) && Game.player.getY() + Game.player.bumpY + Game.player.bumpHeight < y + bumpY + bumpHeight) alpha = 0.8f;
 		else alpha = 1;
 	}
+	
 }

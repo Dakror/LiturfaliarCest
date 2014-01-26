@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.gamesetup.layer.Layer;
@@ -90,6 +91,7 @@ public class World extends Layer
 					else entity = new Object(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")));
 					
 					if (o.has("e")) entity.setEventFunctions(o.getJSONObject("e"));
+					entity.uid = o.getInt("uid");
 					addEntity(entity);
 				}
 			}
@@ -151,6 +153,22 @@ public class World extends Layer
 	public void addEntity(Entity e)
 	{
 		components.add(e);
+	}
+	
+	public String getName()
+	{
+		return name;
+	}
+	
+	public JSONObject getData() throws JSONException
+	{
+		JSONObject o = new JSONObject();
+		o.put("n", name);
+		JSONArray e = new JSONArray();
+		for (Component c : components)
+			e.put(((Entity) c).getData());
+		o.put("e", e);
+		return o;
 	}
 	
 	public Area getBump()
