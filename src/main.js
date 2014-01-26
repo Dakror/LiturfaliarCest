@@ -22,7 +22,7 @@ function teleport(e, x, y, bumpPos)
  * @param map - name of new map
  * @param bumpPos - if position should be set for bumpRectangle or for top-left Corner of e
  */
-function teleport(x, y, map, bumpPos)
+function teleportMap(x, y, map, bumpPos)
 {
 	game.fadeTo(1.0, 0.05);
 	game.actionOnFade = "function() {game.setWorld('" + map + "'); teleport(game.player, " + x + ", " + y + ", " + bumpPos + ");game.fadeTo(0, 0.05);}";

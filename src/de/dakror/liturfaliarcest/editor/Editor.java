@@ -92,6 +92,7 @@ public class Editor extends JFrame
 		setSize(1280, 720);
 		setLocationRelativeTo(null);
 		setResizable(false);
+		setIconImage(Game.getImage("system/logo.png"));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		devMode = new File(System.getProperty("user.dir"), "src").exists();

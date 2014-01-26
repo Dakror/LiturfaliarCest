@@ -27,6 +27,7 @@ public class Game extends GameFrame
 	@Override
 	public void initGame()
 	{
+		w.setIconImage(Game.getImage("system/logo.png"));
 		EntityType.init();
 		
 		worlds = new HashMap<>();
