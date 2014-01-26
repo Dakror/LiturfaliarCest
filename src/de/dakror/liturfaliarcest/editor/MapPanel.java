@@ -91,10 +91,10 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				}
 				Entity l = new Entity(new ImageIcon(img));
 				l.e = en.has("e") ? en.getJSONObject("e") : new JSONObject();
-				l.m = en.has("m") ? en.getJSONObject("m") : new JSONObject();
-				l.setPreferredSize(new Dimension(o.getInt("w"), o.getInt("h")));
 				l.setName(en.getInt("i") + "");
+				l.setPreferredSize(new Dimension(o.getInt("w"), o.getInt("h")));
 				l.setBounds(en.getInt("x"), en.getInt("y"), o.getInt("w"), o.getInt("h"));
+				l.setM(en.has("m") ? en.getJSONObject("m") : new JSONObject());
 				addEntity(l);
 			}
 			
@@ -340,6 +340,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		JarManager jarManager = support1.getJarManager();
 		jarManager.addCurrentJreClassFileSource();
 		support1.install(textArea);
+		support1.getParser(textArea).setEnabled(false);
 	}
 	
 	private String fmt(JSONObject m) throws JSONException

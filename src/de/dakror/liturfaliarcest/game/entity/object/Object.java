@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
+import de.dakror.liturfaliarcest.game.entity.EntityType;
 import de.dakror.liturfaliarcest.game.world.World;
 
 /**
@@ -15,11 +16,11 @@ import de.dakror.liturfaliarcest.game.world.World;
  */
 public class Object extends Entity
 {
-	ObjectType type;
+	EntityType type;
 	
-	public Object(int x, int y, ObjectType type)
+	public Object(int x, int y, EntityType type)
 	{
-		super(x * (World.TILE_SIZE / 32), y * (World.TILE_SIZE / 32), type.width * (World.TILE_SIZE / 32), type.height * (World.TILE_SIZE / 32));
+		super(x, y, type.width * (World.TILE_SIZE / 32), type.height * (World.TILE_SIZE / 32));
 		
 		this.type = type;
 		

@@ -24,8 +24,9 @@ import de.dakror.gamesetup.util.Compressor;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
+import de.dakror.liturfaliarcest.game.entity.EntityType;
+import de.dakror.liturfaliarcest.game.entity.creature.NPC;
 import de.dakror.liturfaliarcest.game.entity.object.Object;
-import de.dakror.liturfaliarcest.game.entity.object.ObjectType;
 
 public class World extends Layer
 {
@@ -83,9 +84,13 @@ public class World extends Layer
 				for (int i = 0; i < e.length(); i++)
 				{
 					JSONObject o = e.getJSONObject(i);
-					Object obj = new Object(o.getInt("x"), o.getInt("y"), ObjectType.objectTypes.get(o.getInt("i")));
-					if (o.has("e")) obj.setEventFunctions(o.getJSONObject("e"));
-					addEntity(obj);
+					Entity entity = null;
+					
+					if (o.has("m") && o.getJSONObject("m").getBoolean("npc")) entity = new NPC(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")), o.getJSONObject("m"));
+					else entity = new Object(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")));
+					
+					if (o.has("e")) entity.setEventFunctions(o.getJSONObject("e"));
+					addEntity(entity);
 				}
 			}
 		}

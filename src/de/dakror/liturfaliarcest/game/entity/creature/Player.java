@@ -19,7 +19,7 @@ public class Player extends Creature
 	public Player(int x, int y)
 	{
 		super(x, y, 64, 96);
-		tex = "001-Fighter01";
+		tex = "char/chars/001-Fighter01.png";
 		speed = 2f;
 		
 		bumpY = 70;

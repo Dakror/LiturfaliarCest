@@ -31,6 +31,9 @@ public class Entity extends JLabel
 	public void setM(JSONObject m)
 	{
 		this.m = m;
+		
+		if (m.length() == 0) return;
+		
 		if (m.has("texture"))
 		{
 			try

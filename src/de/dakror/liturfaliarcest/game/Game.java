@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.liturfaliarcest.game.entity.EntityType;
 import de.dakror.liturfaliarcest.game.entity.creature.Player;
-import de.dakror.liturfaliarcest.game.entity.object.ObjectType;
 import de.dakror.liturfaliarcest.game.world.World;
 
 public class Game extends GameFrame
@@ -27,7 +27,7 @@ public class Game extends GameFrame
 	@Override
 	public void initGame()
 	{
-		ObjectType.init();
+		EntityType.init();
 		
 		worlds = new HashMap<>();
 		world = new World("Zu Hause");

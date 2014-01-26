@@ -1,4 +1,4 @@
-package de.dakror.liturfaliarcest.game.entity.object;
+package de.dakror.liturfaliarcest.game.entity;
 
 import java.util.ArrayList;
 
@@ -7,24 +7,25 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.liturfaliarcest.game.entity.object.Object;
 
 /**
  * @author Dakror
  */
-public class ObjectType
+public class EntityType
 {
-	public static ArrayList<ObjectType> objectTypes;
+	public static ArrayList<EntityType> entityTypes;
 	
 	public static void init()
 	{
 		try
 		{
 			JSONArray a = new JSONArray(Helper.getURLContent(Object.class.getResource("/entities.entlist")));
-			objectTypes = new ArrayList<>();
+			entityTypes = new ArrayList<>();
 			for (int i = 0; i < a.length(); i++)
 			{
 				JSONObject o = a.getJSONObject(i);
-				ObjectType ot = new ObjectType();
+				EntityType ot = new EntityType();
 				ot.tileset = o.getString("t");
 				ot.tx = o.getInt("x");
 				ot.ty = o.getInt("y");
@@ -34,7 +35,7 @@ public class ObjectType
 				ot.bumpY = o.getInt("by");
 				ot.bumpWidth = o.getInt("bw");
 				ot.bumpHeight = o.getInt("bh");
-				objectTypes.add(ot);
+				entityTypes.add(ot);
 			}
 		}
 		catch (JSONException e)
@@ -43,14 +44,13 @@ public class ObjectType
 		}
 	}
 	
-	
-	String tileset;
-	int tx;
-	int ty;
-	int width;
-	int height;
-	int bumpX;
-	int bumpY;
-	int bumpWidth;
-	int bumpHeight;
+	public String tileset;
+	public int tx;
+	public int ty;
+	public int width;
+	public int height;
+	public int bumpX;
+	public int bumpY;
+	public int bumpWidth;
+	public int bumpHeight;
 }
