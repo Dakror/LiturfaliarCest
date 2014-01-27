@@ -53,7 +53,7 @@ public class Object extends Entity
 	{
 		if (type.tileset.equals("black")) return;
 		
-		if (getArea().intersects(Game.player.getArea()) && Game.player.getY() + Game.player.bumpY + Game.player.bumpHeight < y + bumpY + bumpHeight) alpha = 0.8f;
+		if (getArea().intersects(Game.player.getArea()) && Game.player.getY() + Game.player.bumpY + Game.player.bumpHeight < y + bumpY + bumpHeight) alpha = 0.6f;
 		else alpha = 1;
 	}
 	

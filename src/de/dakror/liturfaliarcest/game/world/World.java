@@ -19,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Compressor;
@@ -39,6 +40,8 @@ public class World extends Layer
 	Area bump;
 	
 	boolean groundLayer, aboveLayer;
+	
+	public int drawn;
 	
 	public World(String name)
 	{
@@ -92,6 +95,7 @@ public class World extends Layer
 					
 					if (o.has("e")) entity.setEventFunctions(o.getJSONObject("e"));
 					entity.uid = o.getInt("uid");
+					
 					addEntity(entity);
 				}
 			}
@@ -119,7 +123,18 @@ public class World extends Layer
 		at.translate(x, y);
 		g.setTransform(at);
 		
-		drawComponents(g);
+		drawn = 0;
+		
+		Component hovered = null;
+		for (Component c : components)
+		{
+			if (!new Rectangle(0, 0, Game.getWidth(), Game.getHeight()).intersects(((Entity) c).getArea2())) continue;
+			
+			drawn++;
+			c.draw(g);
+			if (c.state == 2) hovered = c;
+		}
+		if (hovered != null) hovered.drawTooltip(GameFrame.currentFrame.mouse.x, GameFrame.currentFrame.mouse.y, g);
 		
 		g.setTransform(old);
 		
@@ -166,9 +181,20 @@ public class World extends Layer
 		o.put("n", name);
 		JSONArray e = new JSONArray();
 		for (Component c : components)
-			e.put(((Entity) c).getData());
+		{
+			JSONObject d = ((Entity) c).getData();
+			if (d.length() > 0) e.put(d);
+		}
 		o.put("e", e);
 		return o;
+	}
+	
+	public Entity getEntityForUID(int uid)
+	{
+		for (Component c : components)
+			if (c instanceof Entity && ((Entity) c).uid == uid) return (Entity) c;
+		
+		return null;
 	}
 	
 	public Area getBump()

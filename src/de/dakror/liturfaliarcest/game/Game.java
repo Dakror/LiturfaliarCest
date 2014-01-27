@@ -57,6 +57,7 @@ public class Game extends GameFrame
 		
 		Helper.drawString("FPS: " + getFPS(), 10, 26, g, 18);
 		Helper.drawString("UPS: " + getUPS(), 10, 52, g, 18);
+		Helper.drawString("E: " + world.drawn + " / " + world.components.size(), 10, 52 + 26, g, 18);
 	}
 	
 	@Override

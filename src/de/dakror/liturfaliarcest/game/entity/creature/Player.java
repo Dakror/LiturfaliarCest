@@ -26,6 +26,8 @@ public class Player extends Creature
 		bumpX = 16;
 		bumpWidth = width / 2;
 		bumpHeight = 24;
+		
+		uid = 0;
 	}
 	
 	@Override

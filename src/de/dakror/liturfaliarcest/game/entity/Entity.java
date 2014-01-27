@@ -3,6 +3,7 @@ package de.dakror.liturfaliarcest.game.entity;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,7 +18,7 @@ import de.dakror.liturfaliarcest.util.JSInvoker;
  */
 public abstract class Entity extends Component
 {
-	protected Vector pos, target;
+	protected Vector pos, target, spawn;
 	protected float speed;
 	
 	public int uid;
@@ -32,6 +33,7 @@ public abstract class Entity extends Component
 	{
 		super(x, y, width, height);
 		pos = new Vector(x, y);
+		spawn = new Vector(x, y);
 		speed = 0;
 		alpha = 1;
 		
@@ -109,6 +111,16 @@ public abstract class Entity extends Component
 		return new Rectangle2D.Float(pos.x, pos.y, width, height);
 	}
 	
+	public Rectangle2D getArea2()
+	{
+		return new Rectangle2D.Float(Game.world.x + pos.x, Game.world.y + pos.y, width, height);
+	}
+	
+	public boolean hasMoved()
+	{
+		return !pos.equals(spawn);
+	}
+	
 	protected void checkForOnEnterEvent()
 	{
 		for (Component e : Game.world.components)
@@ -137,10 +149,22 @@ public abstract class Entity extends Component
 	public JSONObject getData() throws JSONException
 	{
 		JSONObject o = new JSONObject();
+		if (!hasMoved()) return o;
+		
 		o.put("uid", uid);
 		o.put("pos", Assistant.serializeVector(pos));
 		if (target != null) o.put("target", Assistant.serializeVector(target));
 		return o;
+	}
+	
+	public void setPos(JSONArray v) throws JSONException
+	{
+		pos = new Vector((float) v.getDouble(0), (float) v.getDouble(1));
+	}
+	
+	public void setTarget(JSONArray v) throws JSONException
+	{
+		target = new Vector((float) v.getDouble(0), (float) v.getDouble(1));
 	}
 	
 	// -- events -- //
