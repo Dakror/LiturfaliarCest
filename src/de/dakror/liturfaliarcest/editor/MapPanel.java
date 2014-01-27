@@ -7,8 +7,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -48,7 +46,7 @@ import de.dakror.liturfaliarcest.util.RhinoJavaScriptLanguageSupport;
 /**
  * @author Dakror
  */
-public class MapPanel extends JPanel implements MouseListener, MouseMotionListener, KeyListener
+public class MapPanel extends JPanel implements MouseListener, MouseMotionListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -137,7 +135,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		
 		if (above != null) g.drawImage(above, 0, 0, null);
 		
-		if (mouse != null && Editor.currentEditor.map != null) Helper.drawString(mouse.x + " (" + (int) Math.floor(mouse.x / 32f) + ") x " + mouse.y + " (" + (int) Math.floor(mouse.y / 32f) + ")", getX(), 16 - getY(), (Graphics2D) g, 15);
+		if (mouse != null && Editor.currentEditor.map != null) Helper.drawString(mouse.x + " (" + (int) Math.floor(mouse.x / 32f) + ") x " + mouse.y + " (" + (int) Math.floor(mouse.y / 32f) + ")", -getX(), 16 - getY(), (Graphics2D) g, 15);
 	}
 	
 	@Override
@@ -333,7 +331,6 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 					}
 					catch (Exception e1)
 					{
-						e1.printStackTrace();
 						int r = JOptionPane.showConfirmDialog(d, "Fehlerhafte Eingabe:\n" + e1.getMessage() + "\nTrotzdem schließen?", "Fehler!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 						if (r != JOptionPane.OK_OPTION) return;
 					}
@@ -378,33 +375,4 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		mouse = null;
 		repaint();
 	}
-	
-	@Override
-	public void keyTyped(KeyEvent e)
-	{}
-	
-	@Override
-	public void keyPressed(KeyEvent e)
-	{
-		if (e.getKeyCode() == KeyEvent.VK_F5 && Editor.currentEditor.map != null)
-		{
-			try
-			{
-				File p = Editor.currentEditor.map.getParentFile();
-				ground = ImageIO.read(new File(p, p.getName() + "-0.png"));
-				if (new File(p, p.getName() + "-1.png").exists()) above = ImageIO.read(new File(p, p.getName() + "-1.png"));
-				else above = null;
-				
-				repaint();
-			}
-			catch (IOException e1)
-			{
-				e1.printStackTrace();
-			}
-		}
-	}
-	
-	@Override
-	public void keyReleased(KeyEvent e)
-	{}
 }

@@ -8,7 +8,11 @@ import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -18,6 +22,7 @@ import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +33,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -37,6 +43,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JSplitPane;
@@ -66,7 +74,7 @@ import de.dakror.liturfaliarcest.settings.CFG;
 /**
  * @author Dakror
  */
-public class Editor extends JFrame
+public class Editor extends JFrame implements KeyListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -132,6 +140,7 @@ public class Editor extends JFrame
 			@Override
 			public void stateChanged(ChangeEvent e)
 			{
+				removeKeyListener(Editor.this);
 				if (cp.getSelectedIndex() == 0)
 				{
 					cp.setComponentAt(1, initEntityEditor());
@@ -459,7 +468,7 @@ public class Editor extends JFrame
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
-					JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
+					final JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
 					jfc.setMultiSelectionEnabled(false);
 					jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 					jfc.setFileFilter(new FileNameExtensionFilter("Liturfaliar Cest Bumpmap (*.png)", "png"));
@@ -467,31 +476,59 @@ public class Editor extends JFrame
 					
 					if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
 					{
-						String s = JOptionPane.showInputDialog("Bitte gib die erwünschte Anzahl an PPB ein:", 4);
+						final String s = JOptionPane.showInputDialog("Bitte gib die erwünschte Anzahl an PPB ein:", 4);
 						if (s == null) return;
 						
-						try
+						final JDialog d = new JDialog();
+						d.setSize(400, 22);
+						d.setLocationRelativeTo(Editor.this);
+						d.setUndecorated(true);
+						final JProgressBar jsb = new JProgressBar(JScrollBar.HORIZONTAL);
+						jsb.setStringPainted(true);
+						d.setContentPane(jsb);
+						d.setVisible(true);
+						
+						new Thread()
 						{
-							int ppb = Integer.parseInt(s);
-							
-							Area area = new Area();
-							BufferedImage bi = ImageIO.read(jfc.getSelectedFile());
-							for (int i = 0; i < bi.getWidth(); i += ppb)
-								for (int j = 0; j < bi.getHeight(); j += ppb)
-									if (new Color(bi.getRGB(i, j)).equals(Color.white)) area.add(new Area(new Rectangle(i, j, ppb, ppb)));
-							
-							ByteArrayOutputStream baos = new ByteArrayOutputStream();
-							ObjectOutputStream oos = new ObjectOutputStream(baos);
-							oos.writeObject(AffineTransform.getTranslateInstance(0, 0).createTransformedShape(area));
-							Compressor.compressFile(new File(jfc.getSelectedFile().getPath().replace("-2.png", ".bump")), baos.toByteArray());
-							
-							JOptionPane.showMessageDialog(Editor.this, "Unwandlung abgeschlossen.", "Fertig", JOptionPane.INFORMATION_MESSAGE);
-							
-						}
-						catch (Exception e2)
-						{
-							JOptionPane.showMessageDialog(Editor.this, s + " ist keine Zahl!", "Fehler!", JOptionPane.ERROR_MESSAGE);
-						}
+							@Override
+							public void run()
+							{
+								setPriority(MAX_PRIORITY);
+								
+								try
+								{
+									int ppb = Integer.parseInt(s);
+									
+									Area area = new Area();
+									BufferedImage bi = ImageIO.read(jfc.getSelectedFile());
+									int index = 0;
+									for (int i = 0; i < bi.getWidth(); i += ppb)
+									{
+										for (int j = 0; j < bi.getHeight(); j += ppb)
+										{
+											if (new Color(bi.getRGB(i, j)).equals(Color.white)) area.add(new Area(new Rectangle(i, j, ppb, ppb)));
+											index++;
+											jsb.setString(index + " / " + (bi.getWidth() * bi.getHeight() / ppb));
+											jsb.setValue(Math.round(index / (float) (bi.getWidth() * bi.getHeight() / ppb) * 100));
+										}
+									}
+									
+									ByteArrayOutputStream baos = new ByteArrayOutputStream();
+									ObjectOutputStream oos = new ObjectOutputStream(baos);
+									oos.writeObject(AffineTransform.getTranslateInstance(0, 0).createTransformedShape(area));
+									Compressor.compressFile(new File(jfc.getSelectedFile().getPath().replace("-2.png", ".bump")), baos.toByteArray());
+									
+									d.dispose();
+									JOptionPane.showMessageDialog(Editor.this, "Unwandlung abgeschlossen.", "Fertig", JOptionPane.INFORMATION_MESSAGE);
+								}
+								catch (Exception e2)
+								{
+									d.dispose();
+									JOptionPane.showMessageDialog(Editor.this, s + " ist keine Zahl!", "Fehler!", JOptionPane.ERROR_MESSAGE);
+									return;
+								}
+							}
+						}.start();
 					}
 				}
 			}));
@@ -631,6 +668,8 @@ public class Editor extends JFrame
 		wrap.setPreferredSize(new Dimension(900, 680));
 		p.add(wrap);
 		
+		addKeyListener(this);
+		
 		return p;
 	}
 	
@@ -674,6 +713,40 @@ public class Editor extends JFrame
 		return new File(f, f.getName() + "-0.png").exists() && (new File(f, f.getName() + "-2.png").exists() || new File(f, f.getName() + ".bump").exists());
 	}
 	
+	@Override
+	public void keyTyped(KeyEvent e)
+	{}
+	
+	@Override
+	public void keyPressed(KeyEvent e)
+	{
+		if (map != null)
+		{
+			if (e.getKeyCode() == KeyEvent.VK_F5)
+			{
+				try
+				{
+					File p = Editor.currentEditor.map.getParentFile();
+					mapPanel.ground = ImageIO.read(new File(p, p.getName() + "-0.png"));
+					if (new File(p, p.getName() + "-1.png").exists()) mapPanel.above = ImageIO.read(new File(p, p.getName() + "-1.png"));
+					else mapPanel.above = null;
+					
+					repaint();
+				}
+				catch (IOException e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+			
+			if (e.getKeyCode() == KeyEvent.VK_C && e.isControlDown()) Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection("// " + mapPanel.mouse.x + " (" + (int) Math.floor(mapPanel.mouse.x / 32f) + ") x " + mapPanel.mouse.y + " (" + (int) Math.floor(mapPanel.mouse.y / 32f) + ")"), null);
+		}
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent e)
+	{}
+	
 	public static void main(String[] args)
 	{
 		try
@@ -689,4 +762,5 @@ public class Editor extends JFrame
 		
 		new Editor();
 	}
+	
 }
