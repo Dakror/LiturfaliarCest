@@ -10,6 +10,8 @@ import org.json.JSONObject;
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.settings.Attributes;
+import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
 import de.dakror.liturfaliarcest.util.Assistant;
 import de.dakror.liturfaliarcest.util.JSInvoker;
 
@@ -18,8 +20,8 @@ import de.dakror.liturfaliarcest.util.JSInvoker;
  */
 public abstract class Entity extends Component
 {
+	protected Attributes attr;
 	protected Vector pos, target, spawn;
-	protected float speed;
 	
 	public int uid;
 	
@@ -34,18 +36,19 @@ public abstract class Entity extends Component
 		super(x, y, width, height);
 		pos = new Vector(x, y);
 		spawn = new Vector(x, y);
-		speed = 0;
 		alpha = 1;
+		
+		attr = new Attributes();
 		
 		eventFunctions = new JSONObject();
 	}
 	
 	public void move()
 	{
-		if (target == null || pos.equals(target) || speed == 0) return;
+		if (target == null || pos.equals(target) || attr.get(Attribute.SPEED) == 0) return;
 		
 		Vector distance = target.clone().sub(pos);
-		if (distance.getLength() >= speed) distance.setLength(speed);
+		if (distance.getLength() >= attr.get(Attribute.SPEED)) distance.setLength(attr.get(Attribute.SPEED));
 		
 		pos.add(distance);
 		checkForOnEnterEvent();
@@ -165,6 +168,11 @@ public abstract class Entity extends Component
 	public void setTarget(JSONArray v) throws JSONException
 	{
 		target = new Vector((float) v.getDouble(0), (float) v.getDouble(1));
+	}
+	
+	public Attributes getAttributes()
+	{
+		return attr;
 	}
 	
 	// -- events -- //

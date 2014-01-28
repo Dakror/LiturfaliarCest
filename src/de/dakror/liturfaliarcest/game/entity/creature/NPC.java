@@ -12,6 +12,7 @@ import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
 import de.dakror.liturfaliarcest.game.entity.EntityType;
 import de.dakror.liturfaliarcest.game.world.World;
+import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
 
 /**
  * @author Dakror
@@ -36,7 +37,7 @@ public class NPC extends Creature
 		bumpX = Math.round(16 * width / 64f);
 		bumpWidth = width / 2;
 		bumpHeight = Math.round(24 * height / 96f);
-		speed = (float) (meta.has("speed") ? meta.getDouble("speed") : 2f);
+		attr.set(Attribute.SPEED, (float) (meta.has("speed") ? meta.getDouble("speed") : 2f));
 		roam = meta.has("roam") && meta.getBoolean("roam");
 		roamTimeout = (int) (Math.random() * 60) + 60;
 	}

@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
 
 /**
  * @author Dakror
@@ -15,17 +16,22 @@ public class Player extends Creature
 	 * a, w, d, s
 	 */
 	boolean[] dirs = { false, false, false, false };
+	boolean sprint = true;
 	
 	public Player(int x, int y)
 	{
 		super(x, y, 64, 96);
 		tex = "char/chars/001-Fighter01.png";
-		speed = 2f;
+		attr.set(Attribute.SPEED, 2);
 		
 		bumpY = 70;
 		bumpX = 16;
 		bumpWidth = width / 2;
 		bumpHeight = 24;
+		sprint = false;
+		
+		attr.setWithMax(Attribute.HEALTH, 10);
+		attr.setWithMax(Attribute.STAMINA, 10);
 		
 		uid = 0;
 	}
@@ -33,9 +39,29 @@ public class Player extends Creature
 	@Override
 	protected void tick(int tick)
 	{
+		float spe = 0.025f;
+		if (sprint && attr.get(Attribute.STAMINA) > 0 && (dirs[0] || dirs[1] || dirs[2] || dirs[3]))
+		{
+			attr.set(Attribute.SPEED, 5);
+			attr.add(Attribute.STAMINA, -spe);
+		}
+		else
+		{
+			if (!dirs[0] && !dirs[1] && !dirs[2] && !dirs[3]) sprint = false;
+			
+			attr.set(Attribute.SPEED, 2);
+			if (attr.get(Attribute.STAMINA) < attr.get(Attribute.STAMINA_MAX))
+			{
+				float dif = attr.get(Attribute.STAMINA_MAX) - attr.get(Attribute.STAMINA);
+				if (!sprint) attr.add(Attribute.STAMINA, dif > 2 * spe ? 2 * spe : dif);
+			}
+		}
+		
 		if (dirs[0] || dirs[1] || dirs[2] || dirs[3])
 		{
 			Vector lastPos = pos.clone();
+			
+			float speed = attr.get(Attribute.SPEED);
 			
 			if (dirs[0] && isFree(-speed, 0)) pos.x -= speed;
 			if (dirs[2] && isFree(speed, 0)) pos.x += speed;
@@ -52,7 +78,7 @@ public class Player extends Creature
 			
 			checkForOnEnterEvent();
 			
-			if (tick % 15 == 0) frame = (frame + 1) % 4;
+			if (tick % (30 / attr.get(Attribute.SPEED)) == 0) frame = (frame + 1) % 4;
 		}
 		else frame = 0;
 		
@@ -94,6 +120,7 @@ public class Player extends Creature
 		if (e.getKeyCode() == KeyEvent.VK_W) dirs[1] = true;
 		if (e.getKeyCode() == KeyEvent.VK_D) dirs[2] = true;
 		if (e.getKeyCode() == KeyEvent.VK_S) dirs[3] = true;
+		if (e.getKeyCode() == KeyEvent.VK_SHIFT) sprint = true;
 	}
 	
 	@Override
@@ -103,5 +130,6 @@ public class Player extends Creature
 		if (e.getKeyCode() == KeyEvent.VK_W) dirs[1] = false;
 		if (e.getKeyCode() == KeyEvent.VK_D) dirs[2] = false;
 		if (e.getKeyCode() == KeyEvent.VK_S) dirs[3] = false;
+		if (e.getKeyCode() == KeyEvent.VK_SHIFT) sprint = false;
 	}
 }

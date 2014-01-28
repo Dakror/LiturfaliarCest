@@ -7,6 +7,7 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
+import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
 
 /**
  * @author Dakror
@@ -43,7 +44,7 @@ public abstract class Creature extends Entity
 			return;
 		}
 		
-		if (target != null && (tick - startTick) % 15 == 0) frame = (frame + 1) % 4;
+		if (target != null && (tick - startTick) % (30 / attr.get(Attribute.SPEED)) == 0) frame = (frame + 1) % 4;
 		
 		if (target != null)
 		{

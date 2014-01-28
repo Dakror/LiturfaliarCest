@@ -9,6 +9,7 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.entity.EntityType;
 import de.dakror.liturfaliarcest.game.entity.creature.Player;
 import de.dakror.liturfaliarcest.game.world.World;
+import de.dakror.liturfaliarcest.layer.HUDLayer;
 import de.dakror.liturfaliarcest.util.SavegameHandler;
 
 public class Game extends GameFrame
@@ -38,6 +39,8 @@ public class Game extends GameFrame
 		player.uid = 0;
 		world.addEntity(player);
 		addLayer(world);
+		
+		addLayer(new HUDLayer());
 	}
 	
 	public void setWorld(String map)
