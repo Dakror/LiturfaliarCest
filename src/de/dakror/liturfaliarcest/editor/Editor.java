@@ -8,11 +8,7 @@ import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -22,7 +18,6 @@ import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,10 +69,9 @@ import de.dakror.liturfaliarcest.settings.CFG;
 /**
  * @author Dakror
  */
-public class Editor extends JFrame implements KeyListener
+public class Editor extends JFrame
 {
 	private static final long serialVersionUID = 1L;
-	
 	public static Editor currentEditor;
 	
 	JSONArray entities;
@@ -140,7 +134,6 @@ public class Editor extends JFrame implements KeyListener
 			@Override
 			public void stateChanged(ChangeEvent e)
 			{
-				removeKeyListener(Editor.this);
 				if (cp.getSelectedIndex() == 0)
 				{
 					cp.setComponentAt(1, initEntityEditor());
@@ -668,8 +661,6 @@ public class Editor extends JFrame implements KeyListener
 		wrap.setPreferredSize(new Dimension(900, 680));
 		p.add(wrap);
 		
-		addKeyListener(this);
-		
 		return p;
 	}
 	
@@ -712,40 +703,6 @@ public class Editor extends JFrame implements KeyListener
 		if (!f.isDirectory()) return false;
 		return new File(f, f.getName() + "-0.png").exists() && (new File(f, f.getName() + "-2.png").exists() || new File(f, f.getName() + ".bump").exists());
 	}
-	
-	@Override
-	public void keyTyped(KeyEvent e)
-	{}
-	
-	@Override
-	public void keyPressed(KeyEvent e)
-	{
-		if (map != null)
-		{
-			if (e.getKeyCode() == KeyEvent.VK_F5)
-			{
-				try
-				{
-					File p = Editor.currentEditor.map.getParentFile();
-					mapPanel.ground = ImageIO.read(new File(p, p.getName() + "-0.png"));
-					if (new File(p, p.getName() + "-1.png").exists()) mapPanel.above = ImageIO.read(new File(p, p.getName() + "-1.png"));
-					else mapPanel.above = null;
-					
-					repaint();
-				}
-				catch (IOException e1)
-				{
-					e1.printStackTrace();
-				}
-			}
-			
-			if (e.getKeyCode() == KeyEvent.VK_C && e.isControlDown()) Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection("// " + mapPanel.mouse.x + " (" + (int) Math.floor(mapPanel.mouse.x / 32f) + ") x " + mapPanel.mouse.y + " (" + (int) Math.floor(mapPanel.mouse.y / 32f) + ")"), null);
-		}
-	}
-	
-	@Override
-	public void keyReleased(KeyEvent e)
-	{}
 	
 	public static void main(String[] args)
 	{

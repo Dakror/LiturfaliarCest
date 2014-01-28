@@ -7,6 +7,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -21,13 +24,16 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 
 import org.fife.rsta.ac.LanguageSupportFactory;
@@ -60,6 +66,58 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	{
 		addMouseListener(this);
 		addMouseMotionListener(this);
+		
+		KeyStroke keyStroke = KeyStroke.getKeyStroke("F5");
+		getActionMap().put("refresh", new AbstractAction("refresh")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (Editor.currentEditor.map != null)
+				{
+					try
+					{
+						File p = Editor.currentEditor.map.getParentFile();
+						ground = ImageIO.read(new File(p, p.getName() + "-0.png"));
+						if (new File(p, p.getName() + "-1.png").exists()) above = ImageIO.read(new File(p, p.getName() + "-1.png"));
+						else above = null;
+						
+						repaint();
+					}
+					catch (IOException e1)
+					{
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "refresh");
+		
+		KeyStroke keyStroke1 = KeyStroke.getKeyStroke("control C");
+		getActionMap().put("copy", new AbstractAction("copy")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (Editor.currentEditor.map != null)
+				{
+					try
+					{
+						Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection("// " + mouse.x + " (" + (int) Math.floor(mouse.x / 32f) + ") x " + mouse.y + " (" + (int) Math.floor(mouse.y / 32f) + ")"), null);
+					}
+					catch (Exception e1)
+					{
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke1, "copy");
+		
 		setLayout(null);
 	}
 	
