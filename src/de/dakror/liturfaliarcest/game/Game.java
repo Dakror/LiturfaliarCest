@@ -1,5 +1,6 @@
 package de.dakror.liturfaliarcest.game;
 
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
@@ -32,6 +33,14 @@ public class Game extends GameFrame
 	public void initGame()
 	{
 		w.setIconImage(Game.getImage("system/logo.png"));
+		try
+		{
+			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/morpheus.ttf")));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 		EntityType.init();
 		Item.init();
 		Game.getImage("system/icons.png"); // for loading purpose

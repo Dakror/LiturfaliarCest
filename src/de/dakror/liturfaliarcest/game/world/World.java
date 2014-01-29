@@ -139,9 +139,9 @@ public class World extends Layer
 			
 			drawn++;
 			c.draw(g);
-			if (c.state == 2) hovered = c;
+			if (c.state != 0) hovered = c;
 		}
-		if (hovered != null) hovered.drawTooltip(GameFrame.currentFrame.mouse.x, GameFrame.currentFrame.mouse.y, g);
+		if (hovered != null) hovered.drawTooltip(GameFrame.currentFrame.mouse.x - x, GameFrame.currentFrame.mouse.y - y, g);
 		
 		g.setTransform(old);
 		

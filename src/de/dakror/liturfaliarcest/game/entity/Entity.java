@@ -172,6 +172,12 @@ public abstract class Entity extends Component
 		target = new Vector((float) v.getDouble(0), (float) v.getDouble(1));
 	}
 	
+	@Override
+	public boolean contains(int x, int y)
+	{
+		return super.contains(x - Game.world.x, y - Game.world.y);
+	}
+	
 	public Attributes getAttributes()
 	{
 		return attr;

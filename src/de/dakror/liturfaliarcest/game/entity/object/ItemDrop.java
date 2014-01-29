@@ -2,6 +2,7 @@ package de.dakror.liturfaliarcest.game.entity.object;
 
 import java.awt.Graphics2D;
 
+import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
 import de.dakror.liturfaliarcest.game.item.Item;
@@ -28,7 +29,13 @@ public class ItemDrop extends Entity
 	}
 	
 	@Override
+	public void drawTooltip(int x, int y, Graphics2D g)
+	{
+		Helper.drawShadow(x, y, g.getFontMetrics(g.getFont().deriveFont(30f)).stringWidth(item.getName()) + 30, 64, g);
+		Helper.drawString(item.getName(), x + 15, y + 40, g, 30);
+	}
+	
+	@Override
 	protected void tick(int tick)
 	{}
-	
 }
