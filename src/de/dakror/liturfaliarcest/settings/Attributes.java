@@ -20,10 +20,14 @@ public class Attributes
 	{
 		HEALTH(0),
 		HEALTH_MAX(0),
+		DAMAGE(0),
 		STAMINA(0),
+		STAMINA_COST(0),
 		STAMINA_MAX(0),
 		MANA(0),
+		MANA_COST(0),
 		MANA_MAX(0),
+		ATTACK_SPEED(0),
 		SPEED(0),
 		
 		;

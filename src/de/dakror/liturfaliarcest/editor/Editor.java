@@ -3,6 +3,7 @@ package de.dakror.liturfaliarcest.editor;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
@@ -18,6 +19,7 @@ import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -567,6 +569,25 @@ public class Editor extends JFrame
 				public void actionPerformed(ActionEvent e)
 				{
 					IconSelecter.create();
+				}
+			}));
+			tools.add(new JMenuItem(new AbstractAction("Itemliste einsehen")
+			{
+				private static final long serialVersionUID = 1L;
+				
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					try
+					{
+						File f = File.createTempFile("items", ".csv");
+						Helper.copyInputStream(getClass().getResourceAsStream("/items.csv"), new FileOutputStream(f));
+						Desktop.getDesktop().open(f);
+					}
+					catch (Exception e1)
+					{
+						e1.printStackTrace();
+					}
 				}
 			}));
 			

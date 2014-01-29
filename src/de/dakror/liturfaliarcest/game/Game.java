@@ -8,6 +8,7 @@ import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.entity.EntityType;
 import de.dakror.liturfaliarcest.game.entity.creature.Player;
+import de.dakror.liturfaliarcest.game.item.Item;
 import de.dakror.liturfaliarcest.game.world.World;
 import de.dakror.liturfaliarcest.layer.HUDLayer;
 import de.dakror.liturfaliarcest.util.SavegameHandler;
@@ -32,6 +33,8 @@ public class Game extends GameFrame
 	{
 		w.setIconImage(Game.getImage("system/logo.png"));
 		EntityType.init();
+		Item.init();
+		Game.getImage("system/icons.png"); // for loading purpose
 		
 		worlds = new HashMap<>();
 		world = new World("Zu Hause");

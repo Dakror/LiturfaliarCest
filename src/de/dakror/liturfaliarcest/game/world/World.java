@@ -28,7 +28,9 @@ import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
 import de.dakror.liturfaliarcest.game.entity.EntityType;
 import de.dakror.liturfaliarcest.game.entity.creature.NPC;
+import de.dakror.liturfaliarcest.game.entity.object.ItemDrop;
 import de.dakror.liturfaliarcest.game.entity.object.Object;
+import de.dakror.liturfaliarcest.game.item.Item;
 
 public class World extends Layer
 {
@@ -90,10 +92,15 @@ public class World extends Layer
 					JSONObject o = e.getJSONObject(i);
 					Entity entity = null;
 					
-					if (o.has("m") && o.getJSONObject("m").getBoolean("npc")) entity = new NPC(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")), o.getJSONObject("m"));
+					if (o.has("m"))
+					{
+						if (o.getJSONObject("m").has("npc") && o.getJSONObject("m").getBoolean("npc")) entity = new NPC(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")), o.getJSONObject("m"));
+						else if (o.getJSONObject("m").has("itemID")) entity = new ItemDrop(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), Item.items.get(o.getJSONObject("m").getInt("itemID")));
+					}
 					else entity = new Object(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")));
 					
 					if (o.has("e")) entity.setEventFunctions(o.getJSONObject("e"));
+					
 					entity.uid = o.getInt("uid");
 					
 					addEntity(entity);
@@ -151,7 +158,13 @@ public class World extends Layer
 	@Override
 	public void update(int tick)
 	{
-		updateComponents(tick);
+		if (!enabled) return;
+		
+		for (Component c : components)
+		{
+			c.update(tick);
+			if (((Entity) c).isDead()) components.remove(c);
+		}
 		
 		ArrayList<Component> c = new ArrayList<>(components);
 		Collections.sort(c, new Comparator<Component>()

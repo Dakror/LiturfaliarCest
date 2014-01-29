@@ -26,6 +26,7 @@ public abstract class Entity extends Component
 	public int uid;
 	
 	public float alpha;
+	protected boolean dead;
 	
 	public int bumpX, bumpY, bumpWidth, bumpHeight;
 	
@@ -41,6 +42,7 @@ public abstract class Entity extends Component
 		attr = new Attributes();
 		
 		eventFunctions = new JSONObject();
+		dead = false;
 	}
 	
 	public void move()
@@ -175,6 +177,16 @@ public abstract class Entity extends Component
 		return attr;
 	}
 	
+	public void kill()
+	{
+		dead = true;
+	}
+	
+	public boolean isDead()
+	{
+		return dead;
+	}
+	
 	// -- events -- //
 	protected void onReachTarget()
 	{
@@ -182,7 +194,7 @@ public abstract class Entity extends Component
 		{
 			try
 			{
-				JSInvoker.invoke(eventFunctions.getString("onReachTarget"));
+				JSInvoker.invoke(eventFunctions.getString("onReachTarget"), this);
 			}
 			catch (JSONException e)
 			{
@@ -197,7 +209,7 @@ public abstract class Entity extends Component
 		{
 			try
 			{
-				JSInvoker.invoke(entity.eventFunctions.getString("onEnter"), this);
+				JSInvoker.invoke(entity.eventFunctions.getString("onEnter"), entity, this);
 			}
 			catch (JSONException e)
 			{
