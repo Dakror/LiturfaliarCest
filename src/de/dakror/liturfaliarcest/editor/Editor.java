@@ -47,6 +47,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
+import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
@@ -94,7 +95,7 @@ public class Editor extends JFrame
 		setSize(1280, 720);
 		setLocationRelativeTo(null);
 		setResizable(false);
-		setIconImage(Game.getImage("system/logo.png"));
+		setIconImage(Game.getImage("system/editor.png"));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		devMode = new File(System.getProperty("user.dir"), "src").exists();
@@ -558,6 +559,16 @@ public class Editor extends JFrame
 					}
 				}
 			}));
+			tools.add(new JMenuItem(new AbstractAction("Icon Selecter")
+			{
+				private static final long serialVersionUID = 1L;
+				
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					IconSelecter.create();
+				}
+			}));
 			
 			getJMenuBar().add(tools);
 		}
@@ -709,6 +720,7 @@ public class Editor extends JFrame
 		try
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			ToolTipManager.sharedInstance().setInitialDelay(0);
 		}
 		catch (Exception e)
 		{

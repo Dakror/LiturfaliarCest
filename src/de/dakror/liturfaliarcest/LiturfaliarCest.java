@@ -1,5 +1,6 @@
 package de.dakror.liturfaliarcest;
 
+import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
 import de.dakror.liturfaliarcest.game.Game;
@@ -12,6 +13,7 @@ public class LiturfaliarCest
 		try
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			ToolTipManager.sharedInstance().setInitialDelay(0);
 		}
 		catch (Exception e)
 		{

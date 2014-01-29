@@ -47,13 +47,13 @@ public class Player extends Creature
 		}
 		else
 		{
-			if (!dirs[0] && !dirs[1] && !dirs[2] && !dirs[3]) sprint = false;
-			
 			attr.set(Attribute.SPEED, 2);
 			if (attr.get(Attribute.STAMINA) < attr.get(Attribute.STAMINA_MAX))
 			{
+				if ((dirs[0] || dirs[1] || dirs[2] || dirs[3]) && sprint) sprint = false;
+				
 				float dif = attr.get(Attribute.STAMINA_MAX) - attr.get(Attribute.STAMINA);
-				if (!sprint) attr.add(Attribute.STAMINA, dif > 2 * spe ? 2 * spe : dif);
+				attr.add(Attribute.STAMINA, dif > 2 * spe ? 2 * spe : dif);
 			}
 		}
 		
