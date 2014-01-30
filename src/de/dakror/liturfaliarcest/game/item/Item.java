@@ -45,6 +45,9 @@ public class Item
 				case 3:
 					item.ty = Integer.parseInt(cell);
 					break;
+				case 4:
+					item.stack = cell.length() == 0 ? 1 : Integer.parseInt(cell);
+					break;
 			}
 			
 			if (cell.length() == 0) continue;
@@ -56,9 +59,10 @@ public class Item
 		items.put(item.id, item);
 	}
 	
-	String name;
-	Attributes attr;
-	int id;
+	private String name;
+	private Attributes attr;
+	private int id;
+	private int stack;
 	public int tx, ty;
 	
 	public Item()
@@ -74,6 +78,11 @@ public class Item
 	public String getName()
 	{
 		return name;
+	}
+	
+	public int getStack()
+	{
+		return stack;
 	}
 	
 	public Attributes getAttributes()
