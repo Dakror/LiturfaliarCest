@@ -508,7 +508,7 @@ public class Editor extends JFrame
 											if (new Color(bi.getRGB(i, j)).equals(Color.white)) area.add(new Area(new Rectangle(i, j, ppb, ppb)));
 											index++;
 											jsb.setString(index + " / " + (bi.getWidth() * bi.getHeight() / ppb));
-											jsb.setValue(Math.round(index / (float) (bi.getWidth() * bi.getHeight() / ppb) * 100));
+											jsb.setValue(Math.round(index / (float) (bi.getWidth() / ppb * bi.getHeight() / ppb) * 100));
 										}
 									}
 									

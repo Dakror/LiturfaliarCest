@@ -126,6 +126,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		try
 		{
 			removeAll();
+			revalidate();
 			
 			File p = Editor.currentEditor.map.getParentFile();
 			ground = ImageIO.read(new File(p, p.getName() + "-0.png"));
