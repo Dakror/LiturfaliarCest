@@ -16,6 +16,11 @@ public class ItemStack
 		this.amount = amount;
 	}
 	
+	public ItemStack(Item item)
+	{
+		this(item, 1);
+	}
+	
 	public Item getItem()
 	{
 		return item;
@@ -31,9 +36,21 @@ public class ItemStack
 		this.amount += amount;
 	}
 	
+	public void setAmount(int amount)
+	{
+		this.amount = amount;
+	}
+	
 	public boolean isFull()
 	{
 		return amount == item.getStack();
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj instanceof ItemStack) return item.equals(((ItemStack) obj).item) && amount == ((ItemStack) obj).amount;
+		return false;
 	}
 	
 	public JSONArray getData()

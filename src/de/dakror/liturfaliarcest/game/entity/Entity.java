@@ -12,6 +12,7 @@ import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.settings.Attributes;
 import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
+import de.dakror.liturfaliarcest.settings.Inventory;
 import de.dakror.liturfaliarcest.util.Assistant;
 import de.dakror.liturfaliarcest.util.JSInvoker;
 
@@ -21,6 +22,7 @@ import de.dakror.liturfaliarcest.util.JSInvoker;
 public abstract class Entity extends Component
 {
 	protected Attributes attr;
+	protected Inventory inv;
 	protected Vector pos, target, spawn;
 	
 	public int uid;
@@ -181,6 +183,11 @@ public abstract class Entity extends Component
 	public Attributes getAttributes()
 	{
 		return attr;
+	}
+	
+	public Inventory getInventory()
+	{
+		return inv;
 	}
 	
 	public void kill()

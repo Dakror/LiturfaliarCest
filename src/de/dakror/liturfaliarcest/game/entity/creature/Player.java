@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
+import de.dakror.liturfaliarcest.settings.Inventory;
 
 /**
  * @author Dakror
@@ -23,6 +24,7 @@ public class Player extends Creature
 		super(x, y, 64, 96);
 		tex = "char/chars/001-Fighter01.png";
 		attr.set(Attribute.SPEED, 2);
+		inv = new Inventory(8, 5);
 		
 		bumpY = 70;
 		bumpX = 16;

@@ -47,6 +47,46 @@ public class Inventory
 		return slots[y][x];
 	}
 	
+	public int getWidth()
+	{
+		return slots[0].length;
+	}
+	
+	public int getHeight()
+	{
+		return slots.length;
+	}
+	
+	public void put(ItemStack stack)
+	{
+		for (int i = 0; i < slots.length; i++) // y
+		{
+			for (int j = 0; j < slots[0].length; j++) // x
+			{
+				if (slots[i][j] != null && slots[i][j].getItem().equals(stack.getItem()) && !slots[i][j].isFull())
+				{
+					int prev = slots[i][j].getAmount();
+					slots[i][j].setAmount(Math.min(slots[i][j].getAmount() + stack.getAmount(), stack.getItem().getStack()));
+					stack.addAmount(prev - slots[i][j].getAmount());
+					
+					if (stack.getAmount() == 0) return;
+				}
+			}
+		}
+		
+		for (int i = 0; i < slots.length; i++)
+		{
+			for (int j = 0; j < slots[0].length; j++)
+			{
+				if (slots[i][j] == null)
+				{
+					slots[i][j] = stack;
+					break;
+				}
+			}
+		}
+	}
+	
 	public JSONArray getData()
 	{
 		JSONArray a = new JSONArray();

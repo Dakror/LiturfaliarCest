@@ -44,15 +44,6 @@ public class Game extends GameFrame
 		EntityType.init();
 		Item.init();
 		Game.getImage("system/icons.png"); // for loading purpose
-		
-		worlds = new HashMap<>();
-		world = new World("Zu Hause");
-		player = new Player(90, 400);
-		player.uid = 0;
-		world.addEntity(player);
-		addLayer(world);
-		
-		addLayer(new HUDLayer());
 	}
 	
 	public void setWorld(String map)
@@ -68,6 +59,18 @@ public class Game extends GameFrame
 	@Override
 	public void draw(Graphics2D g)
 	{
+		if (layers.size() == 0)
+		{
+			worlds = new HashMap<>();
+			world = new World("Zu Hause");
+			player = new Player(90, 400);
+			player.uid = 0;
+			world.addEntity(player);
+			addLayer(world);
+			
+			addLayer(new HUDLayer());
+		}
+		
 		drawLayers(g);
 		
 		Helper.drawString("FPS: " + getFPS(), 10, 26, g, 18);
