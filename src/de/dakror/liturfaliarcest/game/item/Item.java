@@ -1,7 +1,11 @@
 package de.dakror.liturfaliarcest.game.item;
 
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import de.dakror.gamesetup.util.CSVReader;
 import de.dakror.gamesetup.util.Helper;
@@ -102,6 +106,14 @@ public class Item
 		Helper.setRenderingHints(g, false);
 		Helper.drawImage(Game.getImage("system/icons.png"), x, y, size, size, tx * 24, ty * 24, 24, 24, g);
 		Helper.setRenderingHints(g, true);
+	}
+	
+	public Icon getIcon(int size)
+	{
+		BufferedImage bi = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+		draw(0, 0, size, (Graphics2D) bi.getGraphics());
+		
+		return new ImageIcon(bi);
 	}
 	
 	@Override

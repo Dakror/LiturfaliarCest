@@ -6,10 +6,10 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.item.Item;
 
 public class Entity extends JLabel
 {
@@ -47,7 +47,18 @@ public class Entity extends JLabel
 					setBounds(getX(), getY(), bi.getWidth() / 4, bi.getHeight() / 4);
 				}
 			}
-			catch (JSONException e)
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		else if (m.has("itemID"))
+		{
+			try
+			{
+				setIcon(Item.items.get(m.getInt("itemID")).getIcon(32));
+			}
+			catch (Exception e)
 			{
 				e.printStackTrace();
 			}

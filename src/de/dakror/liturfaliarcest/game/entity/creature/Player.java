@@ -5,6 +5,8 @@ import java.awt.event.MouseEvent;
 
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.entity.Entity;
+import de.dakror.liturfaliarcest.game.entity.object.ItemDrop;
 import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
 import de.dakror.liturfaliarcest.settings.Inventory;
 
@@ -133,5 +135,16 @@ public class Player extends Creature
 		if (e.getKeyCode() == KeyEvent.VK_D) dirs[2] = false;
 		if (e.getKeyCode() == KeyEvent.VK_S) dirs[3] = false;
 		if (e.getKeyCode() == KeyEvent.VK_SHIFT) sprint = false;
+	}
+	
+	@Override
+	protected void onEnter(Entity entity)
+	{
+		super.onEnter(entity);
+		if (entity instanceof ItemDrop)
+		{
+			inv.put(((ItemDrop) entity).getItemStack());
+			entity.kill();
+		}
 	}
 }

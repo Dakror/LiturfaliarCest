@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
-import de.dakror.liturfaliarcest.game.entity.creature.Player;
 import de.dakror.liturfaliarcest.game.item.Item;
 import de.dakror.liturfaliarcest.game.item.ItemStack;
 import de.dakror.liturfaliarcest.game.world.World;
@@ -50,16 +49,4 @@ public class ItemDrop extends Entity
 	@Override
 	protected void tick(int tick)
 	{}
-	
-	@Override
-	protected void onEnter(Entity entity)
-	{
-		super.onEnter(entity);
-		
-		if (entity instanceof Player)
-		{
-			entity.getInventory().put(getItemStack());
-			kill();
-		}
-	}
 }
