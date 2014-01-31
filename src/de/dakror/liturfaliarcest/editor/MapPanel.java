@@ -15,8 +15,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -28,26 +26,16 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 
-import org.fife.rsta.ac.LanguageSupportFactory;
-import org.fife.rsta.ac.java.JarManager;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-import org.fife.ui.rtextarea.RTextScrollPane;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
-import de.dakror.liturfaliarcest.util.RhinoJavaScriptLanguageSupport;
 
 /**
  * @author Dakror
@@ -338,86 +326,12 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	{
 		try
 		{
-			final JDialog d = new JDialog(Editor.currentEditor, "Entity Events bearbeiten", true);
-			d.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-			d.setSize(400, 350);
-			d.setLocation((Editor.currentEditor.getX() + Editor.currentEditor.getWidth() - 400) / 2, (Editor.currentEditor.getY() + Editor.currentEditor.getHeight() - 350) / 2);
-			
-			final RSyntaxTextArea a = new RSyntaxTextArea("e: " + l.e.toString(2).replaceAll("([^\\\\])(\")", "$1").replace("\\\"", "\"").replace(";", ";\n").replace("{", "{\n").replace("}", "}\n") + ",/*END*/\nm: " + fmt(l.m));
-			LanguageSupportFactory lsf = LanguageSupportFactory.get();
-			lsf.register(a);
-			a.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
-			configureLanguageSupport(a);
-			
-			a.setCodeFoldingEnabled(true);
-			a.setAutoIndentEnabled(true);
-			a.setTabsEmulated(true);
-			a.setAnimateBracketMatching(false);
-			a.setHighlightCurrentLine(false);
-			a.setTabSize(2);
-			a.setClearWhitespaceLinesEnabled(true);
-			
-			RTextScrollPane tsp = new RTextScrollPane(a);
-			tsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-			d.setContentPane(tsp);
-			
-			d.addWindowListener(new WindowAdapter()
-			{
-				@Override
-				public void windowClosing(WindowEvent e)
-				{
-					try
-					{
-						String t = a.getText();
-						
-						// -- events -- //
-						String evts = t.substring(t.indexOf("{"), t.indexOf(",/*END*/"));
-						evts = evts.replace("\"", "\\\"").replace("function", "\"function").replace("}", "}\"").replace("\n", "").replace("  ", " ");
-						evts = evts.substring(0, evts.length() - 1);
-						
-						JSONObject arr = new JSONObject(evts);
-						if (JSONObject.getNames(arr) != null)
-						{
-							for (String k : JSONObject.getNames(arr))
-								if (!arr.getString(k).startsWith("function")) throw new JSONException("No valid function declaration at event '" + k + "'");
-						}
-						l.e = arr;
-						
-						// -- meta -- //
-						String meta = t.substring(t.indexOf("m: ") + "m: ".length());
-						JSONObject o = new JSONObject(meta);
-						l.setM(o);
-					}
-					catch (Exception e1)
-					{
-						int r = JOptionPane.showConfirmDialog(d, "Fehlerhafte Eingabe:\n" + e1.getMessage() + "\nTrotzdem schließen?", "Fehler!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
-						if (r != JOptionPane.OK_OPTION) return;
-					}
-					
-					d.dispose();
-				}
-			});
-			
-			d.setVisible(true);
+			new EntityEventEditor(l);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-	}
-	
-	private void configureLanguageSupport(RSyntaxTextArea textArea) throws IOException
-	{
-		RhinoJavaScriptLanguageSupport support1 = new RhinoJavaScriptLanguageSupport();
-		JarManager jarManager = support1.getJarManager();
-		jarManager.addCurrentJreClassFileSource();
-		support1.install(textArea);
-		support1.getParser(textArea).setEnabled(false);
-	}
-	
-	private String fmt(JSONObject m) throws JSONException
-	{
-		return m.toString(2).replaceAll("(\n)( {0,})(\")", "\n$2").replace("{\"", "{").replace("\":", ":").replace("{", "{\n").replace("}", "\n}\n").replace("\n\n", "\n");
 	}
 	
 	@Override

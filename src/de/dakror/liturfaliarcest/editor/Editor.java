@@ -119,6 +119,7 @@ public class Editor extends JFrame
 			e1.printStackTrace();
 		}
 		
+		initJMenuBar();
 		initComponents();
 		
 		setVisible(true);
@@ -127,10 +128,6 @@ public class Editor extends JFrame
 	public void initComponents()
 	{
 		final JTabbedPane cp = new JTabbedPane();
-		
-		JMenuBar jmb = new JMenuBar();
-		jmb.add(new JMenu(""));
-		setJMenuBar(jmb);
 		
 		if (devMode) cp.addTab("Entity Editor", initEntityEditor());
 		
@@ -149,14 +146,236 @@ public class Editor extends JFrame
 			}
 		});
 		
+		if (devMode) ((JMenu) getJMenuBar().getSubElements()[0]).setEnabled(false);
 		setContentPane(cp);
+	}
+	
+	private void initJMenuBar()
+	{
+		JMenuBar jmb = new JMenuBar();
+		setJMenuBar(jmb);
+		
+		JMenu file = new JMenu("Datei");
+		JMenuItem newFile = new JMenuItem(new AbstractAction("Neue Karte...")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
+				jfc.setMultiSelectionEnabled(false);
+				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				jfc.setFileFilter(new FileNameExtensionFilter("Verzeichis mit Karten-Dateien", "."));
+				jfc.setApproveButtonText("Erstellen");
+				jfc.setDialogTitle("Neue Karte");
+				
+				if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
+				{
+					File f = jfc.getSelectedFile();
+					if (!isValidMapFolder(f))
+					{
+						JOptionPane.showMessageDialog(jfc, "Dieses Verzeichnis enthält keine valide Liturfaliar Cest Karte!", "Fehler: Ungültiges Verzeichnis", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					
+					map = new File(f, f.getName() + ".ent");
+					if (map.exists())
+					{
+						JOptionPane.showMessageDialog(jfc, "Diese Karte existiert bereits!", "Fehler: Karte bereits vorhanden", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					
+					Helper.setFileContent(map, "[]");
+					openMap();
+				}
+			}
+		});
+		newFile.setAccelerator(KeyStroke.getKeyStroke("ctrl N"));
+		file.add(newFile);
+		
+		JMenuItem loadFile = new JMenuItem(new AbstractAction("Karte laden...")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
+				jfc.setMultiSelectionEnabled(false);
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				jfc.setFileFilter(new FileNameExtensionFilter("Liturfaliar Cest Entity Karte (*.ent)", "ent"));
+				jfc.setDialogTitle("Karte laden");
+				
+				if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
+				{
+					map = jfc.getSelectedFile();
+					
+					openMap();
+				}
+			}
+		});
+		loadFile.setAccelerator(KeyStroke.getKeyStroke("ctrl O"));
+		file.add(loadFile);
+		
+		JMenuItem saveFile = new JMenuItem(new AbstractAction("Karte speichern...")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (map != null) saveMap();
+			}
+		});
+		saveFile.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
+		file.add(saveFile);
+		
+		getJMenuBar().add(file);
+		
+		JMenu tools = new JMenu("Werkzeuge");
+		tools.add(new JMenuItem(new AbstractAction("Bumpmap Converter")
+		{
+			
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				final JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
+				jfc.setMultiSelectionEnabled(false);
+				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				jfc.setFileFilter(new FileNameExtensionFilter("Liturfaliar Cest Bumpmap (*.png)", "png"));
+				jfc.setDialogTitle("Bumpmap umwandeln");
+				
+				if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
+				{
+					final String s = JOptionPane.showInputDialog("Bitte gib die erwünschte Anzahl an PPB ein:", 4);
+					if (s == null) return;
+					
+					final JDialog d = new JDialog();
+					d.setSize(400, 22);
+					d.setLocationRelativeTo(Editor.this);
+					d.setUndecorated(true);
+					final JProgressBar jsb = new JProgressBar(JScrollBar.HORIZONTAL);
+					jsb.setStringPainted(true);
+					d.setContentPane(jsb);
+					d.setVisible(true);
+					
+					new Thread()
+					{
+						@Override
+						public void run()
+						{
+							setPriority(MAX_PRIORITY);
+							
+							try
+							{
+								int ppb = Integer.parseInt(s);
+								
+								Area area = new Area();
+								BufferedImage bi = ImageIO.read(jfc.getSelectedFile());
+								int index = 0;
+								for (int i = 0; i < bi.getWidth(); i += ppb)
+								{
+									for (int j = 0; j < bi.getHeight(); j += ppb)
+									{
+										if (new Color(bi.getRGB(i, j)).equals(Color.white)) area.add(new Area(new Rectangle(i, j, ppb, ppb)));
+										index++;
+										jsb.setString(index + " / " + (bi.getWidth() * bi.getHeight() / ppb));
+										jsb.setValue(Math.round(index / (float) (bi.getWidth() / ppb * bi.getHeight() / ppb) * 100));
+									}
+								}
+								
+								ByteArrayOutputStream baos = new ByteArrayOutputStream();
+								ObjectOutputStream oos = new ObjectOutputStream(baos);
+								oos.writeObject(AffineTransform.getTranslateInstance(0, 0).createTransformedShape(area));
+								Compressor.compressFile(new File(jfc.getSelectedFile().getPath().replace("-2.png", ".bump")), baos.toByteArray());
+								
+								d.dispose();
+								JOptionPane.showMessageDialog(Editor.this, "Unwandlung abgeschlossen.", "Fertig", JOptionPane.INFORMATION_MESSAGE);
+							}
+							catch (Exception e2)
+							{
+								d.dispose();
+								JOptionPane.showMessageDialog(Editor.this, s + " ist keine Zahl!", "Fehler!", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+						}
+					}.start();
+				}
+			}
+		}));
+		tools.add(new JMenuItem(new AbstractAction("Karte umbenennen")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
+				jfc.setMultiSelectionEnabled(false);
+				jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				jfc.setFileFilter(new FileNameExtensionFilter("Verzeichis mit Karten-Dateien", "."));
+				jfc.setApproveButtonText("Umbenennen");
+				jfc.setDialogTitle("Karte umbenennen");
+				
+				if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
+				{
+					File f = jfc.getSelectedFile();
+					if (!isValidMapFolder(f))
+					{
+						JOptionPane.showMessageDialog(jfc, "Dieses Verzeichnis enthält keine valide Liturfaliar Cest Karte!", "Fehler: Ungültiges Verzeichnis", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					
+					String newName = JOptionPane.showInputDialog(Editor.this, "Bitte gib den neuen Namen der Karte ein:", f.getName());
+					if (newName == null || newName.length() == 0) return;
+					
+					for (File file : f.listFiles())
+						file.renameTo(new File(f.getPath() + "/" + file.getName().replace(f.getName(), newName)));
+					
+					f.renameTo(new File(f.getParent() + "/" + f.getName().replace(f.getName(), newName)));
+				}
+			}
+		}));
+		tools.add(new JMenuItem(new AbstractAction("Icon Selecter")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				IconSelecter.create();
+			}
+		}));
+		tools.add(new JMenuItem(new AbstractAction("Itemliste einsehen")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				try
+				{
+					File f = File.createTempFile("items", ".csv");
+					Helper.copyInputStream(getClass().getResourceAsStream("/items.csv"), new FileOutputStream(f));
+					Desktop.getDesktop().open(f);
+				}
+				catch (Exception e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		}));
+		
+		
+		getJMenuBar().add(tools);
 	}
 	
 	private JSplitPane initEntityEditor()
 	{
-		getJMenuBar().removeAll();
-		getJMenuBar().repaint();
-		getJMenuBar().add(new JMenu(""));
+		((JMenu) getJMenuBar().getSubElements()[0]).setEnabled(false);
 		
 		JSplitPane p = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		p.setEnabled(false);
@@ -375,227 +594,7 @@ public class Editor extends JFrame
 	
 	private JSplitPane initMapEditor(boolean init)
 	{
-		if (!init)
-		{
-			getJMenuBar().removeAll();
-			getJMenuBar().repaint();
-			
-			JMenu file = new JMenu("Datei");
-			JMenuItem newFile = new JMenuItem(new AbstractAction("Neue Karte...")
-			{
-				private static final long serialVersionUID = 1L;
-				
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
-					jfc.setMultiSelectionEnabled(false);
-					jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-					jfc.setFileFilter(new FileNameExtensionFilter("Verzeichis mit Karten-Dateien", "."));
-					jfc.setApproveButtonText("Erstellen");
-					jfc.setDialogTitle("Neue Karte");
-					
-					if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
-					{
-						File f = jfc.getSelectedFile();
-						if (!isValidMapFolder(f))
-						{
-							JOptionPane.showMessageDialog(jfc, "Dieses Verzeichnis enthält keine valide Liturfaliar Cest Karte!", "Fehler: Ungültiges Verzeichnis", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-						
-						map = new File(f, f.getName() + ".ent");
-						if (map.exists())
-						{
-							JOptionPane.showMessageDialog(jfc, "Diese Karte existiert bereits!", "Fehler: Karte bereits vorhanden", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-						
-						Helper.setFileContent(map, "[]");
-						openMap();
-					}
-				}
-			});
-			newFile.setAccelerator(KeyStroke.getKeyStroke("ctrl N"));
-			file.add(newFile);
-			
-			JMenuItem loadFile = new JMenuItem(new AbstractAction("Karte laden...")
-			{
-				private static final long serialVersionUID = 1L;
-				
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
-					jfc.setMultiSelectionEnabled(false);
-					jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-					jfc.setFileFilter(new FileNameExtensionFilter("Liturfaliar Cest Entity Karte (*.ent)", "ent"));
-					jfc.setDialogTitle("Karte laden");
-					
-					if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
-					{
-						map = jfc.getSelectedFile();
-						
-						openMap();
-					}
-				}
-			});
-			loadFile.setAccelerator(KeyStroke.getKeyStroke("ctrl O"));
-			file.add(loadFile);
-			
-			JMenuItem saveFile = new JMenuItem(new AbstractAction("Karte speichern...")
-			{
-				private static final long serialVersionUID = 1L;
-				
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					if (map != null) saveMap();
-				}
-			});
-			saveFile.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
-			file.add(saveFile);
-			
-			getJMenuBar().add(file);
-			
-			JMenu tools = new JMenu("Werkzeuge");
-			tools.add(new JMenuItem(new AbstractAction("Bumpmap Converter")
-			{
-				
-				private static final long serialVersionUID = 1L;
-				
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					final JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
-					jfc.setMultiSelectionEnabled(false);
-					jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-					jfc.setFileFilter(new FileNameExtensionFilter("Liturfaliar Cest Bumpmap (*.png)", "png"));
-					jfc.setDialogTitle("Bumpmap umwandeln");
-					
-					if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
-					{
-						final String s = JOptionPane.showInputDialog("Bitte gib die erwünschte Anzahl an PPB ein:", 4);
-						if (s == null) return;
-						
-						final JDialog d = new JDialog();
-						d.setSize(400, 22);
-						d.setLocationRelativeTo(Editor.this);
-						d.setUndecorated(true);
-						final JProgressBar jsb = new JProgressBar(JScrollBar.HORIZONTAL);
-						jsb.setStringPainted(true);
-						d.setContentPane(jsb);
-						d.setVisible(true);
-						
-						new Thread()
-						{
-							@Override
-							public void run()
-							{
-								setPriority(MAX_PRIORITY);
-								
-								try
-								{
-									int ppb = Integer.parseInt(s);
-									
-									Area area = new Area();
-									BufferedImage bi = ImageIO.read(jfc.getSelectedFile());
-									int index = 0;
-									for (int i = 0; i < bi.getWidth(); i += ppb)
-									{
-										for (int j = 0; j < bi.getHeight(); j += ppb)
-										{
-											if (new Color(bi.getRGB(i, j)).equals(Color.white)) area.add(new Area(new Rectangle(i, j, ppb, ppb)));
-											index++;
-											jsb.setString(index + " / " + (bi.getWidth() * bi.getHeight() / ppb));
-											jsb.setValue(Math.round(index / (float) (bi.getWidth() / ppb * bi.getHeight() / ppb) * 100));
-										}
-									}
-									
-									ByteArrayOutputStream baos = new ByteArrayOutputStream();
-									ObjectOutputStream oos = new ObjectOutputStream(baos);
-									oos.writeObject(AffineTransform.getTranslateInstance(0, 0).createTransformedShape(area));
-									Compressor.compressFile(new File(jfc.getSelectedFile().getPath().replace("-2.png", ".bump")), baos.toByteArray());
-									
-									d.dispose();
-									JOptionPane.showMessageDialog(Editor.this, "Unwandlung abgeschlossen.", "Fertig", JOptionPane.INFORMATION_MESSAGE);
-								}
-								catch (Exception e2)
-								{
-									d.dispose();
-									JOptionPane.showMessageDialog(Editor.this, s + " ist keine Zahl!", "Fehler!", JOptionPane.ERROR_MESSAGE);
-									return;
-								}
-							}
-						}.start();
-					}
-				}
-			}));
-			tools.add(new JMenuItem(new AbstractAction("Karte umbenennen")
-			{
-				private static final long serialVersionUID = 1L;
-				
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
-					jfc.setMultiSelectionEnabled(false);
-					jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-					jfc.setFileFilter(new FileNameExtensionFilter("Verzeichis mit Karten-Dateien", "."));
-					jfc.setApproveButtonText("Umbenennen");
-					jfc.setDialogTitle("Karte umbenennen");
-					
-					if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
-					{
-						File f = jfc.getSelectedFile();
-						if (!isValidMapFolder(f))
-						{
-							JOptionPane.showMessageDialog(jfc, "Dieses Verzeichnis enthält keine valide Liturfaliar Cest Karte!", "Fehler: Ungültiges Verzeichnis", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-						
-						String newName = JOptionPane.showInputDialog(Editor.this, "Bitte gib den neuen Namen der Karte ein:", f.getName());
-						if (newName == null || newName.length() == 0) return;
-						
-						for (File file : f.listFiles())
-							file.renameTo(new File(f.getPath() + "/" + file.getName().replace(f.getName(), newName)));
-						
-						f.renameTo(new File(f.getParent() + "/" + f.getName().replace(f.getName(), newName)));
-					}
-				}
-			}));
-			tools.add(new JMenuItem(new AbstractAction("Icon Selecter")
-			{
-				private static final long serialVersionUID = 1L;
-				
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					IconSelecter.create();
-				}
-			}));
-			tools.add(new JMenuItem(new AbstractAction("Itemliste einsehen")
-			{
-				private static final long serialVersionUID = 1L;
-				
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					try
-					{
-						File f = File.createTempFile("items", ".csv");
-						Helper.copyInputStream(getClass().getResourceAsStream("/items.csv"), new FileOutputStream(f));
-						Desktop.getDesktop().open(f);
-					}
-					catch (Exception e1)
-					{
-						e1.printStackTrace();
-					}
-				}
-			}));
-			
-			getJMenuBar().add(tools);
-		}
+		((JMenu) getJMenuBar().getSubElements()[0]).setEnabled(true);
 		
 		JSplitPane p = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		p.setEnabled(false);
