@@ -1,5 +1,7 @@
-var game, tilesize;
+importPackage(Packages.de.dakror.liturfaliarcest.settings);
+importPackage(Packages.de.dakror.liturfaliarcest.game);
 
+var game, tilesize;
 /**
  * Teleports the given entity to a given location on the active map
  * 
