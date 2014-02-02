@@ -57,7 +57,7 @@ public class Inventory
 		return slots.length;
 	}
 	
-	public void put(ItemStack stack)
+	public boolean put(ItemStack stack)
 	{
 		for (int i = 0; i < slots.length; i++) // y
 		{
@@ -69,7 +69,7 @@ public class Inventory
 					slots[i][j].setAmount(Math.min(slots[i][j].getAmount() + stack.getAmount(), stack.getItem().getStack()));
 					stack.addAmount(prev - slots[i][j].getAmount());
 					
-					if (stack.getAmount() == 0) return;
+					if (stack.getAmount() == 0) return true;
 				}
 			}
 		}
@@ -81,10 +81,12 @@ public class Inventory
 				if (slots[i][j] == null)
 				{
 					slots[i][j] = stack;
-					break;
+					return true;
 				}
 			}
 		}
+		
+		return false;
 	}
 	
 	public JSONArray getData()

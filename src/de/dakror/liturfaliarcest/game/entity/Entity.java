@@ -7,9 +7,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.dakror.gamesetup.ui.ClickEvent;
+import de.dakror.gamesetup.ui.ClickableComponent;
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.entity.creature.Player;
 import de.dakror.liturfaliarcest.settings.Attributes;
 import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
 import de.dakror.liturfaliarcest.settings.Inventory;
@@ -19,7 +22,7 @@ import de.dakror.liturfaliarcest.util.JSInvoker;
 /**
  * @author Dakror
  */
-public abstract class Entity extends Component
+public abstract class Entity extends ClickableComponent
 {
 	protected Attributes attr;
 	protected Inventory inv;
@@ -45,6 +48,17 @@ public abstract class Entity extends Component
 		
 		eventFunctions = new JSONObject();
 		dead = false;
+		
+		addClickEvent(new ClickEvent()
+		{
+			@Override
+			public void trigger()
+			{
+				if (Entity.this instanceof Player) return;
+				
+				Game.player.setClickTarget(Entity.this);
+			}
+		});
 	}
 	
 	public void move()
@@ -54,13 +68,12 @@ public abstract class Entity extends Component
 		Vector distance = target.clone().sub(pos);
 		if (distance.getLength() >= attr.get(Attribute.SPEED)) distance.setLength(attr.get(Attribute.SPEED));
 		
-		pos.add(distance);
+		if (isFree(distance.x, distance.y)) pos.add(distance);
+		else target = pos;
+		
 		checkForOnEnterEvent();
 		
-		if (pos.equals(target))
-		{
-			onReachTarget();
-		}
+		if (pos.equals(target)) onReachTarget();
 	}
 	
 	@Override
@@ -83,11 +96,7 @@ public abstract class Entity extends Component
 		for (Component e : Game.world.components)
 		{
 			if (e.equals(this)) continue;
-			
-			if (e instanceof Entity)
-			{
-				if (((Entity) e).getBump().intersects(getBump(deltaX, deltaY))) return false;
-			}
+			if (e instanceof Entity) if (((Entity) e).getBump().intersects(getBump(deltaX, deltaY))) return false;
 		}
 		
 		return true;
@@ -174,6 +183,11 @@ public abstract class Entity extends Component
 		target = new Vector((float) v.getDouble(0), (float) v.getDouble(1));
 	}
 	
+	public void setTarget(Vector v)
+	{
+		target = v;
+	}
+	
 	@Override
 	public boolean contains(int x, int y)
 	{
@@ -190,6 +204,16 @@ public abstract class Entity extends Component
 		return inv;
 	}
 	
+	public float getDistance(Entity e)
+	{
+		return new Vector(pos.x + bumpX + bumpWidth / 2, pos.y + bumpY + bumpHeight / 2).getDistance(new Vector(e.pos.x + e.bumpX + e.bumpWidth / 2, e.pos.y + e.bumpY + e.bumpHeight / 2));
+	}
+	
+	public float getBumpRadius()
+	{
+		return (float) Math.sqrt(Math.pow(bumpWidth / 2, 2) + Math.pow(bumpHeight / 2, 2));
+	}
+	
 	public void kill()
 	{
 		dead = true;
@@ -200,7 +224,7 @@ public abstract class Entity extends Component
 		return dead;
 	}
 	
-	// -- events -- //
+	// -- self applying events -- //
 	protected void onReachTarget()
 	{
 		if (eventFunctions.has("onReachTarget"))
@@ -208,6 +232,22 @@ public abstract class Entity extends Component
 			try
 			{
 				JSInvoker.invoke(eventFunctions.getString("onReachTarget"), this);
+			}
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	// -- on other entities applying event -- //
+	protected void onClickReach(Entity entity)
+	{
+		if (entity.eventFunctions.has("onClickReach"))
+		{
+			try
+			{
+				JSInvoker.invoke(entity.eventFunctions.getString("onClickReach"), entity, this);
 			}
 			catch (JSONException e)
 			{

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
@@ -24,6 +25,7 @@ import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Compressor;
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
 import de.dakror.liturfaliarcest.game.entity.EntityType;
@@ -213,5 +215,15 @@ public class World extends Layer
 	public Area getBump()
 	{
 		return bump;
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		Game.player.setClickTarget(null);
+		
+		super.mouseReleased(e);
+		
+		if (AffineTransform.getTranslateInstance(x, y).createTransformedShape(bump).contains(e.getPoint()) || Game.player.getClickTarget() != null) Game.player.setTarget(new Vector(e.getX() - x - Game.player.bumpX - Game.player.bumpWidth / 2, e.getY() - y - Game.player.bumpY - Game.player.bumpHeight / 2));
 	}
 }

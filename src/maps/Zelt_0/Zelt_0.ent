@@ -1,1 +1,0 @@
-[{"uid":569052536,"e":{"onEnter":"function(target, e){ teleportMap(8*tilesize,11*tilesize,\"Seltener Wald\"); }"},"y":140,"x":63,"i":0},{"uid":1727220798,"m":{"itemID":1},"y":64,"x":64,"i":0}]

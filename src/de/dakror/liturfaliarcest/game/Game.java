@@ -2,6 +2,8 @@ package de.dakror.liturfaliarcest.game;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
@@ -32,7 +34,8 @@ public class Game extends GameFrame
 	@Override
 	public void initGame()
 	{
-		w.setIconImage(Game.getImage("system/logo.png"));
+		w.setIconImage(getImage("system/logo.png"));
+		w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(getImage("system/cursor.png"), new Point(0, 0), "default_cursor"));
 		try
 		{
 			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/morpheus.ttf")));
@@ -43,7 +46,7 @@ public class Game extends GameFrame
 		}
 		EntityType.init();
 		Item.init();
-		Game.getImage("system/icons.png"); // for loading purpose
+		getImage("system/icons.png"); // for loading purpose
 	}
 	
 	public void setWorld(String map)

@@ -21,10 +21,12 @@ public class Player extends Creature
 	boolean[] dirs = { false, false, false, false };
 	boolean sprint = true;
 	
+	private Entity clickTarget;
+	
 	public Player(int x, int y)
 	{
 		super(x, y, 64, 96);
-		tex = "char/chars/001-Fighter01.png";
+		tex = "char/chars/105-Civilian05.png";
 		attr.set(Attribute.SPEED, 2);
 		inv = new Inventory(8, 5);
 		
@@ -36,6 +38,7 @@ public class Player extends Creature
 		
 		attr.setWithMax(Attribute.HEALTH, 10);
 		attr.setWithMax(Attribute.STAMINA, 10);
+		attr.set(Attribute.SPEED, 2);
 		
 		uid = 0;
 	}
@@ -43,8 +46,24 @@ public class Player extends Creature
 	@Override
 	protected void tick(int tick)
 	{
+		if (dirs[0] || dirs[1] || dirs[2] || dirs[3]) target = null;
+		
+		if (Game.currentGame.alpha != 0)
+		{
+			dirs = new boolean[] { false, false, false, false };
+			target = null;
+		}
+		
+		if (target != null && startTick == 0)
+		{
+			startTick = tick;
+			return;
+		}
+		
+		if (target != null && (tick - startTick) % (30 / attr.get(Attribute.SPEED)) == 0) frame = (frame + 1) % 4;
+		
 		float spe = 0.025f;
-		if (sprint && attr.get(Attribute.STAMINA) > 0 && (dirs[0] || dirs[1] || dirs[2] || dirs[3]))
+		if (sprint && attr.get(Attribute.STAMINA) > 0 && (dirs[0] || dirs[1] || dirs[2] || dirs[3] || target != null))
 		{
 			attr.set(Attribute.SPEED, 5);
 			attr.add(Attribute.STAMINA, -spe);
@@ -54,7 +73,7 @@ public class Player extends Creature
 			attr.set(Attribute.SPEED, 2);
 			if (attr.get(Attribute.STAMINA) < attr.get(Attribute.STAMINA_MAX))
 			{
-				if ((dirs[0] || dirs[1] || dirs[2] || dirs[3]) && sprint) sprint = false;
+				if ((dirs[0] || dirs[1] || dirs[2] || dirs[3] || target != null) && sprint) sprint = false;
 				
 				float dif = attr.get(Attribute.STAMINA_MAX) - attr.get(Attribute.STAMINA);
 				attr.add(Attribute.STAMINA, dif > 2 * spe ? 2 * spe : dif);
@@ -84,12 +103,12 @@ public class Player extends Creature
 			
 			if (tick % (30 / attr.get(Attribute.SPEED)) == 0) frame = (frame + 1) % 4;
 		}
-		else frame = 0;
+		else if (target == null) frame = 0;
 		
 		if (Game.world.width > Game.getWidth())
 		{
 			Game.world.x = (int) (Game.getWidth() / 2 - pos.x - width / 2);
-			if (Game.world.x > bumpX) Game.world.x = bumpX;
+			if (Game.world.x > 0) Game.world.x = 0;
 			if (Game.world.x + Game.world.width < Game.getWidth()) Game.world.x += Game.getWidth() - (Game.world.x + Game.world.width);
 		}
 		else Game.world.x = (Game.getWidth() - Game.world.width) / 2;
@@ -137,14 +156,38 @@ public class Player extends Creature
 		if (e.getKeyCode() == KeyEvent.VK_SHIFT) sprint = false;
 	}
 	
+	public Entity getClickTarget()
+	{
+		return clickTarget;
+	}
+	
+	public void setClickTarget(Entity clickTarget)
+	{
+		this.clickTarget = clickTarget;
+		
+		checkForOnClickReachEvent();
+	}
+	
+	@Override
+	protected void onReachTarget()
+	{
+		super.onReachTarget();
+		
+		checkForOnClickReachEvent();
+		
+		target = null;
+	}
+	
+	protected void checkForOnClickReachEvent()
+	{
+		if (clickTarget != null && getDistance(clickTarget) <= getBumpRadius() + clickTarget.getBumpRadius()) onClickReach(clickTarget);
+	}
+	
 	@Override
 	protected void onEnter(Entity entity)
 	{
 		super.onEnter(entity);
-		if (entity instanceof ItemDrop)
-		{
-			inv.put(((ItemDrop) entity).getItemStack());
-			entity.kill();
-		}
+		
+		if (entity instanceof ItemDrop) if (inv.put(((ItemDrop) entity).getItemStack())) entity.kill();
 	}
 }

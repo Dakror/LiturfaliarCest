@@ -36,6 +36,7 @@ import org.json.JSONObject;
 
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.world.World;
 
 /**
  * @author Dakror
@@ -95,7 +96,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				{
 					try
 					{
-						Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection("// " + mouse.x + " (" + (int) Math.floor(mouse.x / 32f) + ") x " + mouse.y + " (" + (int) Math.floor(mouse.y / 32f) + ")"), null);
+						Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection("/* " + (mouse.x * World.TILE_SIZE / 32) + " (" + (int) Math.floor(mouse.x / 32f) + ") x " + (mouse.y * World.TILE_SIZE / 32) + " (" + (int) Math.floor(mouse.y / 32f) + ") */"), null);
 					}
 					catch (Exception e1)
 					{
@@ -182,7 +183,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		
 		if (above != null) g.drawImage(above, 0, 0, null);
 		
-		if (mouse != null && Editor.currentEditor.map != null) Helper.drawString(mouse.x + " (" + (int) Math.floor(mouse.x / 32f) + ") x " + mouse.y + " (" + (int) Math.floor(mouse.y / 32f) + ")", -getX(), 16 - getY(), (Graphics2D) g, 15);
+		if (mouse != null && Editor.currentEditor.map != null) Helper.drawString((mouse.x * World.TILE_SIZE / 32) + " (" + (int) Math.floor(mouse.x / 32f) + ") x " + (mouse.y * World.TILE_SIZE / 32) + " (" + (int) Math.floor(mouse.y / 32f) + ")", -getX(), 16 - getY(), (Graphics2D) g, 15);
 	}
 	
 	@Override
@@ -301,10 +302,11 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				}
 				
 				l.setLocation(l.getX() + e.getX() - drag.x, l.getY() + e.getY() - drag.y);
+				l.setToolTipText("X: " + (l.getX() * World.TILE_SIZE / 32) + ", Y: " + (l.getY() * World.TILE_SIZE / 32));
 			}
 		});
 		if (mouse != null) l.setBounds(mouse.x - l.getPreferredSize().width / 2, mouse.y - l.getPreferredSize().height / 2, l.getPreferredSize().width, l.getPreferredSize().height);
-		l.setToolTipText("X: " + l.getX() + ", Y: " + l.getY());
+		l.setToolTipText("X: " + (l.getX() * World.TILE_SIZE / 32) + ", Y: " + (l.getY() * World.TILE_SIZE / 32));
 		add(l);
 	}
 	
