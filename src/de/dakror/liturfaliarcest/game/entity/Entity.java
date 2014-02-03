@@ -216,6 +216,7 @@ public abstract class Entity extends ClickableComponent
 	
 	public void kill()
 	{
+		onDeath();
 		dead = true;
 	}
 	
@@ -232,6 +233,36 @@ public abstract class Entity extends ClickableComponent
 			try
 			{
 				JSInvoker.invoke(eventFunctions.getString("onReachTarget"), this);
+			}
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	protected void onDeath()
+	{
+		if (eventFunctions.has("onDeath"))
+		{
+			try
+			{
+				JSInvoker.invoke(eventFunctions.getString("onDeath"), this);
+			}
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void onPickup()
+	{
+		if (eventFunctions.has("onPickup"))
+		{
+			try
+			{
+				JSInvoker.invoke(eventFunctions.getString("onPickup"), this);
 			}
 			catch (JSONException e)
 			{

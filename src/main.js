@@ -1,5 +1,5 @@
-importPackage(Packages.de.dakror.liturfaliarcest.settings);
-importPackage(Packages.de.dakror.liturfaliarcest.game);
+importClass(Packages.de.dakror.liturfaliarcest.settings.FlagManager);
+importClass(Packages.de.dakror.liturfaliarcest.game.Game);
 
 var game, tilesize;
 /**
@@ -28,4 +28,23 @@ function teleportMap(x, y, map, bumpPos)
 {
 	game.fadeTo(1.0, 0.05);
 	game.actionOnFade = "function() {game.setWorld('" + map + "'); teleport(game.player, " + x + ", " + y + ", " + bumpPos + ");game.fadeTo(0, 0.05);}";
+}
+
+/**
+ * Sets the given flag in the Flag System.
+ * 
+ * @param flag - name of the flag, preferrably in captial letters
+ */
+function setFlag(flag)
+{
+	FlagManager.setFlag(flag);
+}
+/**
+ * Gives the state of the given flag back.
+ * @param flag - name of the flag, preferrably in captial letters
+ * @returns true if flag is set, false otherwise
+ */
+function isFlag(flag)
+{
+	return FlagManager.isFlag(flag);
 }

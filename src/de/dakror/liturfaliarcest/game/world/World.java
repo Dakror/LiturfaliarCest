@@ -33,6 +33,7 @@ import de.dakror.liturfaliarcest.game.entity.creature.NPC;
 import de.dakror.liturfaliarcest.game.entity.object.ItemDrop;
 import de.dakror.liturfaliarcest.game.entity.object.Object;
 import de.dakror.liturfaliarcest.game.item.Item;
+import de.dakror.liturfaliarcest.settings.FlagManager;
 
 public class World extends Layer
 {
@@ -43,6 +44,8 @@ public class World extends Layer
 	String name;
 	Area bump;
 	
+	boolean init;
+	
 	boolean groundLayer, aboveLayer;
 	
 	public int drawn;
@@ -52,66 +55,89 @@ public class World extends Layer
 		this.name = name;
 		x = y = 0;
 		
+		init = false;
+		
 		Game.worlds.put(name, this);
 	}
 	
 	@Override
 	public void init()
 	{
-		groundLayer = Game.getImage("/maps/" + name + "/" + name + "-0.png") != null;
-		aboveLayer = Game.getImage("/maps/" + name + "/" + name + "-1.png") != null;
-		
-		Image img = Game.getImage("/maps/" + name + "/" + name + "-0.png");
-		width = img.getWidth(null) / 32 * TILE_SIZE;
-		height = img.getHeight(null) / 32 * TILE_SIZE;
-		
-		try
+		if (!init)
 		{
-			if (getClass().getResource("/maps/" + name + "/" + name + ".bump") != null)
+			groundLayer = Game.getImage("/maps/" + name + "/" + name + "-0.png") != null;
+			aboveLayer = Game.getImage("/maps/" + name + "/" + name + "-1.png") != null;
+			
+			Image img = Game.getImage("/maps/" + name + "/" + name + "-0.png");
+			width = img.getWidth(null) / 32 * TILE_SIZE;
+			height = img.getHeight(null) / 32 * TILE_SIZE;
+			
+			try
 			{
-				ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(Compressor.decompress(Compressor.getURLContentAsByteArray(getClass().getResource("/maps/" + name + "/" + name + ".bump")))));
-				Path2D p = (Path2D) ois.readObject();
-				bump = new Area(AffineTransform.getScaleInstance(TILE_SIZE / 32, TILE_SIZE / 32).createTransformedShape(new Area(p)));
+				if (getClass().getResource("/maps/" + name + "/" + name + ".bump") != null)
+				{
+					ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(Compressor.decompress(Compressor.getURLContentAsByteArray(getClass().getResource("/maps/" + name + "/" + name + ".bump")))));
+					Path2D p = (Path2D) ois.readObject();
+					bump = new Area(AffineTransform.getScaleInstance(TILE_SIZE / 32, TILE_SIZE / 32).createTransformedShape(new Area(p)));
+				}
+				else
+				{
+					int size = 4;
+					
+					BufferedImage bumpImage = Game.getImage("/maps/" + name + "/" + name + "-2.png");
+					bumpImage = Helper.toBufferedImage(bumpImage.getScaledInstance(bumpImage.getWidth() / 32 * TILE_SIZE, bumpImage.getHeight() / 32 * TILE_SIZE, BufferedImage.SCALE_FAST));
+					
+					bump = new Area();
+					for (int i = 0; i < bumpImage.getWidth(); i += size)
+						for (int j = 0; j < bumpImage.getHeight(); j += size)
+							if (new Color(bumpImage.getRGB(i, j)).equals(Color.white)) bump.add(new Area(new Rectangle(i, j, size, size)));
+				}
+				
+				init = true;
 			}
-			else
+			catch (Exception e)
 			{
-				int size = 4;
-				
-				BufferedImage bumpImage = Game.getImage("/maps/" + name + "/" + name + "-2.png");
-				bumpImage = Helper.toBufferedImage(bumpImage.getScaledInstance(bumpImage.getWidth() / 32 * TILE_SIZE, bumpImage.getHeight() / 32 * TILE_SIZE, BufferedImage.SCALE_FAST));
-				
-				bump = new Area();
-				for (int i = 0; i < bumpImage.getWidth(); i += size)
-					for (int j = 0; j < bumpImage.getHeight(); j += size)
-						if (new Color(bumpImage.getRGB(i, j)).equals(Color.white)) bump.add(new Area(new Rectangle(i, j, size, size)));
+				e.printStackTrace();
 			}
 			
-			if (getClass().getResource("/maps/" + name + "/" + name + ".ent") != null)
-			{
-				JSONArray e = new JSONArray(Helper.getURLContent(getClass().getResource("/maps/" + name + "/" + name + ".ent")));
-				for (int i = 0; i < e.length(); i++)
-				{
-					JSONObject o = e.getJSONObject(i);
-					Entity entity = null;
-					
-					if (o.has("m"))
-					{
-						if (o.getJSONObject("m").has("npc") && o.getJSONObject("m").getBoolean("npc")) entity = new NPC(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")), o.getJSONObject("m"));
-						else if (o.getJSONObject("m").has("itemID")) entity = new ItemDrop(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), Item.items.get(o.getJSONObject("m").getInt("itemID")));
-					}
-					else entity = new Object(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")));
-					
-					if (o.has("e")) entity.setEventFunctions(o.getJSONObject("e"));
-					
-					entity.uid = o.getInt("uid");
-					
-					addEntity(entity);
-				}
-			}
 		}
-		catch (Exception e)
+		try
+		{
+			initEntities();
+		}
+		catch (JSONException e)
 		{
 			e.printStackTrace();
+		}
+	}
+	
+	public void initEntities() throws JSONException
+	{
+		components.clear();
+		
+		if (getClass().getResource("/maps/" + name + "/" + name + ".ent") != null)
+		{
+			JSONArray e = new JSONArray(Helper.getURLContent(getClass().getResource("/maps/" + name + "/" + name + ".ent")));
+			for (int i = 0; i < e.length(); i++)
+			{
+				JSONObject o = e.getJSONObject(i);
+				Entity entity = null;
+				
+				if (o.has("m"))
+				{
+					if (o.getJSONObject("m").has("flags") && !FlagManager.matchesFlags(o.getJSONObject("m").getString("flags"))) continue;
+					
+					if (o.getJSONObject("m").has("npc") && o.getJSONObject("m").getBoolean("npc")) entity = new NPC(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")), o.getJSONObject("m"));
+					else if (o.getJSONObject("m").has("itemID")) entity = new ItemDrop(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), Item.items.get(o.getJSONObject("m").getInt("itemID")));
+				}
+				else entity = new Object(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")));
+				
+				if (o.has("e")) entity.setEventFunctions(o.getJSONObject("e"));
+				
+				entity.uid = o.getInt("uid");
+				
+				addEntity(entity);
+			}
 		}
 	}
 	

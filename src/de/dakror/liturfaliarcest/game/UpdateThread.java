@@ -15,7 +15,6 @@ public class UpdateThread extends Updater
 		{
 			if (Game.currentGame.actionOnFade != null) JSInvoker.invoke(Game.currentGame.actionOnFade);
 			Game.currentGame.actionOnFade = null;
-			
 		}
 	}
 }

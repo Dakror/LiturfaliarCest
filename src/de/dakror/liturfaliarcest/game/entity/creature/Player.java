@@ -188,6 +188,13 @@ public class Player extends Creature
 	{
 		super.onEnter(entity);
 		
-		if (entity instanceof ItemDrop) if (inv.put(((ItemDrop) entity).getItemStack())) entity.kill();
+		if (entity instanceof ItemDrop)
+		{
+			if (inv.put(((ItemDrop) entity).getItemStack()))
+			{
+				entity.onPickup();
+				entity.kill();
+			}
+		}
 	}
 }

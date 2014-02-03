@@ -53,7 +53,6 @@ public class Game extends GameFrame
 	{
 		int index = layers.indexOf(world);
 		world = worlds.containsKey(map) ? worlds.get(map) : new World(map);
-		world.components.clear();
 		world.init();
 		layers.set(index, world);
 		world.addEntity(player);
@@ -68,8 +67,8 @@ public class Game extends GameFrame
 			world = new World("Kerstil");
 			player = new Player(90, 400);
 			player.uid = 0;
-			world.addEntity(player);
 			addLayer(world);
+			world.addEntity(player);
 			
 			addLayer(new HUDLayer());
 		}
