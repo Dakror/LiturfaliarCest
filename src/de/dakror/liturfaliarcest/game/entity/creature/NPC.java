@@ -1,5 +1,6 @@
 package de.dakror.liturfaliarcest.game.entity.creature;
 
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
@@ -7,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.gamesetup.ui.Component;
+import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
@@ -77,6 +79,23 @@ public class NPC extends Creature
 	{
 		int length = (int) (Math.random() * 5 + 1) * bumpWidth;
 		return new Vector[] { new Vector(-length, 0), new Vector(0, -length), new Vector(length, 0), new Vector(0, length) }[(int) Math.floor(Math.random() * 4)];
+	}
+	
+	@Override
+	public void drawTooltip(int x, int y, Graphics2D g)
+	{
+		if (meta.has("name"))
+		{
+			try
+			{
+				Helper.drawShadow(x, y, g.getFontMetrics(g.getFont().deriveFont(30f)).stringWidth(meta.getString("name")) + 30, 64, g);
+				Helper.drawString(meta.getString("name"), x + 15, y + 40, g, 30);
+			}
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private Rectangle2D getBumpFromPosToVector(Vector target)

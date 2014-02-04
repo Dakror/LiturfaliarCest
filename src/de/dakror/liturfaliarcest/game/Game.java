@@ -64,8 +64,8 @@ public class Game extends GameFrame
 		if (layers.size() == 0)
 		{
 			worlds = new HashMap<>();
-			world = new World("Kerstil");
-			player = new Player(90, 400);
+			world = new World("Kerstil_0");
+			player = new Player(3 * World.TILE_SIZE, 3 * World.TILE_SIZE / 2);
 			player.uid = 0;
 			addLayer(world);
 			world.addEntity(player);
