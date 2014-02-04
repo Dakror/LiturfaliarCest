@@ -101,6 +101,6 @@ public class EntityEventEditor extends JDialog
 	
 	private String fmt(JSONObject m) throws JSONException
 	{
-		return m.toString(2).replaceAll("(\n)( {0,})(\")", "\n$2").replace("{\"", "{").replace("\":", ":").replace("{", "{\n").replace("}", "\n}\n").replace("\n\n", "\n");
+		return m.toString(2).replaceAll("(\n)( {0,})(\")(.{1,})(\")(:)", "\n$2$4$6").replace("{\"", "{").replace("\":", ":").replace("{", "{\n").replace("}", "\n}\n").replace("\n\n", "\n");
 	}
 }

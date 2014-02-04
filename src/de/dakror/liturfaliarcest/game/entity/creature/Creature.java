@@ -32,7 +32,7 @@ public abstract class Creature extends Entity
 		Helper.drawImage(img, x, y, width, height, frame * img.getWidth() / 4, dir * img.getHeight() / 4, img.getWidth() / 4, img.getHeight() / 4, g);
 		
 		Helper.setRenderingHints(g, true);
-		// g.drawRect(x + bumpX, y + bumpY, bumpWidth, bumpHeight);
+		g.drawRect(x + bumpX, y + bumpY, bumpWidth, bumpHeight);
 	}
 	
 	@Override
