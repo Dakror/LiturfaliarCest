@@ -7,6 +7,7 @@ import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
 import de.dakror.liturfaliarcest.game.entity.object.ItemDrop;
+import de.dakror.liturfaliarcest.layer.TalkLayer;
 import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
 import de.dakror.liturfaliarcest.settings.Inventory;
 
@@ -46,80 +47,83 @@ public class Player extends Creature
 	@Override
 	protected void tick(int tick)
 	{
-		if (dirs[0] || dirs[1] || dirs[2] || dirs[3]) target = null;
-		
-		if (Game.currentGame.alpha != 0)
+		if (!frozen)
 		{
-			dirs = new boolean[] { false, false, false, false };
-			target = null;
-		}
-		
-		if (target != null && startTick == 0)
-		{
-			startTick = tick;
-			return;
-		}
-		
-		if (target != null && (tick - startTick) % (30 / attr.get(Attribute.SPEED)) == 0) frame = (frame + 1) % 4;
-		
-		float spe = 0.025f;
-		if (sprint && attr.get(Attribute.STAMINA) > 0 && (dirs[0] || dirs[1] || dirs[2] || dirs[3] || target != null))
-		{
-			attr.set(Attribute.SPEED, 5);
-			attr.add(Attribute.STAMINA, -spe);
-		}
-		else
-		{
-			attr.set(Attribute.SPEED, 2);
-			if (attr.get(Attribute.STAMINA) < attr.get(Attribute.STAMINA_MAX))
+			if (dirs[0] || dirs[1] || dirs[2] || dirs[3]) target = null;
+			
+			if (Game.currentGame.alpha != 0)
 			{
-				if ((dirs[0] || dirs[1] || dirs[2] || dirs[3] || target != null) && sprint) sprint = false;
+				dirs = new boolean[] { false, false, false, false };
+				target = null;
+			}
+			
+			if (target != null && startTick == 0)
+			{
+				startTick = tick;
+				return;
+			}
+			
+			if (target != null && (tick - startTick) % (30 / attr.get(Attribute.SPEED)) == 0) frame = (frame + 1) % 4;
+			
+			float spe = 0.025f;
+			if (sprint && attr.get(Attribute.STAMINA) > 0 && (dirs[0] || dirs[1] || dirs[2] || dirs[3] || target != null))
+			{
+				attr.set(Attribute.SPEED, 5);
+				attr.add(Attribute.STAMINA, -spe);
+			}
+			else
+			{
+				attr.set(Attribute.SPEED, 2);
+				if (attr.get(Attribute.STAMINA) < attr.get(Attribute.STAMINA_MAX))
+				{
+					if ((dirs[0] || dirs[1] || dirs[2] || dirs[3] || target != null) && sprint) sprint = false;
+					
+					float dif = attr.get(Attribute.STAMINA_MAX) - attr.get(Attribute.STAMINA);
+					attr.add(Attribute.STAMINA, dif > 2 * spe ? 2 * spe : dif);
+				}
+			}
+			
+			if ((dirs[0] || dirs[1] || dirs[2] || dirs[3]))
+			{
+				Vector lastPos = pos.clone();
 				
-				float dif = attr.get(Attribute.STAMINA_MAX) - attr.get(Attribute.STAMINA);
-				attr.add(Attribute.STAMINA, dif > 2 * spe ? 2 * spe : dif);
+				float speed = attr.get(Attribute.SPEED);
+				
+				if (dirs[0] && isFree(-speed, 0)) pos.x -= speed;
+				if (dirs[2] && isFree(speed, 0)) pos.x += speed;
+				
+				if (dirs[1] && isFree(0, -speed)) pos.y -= speed;
+				if (dirs[3] && isFree(0, speed)) pos.y += speed;
+				
+				Vector dist = pos.clone().sub(lastPos);
+				if (dist.getLength() > 1)
+				{
+					dist.setLength(speed);
+					pos = lastPos.add(dist);
+				}
+				
+				checkForOnEnterEvent();
+				
+				if (tick % (30 / attr.get(Attribute.SPEED)) == 0) frame = (frame + 1) % 4;
 			}
-		}
-		
-		if (dirs[0] || dirs[1] || dirs[2] || dirs[3])
-		{
-			Vector lastPos = pos.clone();
+			else if (target == null) frame = 0;
 			
-			float speed = attr.get(Attribute.SPEED);
-			
-			if (dirs[0] && isFree(-speed, 0)) pos.x -= speed;
-			if (dirs[2] && isFree(speed, 0)) pos.x += speed;
-			
-			if (dirs[1] && isFree(0, -speed)) pos.y -= speed;
-			if (dirs[3] && isFree(0, speed)) pos.y += speed;
-			
-			Vector dist = pos.clone().sub(lastPos);
-			if (dist.getLength() > 1)
+			if (Game.world.width > Game.getWidth())
 			{
-				dist.setLength(speed);
-				pos = lastPos.add(dist);
+				Game.world.x = (int) (Game.getWidth() / 2 - pos.x - width / 2);
+				if (Game.world.x > 0) Game.world.x = 0;
+				if (Game.world.x + Game.world.width < Game.getWidth()) Game.world.x += Game.getWidth() - (Game.world.x + Game.world.width);
 			}
+			else Game.world.x = (Game.getWidth() - Game.world.width) / 2;
 			
-			checkForOnEnterEvent();
-			
-			if (tick % (30 / attr.get(Attribute.SPEED)) == 0) frame = (frame + 1) % 4;
+			if (Game.world.height > Game.getHeight())
+			{
+				Game.world.y = (int) (Game.getHeight() / 2 - pos.y - height / 2);
+				if (Game.world.y > bumpY) Game.world.y = bumpY;
+				if (Game.world.y + Game.world.height < Game.getHeight()) Game.world.y += Game.getHeight() - (Game.world.y + Game.world.height);
+			}
+			else Game.world.y = (Game.getHeight() - Game.world.height) / 2;
 		}
-		else if (target == null) frame = 0;
-		
-		if (Game.world.width > Game.getWidth())
-		{
-			Game.world.x = (int) (Game.getWidth() / 2 - pos.x - width / 2);
-			if (Game.world.x > 0) Game.world.x = 0;
-			if (Game.world.x + Game.world.width < Game.getWidth()) Game.world.x += Game.getWidth() - (Game.world.x + Game.world.width);
-		}
-		else Game.world.x = (Game.getWidth() - Game.world.width) / 2;
-		
-		if (Game.world.height > Game.getHeight())
-		{
-			Game.world.y = (int) (Game.getHeight() / 2 - pos.y - height / 2);
-			if (Game.world.y > bumpY) Game.world.y = bumpY;
-			if (Game.world.y + Game.world.height < Game.getHeight()) Game.world.y += Game.getHeight() - (Game.world.y + Game.world.height);
-		}
-		else Game.world.y = (Game.getHeight() - Game.world.height) / 2;
 	}
 	
 	@Override
@@ -127,13 +131,16 @@ public class Player extends Creature
 	{
 		super.mouseMoved(e);
 		
-		float degs = pos.clone().add(new Vector(width / 2, height / 2)).add(new Vector(Game.world.x, Game.world.y)).sub(new Vector(Game.currentGame.mouse)).getAngleOnXAxis();
-		if (degs < 0) degs += 360;
-		
-		if (degs < 45 || degs > 315) dir = 1;
-		else if (degs > 135 && degs < 225) dir = 2;
-		else if (degs > 45 && degs < 135) dir = 3;
-		else dir = 0;
+		if (!frozen)
+		{
+			float degs = pos.clone().add(new Vector(width / 2, height / 2)).add(new Vector(Game.world.x, Game.world.y)).sub(new Vector(Game.currentGame.mouse)).getAngleOnXAxis();
+			if (degs < 0) degs += 360;
+			
+			if (degs < 45 || degs > 315) dir = 1;
+			else if (degs > 135 && degs < 225) dir = 2;
+			else if (degs > 45 && degs < 135) dir = 3;
+			else dir = 0;
+		}
 	}
 	
 	@Override
@@ -181,6 +188,12 @@ public class Player extends Creature
 	protected void checkForOnClickReachEvent()
 	{
 		if (clickTarget != null && getDistance(clickTarget) <= getBumpRadius() + clickTarget.getBumpRadius()) onClickReach(clickTarget);
+	}
+	
+	@Override
+	protected void onClickReach(Entity entity)
+	{
+		if (entity instanceof NPC && ((NPC) entity).getTalk() != null) Game.currentGame.addLayer(new TalkLayer(((NPC) entity).getTalk(), (NPC) entity));
 	}
 	
 	@Override

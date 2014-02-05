@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -103,6 +104,24 @@ public class NPC extends Creature
 		return new Rectangle2D.Float(Math.min(target.x, pos.x) + bumpX, Math.min(target.y, pos.y) + bumpY, (Math.max(target.x, pos.x) - Math.min(target.x, pos.x)) + bumpWidth, (Math.max(target.y, pos.y) - Math.min(target.y, pos.y)) + bumpHeight);
 	}
 	
+	public JSONObject getMeta()
+	{
+		return meta;
+	}
+	
+	public JSONArray getTalk()
+	{
+		try
+		{
+			return meta.has("talk") ? meta.getJSONArray("talk") : null;
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	@Override
 	protected void onReachTarget()
 	{
@@ -110,4 +129,5 @@ public class NPC extends Creature
 		target = null;
 		frame = 0;
 	}
+	
 }

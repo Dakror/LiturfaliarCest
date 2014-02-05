@@ -114,6 +114,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	{
 		try
 		{
+			setLayout(null);
 			removeAll();
 			revalidate();
 			

@@ -31,7 +31,7 @@ public abstract class Entity extends ClickableComponent
 	public int uid;
 	
 	public float alpha;
-	protected boolean dead;
+	protected boolean dead, frozen;
 	
 	public int bumpX, bumpY, bumpWidth, bumpHeight;
 	
@@ -48,6 +48,7 @@ public abstract class Entity extends ClickableComponent
 		
 		eventFunctions = new JSONObject();
 		dead = false;
+		frozen = false;
 		
 		addClickEvent(new ClickEvent()
 		{
@@ -79,7 +80,7 @@ public abstract class Entity extends ClickableComponent
 	@Override
 	public void update(int tick)
 	{
-		move();
+		if (!frozen) move();
 		tick(tick);
 		
 		x = (int) pos.x;
@@ -225,6 +226,16 @@ public abstract class Entity extends ClickableComponent
 		return dead;
 	}
 	
+	public boolean isFrozen()
+	{
+		return frozen;
+	}
+	
+	public void setFrozen(boolean f)
+	{
+		frozen = f;
+	}
+	
 	// -- self applying events -- //
 	protected void onReachTarget()
 	{
@@ -301,4 +312,5 @@ public abstract class Entity extends ClickableComponent
 			}
 		}
 	}
+	
 }

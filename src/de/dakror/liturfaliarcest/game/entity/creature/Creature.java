@@ -32,29 +32,32 @@ public abstract class Creature extends Entity
 		Helper.drawImage(img, x, y, width, height, frame * img.getWidth() / 4, dir * img.getHeight() / 4, img.getWidth() / 4, img.getHeight() / 4, g);
 		
 		Helper.setRenderingHints(g, true);
-		g.drawRect(x + bumpX, y + bumpY, bumpWidth, bumpHeight);
+		// g.drawRect(x + bumpX, y + bumpY, bumpWidth, bumpHeight);
 	}
 	
 	@Override
 	protected void tick(int tick)
 	{
-		if (target != null && startTick == 0)
+		if (!frozen)
 		{
-			startTick = tick;
-			return;
-		}
-		
-		if (target != null && (tick - startTick) % (30 / attr.get(Attribute.SPEED)) == 0) frame = (frame + 1) % 4;
-		
-		if (target != null)
-		{
-			float degs = pos.clone().add(new Vector(width / 2, height / 2)).sub(target.clone().add(new Vector(width / 2, height / 2))).getAngleOnXAxis();
-			if (degs < 0) degs += 360;
+			if (target != null && startTick == 0)
+			{
+				startTick = tick;
+				return;
+			}
 			
-			if (degs < 45 || degs > 315) dir = 1;
-			else if (degs > 135 && degs < 225) dir = 2;
-			else if (degs > 45 && degs < 135) dir = 3;
-			else dir = 0;
+			if (target != null && (tick - startTick) % (30 / attr.get(Attribute.SPEED)) == 0) frame = (frame + 1) % 4;
+			
+			if (target != null)
+			{
+				float degs = pos.clone().add(new Vector(width / 2, height / 2)).sub(target.clone().add(new Vector(width / 2, height / 2))).getAngleOnXAxis();
+				if (degs < 0) degs += 360;
+				
+				if (degs < 45 || degs > 315) dir = 1;
+				else if (degs > 135 && degs < 225) dir = 2;
+				else if (degs > 45 && degs < 135) dir = 3;
+				else dir = 0;
+			}
 		}
 	}
 }
