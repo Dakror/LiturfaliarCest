@@ -1,6 +1,8 @@
 package de.dakror.liturfaliarcest.layer;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,14 +22,13 @@ public class TalkLayer extends Layer
 	JSONArray talk;
 	String activeText;
 	int index;
+	int y;
 	
 	public TalkLayer(JSONArray t, NPC s)
 	{
 		talk = t;
 		source = s;
 		index = -1;
-		s.setFrozen(true);
-		Game.player.setFrozen(true);
 	}
 	
 	@Override
@@ -43,12 +44,21 @@ public class TalkLayer extends Layer
 		{
 			Helper.drawContainer(50, Game.getHeight() - 200, Game.getWidth() - 100, 175, true, true, g);
 			Helper.drawStringWrapped(activeText, 75, Game.getHeight() - 160, Game.getWidth() - 100, g, 30);
+			
+			Helper.setRenderingHints(g, false);
+			g.drawImage(Game.getImage("system/arrow.png"), Game.getWidth() - 105, Game.getHeight() - 65 + y, 40, 20, Game.w);
+			Helper.setRenderingHints(g, true);
 		}
 	}
 	
 	@Override
 	public void update(int tick)
-	{}
+	{
+		if (activeText != null)
+		{
+			y = (int) Math.round(Math.sin(tick / 10d) * 5);
+		}
+	}
 	
 	public void next()
 	{
@@ -75,7 +85,7 @@ public class TalkLayer extends Layer
 					if (source.getMeta().has("name"))
 					{
 						activeName = activeName.replace("%e", source.getMeta().getString("name"));
-						activeText = activeName + ": " + activeText;
+						activeText = activeName + ":    " + activeText;
 					}
 					
 					break;
@@ -85,6 +95,17 @@ public class TalkLayer extends Layer
 		catch (JSONException e)
 		{
 			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+		super.mousePressed(e);
+		
+		if (new Rectangle(50, Game.getHeight() - 200, Game.getWidth() - 100, 175).contains(e.getPoint()))
+		{
+			next();
 		}
 	}
 }
