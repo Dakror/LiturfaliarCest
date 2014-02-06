@@ -163,6 +163,13 @@ public class Player extends Creature
 		if (e.getKeyCode() == KeyEvent.VK_SHIFT) sprint = false;
 	}
 	
+	@Override
+	public void setTarget(Vector v)
+	{
+		target = v;
+		if (frozen) target = null;
+	}
+	
 	public Entity getClickTarget()
 	{
 		return clickTarget;
