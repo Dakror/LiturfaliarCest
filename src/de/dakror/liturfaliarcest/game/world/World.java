@@ -169,7 +169,6 @@ public class World extends Layer
 			c.draw(g);
 			if (c.state != 0) hovered = c;
 		}
-		if (hovered != null) hovered.drawTooltip(GameFrame.currentFrame.mouse.x - x, GameFrame.currentFrame.mouse.y - y, g);
 		
 		g.setTransform(old);
 		
@@ -181,6 +180,14 @@ public class World extends Layer
 			
 			Helper.setRenderingHints(g, true);
 		}
+		
+		at = g.getTransform();
+		at.translate(x, y);
+		g.setTransform(at);
+		
+		if (hovered != null) hovered.drawTooltip(GameFrame.currentFrame.mouse.x - x, GameFrame.currentFrame.mouse.y - y, g);
+		
+		g.setTransform(old);
 	}
 	
 	@Override

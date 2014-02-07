@@ -43,6 +43,7 @@ public class NPC extends Creature
 		attr.set(Attribute.SPEED, (float) (meta.has("speed") ? meta.getDouble("speed") : 2f));
 		roam = meta.has("roam") && meta.getBoolean("roam");
 		roamTimeout = (int) (Math.random() * 60) + 60;
+		if (meta.has("dir")) dir = meta.getInt("dir");
 	}
 	
 	@Override
@@ -89,8 +90,8 @@ public class NPC extends Creature
 		{
 			try
 			{
-				Helper.drawShadow(x, y, g.getFontMetrics(g.getFont().deriveFont(30f)).stringWidth(meta.getString("name")) + 30, 64, g);
-				Helper.drawString(meta.getString("name"), x + 15, y + 40, g, 30);
+				Helper.drawShadow(x, y, g.getFontMetrics(g.getFont().deriveFont(35f)).stringWidth(meta.getString("name")) + 30, 64, g);
+				Helper.drawString(meta.getString("name"), x + 10, y + 44, g, 35);
 			}
 			catch (JSONException e)
 			{
