@@ -14,8 +14,10 @@ import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
 import de.dakror.liturfaliarcest.game.entity.EntityType;
+import de.dakror.liturfaliarcest.game.quest.Quest;
 import de.dakror.liturfaliarcest.game.world.World;
 import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
+import de.dakror.liturfaliarcest.settings.FlagManager;
 
 /**
  * @author Dakror
@@ -131,4 +133,20 @@ public class NPC extends Creature
 		frame = 0;
 	}
 	
+	public void checkForQuestState()
+	{
+		for (Quest q : Quest.quests.values())
+		{
+			if (equalsGUID(q.getOriginGUID()) && (q.getFlags().length() == 0 || FlagManager.matchesFlags(q.getFlags())))
+			{
+				questIcon = 0;
+				break;
+			}
+			if (equalsGUID(q.getGoal().substring(q.getGoal().indexOf(":") + 1)) && (FlagManager.matchesFlags(q.getFlags() + " QUEST_" + q.getId() + "_ACCEPTED")))
+			{
+				questIcon = 1;
+				break;
+			}
+		}
+	}
 }

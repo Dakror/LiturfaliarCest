@@ -15,11 +15,12 @@ import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
 public abstract class Creature extends Entity
 {
 	protected String tex;
-	int startTick, frame, dir;
+	int startTick, frame, dir, questIcon, emoticonFrame;
 	
 	public Creature(int x, int y, int width, int height)
 	{
 		super(x, y, width, height);
+		questIcon = -1;
 	}
 	
 	@Override
@@ -32,12 +33,21 @@ public abstract class Creature extends Entity
 		Helper.drawImage(img, x, y, width, height, frame * img.getWidth() / 4, dir * img.getHeight() / 4, img.getWidth() / 4, img.getHeight() / 4, g);
 		
 		Helper.setRenderingHints(g, true);
+		
+		if (questIcon > -1)
+		{
+			int size = 32;
+			Helper.drawImage(Game.getImage("system/emoticon.png"), x + width / 2, y - size, size, size, emoticonFrame * 32, questIcon * 32, 32, 32, g);
+		}
+		
 		// g.drawRect(x + bumpX, y + bumpY, bumpWidth, bumpHeight);
 	}
 	
 	@Override
 	protected void tick(int tick)
 	{
+		if (questIcon > -1 && tick % 5 == 0) emoticonFrame = (emoticonFrame + 1) % 7;
+		
 		if (!frozen)
 		{
 			if (target != null && startTick == 0)

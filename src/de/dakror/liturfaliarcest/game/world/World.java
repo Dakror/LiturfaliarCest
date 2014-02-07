@@ -135,6 +135,7 @@ public class World extends Layer
 				if (o.has("e")) entity.setEventFunctions(o.getJSONObject("e"));
 				
 				entity.uid = o.getInt("uid");
+				if (entity instanceof NPC) ((NPC) entity).checkForQuestState();
 				
 				addEntity(entity);
 			}
@@ -249,6 +250,7 @@ public class World extends Layer
 	{
 		return bump;
 	}
+	
 	
 	@Override
 	public void mouseReleased(MouseEvent e)

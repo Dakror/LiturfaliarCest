@@ -35,8 +35,8 @@ public class FlagManager
 		String[] flags = text.split(" ");
 		for (String flag : flags)
 		{
-			String f = flag.substring(1);
-			if (flag.startsWith("!") == isFlag(f)) return false;
+			if (flag.startsWith("!") && isFlag(flag.substring(1))) return false;
+			else if (!flag.startsWith("!") && !isFlag(flag)) return false;
 		}
 		
 		return true;

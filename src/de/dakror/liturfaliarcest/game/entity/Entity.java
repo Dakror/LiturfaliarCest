@@ -236,6 +236,13 @@ public abstract class Entity extends ClickableComponent
 		frozen = f;
 	}
 	
+	public boolean equalsGUID(String guid)
+	{
+		if (!guid.substring(0, guid.indexOf("$")).equals(Game.world.getName())) return false;
+		
+		return Integer.parseInt(guid.substring(guid.indexOf("$") + 1)) == uid;
+	}
+	
 	// -- self applying events -- //
 	protected void onReachTarget()
 	{

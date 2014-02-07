@@ -30,18 +30,21 @@ public class Quest
 					quest.id = Integer.parseInt(cell);
 					break;
 				case 1:
-					quest.flag = cell;
+					quest.flags = cell;
 					break;
 				case 2:
 					quest.name = cell;
 					break;
 				case 3:
-					quest.originGUID = cell;
+					quest.text = cell;
 					break;
 				case 4:
-					quest.goal = cell;
+					quest.originGUID = cell;
 					break;
 				case 5:
+					quest.goal = cell;
+					break;
+				case 6:
 					quest.main = cell.equals("1") ? true : false;
 					break;
 			}
@@ -52,7 +55,7 @@ public class Quest
 		quests.put(quest.id, quest);
 	}
 	
-	private String name, text, flag, originGUID, goal;
+	private String name, text, flags, originGUID, goal;
 	private boolean main;
 	private int id;
 	
@@ -69,9 +72,9 @@ public class Quest
 		return text;
 	}
 	
-	public String getFlag()
+	public String getFlags()
 	{
-		return flag;
+		return flags;
 	}
 	
 	public String getOriginGUID()
