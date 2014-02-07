@@ -27,7 +27,9 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 
@@ -240,7 +242,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			@Override
 			public void mousePressed(MouseEvent e)
 			{
-				if (e.getClickCount() == 2) editEntityEvents(l);
+				if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) editEntityEvents(l);
 			}
 			
 			@Override
@@ -265,6 +267,45 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 					{
 						MapPanel.this.remove(l);
 						repaint();
+					}
+					else if (e.getButton() == MouseEvent.BUTTON2)
+					{
+						JPopupMenu jpm = new JPopupMenu();
+						jpm.add(new JMenuItem(new AbstractAction("UID kopieren")
+						{
+							private static final long serialVersionUID = 1L;
+							
+							@Override
+							public void actionPerformed(ActionEvent e)
+							{
+								try
+								{
+									Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(l.uid + ""), null);
+								}
+								catch (Exception e1)
+								{
+									e1.printStackTrace();
+								}
+							}
+						}));
+						jpm.add(new JMenuItem(new AbstractAction("GUID kopieren")
+						{
+							private static final long serialVersionUID = 1L;
+							
+							@Override
+							public void actionPerformed(ActionEvent e)
+							{
+								try
+								{
+									Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(Editor.currentEditor.map.getParentFile().getName() + "$" + l.uid + ""), null);
+								}
+								catch (Exception e1)
+								{
+									e1.printStackTrace();
+								}
+							}
+						}));
+						jpm.show(l, e.getX(), e.getY());
 					}
 					else l.setBorder(BorderFactory.createLineBorder(Color.black));
 				}

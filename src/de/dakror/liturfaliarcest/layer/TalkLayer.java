@@ -85,7 +85,7 @@ public class TalkLayer extends Layer
 					if (source.getMeta().has("name"))
 					{
 						activeName = activeName.replace("%e", source.getMeta().getString("name"));
-						activeText = activeName + ":    " + activeText;
+						activeText = activeName + ": " + activeText;
 					}
 					
 					break;
