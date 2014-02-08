@@ -32,6 +32,7 @@ public class FlagManager
 	
 	public static boolean matchesFlags(String text)
 	{
+		text = text.trim();
 		String[] flags = text.split(" ");
 		for (String flag : flags)
 		{

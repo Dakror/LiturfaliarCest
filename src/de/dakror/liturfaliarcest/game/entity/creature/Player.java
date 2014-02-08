@@ -47,42 +47,42 @@ public class Player extends Creature
 	@Override
 	protected void tick(int tick)
 	{
+		if (dirs[0] || dirs[1] || dirs[2] || dirs[3]) target = null;
+		
+		if (Game.currentGame.alpha != 0)
+		{
+			dirs = new boolean[] { false, false, false, false };
+			target = null;
+		}
+		
+		if (target != null && startTick == 0)
+		{
+			startTick = tick;
+			return;
+		}
+		
+		if (target != null && (tick - startTick) % (30 / attr.get(Attribute.SPEED)) == 0) frame = (frame + 1) % 4;
+		
+		float spe = 0.025f;
+		if (sprint && attr.get(Attribute.STAMINA) > 0 && (dirs[0] || dirs[1] || dirs[2] || dirs[3] || target != null))
+		{
+			attr.set(Attribute.SPEED, 5);
+			attr.add(Attribute.STAMINA, -spe);
+		}
+		else
+		{
+			attr.set(Attribute.SPEED, 2);
+			if (attr.get(Attribute.STAMINA) < attr.get(Attribute.STAMINA_MAX))
+			{
+				if ((dirs[0] || dirs[1] || dirs[2] || dirs[3] || target != null) && sprint) sprint = false;
+				
+				float dif = attr.get(Attribute.STAMINA_MAX) - attr.get(Attribute.STAMINA);
+				attr.add(Attribute.STAMINA, dif > 2 * spe ? 2 * spe : dif);
+			}
+		}
+		
 		if (!frozen)
 		{
-			if (dirs[0] || dirs[1] || dirs[2] || dirs[3]) target = null;
-			
-			if (Game.currentGame.alpha != 0)
-			{
-				dirs = new boolean[] { false, false, false, false };
-				target = null;
-			}
-			
-			if (target != null && startTick == 0)
-			{
-				startTick = tick;
-				return;
-			}
-			
-			if (target != null && (tick - startTick) % (30 / attr.get(Attribute.SPEED)) == 0) frame = (frame + 1) % 4;
-			
-			float spe = 0.025f;
-			if (sprint && attr.get(Attribute.STAMINA) > 0 && (dirs[0] || dirs[1] || dirs[2] || dirs[3] || target != null))
-			{
-				attr.set(Attribute.SPEED, 5);
-				attr.add(Attribute.STAMINA, -spe);
-			}
-			else
-			{
-				attr.set(Attribute.SPEED, 2);
-				if (attr.get(Attribute.STAMINA) < attr.get(Attribute.STAMINA_MAX))
-				{
-					if ((dirs[0] || dirs[1] || dirs[2] || dirs[3] || target != null) && sprint) sprint = false;
-					
-					float dif = attr.get(Attribute.STAMINA_MAX) - attr.get(Attribute.STAMINA);
-					attr.add(Attribute.STAMINA, dif > 2 * spe ? 2 * spe : dif);
-				}
-			}
-			
 			if ((dirs[0] || dirs[1] || dirs[2] || dirs[3]))
 			{
 				Vector lastPos = pos.clone();
@@ -124,6 +124,7 @@ public class Player extends Creature
 			}
 			else Game.world.y = (Game.getHeight() - Game.world.height) / 2;
 		}
+		else frame = 0;
 	}
 	
 	@Override

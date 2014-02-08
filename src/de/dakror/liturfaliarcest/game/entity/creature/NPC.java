@@ -137,16 +137,19 @@ public class NPC extends Creature
 	{
 		for (Quest q : Quest.quests.values())
 		{
-			if (equalsGUID(q.getOriginGUID()) && (q.getFlags().length() == 0 || FlagManager.matchesFlags(q.getFlags())))
+			if (equalsGUID(q.getOriginGUID()) && (q.getFlags().length() == 0 || FlagManager.matchesFlags(q.getFlags())) && FlagManager.matchesFlags("!QUEST_" + q.getId() + "_ACCEPTED !QUEST_" + q.getId() + "_DONE"))
 			{
 				questIcon = 0;
-				break;
+				return;
 			}
-			if (equalsGUID(q.getGoal().substring(q.getGoal().indexOf(":") + 1)) && (FlagManager.matchesFlags(q.getFlags() + " QUEST_" + q.getId() + "_ACCEPTED")))
+			
+			if (equalsGUID(q.getGoal().substring(q.getGoal().indexOf(":") + 1)) && FlagManager.matchesFlags(q.getFlags() + " QUEST_" + q.getId() + "_ACCEPTED !QUEST_" + q.getId() + "_DONE"))
 			{
 				questIcon = 1;
-				break;
+				return;
 			}
 		}
+		
+		questIcon = -1;
 	}
 }

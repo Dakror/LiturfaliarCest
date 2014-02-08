@@ -2,6 +2,7 @@ package de.dakror.liturfaliarcest.game.entity;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +38,8 @@ public abstract class Entity extends ClickableComponent
 	
 	protected JSONObject eventFunctions;
 	
+	protected ArrayList<Entity> lastTickEntered;
+	
 	public Entity(int x, int y, int width, int height)
 	{
 		super(x, y, width, height);
@@ -49,6 +52,8 @@ public abstract class Entity extends ClickableComponent
 		eventFunctions = new JSONObject();
 		dead = false;
 		frozen = false;
+		
+		lastTickEntered = new ArrayList<>();
 		
 		addClickEvent(new ClickEvent()
 		{
@@ -145,7 +150,15 @@ public abstract class Entity extends ClickableComponent
 			if (e.equals(this)) continue;
 			Entity e1 = (Entity) e;
 			Rectangle2D is = getBump().createIntersection(e1.hasBump() ? e1.getBump() : e1.getArea());
-			if (is.getWidth() > 8 && is.getHeight() > 8) onEnter(e1);
+			if (is.getWidth() > 8 && is.getHeight() > 8 && !lastTickEntered.contains(e1))
+			{
+				onEnter(e1);
+				lastTickEntered.add(e1);
+			}
+			else if (is.getWidth() < 8 || is.getHeight() < 8 && lastTickEntered.contains(e1))
+			{
+				lastTickEntered.remove(e1);
+			}
 		}
 	}
 	
@@ -307,7 +320,7 @@ public abstract class Entity extends ClickableComponent
 	
 	protected void onEnter(Entity entity)
 	{
-		if (entity.eventFunctions.has("onEnter"))
+		if (entity.eventFunctions.has("onEnter") && this instanceof Player)
 		{
 			try
 			{
