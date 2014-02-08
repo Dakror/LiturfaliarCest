@@ -77,7 +77,7 @@ public class TalkLayer extends Layer
 				Helper.drawContainer(50, 50, Game.getWidth() / 4, Game.getHeight() / 5 * 3, true, false, g);
 				
 				Helper.setRenderingHints(g, false);
-				BufferedImage bi = Game.getImage(source.getMeta().getString("texture"));
+				BufferedImage bi = Game.getImage(activeName.length() > 0 ? source.getMeta().getString("texture") : Game.player.getTexture());
 				Helper.drawShadow(80, 70, bi.getWidth() / 4 * 4, bi.getHeight() / 4 / 2 * 4 + 30, g);
 				Helper.drawOutline(80, 70, bi.getWidth() / 4 * 4, bi.getHeight() / 4 / 2 * 4 + 30, false, g);
 				Helper.drawImage(bi, 80, 80, bi.getWidth() / 4 * 4, bi.getHeight() / 4 / 2 * 4, 0, 0, bi.getWidth() / 4, bi.getHeight() / 4 / 2, g);
@@ -113,6 +113,7 @@ public class TalkLayer extends Layer
 		source.setFrozen(false);
 		Game.player.setFrozen(false);
 		Game.currentGame.removeLayer(this);
+		Game.world.skipWorldClick = true;
 	}
 	
 	public void next()
@@ -137,6 +138,7 @@ public class TalkLayer extends Layer
 					activeText = o.getString(2);
 					String modifiers = o.getString(1);
 					if (modifiers.contains("%e")) activeName = source.getMeta().getString("name");
+					else activeName = "";
 					if (modifiers.contains("%q"))
 					{
 						String s = modifiers.substring(modifiers.indexOf("%q_") + "%q_".length());

@@ -70,4 +70,9 @@ public abstract class Creature extends Entity
 			}
 		}
 	}
+	
+	public String getTexture()
+	{
+		return tex;
+	}
 }

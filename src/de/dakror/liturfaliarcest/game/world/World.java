@@ -50,6 +50,8 @@ public class World extends Layer
 	
 	public int drawn;
 	
+	public boolean skipWorldClick; // hack
+	
 	public World(String name)
 	{
 		this.name = name;
@@ -251,13 +253,18 @@ public class World extends Layer
 		return bump;
 	}
 	
-	
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
 		Game.player.setClickTarget(null);
 		
 		super.mouseReleased(e);
+		
+		if (skipWorldClick)
+		{
+			skipWorldClick = false;
+			return;
+		}
 		
 		if (AffineTransform.getTranslateInstance(x, y).createTransformedShape(bump).contains(e.getPoint()) || Game.player.getClickTarget() != null) Game.player.setTarget(new Vector(e.getX() - x - Game.player.bumpX - Game.player.bumpWidth / 2, e.getY() - y - Game.player.bumpY - Game.player.bumpHeight / 2));
 	}
