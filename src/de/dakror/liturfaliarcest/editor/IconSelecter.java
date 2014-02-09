@@ -33,7 +33,7 @@ public class IconSelecter
 			e.printStackTrace();
 		}
 		
-		final JFrame frame = new JFrame("Icon Selecter");
+		final JFrame frame = new JFrame("Liturfaliar Cest Editor: Icons");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setResizable(false);
 		

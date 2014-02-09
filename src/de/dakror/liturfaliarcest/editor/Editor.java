@@ -92,7 +92,6 @@ public class Editor extends JFrame
 	public Editor()
 	{
 		super("Liturfaliar Cest Editor");
-		
 		Item.init();
 		
 		currentEditor = this;
@@ -368,7 +367,16 @@ public class Editor extends JFrame
 				}
 			}
 		}));
-		
+		tools.add(new JMenuItem(new AbstractAction("Boden-Editor")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				new FloorEditor();
+			}
+		}));
 		
 		getJMenuBar().add(tools);
 	}

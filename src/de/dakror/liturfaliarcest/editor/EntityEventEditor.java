@@ -27,7 +27,7 @@ public class EntityEventEditor extends JDialog
 	
 	public EntityEventEditor(final Entity l) throws Exception
 	{
-		super(Editor.currentEditor, "Entity Events bearbeiten", true);
+		super(Editor.currentEditor, "Liturfaliar Cest Editor: Entity Events", true);
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setSize(400, 350);
 		setLocationRelativeTo(Editor.currentEditor);
