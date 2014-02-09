@@ -44,6 +44,7 @@ public class FloorEditor extends JFrame
 	{
 		JSplitPane cp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		cp.setEnabled(false);
+		cp.setDividerLocation(200);
 		JPanel tilesets = new JPanel(new WrapLayout(WrapLayout.LEFT));
 		
 		for (String tileset : CFG.AUTOTILES)
@@ -52,12 +53,18 @@ public class FloorEditor extends JFrame
 		tilesets.setSize(200, 600);
 		
 		JScrollPane jsp = new JScrollPane(tilesets, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		jsp.setPreferredSize(new Dimension(200, 600));
 		cp.add(jsp);
 		
 		map = new JPanel(null);
-		tilesets.setSize(600, 600);
+		for (int i = 0; i < 10; i++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				map.add(new Autotile(i, j, "", true));
+			}
+		}
 		JScrollPane jsp2 = new JScrollPane(map, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		jsp2.setSize(new Dimension(600, 600));
 		cp.add(jsp2);
 		
 		setContentPane(cp);
