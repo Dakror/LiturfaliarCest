@@ -3,14 +3,15 @@ package de.dakror.liturfaliarcest.editor;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,21 +29,27 @@ public class Autotile extends JLabel
 	public String tileset;
 	boolean map;
 	
+	boolean border;
+	
 	public Autotile(int x, int y, String tileset, boolean map)
 	{
 		if (map) setBounds(x * 32, y * 32, 32, 32);
 		setPreferredSize(new Dimension(32, 32));
 		this.tileset = tileset;
 		this.map = map;
-		
-		setBorder(BorderFactory.createLineBorder(Color.black));
-		
 		addMouseListener(new MouseAdapter()
 		{
 			@Override
 			public void mousePressed(MouseEvent e)
 			{
 				if (!Autotile.this.map && e.getButton() == MouseEvent.BUTTON1) FloorEditor.currentFloorEditor.selectedTile = Autotile.this.tileset;
+				
+				if (Autotile.this.map && e.getButton() == MouseEvent.BUTTON3)
+				{
+					Autotile.this.tileset = "";
+					updateIcon();
+					updateMap();
+				}
 				if (Autotile.this.map && e.getButton() == MouseEvent.BUTTON1 && FloorEditor.currentFloorEditor.selectedTile != null)
 				{
 					Autotile.this.tileset = FloorEditor.currentFloorEditor.selectedTile;
@@ -50,9 +57,42 @@ public class Autotile extends JLabel
 					updateMap();
 				}
 			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e)
+			{
+				border = true;
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e)
+			{
+				border = false;
+				repaint();
+			}
+		});
+		
+		addMouseMotionListener(new MouseMotionAdapter()
+		{
+			@Override
+			public void mouseMoved(MouseEvent e)
+			{
+				repaint();
+			}
 		});
 		
 		updateIcon();
+	}
+	
+	@Override
+	public void paint(Graphics g)
+	{
+		super.paint(g);
+		if (border)
+		{
+			g.setColor(Color.black);
+			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+		}
 	}
 	
 	public void updateMap()
@@ -66,7 +106,8 @@ public class Autotile extends JLabel
 	{
 		if (tileset == "")
 		{
-			setIcon(null);
+			setIcon(new ImageIcon(new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB)));
+			repaint();
 			return;
 		}
 		if (map)
