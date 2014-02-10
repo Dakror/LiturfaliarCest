@@ -1,9 +1,17 @@
 package de.dakror.liturfaliarcest.editor;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Composite;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +45,9 @@ public class FloorEditor extends JFrame
 	
 	JPanel map;
 	public String selectedTile;
+	boolean border;
+	boolean dragDelete;
+	Point dragStart, dragEnd;
 	
 	public FloorEditor()
 	{
@@ -44,7 +55,7 @@ public class FloorEditor extends JFrame
 		
 		currentFloorEditor = this;
 		
-		setSize(800, 600);
+		setSize(1280, 720);
 		setLocationRelativeTo(Editor.currentEditor);
 		setResizable(false);
 		setIconImage(Game.getImage("system/editor.png"));
@@ -65,12 +76,37 @@ public class FloorEditor extends JFrame
 		for (String tileset : CFG.AUTOTILES)
 			tilesets.add(new Autotile(0, 0, tileset, false));
 		
-		tilesets.setSize(200, 600);
+		tilesets.setSize(200, 720);
 		
 		JScrollPane jsp = new JScrollPane(tilesets, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		cp.add(jsp);
 		
-		map = new JPanel(null);
+		map = new JPanel(null)
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void paint(Graphics g)
+			{
+				super.paint(g);
+				
+				if (dragEnd != null && dragStart != null)
+				{
+					Graphics2D g2 = (Graphics2D) g;
+					Composite c = g2.getComposite();
+					Color color = g2.getColor();
+					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+					g2.setColor(dragDelete ? Color.red : Color.green);
+					int x = Math.min(dragStart.x, dragEnd.x);
+					int y = Math.min(dragStart.y, dragEnd.y);
+					int xM = Math.max(dragStart.x, dragEnd.x);
+					int yM = Math.max(dragStart.y, dragEnd.y);
+					g2.fillRect(x, y, xM - x, yM - y);
+					g2.setComposite(c);
+					g2.setColor(color);
+				}
+			}
+		};
 		KeyStroke keyStroke = KeyStroke.getKeyStroke("A");
 		map.getActionMap().put("a-add", new AbstractAction("a-add")
 		{
@@ -182,18 +218,73 @@ public class FloorEditor extends JFrame
 			}
 		});
 		map.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "save");
+		keyStroke = KeyStroke.getKeyStroke("B");
+		map.getActionMap().put("border", new AbstractAction("border")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				border = !border;
+				for (Component c : map.getComponents())
+					((Autotile) c).gridBorder = border;
+				
+				map.repaint();
+			}
+		});
+		map.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "border");
+		
+		map.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mouseReleased(MouseEvent e)
+			{
+				if (dragStart != null && dragEnd != null)
+				{
+					int x = Math.min(dragStart.x, dragEnd.x);
+					int y = Math.min(dragStart.y, dragEnd.y);
+					int xM = Math.max(dragStart.x, dragEnd.x);
+					int yM = Math.max(dragStart.y, dragEnd.y);
+					for (Component c : map.getComponents())
+					{
+						if (c instanceof Autotile && c.getX() >= x && c.getX() < xM && c.getY() >= y && c.getY() < yM)
+						{
+							if (dragDelete) ((Autotile) c).tileset = "";
+							else ((Autotile) c).tileset = selectedTile;
+						}
+					}
+					Autotile.updateMap();
+				}
+				
+				dragEnd = dragStart = null;
+				dragDelete = false;
+				map.repaint();
+			}
+		});
+		map.addMouseMotionListener(new MouseMotionAdapter()
+		{
+			@Override
+			public void mouseDragged(MouseEvent e)
+			{
+				if (selectedTile == null) return;
+				dragDelete = e.getModifiers() == 4;
+				
+				if (dragStart == null) dragStart = new Point((int) Math.ceil(e.getX() / 32f) * 32, (int) Math.ceil(e.getY() / 32f) * 32);
+				else dragEnd = new Point((int) Math.ceil(e.getX() / 32f) * 32, (int) Math.ceil(e.getY() / 32f) * 32);
+				map.repaint();
+			}
+		});
+		
 		
 		width = 10;
 		height = 10;
 		for (int i = 0; i < width; i++)
-		{
 			for (int j = 0; j < height; j++)
-			{
 				map.add(new Autotile(i, j, "", true));
-			}
-		}
+		
 		JScrollPane jsp2 = new JScrollPane(map, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		jsp2.setSize(new Dimension(600, 600));
+		jsp2.setSize(new Dimension(1080, 720));
 		cp.add(jsp2);
 		
 		setContentPane(cp);

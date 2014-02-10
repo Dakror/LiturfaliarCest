@@ -1,5 +1,7 @@
 package de.dakror.liturfaliarcest.editor;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 
 import javax.swing.Icon;
@@ -28,6 +30,14 @@ public class Entity extends JLabel
 		e = new JSONObject();
 		m = new JSONObject();
 		defaultIcon = i;
+		addMouseMotionListener(new MouseMotionAdapter()
+		{
+			@Override
+			public void mouseMoved(MouseEvent e)
+			{
+				Editor.currentEditor.mapPanel.getMouseMotionListeners()[0].mouseMoved(e);
+			}
+		});
 	}
 	
 	public void setM(JSONObject m)

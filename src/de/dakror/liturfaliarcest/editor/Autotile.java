@@ -29,7 +29,7 @@ public class Autotile extends JLabel
 	public String tileset;
 	boolean map;
 	
-	boolean border;
+	boolean border, gridBorder;
 	
 	public Autotile(int x, int y, String tileset, boolean map)
 	{
@@ -37,25 +37,34 @@ public class Autotile extends JLabel
 		setPreferredSize(new Dimension(32, 32));
 		this.tileset = tileset;
 		this.map = map;
+		gridBorder = FloorEditor.currentFloorEditor.border;
+		
 		addMouseListener(new MouseAdapter()
 		{
 			@Override
-			public void mousePressed(MouseEvent e)
+			public void mouseReleased(MouseEvent e)
 			{
-				if (!Autotile.this.map && e.getButton() == MouseEvent.BUTTON1) FloorEditor.currentFloorEditor.selectedTile = Autotile.this.tileset;
+				if (FloorEditor.currentFloorEditor.dragStart == null)
+				{
+					
+					if (!Autotile.this.map && e.getButton() == MouseEvent.BUTTON1) FloorEditor.currentFloorEditor.selectedTile = Autotile.this.tileset;
+					
+					if (Autotile.this.map && e.getButton() == MouseEvent.BUTTON3)
+					{
+						Autotile.this.tileset = "";
+						updateIcon();
+						updateMap();
+					}
+					if (Autotile.this.map && e.getButton() == MouseEvent.BUTTON1 && FloorEditor.currentFloorEditor.selectedTile != null)
+					{
+						Autotile.this.tileset = FloorEditor.currentFloorEditor.selectedTile;
+						updateIcon();
+						updateMap();
+					}
+				}
 				
-				if (Autotile.this.map && e.getButton() == MouseEvent.BUTTON3)
-				{
-					Autotile.this.tileset = "";
-					updateIcon();
-					updateMap();
-				}
-				if (Autotile.this.map && e.getButton() == MouseEvent.BUTTON1 && FloorEditor.currentFloorEditor.selectedTile != null)
-				{
-					Autotile.this.tileset = FloorEditor.currentFloorEditor.selectedTile;
-					updateIcon();
-					updateMap();
-				}
+				e.translatePoint(getX(), getY());
+				FloorEditor.currentFloorEditor.map.getMouseListeners()[0].mouseReleased(e);
 			}
 			
 			@Override
@@ -75,6 +84,13 @@ public class Autotile extends JLabel
 		addMouseMotionListener(new MouseMotionAdapter()
 		{
 			@Override
+			public void mouseDragged(MouseEvent e)
+			{
+				e.translatePoint(getX(), getY());
+				FloorEditor.currentFloorEditor.map.getMouseMotionListeners()[0].mouseDragged(e);
+			}
+			
+			@Override
 			public void mouseMoved(MouseEvent e)
 			{
 				repaint();
@@ -88,14 +104,14 @@ public class Autotile extends JLabel
 	public void paint(Graphics g)
 	{
 		super.paint(g);
-		if (border)
+		if (border || gridBorder)
 		{
-			g.setColor(Color.black);
+			g.setColor(gridBorder && border ? Color.white : Color.black);
 			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 		}
 	}
 	
-	public void updateMap()
+	public static void updateMap()
 	{
 		JPanel map = FloorEditor.currentFloorEditor.map;
 		for (Component c : map.getComponents())
