@@ -31,13 +31,31 @@ function teleportMap(x, y, map, bumpPos)
 }
 
 /**
- * Sets the given flag in the Flag System.
+ * Sets the given flag in the Flag System if it has not been set yet.
  * 
  * @param flag - name of the flag, preferrably in captial letters
  */
 function setFlag(flag)
 {
 	FlagManager.setFlag(flag);
+}
+/**
+ * Adds the given flag in the Flag System.
+ * 
+ * @param flag - name of the flag, preferrably in captial letters
+ */
+function addFlag(flag)
+{
+	FlagManager.addFlag(flag);
+}
+/**
+ * Removes the given flag from the Flag System.
+ * 
+ * @param flag - name of the flag, preferrably in captial letters
+ */
+function removeFlag(flag)
+{
+	FlagManager.removeFlag(flag);
 }
 /**
  * Gives the state of the given flag back.

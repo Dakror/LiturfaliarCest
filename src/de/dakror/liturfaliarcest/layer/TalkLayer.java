@@ -60,7 +60,15 @@ public class TalkLayer extends Layer
 			@Override
 			public void trigger()
 			{
-				if (questTrigger > -1) FlagManager.setFlag("QUEST_" + questTrigger + "_ACCEPTED");
+				if (questTrigger > -1)
+				{
+					if (FlagManager.isFlag("QUEST_" + questTrigger + "_ACCEPTED"))
+					{
+						FlagManager.removeFlag("QUEST_" + questTrigger + "_ACCEPTED");
+						FlagManager.setFlag("QUEST_" + questTrigger + "_DONE");
+					}
+					else FlagManager.setFlag("QUEST_" + questTrigger + "_ACCEPTED");
+				}
 				next();
 			}
 		});

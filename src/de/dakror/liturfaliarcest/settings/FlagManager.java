@@ -20,6 +20,11 @@ public class FlagManager
 		if (!flags.contains(name)) flags.add(name.toUpperCase());
 	}
 	
+	public static void removeFlag(String name)
+	{
+		flags.remove(name.toUpperCase());
+	}
+	
 	public static void addFlag(String name)
 	{
 		flags.add(name.toUpperCase());
