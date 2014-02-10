@@ -1,5 +1,6 @@
 package de.dakror.liturfaliarcest.editor;
 
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
@@ -36,6 +37,14 @@ public class Entity extends JLabel
 			public void mouseMoved(MouseEvent e)
 			{
 				Editor.currentEditor.mapPanel.getMouseMotionListeners()[0].mouseMoved(e);
+			}
+		});
+		addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(MouseEvent e)
+			{
+				Editor.currentEditor.mapPanel.getMouseListeners()[0].mousePressed(e);
 			}
 		});
 	}

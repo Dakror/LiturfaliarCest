@@ -28,6 +28,7 @@ import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.swing.WrapLayout;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.settings.CFG;
@@ -270,8 +271,8 @@ public class FloorEditor extends JFrame
 				if (selectedTile == null) return;
 				dragDelete = e.getModifiers() == 4;
 				
-				if (dragStart == null) dragStart = new Point((int) Math.ceil(e.getX() / 32f) * 32, (int) Math.ceil(e.getY() / 32f) * 32);
-				else dragEnd = new Point((int) Math.ceil(e.getX() / 32f) * 32, (int) Math.ceil(e.getY() / 32f) * 32);
+				if (dragStart == null) dragStart = new Point(Helper.round(e.getX(), 32), Helper.round(e.getY(), 32));
+				else dragEnd = new Point(Helper.round(e.getX(), 32), Helper.round(e.getY(), 32));
 				map.repaint();
 			}
 		});
