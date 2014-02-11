@@ -252,7 +252,7 @@ public abstract class Entity extends ClickableComponent
 	
 	public boolean equalsGUID(String guid)
 	{
-		if (!guid.substring(0, guid.indexOf("$")).equals(Game.world.getName())) return false;
+		if (guid.indexOf("$") == -1 || !guid.substring(0, guid.indexOf("$")).equals(Game.world.getName())) return false;
 		
 		return Integer.parseInt(guid.substring(guid.indexOf("$") + 1)) == uid;
 	}

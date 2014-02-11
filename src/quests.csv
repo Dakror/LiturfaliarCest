@@ -1,2 +1,4 @@
 id;flag;name;text;origin;goal;main
 1;;Eine wichtige Angelegenheit;Laut Vater möchte Wächter Krosso mir etwas Wichtiges mitteilen. Besser, ich suche ihn rasch auf.;Kerstil_0$511977843;onTalk:Kerstil$2114996193;1
+2;;Schließt die Tore!;Die offensichtlich feindseligen Reiter kommen immer näher. Von Wächter Krosso wurde mir aufgetragen, die Palisade im Westen zu versprerren.;Kerstil$2114996193;;1
+3;;Zu den Waffen!;Wächter Krosso trug mir außerdem auf, die Mitbewohner über die Lage zu informieren und mich zu bewaffnen.;Kerstil$2114996193;;1
