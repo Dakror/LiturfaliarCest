@@ -13,6 +13,7 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.creature.NPC;
 import de.dakror.liturfaliarcest.settings.FlagManager;
+import de.dakror.liturfaliarcest.settings.Talk;
 
 /**
  * @author Dakror
@@ -23,6 +24,7 @@ public class TalkLayer extends Layer
 	JSONArray talk;
 	String activeText, activeName;
 	int index;
+	Talk activeTalk; // for JS event
 	int questTrigger = -1;
 	
 	public TalkLayer(JSONArray t, NPC s)
@@ -30,6 +32,7 @@ public class TalkLayer extends Layer
 		talk = t;
 		source = s;
 		index = -1;
+		activeTalk = new Talk();
 	}
 	
 	@Override
@@ -91,8 +94,7 @@ public class TalkLayer extends Layer
 				Helper.drawImage(bi, 80, 80, bi.getWidth() / 4 * 4, bi.getHeight() / 4 / 2 * 4, 0, 0, bi.getWidth() / 4, bi.getHeight() / 4 / 2, g);
 				Helper.setRenderingHints(g, true);
 				
-				Helper.drawString(activeName, 90 + bi.getWidth() / 4 * 4, 120, g, 45);
-				
+				Helper.drawStringWrapped(activeName, 90 + bi.getWidth() / 4 * 4, 120, Game.getWidth() / 4 - bi.getWidth() / 4 * 4 - 60, g, 45);
 				Helper.drawOutline(55, 55, Game.getWidth() / 4 - 10, bi.getHeight() / 4 / 2 * 4 + 70, false, g);
 				
 				Helper.drawOutline(55, Game.getHeight() / 5 * 3 - components.get(0).getHeight() + 20 + 7, Game.getWidth() / 4 - 10, components.get(0).getHeight() + 20, false, g);
@@ -136,7 +138,6 @@ public class TalkLayer extends Layer
 		try
 		{
 			index++;
-			
 			JSONArray a = talk.getJSONArray(index);
 			for (int i = 0; i < a.length(); i++)
 			{
@@ -155,6 +156,8 @@ public class TalkLayer extends Layer
 					}
 					else questTrigger = -1;
 					
+					source.onNextTalk(activeTalk, new Talk(i, index, o.getString(0), o.getString(1), o.getString(2)));
+					activeTalk = new Talk(i, index, o.getString(0), o.getString(1), o.getString(2));
 					return;
 				}
 			}

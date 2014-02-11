@@ -17,6 +17,7 @@ import de.dakror.liturfaliarcest.game.entity.creature.Player;
 import de.dakror.liturfaliarcest.settings.Attributes;
 import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
 import de.dakror.liturfaliarcest.settings.Inventory;
+import de.dakror.liturfaliarcest.settings.Talk;
 import de.dakror.liturfaliarcest.util.Assistant;
 import de.dakror.liturfaliarcest.util.JSInvoker;
 
@@ -294,6 +295,21 @@ public abstract class Entity extends ClickableComponent
 			try
 			{
 				JSInvoker.invoke(eventFunctions.getString("onPickup"), this);
+			}
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void onNextTalk(Talk oldTalk, Talk newTalk)
+	{
+		if (eventFunctions.has("onNextTalk"))
+		{
+			try
+			{
+				JSInvoker.invoke(eventFunctions.getString("onNextTalk"), this, oldTalk, newTalk);
 			}
 			catch (JSONException e)
 			{
