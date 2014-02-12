@@ -252,7 +252,7 @@ public class Editor extends JFrame
 					final String s = JOptionPane.showInputDialog("Bitte gib die erwünschte Anzahl an PPB ein:", 4);
 					if (s == null) return;
 					
-					final JDialog d = new JDialog();
+					final JDialog d = new JDialog(Editor.this);
 					d.setSize(400, 22);
 					d.setLocationRelativeTo(Editor.this);
 					d.setUndecorated(true);
