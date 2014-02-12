@@ -201,12 +201,14 @@ public class Player extends Creature
 	@Override
 	protected void onClickReach(Entity entity)
 	{
-		if (entity instanceof NPC && ((NPC) entity).getTalk() != null && !(Game.currentGame.getActiveLayer() instanceof TalkLayer))
-		{
-			Game.currentGame.addLayer(new TalkLayer(((NPC) entity).getTalk(), (NPC) entity));
-			entity.setFrozen(true);
-			frozen = true;
-		}
+		if (entity instanceof NPC && ((NPC) entity).getTalk() != null && !(Game.currentGame.getActiveLayer() instanceof TalkLayer)) startTalk(entity);
+	}
+	
+	public void startTalk(Entity entity)
+	{
+		Game.currentGame.addLayer(new TalkLayer(((NPC) entity).getTalk(), (NPC) entity));
+		entity.setFrozen(true);
+		frozen = true;
 	}
 	
 	@Override

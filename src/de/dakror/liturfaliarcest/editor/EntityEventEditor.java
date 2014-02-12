@@ -29,7 +29,7 @@ public class EntityEventEditor extends JDialog
 	{
 		super(Editor.currentEditor, "Liturfaliar Cest Editor: Entity Events", true);
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-		setSize(400, 350);
+		setSize(800, 600);
 		setLocationRelativeTo(Editor.currentEditor);
 		
 		final RSyntaxTextArea a = new RSyntaxTextArea("e: " + l.e.toString(2).replaceAll("([^\\\\])(\")", "$1").replace("\\\"", "\"").replace(";", ";\n").replace("{", "{\n").replace("}", "}\n") + ",/*END*/\nm: " + fmt(l.m));

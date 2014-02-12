@@ -34,14 +34,22 @@ public class NPC extends Creature
 	{
 		super(x, y, 0, 0);
 		this.meta = meta;
-		tex = meta.getString("texture");
-		BufferedImage img = Game.getImage(tex);
-		width = img.getWidth() / 4 * (World.TILE_SIZE / 32);
-		height = img.getHeight() / 4 * (World.TILE_SIZE / 32);
-		bumpY = Math.round(70 * height / 96f);
-		bumpX = Math.round(16 * width / 64f);
-		bumpWidth = width / 2;
-		bumpHeight = Math.round(24 * height / 96f);
+		tex = meta.has("texture") ? meta.getString("texture") : "";
+		if (meta.has("texture"))
+		{
+			BufferedImage img = Game.getImage(tex);
+			width = img.getWidth() / 4 * (World.TILE_SIZE / 32);
+			height = img.getHeight() / 4 * (World.TILE_SIZE / 32);
+			bumpY = Math.round(70 * height / 96f);
+			bumpX = Math.round(16 * width / 64f);
+			bumpWidth = width / 2;
+			bumpHeight = Math.round(24 * height / 96f);
+		}
+		else
+		{
+			width = height = World.TILE_SIZE;
+			bumpWidth = bumpHeight = 0;
+		}
 		attr.set(Attribute.SPEED, (float) (meta.has("speed") ? meta.getDouble("speed") : 2f));
 		roam = meta.has("roam") && meta.getBoolean("roam");
 		roamTimeout = (int) (Math.random() * 60) + 60;

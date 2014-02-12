@@ -26,6 +26,8 @@ public abstract class Creature extends Entity
 	@Override
 	public void draw(Graphics2D g)
 	{
+		if (tex.length() == 0) return;
+		
 		Helper.setRenderingHints(g, false);
 		
 		BufferedImage img = Game.getImage(tex);

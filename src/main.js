@@ -66,3 +66,11 @@ function isFlag(flag)
 {
 	return FlagManager.isFlag(flag);
 }
+
+/**
+ * Manually triggers the talk of the given entity
+ * @param entity - entity whose talk will be started
+ */
+function talk(entity) {
+	game.player.startTalk(entity);
+}
