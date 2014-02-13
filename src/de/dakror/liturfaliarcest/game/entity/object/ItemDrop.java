@@ -2,6 +2,8 @@ package de.dakror.liturfaliarcest.game.entity.object;
 
 import java.awt.Graphics2D;
 
+import org.json.JSONObject;
+
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
@@ -16,9 +18,9 @@ public class ItemDrop extends Entity
 {
 	Item item;
 	
-	public ItemDrop(int x, int y, Item item)
+	public ItemDrop(int x, int y, Item item, JSONObject meta)
 	{
-		super(x + (World.TILE_SIZE - 32) / 2, y + (World.TILE_SIZE - 32) / 2, 32, 32);
+		super(x + (World.TILE_SIZE - 32) / 2, y + (World.TILE_SIZE - 32) / 2, 32, 32, meta);
 		this.item = item;
 	}
 	

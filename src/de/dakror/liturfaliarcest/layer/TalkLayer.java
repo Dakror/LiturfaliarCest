@@ -11,6 +11,7 @@ import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.button.TextButton;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.entity.Entity;
 import de.dakror.liturfaliarcest.game.entity.creature.NPC;
 import de.dakror.liturfaliarcest.settings.FlagManager;
 import de.dakror.liturfaliarcest.settings.Talk;
@@ -20,14 +21,14 @@ import de.dakror.liturfaliarcest.settings.Talk;
  */
 public class TalkLayer extends Layer
 {
-	NPC source;
+	Entity source;
 	JSONArray talk;
 	String activeText, activeName;
 	int index;
 	Talk activeTalk; // for JS event
 	int[] questTriggers = {};
 	
-	public TalkLayer(JSONArray t, NPC s)
+	public TalkLayer(JSONArray t, Entity s)
 	{
 		talk = t;
 		source = s;
@@ -131,7 +132,7 @@ public class TalkLayer extends Layer
 	
 	public void next()
 	{
-		source.checkForQuestState();
+		if (source instanceof NPC) ((NPC) source).checkForQuestState();
 		if (index == talk.length() - 1)
 		{
 			endTalk();

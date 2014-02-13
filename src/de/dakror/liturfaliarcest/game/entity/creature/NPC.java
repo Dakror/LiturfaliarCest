@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,15 +24,13 @@ import de.dakror.liturfaliarcest.settings.FlagManager;
 public class NPC extends Creature
 {
 	EntityType type;
-	JSONObject meta;
 	
 	boolean roam;
 	int sTick, roamTimeout;
 	
 	public NPC(int x, int y, EntityType type, JSONObject meta) throws JSONException
 	{
-		super(x, y, 0, 0);
-		this.meta = meta;
+		super(x, y, 0, 0, meta);
 		tex = meta.has("texture") ? meta.getString("texture") : "";
 		if (meta.has("texture"))
 		{
@@ -113,24 +110,6 @@ public class NPC extends Creature
 	private Rectangle2D getBumpFromPosToVector(Vector target)
 	{
 		return new Rectangle2D.Float(Math.min(target.x, pos.x) + bumpX, Math.min(target.y, pos.y) + bumpY, (Math.max(target.x, pos.x) - Math.min(target.x, pos.x)) + bumpWidth, (Math.max(target.y, pos.y) - Math.min(target.y, pos.y)) + bumpHeight);
-	}
-	
-	public JSONObject getMeta()
-	{
-		return meta;
-	}
-	
-	public JSONArray getTalk()
-	{
-		try
-		{
-			return meta.has("talk") ? meta.getJSONArray("talk") : null;
-		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-			return null;
-		}
 	}
 	
 	@Override

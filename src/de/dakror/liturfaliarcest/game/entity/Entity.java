@@ -29,6 +29,7 @@ public abstract class Entity extends ClickableComponent
 	protected Attributes attr;
 	protected Inventory inv;
 	protected Vector pos, target, spawn;
+	protected JSONObject meta;
 	
 	public int uid;
 	
@@ -41,9 +42,10 @@ public abstract class Entity extends ClickableComponent
 	
 	protected ArrayList<Entity> lastTickEntered;
 	
-	public Entity(int x, int y, int width, int height)
+	public Entity(int x, int y, int width, int height, JSONObject meta)
 	{
 		super(x, y, width, height);
+		this.meta = meta;
 		pos = new Vector(x, y);
 		spawn = new Vector(x, y);
 		alpha = 1;
@@ -255,6 +257,24 @@ public abstract class Entity extends ClickableComponent
 		if (guid.indexOf("$") == -1 || !guid.substring(0, guid.indexOf("$")).equals(Game.world.getName())) return false;
 		
 		return Integer.parseInt(guid.substring(guid.indexOf("$") + 1)) == uid;
+	}
+	
+	public JSONObject getMeta()
+	{
+		return meta;
+	}
+	
+	public JSONArray getTalk()
+	{
+		try
+		{
+			return meta.has("talk") ? meta.getJSONArray("talk") : null;
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	// -- self applying events -- //

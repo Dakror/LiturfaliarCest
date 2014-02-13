@@ -3,6 +3,8 @@ package de.dakror.liturfaliarcest.game.entity.creature;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
+import org.json.JSONObject;
+
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
@@ -26,7 +28,7 @@ public class Player extends Creature
 	
 	public Player(int x, int y)
 	{
-		super(x, y, 64, 96);
+		super(x, y, 64, 96, new JSONObject());
 		tex = "char/chars/105-Civilian05.png";
 		attr.set(Attribute.SPEED, 2);
 		inv = new Inventory(8, 5);
@@ -201,12 +203,13 @@ public class Player extends Creature
 	@Override
 	protected void onClickReach(Entity entity)
 	{
+		super.onClickReach(entity);
 		if (entity instanceof NPC && ((NPC) entity).getTalk() != null && !(Game.currentGame.getActiveLayer() instanceof TalkLayer)) startTalk(entity);
 	}
 	
 	public void startTalk(Entity entity)
 	{
-		Game.currentGame.addLayer(new TalkLayer(((NPC) entity).getTalk(), (NPC) entity));
+		Game.currentGame.addLayer(new TalkLayer(entity.getTalk(), entity));
 		entity.setFrozen(true);
 		frozen = true;
 	}

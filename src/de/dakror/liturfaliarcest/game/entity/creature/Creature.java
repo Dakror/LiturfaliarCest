@@ -3,6 +3,8 @@ package de.dakror.liturfaliarcest.game.entity.creature;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import org.json.JSONObject;
+
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
@@ -17,9 +19,9 @@ public abstract class Creature extends Entity
 	protected String tex;
 	int startTick, frame, dir, questIcon, emoticonFrame;
 	
-	public Creature(int x, int y, int width, int height)
+	public Creature(int x, int y, int width, int height, JSONObject meta)
 	{
-		super(x, y, width, height);
+		super(x, y, width, height, meta);
 		questIcon = -1;
 	}
 	

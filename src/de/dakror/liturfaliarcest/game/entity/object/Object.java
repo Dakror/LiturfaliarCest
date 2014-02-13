@@ -5,6 +5,8 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import org.json.JSONObject;
+
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
@@ -18,9 +20,9 @@ public class Object extends Entity
 {
 	EntityType type;
 	
-	public Object(int x, int y, EntityType type)
+	public Object(int x, int y, EntityType type, JSONObject meta)
 	{
-		super(x, y, type.width * (World.TILE_SIZE / 32), type.height * (World.TILE_SIZE / 32));
+		super(x, y, type.width * (World.TILE_SIZE / 32), type.height * (World.TILE_SIZE / 32), meta);
 		
 		this.type = type;
 		
