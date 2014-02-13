@@ -85,7 +85,7 @@ public class Entity extends JLabel
 		else
 		{
 			setIcon(defaultIcon);
-			setBounds(getX(), getY(), 32, 32);
+			if (getName().equals("0")) setBounds(getX(), getY(), 32, 32);
 		}
 	}
 }

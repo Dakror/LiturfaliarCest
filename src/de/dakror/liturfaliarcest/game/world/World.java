@@ -132,7 +132,8 @@ public class World extends Layer
 					if (o.getJSONObject("m").has("npc") && o.getJSONObject("m").getBoolean("npc")) entity = new NPC(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")), o.getJSONObject("m"));
 					else if (o.getJSONObject("m").has("itemID")) entity = new ItemDrop(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), Item.items.get(o.getJSONObject("m").getInt("itemID")));
 				}
-				else entity = new Object(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")));
+				
+				if (entity == null) entity = new Object(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")));
 				
 				if (o.has("e")) entity.setEventFunctions(o.getJSONObject("e"));
 				

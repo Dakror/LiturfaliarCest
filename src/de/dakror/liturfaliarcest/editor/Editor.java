@@ -249,6 +249,8 @@ public class Editor extends JFrame
 				
 				if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)
 				{
+					if (!jfc.getSelectedFile().getName().endsWith("-2.png")) return;
+					
 					final String s = JOptionPane.showInputDialog("Bitte gib die erwünschte Anzahl an PPB ein:", 4);
 					if (s == null) return;
 					
@@ -642,6 +644,12 @@ public class Editor extends JFrame
 					Graphics2D g = (Graphics2D) img.getGraphics();
 					g.setColor(Color.black);
 					Helper.drawHorizontallyCenteredString("E", 32, 32, g, 44);
+				}
+				else
+				{
+					Graphics2D g = (Graphics2D) img.getGraphics();
+					g.setColor(Color.green);
+					g.drawRect(o.getInt("bx"), o.getInt("by"), o.getInt("bw"), o.getInt("bh"));
 				}
 				final JLabel l = new JLabel(new ImageIcon(img));
 				l.setPreferredSize(new Dimension(o.getInt("w"), o.getInt("h")));

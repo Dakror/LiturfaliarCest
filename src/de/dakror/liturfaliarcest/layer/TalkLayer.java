@@ -25,7 +25,7 @@ public class TalkLayer extends Layer
 	String activeText, activeName;
 	int index;
 	Talk activeTalk; // for JS event
-	int questTrigger = -1;
+	int[] questTriggers = {};
 	
 	public TalkLayer(JSONArray t, NPC s)
 	{
@@ -63,14 +63,17 @@ public class TalkLayer extends Layer
 			@Override
 			public void trigger()
 			{
-				if (questTrigger > -1)
+				if (questTriggers.length > 0)
 				{
-					if (FlagManager.isFlag("QUEST_" + questTrigger + "_ACCEPTED"))
+					for (int q : questTriggers)
 					{
-						FlagManager.removeFlag("QUEST_" + questTrigger + "_ACCEPTED");
-						FlagManager.setFlag("QUEST_" + questTrigger + "_DONE");
+						if (FlagManager.isFlag("QUEST_" + q + "_ACCEPTED"))
+						{
+							FlagManager.removeFlag("QUEST_" + q + "_ACCEPTED");
+							FlagManager.setFlag("QUEST_" + q + "_DONE");
+						}
+						else FlagManager.setFlag("QUEST_" + q + "_ACCEPTED");
 					}
-					else FlagManager.setFlag("QUEST_" + questTrigger + "_ACCEPTED");
 				}
 				next();
 			}
@@ -146,15 +149,23 @@ public class TalkLayer extends Layer
 				{
 					activeText = o.getString(2);
 					String modifiers = o.getString(1);
+					if (modifiers.contains("%skip"))
+					{
+						next();
+						return;
+					}
 					if (modifiers.contains("%e")) activeName = source.getMeta().getString("name");
 					else activeName = "";
 					if (modifiers.contains("%q"))
 					{
 						String s = modifiers.substring(modifiers.indexOf("%q_") + "%q_".length());
 						s = s.substring(0, s.indexOf("%") > -1 ? s.indexOf("%") : s.length());
-						questTrigger = Integer.parseInt(s);
+						String[] quests = s.split(",");
+						questTriggers = new int[quests.length];
+						for (int j = 0; j < quests.length; j++)
+							questTriggers[j] = Integer.parseInt(quests[j]);
 					}
-					else questTrigger = -1;
+					else questTriggers = new int[] {};
 					
 					source.onNextTalk(activeTalk, new Talk(i, index, o.getString(0), o.getString(1), o.getString(2)));
 					activeTalk = new Talk(i, index, o.getString(0), o.getString(1), o.getString(2));

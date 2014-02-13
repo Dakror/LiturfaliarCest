@@ -2,6 +2,7 @@ package de.dakror.liturfaliarcest.util;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.swing.JOptionPane;
 
 import de.dakror.gamesetup.util.Helper;
@@ -41,6 +42,9 @@ public class JSInvoker
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			String[] lines = (mainjs + "(" + code + ")(" + p + ")").split("\r\n");
+			for (int i = 0; i < lines.length; i++)
+				System.err.println((i + 1) + " " + (e instanceof ScriptException && ((ScriptException) e).getLineNumber() == i + 1 ? "ERROR>>> " : "") + lines[i]);
 			Game.w.dispose();
 			JOptionPane.showMessageDialog(Game.w, "Ein Fehler in der Event Programmierung ist aufgetreten:\n" + e.getMessage(), "Kritischer Fehler!", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
