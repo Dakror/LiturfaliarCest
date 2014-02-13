@@ -33,7 +33,6 @@ import de.dakror.liturfaliarcest.game.entity.creature.NPC;
 import de.dakror.liturfaliarcest.game.entity.object.ItemDrop;
 import de.dakror.liturfaliarcest.game.entity.object.Object;
 import de.dakror.liturfaliarcest.game.item.Item;
-import de.dakror.liturfaliarcest.settings.CFG;
 import de.dakror.liturfaliarcest.settings.FlagManager;
 
 public class World extends Layer
@@ -220,7 +219,6 @@ public class World extends Layer
 	
 	public void dispatchFlagChange(String flag, boolean on)
 	{
-		CFG.p(flag, on);
 		for (Component c : components)
 			((Entity) c).onFlagChange(flag, on);
 	}
