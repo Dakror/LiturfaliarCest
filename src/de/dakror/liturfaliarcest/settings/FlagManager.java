@@ -2,6 +2,8 @@ package de.dakror.liturfaliarcest.settings;
 
 import java.util.ArrayList;
 
+import de.dakror.liturfaliarcest.game.Game;
+
 /**
  * @author Dakror
  */
@@ -11,18 +13,31 @@ public class FlagManager
 	
 	public static void toggleFlag(String name)
 	{
-		if (flags.contains(name.toUpperCase())) flags.remove(name.toUpperCase());
-		else flags.add(name.toUpperCase());
+		if (flags.contains(name.toUpperCase()))
+		{
+			flags.remove(name.toUpperCase());
+			Game.world.dispatchFlagChange(name, false);
+		}
+		else
+		{
+			flags.add(name.toUpperCase());
+			Game.world.dispatchFlagChange(name, true);
+		}
 	}
 	
 	public static void setFlag(String name)
 	{
-		if (!flags.contains(name)) flags.add(name.toUpperCase());
+		if (!flags.contains(name))
+		{
+			flags.add(name.toUpperCase());
+			Game.world.dispatchFlagChange(name, true);
+		}
 	}
 	
 	public static void removeFlag(String name)
 	{
 		flags.remove(name.toUpperCase());
+		Game.world.dispatchFlagChange(name, false);
 	}
 	
 	public static void addFlag(String name)

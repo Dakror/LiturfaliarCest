@@ -209,9 +209,9 @@ public class Player extends Creature
 	
 	public void startTalk(Entity entity)
 	{
+		frozen = true;
 		Game.currentGame.addLayer(new TalkLayer(entity.getTalk(), entity));
 		entity.setFrozen(true);
-		frozen = true;
 	}
 	
 	@Override

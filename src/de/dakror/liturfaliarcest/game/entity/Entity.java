@@ -16,6 +16,7 @@ import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.creature.Player;
 import de.dakror.liturfaliarcest.settings.Attributes;
 import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
+import de.dakror.liturfaliarcest.settings.FlagManager;
 import de.dakror.liturfaliarcest.settings.Inventory;
 import de.dakror.liturfaliarcest.settings.Talk;
 import de.dakror.liturfaliarcest.util.Assistant;
@@ -335,6 +336,18 @@ public abstract class Entity extends ClickableComponent
 			{
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	public void onFlagChange(String flag, boolean on)
+	{
+		try
+		{
+			if (meta.has("flags")) enabled = FlagManager.matchesFlags(meta.getString("flags"));
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
 		}
 	}
 	

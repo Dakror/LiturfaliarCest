@@ -33,6 +33,7 @@ import de.dakror.liturfaliarcest.game.entity.creature.NPC;
 import de.dakror.liturfaliarcest.game.entity.object.ItemDrop;
 import de.dakror.liturfaliarcest.game.entity.object.Object;
 import de.dakror.liturfaliarcest.game.item.Item;
+import de.dakror.liturfaliarcest.settings.CFG;
 import de.dakror.liturfaliarcest.settings.FlagManager;
 
 public class World extends Layer
@@ -127,8 +128,6 @@ public class World extends Layer
 				
 				if (o.has("m"))
 				{
-					if (o.getJSONObject("m").has("flags") && !FlagManager.matchesFlags(o.getJSONObject("m").getString("flags"))) continue;
-					
 					if (o.getJSONObject("m").has("npc") && o.getJSONObject("m").getBoolean("npc")) entity = new NPC(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")), o.getJSONObject("m"));
 					else if (o.getJSONObject("m").has("itemID")) entity = new ItemDrop(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), Item.items.get(o.getJSONObject("m").getInt("itemID")), o.getJSONObject("m"));
 					else entity = new Object(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")), o.getJSONObject("m"));
@@ -139,6 +138,8 @@ public class World extends Layer
 				
 				entity.uid = o.getInt("uid");
 				if (entity instanceof NPC) ((NPC) entity).checkForQuestState();
+				
+				if (o.has("m") && o.getJSONObject("m").has("flags")) entity.enabled = FlagManager.matchesFlags(o.getJSONObject("m").getString("flags"));
 				
 				addEntity(entity);
 			}
@@ -167,7 +168,7 @@ public class World extends Layer
 		Component hovered = null;
 		for (Component c : components)
 		{
-			if (!new Rectangle(0, 0, Game.getWidth(), Game.getHeight()).intersects(((Entity) c).getArea2())) continue;
+			if (!new Rectangle(0, 0, Game.getWidth(), Game.getHeight()).intersects(((Entity) c).getArea2()) || !c.enabled) continue;
 			
 			drawn++;
 			c.draw(g);
@@ -215,6 +216,13 @@ public class World extends Layer
 			}
 		});
 		components = new CopyOnWriteArrayList<>(c);
+	}
+	
+	public void dispatchFlagChange(String flag, boolean on)
+	{
+		CFG.p(flag, on);
+		for (Component c : components)
+			((Entity) c).onFlagChange(flag, on);
 	}
 	
 	public void addEntity(Entity e)
