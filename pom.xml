@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.dakror</groupId>
 	<artifactId>LiturfaliarCest</artifactId>
-	<version>1.1.1-Alpha</version>
+	<version>invdef</version>
 
 	<dependencies>
 		<dependency>
@@ -19,13 +19,6 @@
 			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${basedir}/libs/autocomplete.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>.</groupId>
-			<artifactId>GameSetup</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/libs/GameSetup.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>.</groupId>
@@ -47,6 +40,13 @@
 			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${basedir}/libs/rsyntaxtextarea.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>.</groupId>
+			<artifactId>GameSetup</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/libs/GameSetup.jar</systemPath>
 		</dependency>
 	</dependencies>
 
