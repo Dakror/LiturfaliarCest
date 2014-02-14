@@ -96,8 +96,9 @@
 						<phase>package</phase>
 					</execution>
 					<execution>
-						<id>build-a</id>
+						<id>build-game</id>
 						<configuration>
+							<appendAssemblyId>false</appendAssemblyId>
 							<archive>
 								<manifest>
 									<mainClass>de.dakror.liturfaliarcest.LiturfaliarCest</mainClass>
@@ -106,17 +107,17 @@
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
-							<appendAssemblyId>true</appendAssemblyId>
-							<finalName>${project.artifactId}-${project.version}</finalName>
+							<finalName>${project.artifactId}</finalName>
 						</configuration>
+						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
 						</goals>
-						<phase>package</phase>
 					</execution>
 					<execution>
-						<id>build-b</id>
+						<id>build-editor</id>
 						<configuration>
+							<appendAssemblyId>false</appendAssemblyId>
 							<archive>
 								<manifest>
 									<mainClass>de.dakror.liturfaliarcest.editor.Editor</mainClass>
@@ -125,13 +126,12 @@
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
-							<appendAssemblyId>true</appendAssemblyId>
-							<finalName>${project.artifactId}-Editor-${project.version}</finalName>
+							<finalName>${project.artifactId}-Editor</finalName>
 						</configuration>
+						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
 						</goals>
-						<phase>package</phase>
 					</execution>
 				</executions>
 			</plugin>
