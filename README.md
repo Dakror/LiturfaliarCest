@@ -1,4 +1,4 @@
-# LiturfaliarCest #
+# LiturfaliarCest [![Build Status](https://buildhive.cloudbees.com/job/Dakror/job/LiturfaliarCest/badge/icon)](https://buildhive.cloudbees.com/job/Dakror/job/LiturfaliarCest/)
 
 A 2.5D Fantasy RPG.
 
