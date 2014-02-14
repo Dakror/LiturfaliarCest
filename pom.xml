@@ -126,7 +126,7 @@
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
 							<appendAssemblyId>false</appendAssemblyId>
-							<finalName>${project.artifactId} Editor ${project.version}</finalName>
+							<finalName>${project.artifactId}-Editor-${project.version}</finalName>
 						</configuration>
 						<goals>
 							<goal>single</goal>
