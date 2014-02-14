@@ -84,24 +84,45 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-->plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> 
+				<executions> </executions> <configuration> <archive> <manifest> <addClasspath>true</addClasspath> 
+				<classpathPrefix>libs/</classpathPrefix> <mainClass>de.dakror.liturfaliarcest.LiturfaliarCest</mainClass> 
+				</manifest> </archive> </configuration> </plugin -->
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
+				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
 					<execution>
 						<id>unpack-dependencies</id>
 						<phase>package</phase>
 					</execution>
+					<execution>
+						<id>build-a</id>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>de.dakror.liturfaliarcest.LiturfaliarCest</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>build-b</id>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>de.dakror.liturfaliarcest.editor.Editor</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<finalName>${project.artifactId} Editor ${project.version}</finalName>
+						</configuration>
+					</execution>
 				</executions>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>libs/</classpathPrefix>
-							<mainClass>de.dakror.liturfaliarcest.LiturfaliarCest</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
