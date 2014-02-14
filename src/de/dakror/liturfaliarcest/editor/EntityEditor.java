@@ -21,13 +21,13 @@ import de.dakror.liturfaliarcest.util.RhinoJavaScriptLanguageSupport;
 /**
  * @author Dakror
  */
-public class EntityEventEditor extends JDialog
+public class EntityEditor extends JDialog
 {
 	private static final long serialVersionUID = 1L;
 	
-	public EntityEventEditor(final Entity l) throws Exception
+	public EntityEditor(final Entity l) throws Exception
 	{
-		super(Editor.currentEditor, "Liturfaliar Cest Editor: Entity Events", true);
+		super(Editor.currentEditor, "Liturfaliar Cest Editor: Entity", true);
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setSize(800, 600);
 		setLocationRelativeTo(Editor.currentEditor);
@@ -79,7 +79,7 @@ public class EntityEventEditor extends JDialog
 				}
 				catch (Exception e1)
 				{
-					int r = JOptionPane.showConfirmDialog(EntityEventEditor.this, "Fehlerhafte Eingabe:\n" + e1.getMessage() + "\nTrotzdem schließen?", "Fehler!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+					int r = JOptionPane.showConfirmDialog(EntityEditor.this, "Fehlerhafte Eingabe:\n" + e1.getMessage() + "\nTrotzdem schließen?", "Fehler!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 					if (r != JOptionPane.OK_OPTION) return;
 				}
 				

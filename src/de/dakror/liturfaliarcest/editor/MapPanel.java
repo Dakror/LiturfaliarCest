@@ -370,7 +370,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	{
 		try
 		{
-			new EntityEventEditor(l);
+			new EntityEditor(l);
 		}
 		catch (Exception e)
 		{
