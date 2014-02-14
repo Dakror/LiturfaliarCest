@@ -145,7 +145,7 @@ public class Editor extends JFrame
 			}
 		});
 		
-		cp.setSelectedIndex(1);
+		cp.setSelectedIndex(devMode ? 1 : 0);
 		setContentPane(cp);
 	}
 	
