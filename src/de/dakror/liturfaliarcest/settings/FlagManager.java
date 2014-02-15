@@ -30,7 +30,7 @@ public class FlagManager
 		if (!flags.contains(name))
 		{
 			flags.add(name.toUpperCase());
-			// Game.world.dispatchFlagChange(name, true);
+			Game.world.dispatchFlagChange(name, true);
 		}
 	}
 	
