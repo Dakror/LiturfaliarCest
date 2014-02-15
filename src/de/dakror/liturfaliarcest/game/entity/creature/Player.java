@@ -9,6 +9,7 @@ import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
 import de.dakror.liturfaliarcest.game.entity.object.ItemDrop;
+import de.dakror.liturfaliarcest.game.world.World;
 import de.dakror.liturfaliarcest.layer.TalkLayer;
 import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
 import de.dakror.liturfaliarcest.settings.Inventory;
@@ -197,14 +198,14 @@ public class Player extends Creature
 	
 	protected void checkForOnClickReachEvent()
 	{
-		if (clickTarget != null && getDistance(clickTarget) <= getBumpRadius() + clickTarget.getBumpRadius()) onClickReach(clickTarget);
+		if (clickTarget != null && getDistance(clickTarget) <= getBumpRadius() + clickTarget.getBumpRadius() + World.TILE_SIZE / 4) onClickReach(clickTarget);
 	}
 	
 	@Override
 	protected void onClickReach(Entity entity)
 	{
 		super.onClickReach(entity);
-		if (entity instanceof NPC && ((NPC) entity).getTalk() != null && !(Game.currentGame.getActiveLayer() instanceof TalkLayer)) startTalk(entity);
+		if (entity.getTalk() != null && !(Game.currentGame.getActiveLayer() instanceof TalkLayer)) startTalk(entity);
 	}
 	
 	public void startTalk(Entity entity)

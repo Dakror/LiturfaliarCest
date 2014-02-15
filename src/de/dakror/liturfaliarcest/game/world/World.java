@@ -117,9 +117,9 @@ public class World extends Layer
 	{
 		components.clear();
 		
-		if (getClass().getResource("/maps/" + name + "/" + name + ".ent") != null)
+		if (getClass().getResource("/maps/" + name + "/" + name + ".json") != null)
 		{
-			JSONArray e = new JSONArray(Helper.getURLContent(getClass().getResource("/maps/" + name + "/" + name + ".ent")));
+			JSONArray e = new JSONArray(Helper.getURLContent(getClass().getResource("/maps/" + name + "/" + name + ".json")));
 			for (int i = 0; i < e.length(); i++)
 			{
 				JSONObject o = e.getJSONObject(i);

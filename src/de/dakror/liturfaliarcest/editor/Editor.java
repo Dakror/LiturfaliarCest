@@ -178,7 +178,7 @@ public class Editor extends JFrame
 						return;
 					}
 					
-					map = new File(f, f.getName() + ".ent");
+					map = new File(f, f.getName() + ".json");
 					if (map.exists())
 					{
 						JOptionPane.showMessageDialog(jfc, "Diese Karte existiert bereits!", "Fehler: Karte bereits vorhanden", JOptionPane.ERROR_MESSAGE);
@@ -203,7 +203,7 @@ public class Editor extends JFrame
 				JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
 				jfc.setMultiSelectionEnabled(false);
 				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				jfc.setFileFilter(new FileNameExtensionFilter("Liturfaliar Cest Entity Karte (*.ent)", "ent"));
+				jfc.setFileFilter(new FileNameExtensionFilter("Liturfaliar Cest Entity Karte (*.json)", "json"));
 				jfc.setDialogTitle("Karte laden");
 				
 				if (jfc.showOpenDialog(Editor.this) == JFileChooser.APPROVE_OPTION)

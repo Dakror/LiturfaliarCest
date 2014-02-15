@@ -39,7 +39,7 @@ public class Game extends GameFrame
 		w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(getImage("system/cursor.png"), new Point(0, 0), "default_cursor"));
 		try
 		{
-			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/morpheus.ttf")));
+			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/MorrisRomanBlack.ttf")));
 		}
 		catch (Exception e)
 		{

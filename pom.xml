@@ -102,6 +102,8 @@
 							<archive>
 								<manifest>
 									<mainClass>de.dakror.liturfaliarcest.LiturfaliarCest</mainClass>
+									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+									<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 								</manifest>
 							</archive>
 							<descriptorRefs>
@@ -121,6 +123,8 @@
 							<archive>
 								<manifest>
 									<mainClass>de.dakror.liturfaliarcest.editor.Editor</mainClass>
+									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+									<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 								</manifest>
 							</archive>
 							<descriptorRefs>
