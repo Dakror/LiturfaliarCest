@@ -1,3 +1,2 @@
-sep=;
 id;name;tx;ty;stack;SPEED;ATTACK_SPEED;HEALTH;MANA;STAMINA;DAMAGE;MANA_COST;STAMINA_COST
 1;Trainingsschwert;7;16;;;1;;;;2;;
