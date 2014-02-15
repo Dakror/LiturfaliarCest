@@ -335,7 +335,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			@Override
 			public void mouseDragged(MouseEvent e)
 			{
-				if (e.getModifiers() != 16) return;
+				if (e.getModifiers() != 16 && e.getModifiers() != 18) return;
 				
 				if (drag == null)
 				{
@@ -343,7 +343,9 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 					drag = e.getPoint();
 				}
 				
-				l.setLocation(l.getX() + e.getX() - drag.x, l.getY() + e.getY() - drag.y);
+				if (e.isControlDown()) l.setLocation(Helper.round(l.getX() + e.getX() - drag.x, 32), Helper.round(l.getY() + e.getY() - drag.y, 32));
+				else l.setLocation(l.getX() + e.getX() - drag.x, l.getY() + e.getY() - drag.y);
+				
 				l.setToolTipText("X: " + (l.getX() * World.TILE_SIZE / 32) + ", Y: " + (l.getY() * World.TILE_SIZE / 32));
 			}
 		});
