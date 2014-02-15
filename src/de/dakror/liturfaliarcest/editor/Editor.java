@@ -360,7 +360,7 @@ public class Editor extends JFrame
 				try
 				{
 					File f = File.createTempFile("quests", ".csv");
-					Helper.copyInputStream(getClass().getResourceAsStream("/quests.csv"), new FileOutputStream(f));
+					Helper.copyInputStream(getClass().getResourceAsStream("/csv/quests.csv"), new FileOutputStream(f));
 					Desktop.getDesktop().open(f);
 				}
 				catch (Exception e1)
@@ -379,7 +379,7 @@ public class Editor extends JFrame
 				try
 				{
 					File f = File.createTempFile("items", ".csv");
-					Helper.copyInputStream(getClass().getResourceAsStream("/items.csv"), new FileOutputStream(f));
+					Helper.copyInputStream(getClass().getResourceAsStream("/csv/items.csv"), new FileOutputStream(f));
 					Desktop.getDesktop().open(f);
 				}
 				catch (Exception e1)

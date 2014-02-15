@@ -26,7 +26,7 @@ public class Item
 	{
 		items = new HashMap<>();
 		
-		CSVReader csv = new CSVReader("/items.csv");
+		CSVReader csv = new CSVReader("/csv/items.csv");
 		String[] headings = csv.readRow();
 		
 		String cell = "";
