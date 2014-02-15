@@ -30,7 +30,7 @@ public class FlagManager
 		if (!flags.contains(name))
 		{
 			flags.add(name.toUpperCase());
-			Game.world.dispatchFlagChange(name, true);
+			// Game.world.dispatchFlagChange(name, true);
 		}
 	}
 	
@@ -56,8 +56,22 @@ public class FlagManager
 		String[] flags = text.split(" ");
 		for (String flag : flags)
 		{
-			if (flag.startsWith("!") && isFlag(flag.substring(1))) return false;
-			else if (!flag.startsWith("!") && !isFlag(flag)) return false;
+			if (flag.contains("|"))
+			{
+				String[] fl = flag.split("\\|");
+				boolean match = false;
+				for (String f : fl)
+				{
+					if ((f.startsWith("!") && !isFlag(f.substring(1))) || (!f.startsWith("!") && isFlag(f)))
+					{
+						match = true;
+						break;
+					}
+				}
+				
+				if (!match) return false;
+			}
+			else if ((flag.startsWith("!") && isFlag(flag.substring(1))) || (!flag.startsWith("!") && !isFlag(flag))) return false;
 		}
 		
 		return true;

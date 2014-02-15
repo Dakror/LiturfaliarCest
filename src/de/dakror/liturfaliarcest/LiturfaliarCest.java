@@ -6,6 +6,7 @@ import javax.swing.UIManager;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.UpdateThread;
 
+
 public class LiturfaliarCest
 {
 	public static void main(String[] args)

@@ -68,6 +68,15 @@ function isFlag(flag)
 }
 
 /**
+ * Checks if the given flag expression is matching
+ * @param flags - flag expression to be matched against
+ * @returns true if flag matches, false otherwise
+ */
+function matches(flags) {
+	return FlagManager.matchesFlags(flags);
+}
+
+/**
  * Manually triggers the talk of the given entity
  * @param entity - entity whose talk will be started
  */

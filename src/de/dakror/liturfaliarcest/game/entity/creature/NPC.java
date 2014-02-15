@@ -120,6 +120,13 @@ public class NPC extends Creature
 		frame = 0;
 	}
 	
+	@Override
+	public void onFlagChange(String flag, boolean on)
+	{
+		super.onFlagChange(flag, on);
+		checkForQuestState();
+	}
+	
 	public void checkForQuestState()
 	{
 		for (Quest q : Quest.quests.values())
