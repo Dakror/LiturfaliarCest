@@ -119,4 +119,18 @@ public class Attributes
 	{
 		return attr.toString();
 	}
+	
+	@Override
+	public Attributes clone()
+	{
+		try
+		{
+			return new Attributes(getData());
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

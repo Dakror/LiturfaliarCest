@@ -27,7 +27,7 @@ public class Inventory
 			for (int j = 0; j < row.length(); j++)
 			{
 				JSONArray c = row.getJSONArray(j);
-				slots[i][j] = c.length() == 0 ? null : new ItemStack(Item.items.get(c.getInt(0)), c.getInt(1));
+				slots[i][j] = c.length() == 0 ? null : new ItemStack(Item.getItemInstance(c.getInt(0)), c.getInt(1));
 			}
 		}
 	}

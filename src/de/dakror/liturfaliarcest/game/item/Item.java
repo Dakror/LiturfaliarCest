@@ -18,7 +18,7 @@ import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
  */
 public class Item
 {
-	public static HashMap<Integer, Item> items;
+	private static HashMap<Integer, Item> items;
 	
 	public static int SIZE = 32;
 	
@@ -61,6 +61,16 @@ public class Item
 		}
 		
 		items.put(item.id, item);
+	}
+	
+	public static Item getItemForId(int id)
+	{
+		return items.get(id);
+	}
+	
+	public static Item getItemInstance(int id)
+	{
+		return items.get(id).clone();
 	}
 	
 	private String name;
@@ -114,6 +124,18 @@ public class Item
 		draw(0, 0, size, (Graphics2D) bi.getGraphics());
 		
 		return new ImageIcon(bi);
+	}
+	
+	@Override
+	public Item clone()
+	{
+		Item i = new Item();
+		i.name = new String(name);
+		i.id = id;
+		i.stack = stack;
+		i.tx = tx;
+		i.ty = ty;
+		return i;
 	}
 	
 	@Override

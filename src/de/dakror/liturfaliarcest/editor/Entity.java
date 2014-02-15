@@ -75,7 +75,7 @@ public class Entity extends JLabel
 		{
 			try
 			{
-				setIcon(Item.items.get(m.getInt("itemID")).getIcon(32));
+				setIcon(Item.getItemForId(m.getInt("itemID")).getIcon(32));
 			}
 			catch (Exception e)
 			{
