@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import org.json.JSONObject;
 
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.animation.Animation;
 import de.dakror.liturfaliarcest.game.item.Item;
 
 public class Entity extends JLabel
@@ -76,6 +77,19 @@ public class Entity extends JLabel
 			try
 			{
 				setIcon(Item.getItemForId(m.getInt("itemID")).getIcon(32));
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		else if (m.has("animID"))
+		{
+			try
+			{
+				Animation a = Animation.getAnimationForId(m.getInt("animID"));
+				setBounds(getX(), getY(), m.has("width") ? m.getInt("width") : a.getDefaultWidth(), m.has("height") ? m.getInt("height") : a.getDefaultHeight());
+				setIcon(a.getIcon(getWidth(), getHeight()));
 			}
 			catch (Exception e)
 			{

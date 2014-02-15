@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.liturfaliarcest.game.animation.Animation;
 import de.dakror.liturfaliarcest.game.entity.EntityType;
 import de.dakror.liturfaliarcest.game.entity.creature.Player;
 import de.dakror.liturfaliarcest.game.item.Item;
@@ -48,6 +49,8 @@ public class Game extends GameFrame
 		EntityType.init();
 		Item.init();
 		Quest.init();
+		Animation.init();
+		
 		getImage("system/icons.png"); // for loading purpose
 	}
 	

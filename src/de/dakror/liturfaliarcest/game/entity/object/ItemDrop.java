@@ -2,6 +2,7 @@ package de.dakror.liturfaliarcest.game.entity.object;
 
 import java.awt.Graphics2D;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.gamesetup.util.Helper;
@@ -18,10 +19,10 @@ public class ItemDrop extends Entity
 {
 	Item item;
 	
-	public ItemDrop(int x, int y, Item item, JSONObject meta)
+	public ItemDrop(int x, int y, JSONObject meta) throws JSONException
 	{
 		super(x + (World.TILE_SIZE - 32) / 2, y + (World.TILE_SIZE - 32) / 2, 32, 32, meta);
-		this.item = item;
+		item = Item.getItemInstance(meta.getInt("itemID"));
 	}
 	
 	@Override

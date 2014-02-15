@@ -67,6 +67,7 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.swing.SpringUtilities;
 import de.dakror.gamesetup.util.swing.WrapLayout;
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.animation.Animation;
 import de.dakror.liturfaliarcest.game.item.Item;
 import de.dakror.liturfaliarcest.settings.CFG;
 
@@ -93,6 +94,7 @@ public class Editor extends JFrame
 	{
 		super("Liturfaliar Cest Editor");
 		Item.init();
+		Animation.init();
 		
 		currentEditor = this;
 		

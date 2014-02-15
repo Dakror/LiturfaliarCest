@@ -27,12 +27,12 @@ import de.dakror.gamesetup.util.Compressor;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.animation.AnimationSpot;
 import de.dakror.liturfaliarcest.game.entity.Entity;
 import de.dakror.liturfaliarcest.game.entity.EntityType;
 import de.dakror.liturfaliarcest.game.entity.creature.NPC;
 import de.dakror.liturfaliarcest.game.entity.object.ItemDrop;
 import de.dakror.liturfaliarcest.game.entity.object.Object;
-import de.dakror.liturfaliarcest.game.item.Item;
 import de.dakror.liturfaliarcest.settings.FlagManager;
 
 public class World extends Layer
@@ -128,7 +128,8 @@ public class World extends Layer
 				if (o.has("m"))
 				{
 					if (o.getJSONObject("m").has("npc") && o.getJSONObject("m").getBoolean("npc")) entity = new NPC(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")), o.getJSONObject("m"));
-					else if (o.getJSONObject("m").has("itemID")) entity = new ItemDrop(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), Item.getItemForId(o.getJSONObject("m").getInt("itemID")), o.getJSONObject("m"));
+					else if (o.getJSONObject("m").has("itemID")) entity = new ItemDrop(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), o.getJSONObject("m"));
+					else if (o.getJSONObject("m").has("animID")) entity = new AnimationSpot(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), o.getJSONObject("m"));
 					else entity = new Object(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")), o.getJSONObject("m"));
 				}
 				else entity = new Object(o.getInt("x") * (World.TILE_SIZE / 32), o.getInt("y") * (World.TILE_SIZE / 32), EntityType.entityTypes.get(o.getInt("i")), new JSONObject());
