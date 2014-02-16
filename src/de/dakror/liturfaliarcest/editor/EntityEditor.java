@@ -16,6 +16,8 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 import de.dakror.liturfaliarcest.util.RhinoJavaScriptLanguageSupport;
 
 /**
@@ -32,7 +34,14 @@ public class EntityEditor extends JDialog
 		setSize(800, 600);
 		setLocationRelativeTo(Editor.currentEditor);
 		
-		final RSyntaxTextArea a = new RSyntaxTextArea("e: " + l.e.toString(2).replaceAll("([^\\\\])(\")", "$1").replace("\\\"", "\"").replace(";", ";\n").replace("{", "{\n").replace("}", "}\n") + ",/*END*/\nm: " + fmt(l.m));
+		String e = "";
+		String[] names = JSONObject.getNames(l.e);
+		for (int i = 0; i < names.length; i++)
+		{
+			e += names[i] + ": " + new String(new BASE64Decoder().decodeBuffer(l.e.getString(names[i]))) + (i < names.length - 1 ? ",\n" : "");
+		}
+		
+		final RSyntaxTextArea a = new RSyntaxTextArea("e: {\n" + e.replace("}", "\n}").replace("{", "{\n") + "\n}\n,/*END*/\nm: " + fmt(l.m));
 		LanguageSupportFactory lsf = LanguageSupportFactory.get();
 		lsf.register(a);
 		a.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
@@ -60,17 +69,19 @@ public class EntityEditor extends JDialog
 					String t = a.getText();
 					
 					// -- events -- //
-					String evts = t.substring(t.indexOf("{"), t.indexOf(",/*END*/"));
-					evts = evts.replace("\"", "\\\"").replace("function", "\"function").replace("}", "}\"").replace("\n", "").replace("  ", " ");
-					evts = evts.substring(0, evts.length() - 1);
+					String evts = t.substring(t.indexOf("{"), t.indexOf(",/*END*/")).trim();
+					evts = evts.substring(evts.indexOf("{") + 1, evts.lastIndexOf("}"));
+					String[] functions = evts.split("},");
+					functions[functions.length - 1] = functions[functions.length - 1].substring(0, functions[functions.length - 1].lastIndexOf("}"));
 					
-					JSONObject arr = new JSONObject(evts);
-					if (JSONObject.getNames(arr) != null)
+					JSONObject evt = new JSONObject();
+					for (String f : functions)
 					{
-						for (String k : JSONObject.getNames(arr))
-							if (!arr.getString(k).startsWith("function")) throw new JSONException("No valid function declaration at event '" + k + "'");
+						String fn = f.substring(0, f.indexOf(":")).trim();
+						String fb = f.substring(f.indexOf(":") + 1).replaceAll("(\n)|(\r\n)", "").trim() + "}";
+						evt.put(fn, new BASE64Encoder().encode(fb.getBytes()).replace("\r\n", ""));
 					}
-					l.e = arr;
+					l.e = evt;
 					
 					// -- meta -- //
 					String meta = t.substring(t.indexOf("m: ") + "m: ".length());
