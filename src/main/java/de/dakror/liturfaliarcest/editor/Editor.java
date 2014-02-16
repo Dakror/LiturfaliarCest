@@ -371,25 +371,6 @@ public class Editor extends JFrame
 				}
 			}
 		}));
-		tools.add(new JMenuItem(new AbstractAction("Questliste einsehen")
-		{
-			private static final long serialVersionUID = 1L;
-			
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				try
-				{
-					File f = File.createTempFile("quests", ".csv");
-					Helper.copyInputStream(getClass().getResourceAsStream("/main/resources/csv/quests.csv"), new FileOutputStream(f));
-					Desktop.getDesktop().open(f);
-				}
-				catch (Exception e1)
-				{
-					e1.printStackTrace();
-				}
-			}
-		}));
 		tools.add(new JMenuItem(new AbstractAction("Itemliste einsehen")
 		{
 			private static final long serialVersionUID = 1L;
@@ -401,6 +382,25 @@ public class Editor extends JFrame
 				{
 					File f = File.createTempFile("items", ".csv");
 					Helper.copyInputStream(getClass().getResourceAsStream("/main/resources/csv/items.csv"), new FileOutputStream(f));
+					Desktop.getDesktop().open(f);
+				}
+				catch (Exception e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		}));
+		tools.add(new JMenuItem(new AbstractAction("Questliste einsehen")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				try
+				{
+					File f = File.createTempFile("quests", ".csv");
+					Helper.copyInputStream(getClass().getResourceAsStream("/main/resources/csv/quests.csv"), new FileOutputStream(f));
 					Desktop.getDesktop().open(f);
 				}
 				catch (Exception e1)

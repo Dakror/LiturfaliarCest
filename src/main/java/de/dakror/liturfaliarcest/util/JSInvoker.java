@@ -5,9 +5,9 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.swing.JOptionPane;
 
+import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.world.World;
-import de.dakror.gamesetup.util.Helper;
 
 /**
  * @author Dakror
@@ -18,7 +18,7 @@ public class JSInvoker
 	
 	static
 	{
-		mainjs = Helper.getURLContent(JSInvoker.class.getResource("/main.js"));
+		mainjs = Helper.getURLContent(JSInvoker.class.getResource("/main/resources/main.js"));
 	}
 	
 	public static void invoke(String code, Object... params)

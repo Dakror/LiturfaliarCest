@@ -8,8 +8,6 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
-import de.dakror.liturfaliarcest.util.RhinoJavaScriptLanguageSupport;
-
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.rsta.ac.java.JarManager;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -20,6 +18,7 @@ import org.json.JSONObject;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
+import de.dakror.liturfaliarcest.util.RhinoJavaScriptLanguageSupport;
 
 /**
  * @author Dakror
@@ -37,12 +36,16 @@ public class EntityEditor extends JDialog
 		
 		String e = "";
 		String[] names = JSONObject.getNames(l.e);
-		for (int i = 0; i < names.length; i++)
+		if (names != null)
 		{
-			e += names[i] + ": " + new String(new BASE64Decoder().decodeBuffer(l.e.getString(names[i]))) + (i < names.length - 1 ? ",\n" : "");
+			for (int i = 0; i < names.length; i++)
+			{
+				String value = l.e.getString(names[i]);
+				e += names[i] + ": " + (value.contains("function") ? value/* old version */: new String(new BASE64Decoder().decodeBuffer(l.e.getString(names[i])))) + (i < names.length - 1 ? ",\n" : "");
+			}
 		}
 		
-		final RSyntaxTextArea a = new RSyntaxTextArea("e: {\n" + e.replace("}", "\n}").replace("{", "{\n") + "\n}\n,/*END*/\nm: " + fmt(l.m));
+		final RSyntaxTextArea a = new RSyntaxTextArea(("e: {\n" + e.replace("}", "\n}").replace("{", "\n{\n").replace(";", ";\n") + "\n}\n,/*END*/\nm: " + fmt(l.m)).replace("\n\n", "\n"));
 		LanguageSupportFactory lsf = LanguageSupportFactory.get();
 		lsf.register(a);
 		a.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
@@ -73,14 +76,18 @@ public class EntityEditor extends JDialog
 					String evts = t.substring(t.indexOf("{"), t.indexOf(",/*END*/")).trim();
 					evts = evts.substring(evts.indexOf("{") + 1, evts.lastIndexOf("}"));
 					String[] functions = evts.split("},");
-					functions[functions.length - 1] = functions[functions.length - 1].substring(0, functions[functions.length - 1].lastIndexOf("}"));
-					
 					JSONObject evt = new JSONObject();
-					for (String f : functions)
+					if (functions[functions.length - 1].contains("function"))
 					{
-						String fn = f.substring(0, f.indexOf(":")).trim();
-						String fb = f.substring(f.indexOf(":") + 1).replaceAll("(\n)|(\r\n)", "").trim() + "}";
-						evt.put(fn, new BASE64Encoder().encode(fb.getBytes()).replace("\r\n", ""));
+						functions[functions.length - 1] = functions[functions.length - 1].substring(0, functions[functions.length - 1].lastIndexOf("}"));
+						
+						
+						for (String f : functions)
+						{
+							String fn = f.substring(0, f.indexOf(":")).trim();
+							String fb = f.substring(f.indexOf(":") + 1).replaceAll("(\n)|(\r\n)", "").trim() + "}";
+							evt.put(fn, new BASE64Encoder().encode(fb.getBytes()).replace("\r\n", ""));
+						}
 					}
 					l.e = evt;
 					
