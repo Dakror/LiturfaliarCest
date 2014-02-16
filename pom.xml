@@ -3,14 +3,21 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.dakror</groupId>
 	<artifactId>LiturfaliarCest</artifactId>
-	<version>invdef</version>
+	<version>Pre-Alpha</version>
 
 	<properties>
 		<timestamp>${maven.build.timestamp}</timestamp>
-		<maven.build.timestamp.format>yyMMddHHmm</maven.build.timestamp.format>
+		<maven.build.timestamp.format>yyMMddHHmm</maven.build.timestamp.format> <!-- will be ignored by jenkins tho -->
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>.</groupId>
+			<artifactId>MUniVersion</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/libs/MUniVersion.jar</systemPath>
+		</dependency>
 		<dependency>
 			<groupId>.</groupId>
 			<artifactId>JSON</artifactId>
@@ -63,7 +70,6 @@
 				<excludes>
 					<exclude>**/*.java</exclude>
 				</excludes>
-				<filtering>true</filtering>
 			</resource>
 		</resources>
 		<plugins>
