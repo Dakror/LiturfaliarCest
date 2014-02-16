@@ -5,8 +5,13 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
+import javax.imageio.ImageIO;
+
+import de.dakror.gamesetup.GameFrame;
+import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.animation.Animation;
 import de.dakror.liturfaliarcest.game.entity.EntityType;
 import de.dakror.liturfaliarcest.game.entity.creature.Player;
@@ -15,8 +20,6 @@ import de.dakror.liturfaliarcest.game.quest.Quest;
 import de.dakror.liturfaliarcest.game.world.World;
 import de.dakror.liturfaliarcest.layer.HUDLayer;
 import de.dakror.liturfaliarcest.util.SavegameHandler;
-import de.dakror.gamesetup.GameFrame;
-import de.dakror.gamesetup.util.Helper;
 
 public class Game extends GameFrame
 {
@@ -90,5 +93,20 @@ public class Game extends GameFrame
 	{
 		super.keyPressed(e);
 		if (e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) SavegameHandler.save(null);
+	}
+	
+	@Override
+	public BufferedImage loadImage(String p)
+	{
+		try
+		{
+			BufferedImage i = ImageIO.read(GameFrame.class.getResource((p.startsWith("/") ? "" : p.contains("gui") ? "/img/" : "/main/resources/img/") + p));
+			
+			return i;
+		}
+		catch (Exception e)
+		{
+			return null;
+		}
 	}
 }

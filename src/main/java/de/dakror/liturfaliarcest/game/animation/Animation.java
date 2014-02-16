@@ -7,9 +7,9 @@ import java.util.HashMap;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.gamesetup.util.CSVReader;
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.liturfaliarcest.game.Game;
 
 /**
  * @author Dakror
@@ -22,7 +22,7 @@ public class Animation
 	{
 		animations = new HashMap<>();
 		
-		CSVReader csv = new CSVReader("/csv/anim.csv");
+		CSVReader csv = new CSVReader("/main/resources/csv/anim.csv");
 		csv.readRow();
 		String cell = "";
 		Animation anim = null;

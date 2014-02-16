@@ -58,11 +58,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import de.dakror.liturfaliarcest.game.Game;
-import de.dakror.liturfaliarcest.game.animation.Animation;
-import de.dakror.liturfaliarcest.game.item.Item;
-import de.dakror.liturfaliarcest.settings.CFG;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,6 +66,10 @@ import de.dakror.gamesetup.util.Compressor;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.swing.SpringUtilities;
 import de.dakror.gamesetup.util.swing.WrapLayout;
+import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.animation.Animation;
+import de.dakror.liturfaliarcest.game.item.Item;
+import de.dakror.liturfaliarcest.settings.CFG;
 
 /**
  * @author Dakror
@@ -111,10 +110,10 @@ public class Editor extends JFrame
 		{
 			if (devMode)
 			{
-				entlist = new File(System.getProperty("user.dir"), "src/entities.entlist");
+				entlist = new File(System.getProperty("user.dir"), "src/main/resources/entities.entlist");
 				entities = new JSONArray(Helper.getFileContent(entlist));
 			}
-			else entities = new JSONArray(Helper.getURLContent(getClass().getResource("/entities.entlist")));
+			else entities = new JSONArray(Helper.getURLContent(getClass().getResource("/main/resources/entities.entlist")));
 		}
 		catch (JSONException e1)
 		{
@@ -353,6 +352,25 @@ public class Editor extends JFrame
 				IconSelecter.create();
 			}
 		}));
+		tools.add(new JMenuItem(new AbstractAction("Animationsliste einsehen")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				try
+				{
+					File f = File.createTempFile("anim", ".csv");
+					Helper.copyInputStream(getClass().getResourceAsStream("/main/resources/csv/anim.csv"), new FileOutputStream(f));
+					Desktop.getDesktop().open(f);
+				}
+				catch (Exception e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		}));
 		tools.add(new JMenuItem(new AbstractAction("Questliste einsehen")
 		{
 			private static final long serialVersionUID = 1L;
@@ -363,7 +381,7 @@ public class Editor extends JFrame
 				try
 				{
 					File f = File.createTempFile("quests", ".csv");
-					Helper.copyInputStream(getClass().getResourceAsStream("/csv/quests.csv"), new FileOutputStream(f));
+					Helper.copyInputStream(getClass().getResourceAsStream("/main/resources/csv/quests.csv"), new FileOutputStream(f));
 					Desktop.getDesktop().open(f);
 				}
 				catch (Exception e1)
@@ -382,7 +400,7 @@ public class Editor extends JFrame
 				try
 				{
 					File f = File.createTempFile("items", ".csv");
-					Helper.copyInputStream(getClass().getResourceAsStream("/csv/items.csv"), new FileOutputStream(f));
+					Helper.copyInputStream(getClass().getResourceAsStream("/main/resources/csv/items.csv"), new FileOutputStream(f));
 					Desktop.getDesktop().open(f);
 				}
 				catch (Exception e1)

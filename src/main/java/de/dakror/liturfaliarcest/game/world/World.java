@@ -16,15 +16,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import de.dakror.liturfaliarcest.game.Game;
-import de.dakror.liturfaliarcest.game.animation.AnimationSpot;
-import de.dakror.liturfaliarcest.game.entity.Entity;
-import de.dakror.liturfaliarcest.game.entity.EntityType;
-import de.dakror.liturfaliarcest.game.entity.creature.NPC;
-import de.dakror.liturfaliarcest.game.entity.object.ItemDrop;
-import de.dakror.liturfaliarcest.game.entity.object.Object;
-import de.dakror.liturfaliarcest.settings.FlagManager;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +26,14 @@ import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Compressor;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
+import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.animation.AnimationSpot;
+import de.dakror.liturfaliarcest.game.entity.Entity;
+import de.dakror.liturfaliarcest.game.entity.EntityType;
+import de.dakror.liturfaliarcest.game.entity.creature.NPC;
+import de.dakror.liturfaliarcest.game.entity.object.ItemDrop;
+import de.dakror.liturfaliarcest.game.entity.object.Object;
+import de.dakror.liturfaliarcest.settings.FlagManager;
 
 public class World extends Layer
 {
@@ -68,18 +67,18 @@ public class World extends Layer
 	{
 		if (!init)
 		{
-			groundLayer = Game.getImage("/maps/" + name + "/" + name + "-0.png") != null;
-			aboveLayer = Game.getImage("/maps/" + name + "/" + name + "-1.png") != null;
+			groundLayer = Game.getImage("/main/resources/maps/" + name + "/" + name + "-0.png") != null;
+			aboveLayer = Game.getImage("/main/resources/maps/" + name + "/" + name + "-1.png") != null;
 			
-			Image img = Game.getImage("/maps/" + name + "/" + name + "-0.png");
+			Image img = Game.getImage("/main/resources/maps/" + name + "/" + name + "-0.png");
 			width = img.getWidth(null) / 32 * TILE_SIZE;
 			height = img.getHeight(null) / 32 * TILE_SIZE;
 			
 			try
 			{
-				if (getClass().getResource("/maps/" + name + "/" + name + ".bump") != null)
+				if (getClass().getResource("/main/resources/maps/" + name + "/" + name + ".bump") != null)
 				{
-					ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(Compressor.decompress(Compressor.getURLContentAsByteArray(getClass().getResource("/maps/" + name + "/" + name + ".bump")))));
+					ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(Compressor.decompress(Compressor.getURLContentAsByteArray(getClass().getResource("/main/resources/maps/" + name + "/" + name + ".bump")))));
 					Path2D p = (Path2D) ois.readObject();
 					bump = new Area(AffineTransform.getScaleInstance(TILE_SIZE / 32, TILE_SIZE / 32).createTransformedShape(new Area(p)));
 				}
@@ -87,7 +86,7 @@ public class World extends Layer
 				{
 					int size = 4;
 					
-					BufferedImage bumpImage = Game.getImage("/maps/" + name + "/" + name + "-2.png");
+					BufferedImage bumpImage = Game.getImage("/main/resources/maps/" + name + "/" + name + "-2.png");
 					bumpImage = Helper.toBufferedImage(bumpImage.getScaledInstance(bumpImage.getWidth() / 32 * TILE_SIZE, bumpImage.getHeight() / 32 * TILE_SIZE, BufferedImage.SCALE_FAST));
 					
 					bump = new Area();
@@ -118,9 +117,9 @@ public class World extends Layer
 	{
 		components.clear();
 		
-		if (getClass().getResource("/maps/" + name + "/" + name + ".json") != null)
+		if (getClass().getResource("/main/resources/maps/" + name + "/" + name + ".json") != null)
 		{
-			JSONArray e = new JSONArray(Helper.getURLContent(getClass().getResource("/maps/" + name + "/" + name + ".json")));
+			JSONArray e = new JSONArray(Helper.getURLContent(getClass().getResource("/main/resources/maps/" + name + "/" + name + ".json")));
 			for (int i = 0; i < e.length(); i++)
 			{
 				JSONObject o = e.getJSONObject(i);
@@ -154,7 +153,7 @@ public class World extends Layer
 		{
 			Helper.setRenderingHints(g, false);
 			
-			g.drawImage(Game.getImage("/maps/" + name + "/" + name + "-0.png"), x, y, width, height, Game.w);
+			g.drawImage(Game.getImage("/main/resources/maps/" + name + "/" + name + "-0.png"), x, y, width, height, Game.w);
 			
 			Helper.setRenderingHints(g, true);
 		}
@@ -182,7 +181,7 @@ public class World extends Layer
 		{
 			Helper.setRenderingHints(g, false);
 			
-			g.drawImage(Game.getImage("/maps/" + name + "/" + name + "-1.png"), x, y, width, height, Game.w);
+			g.drawImage(Game.getImage("/main/resources/maps/" + name + "/" + name + "-1.png"), x, y, width, height, Game.w);
 			
 			Helper.setRenderingHints(g, true);
 		}

@@ -15,7 +15,7 @@ public class Quest
 	{
 		quests = new HashMap<>();
 		
-		CSVReader csv = new CSVReader("/csv/quests.csv");
+		CSVReader csv = new CSVReader("/main/resources/csv/quests.csv");
 		csv.readRow();
 		
 		String cell = "";

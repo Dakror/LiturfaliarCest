@@ -7,11 +7,11 @@ import java.util.HashMap;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import de.dakror.gamesetup.util.CSVReader;
+import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.settings.Attributes;
 import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
-import de.dakror.gamesetup.util.CSVReader;
-import de.dakror.gamesetup.util.Helper;
 
 /**
  * @author Dakror
@@ -26,7 +26,7 @@ public class Item
 	{
 		items = new HashMap<>();
 		
-		CSVReader csv = new CSVReader("/csv/items.csv");
+		CSVReader csv = new CSVReader("/main/resources/csv/items.csv");
 		String[] headings = csv.readRow();
 		
 		String cell = "";
