@@ -14,11 +14,29 @@ import de.dakror.liturfaliarcest.game.world.World;
  */
 public class JSInvoker
 {
-	public static String mainjs;
+	public static String mainjs, jsbeautifier;
 	
 	static
 	{
 		mainjs = Helper.getURLContent(JSInvoker.class.getResource("/main/resources/main.js"));
+		jsbeautifier = Helper.getURLContent(JSInvoker.class.getResource("/main/resources/jsbeautifier.js"));
+	}
+	
+	public static String beautifyJavaScript(String code)
+	{
+		try
+		{
+			ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
+			code = code.replace("\\\"", "\\\\\"");
+			code = code.replace("\"", "\\\"");
+			engine.eval(jsbeautifier + "var result = js_beautify(\"" + code + "\");");
+			return (String) engine.get("result");
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public static void invoke(String code, Object... params)

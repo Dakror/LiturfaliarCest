@@ -3,12 +3,6 @@ package de.dakror.liturfaliarcest.layer;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import de.dakror.liturfaliarcest.game.Game;
-import de.dakror.liturfaliarcest.game.entity.Entity;
-import de.dakror.liturfaliarcest.game.entity.creature.NPC;
-import de.dakror.liturfaliarcest.settings.FlagManager;
-import de.dakror.liturfaliarcest.settings.Talk;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -16,6 +10,11 @@ import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.button.TextButton;
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.entity.Entity;
+import de.dakror.liturfaliarcest.game.entity.creature.NPC;
+import de.dakror.liturfaliarcest.settings.FlagManager;
+import de.dakror.liturfaliarcest.settings.Talk;
 
 /**
  * @author Dakror
@@ -61,7 +60,6 @@ public class TalkLayer extends Layer
 		ok.setHeight(Math.round(TextButton.HEIGHT * (cancel.getWidth() / (float) TextButton.WIDTH)));
 		ok.addClickEvent(new ClickEvent()
 		{
-			
 			@Override
 			public void trigger()
 			{
@@ -136,6 +134,7 @@ public class TalkLayer extends Layer
 		if (source instanceof NPC) ((NPC) source).checkForQuestState();
 		if (index == talk.length() - 1)
 		{
+			source.onNextTalk(activeTalk, new Talk(null));
 			endTalk();
 			return;
 		}

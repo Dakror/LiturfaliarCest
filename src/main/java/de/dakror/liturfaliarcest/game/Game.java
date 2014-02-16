@@ -19,6 +19,7 @@ import de.dakror.liturfaliarcest.game.item.Item;
 import de.dakror.liturfaliarcest.game.quest.Quest;
 import de.dakror.liturfaliarcest.game.world.World;
 import de.dakror.liturfaliarcest.layer.HUDLayer;
+import de.dakror.liturfaliarcest.layer.TalkLayer;
 import de.dakror.liturfaliarcest.util.SavegameHandler;
 
 public class Game extends GameFrame
@@ -93,6 +94,11 @@ public class Game extends GameFrame
 	{
 		super.keyPressed(e);
 		if (e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) SavegameHandler.save(null);
+	}
+	
+	public void endTalk()
+	{
+		if (getActiveLayer() instanceof TalkLayer) ((TalkLayer) getActiveLayer()).endTalk();
 	}
 	
 	@Override

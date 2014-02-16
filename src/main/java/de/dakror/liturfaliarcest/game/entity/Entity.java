@@ -4,24 +4,24 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
-import de.dakror.liturfaliarcest.game.Game;
-import de.dakror.liturfaliarcest.game.entity.creature.Player;
-import de.dakror.liturfaliarcest.settings.Attributes;
-import de.dakror.liturfaliarcest.settings.FlagManager;
-import de.dakror.liturfaliarcest.settings.Inventory;
-import de.dakror.liturfaliarcest.settings.Talk;
-import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
-import de.dakror.liturfaliarcest.util.Assistant;
-import de.dakror.liturfaliarcest.util.JSInvoker;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import sun.misc.BASE64Decoder;
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.ClickableComponent;
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Vector;
+import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.entity.creature.Player;
+import de.dakror.liturfaliarcest.settings.Attributes;
+import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
+import de.dakror.liturfaliarcest.settings.FlagManager;
+import de.dakror.liturfaliarcest.settings.Inventory;
+import de.dakror.liturfaliarcest.settings.Talk;
+import de.dakror.liturfaliarcest.util.Assistant;
+import de.dakror.liturfaliarcest.util.JSInvoker;
 
 /**
  * @author Dakror
@@ -116,6 +116,19 @@ public abstract class Entity extends ClickableComponent
 	public void setEventFunctions(JSONObject o)
 	{
 		eventFunctions = o;
+		try
+		{
+			for (String name : JSONObject.getNames(o))
+			{
+				String value = o.getString(name);
+				if (!value.contains("function")) // base64-ed
+				eventFunctions.put(name, new String(new BASE64Decoder().decodeBuffer(value)));
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public Rectangle2D getBump()

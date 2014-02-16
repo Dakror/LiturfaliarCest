@@ -26,4 +26,9 @@ public class Talk
 	{
 		this(0, 0, "", "", "");
 	}
+	
+	public Talk(String over)
+	{
+		this(-1024, 0, "", "", "");
+	}
 }

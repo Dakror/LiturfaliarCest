@@ -5,14 +5,13 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import org.json.JSONObject;
+
+import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
 import de.dakror.liturfaliarcest.game.entity.EntityType;
 import de.dakror.liturfaliarcest.game.world.World;
-
-import org.json.JSONObject;
-
-import de.dakror.gamesetup.util.Helper;
 
 /**
  * @author Dakror
@@ -49,6 +48,8 @@ public class Object extends Entity
 		g.setComposite(c);
 		
 		Helper.setRenderingHints(g, true);
+		
+		if (getBump().contains(Game.player.getBump())) Game.player.draw(g);
 	}
 	
 	@Override
@@ -56,8 +57,7 @@ public class Object extends Entity
 	{
 		if (type.tileset.equals("black")) return;
 		
-		if (getArea().intersects(Game.player.getArea()) && Game.player.getY() + Game.player.bumpY + Game.player.bumpHeight < y + bumpY + bumpHeight) alpha = 0.6f;
+		if (getArea().intersects(Game.player.getArea()) && Game.player.getY() + Game.player.bumpY + Game.player.bumpHeight < y + bumpY + bumpHeight && !getBump().contains(Game.player.getBump())) alpha = 0.6f;
 		else alpha = 1;
 	}
-	
 }

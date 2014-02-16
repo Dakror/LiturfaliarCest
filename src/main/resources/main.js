@@ -59,6 +59,7 @@ function removeFlag(flag)
 }
 /**
  * Gives the state of the given flag back.
+ * 
  * @param flag - name of the flag, preferrably in captial letters
  * @returns true if flag is set, false otherwise
  */
@@ -69,17 +70,29 @@ function isFlag(flag)
 
 /**
  * Checks if the given flag expression is matching
+ * 
  * @param flags - flag expression to be matched against
  * @returns true if flag matches, false otherwise
  */
-function matches(flags) {
+function matches(flags)
+{
 	return FlagManager.matchesFlags(flags);
 }
 
 /**
  * Manually triggers the talk of the given entity
+ * 
  * @param entity - entity whose talk will be started
  */
-function talk(entity) {
+function talk(entity)
+{
 	game.player.startTalk(entity);
+}
+
+/**
+ * Manually ends the active talk
+ */
+function endTalk()
+{
+	game.endTalk();
 }

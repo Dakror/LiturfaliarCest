@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
+import de.dakror.liturfaliarcest.util.JSInvoker;
 import de.dakror.liturfaliarcest.util.RhinoJavaScriptLanguageSupport;
 
 /**
@@ -41,11 +42,13 @@ public class EntityEditor extends JDialog
 			for (int i = 0; i < names.length; i++)
 			{
 				String value = l.e.getString(names[i]);
-				e += names[i] + ": " + (value.contains("function") ? value/* old version */: new String(new BASE64Decoder().decodeBuffer(l.e.getString(names[i])))) + (i < names.length - 1 ? ",\n" : "");
+				value = (value.contains("function") ? value/* old version */: new String(new BASE64Decoder().decodeBuffer(l.e.getString(names[i]))));
+				value = JSInvoker.beautifyJavaScript(value);
+				e += names[i] + ": " + value + (i < names.length - 1 ? ",\n" : "");
 			}
 		}
 		
-		final RSyntaxTextArea a = new RSyntaxTextArea(("e: {\n" + e.replace("}", "\n}").replace("{", "\n{\n").replace(";", ";\n") + "\n}\n,/*END*/\nm: " + fmt(l.m)).replace("\n\n", "\n"));
+		final RSyntaxTextArea a = new RSyntaxTextArea(("e: {\n" + e + "\n},\nm: " + fmt(l.m)).replace("\n\n", "\n"));
 		LanguageSupportFactory lsf = LanguageSupportFactory.get();
 		lsf.register(a);
 		a.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
@@ -73,7 +76,7 @@ public class EntityEditor extends JDialog
 					String t = a.getText();
 					
 					// -- events -- //
-					String evts = t.substring(t.indexOf("{"), t.indexOf(",/*END*/")).trim();
+					String evts = t.substring(t.indexOf("{"), t.indexOf(",\nm:")).trim();
 					evts = evts.substring(evts.indexOf("{") + 1, evts.lastIndexOf("}"));
 					String[] functions = evts.split("},");
 					JSONObject evt = new JSONObject();
@@ -85,7 +88,7 @@ public class EntityEditor extends JDialog
 						for (String f : functions)
 						{
 							String fn = f.substring(0, f.indexOf(":")).trim();
-							String fb = f.substring(f.indexOf(":") + 1).replaceAll("(\n)|(\r\n)", "").trim() + "}";
+							String fb = f.substring(f.indexOf(":") + 1).replaceAll("(\n)|(\r\n)", "").trim().replace("  ", " ") + "}";
 							evt.put(fn, new BASE64Encoder().encode(fb.getBytes()).replace("\r\n", ""));
 						}
 					}
