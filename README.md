@@ -15,7 +15,7 @@ Lade es herunter: [Liturfaliar Cest.jar](http://dakror.de/download?u=https://bui
 ---
 For Mapmakers:
 
-Editor: [Liturfaliar Cest Editor.jar](http://dakror.de/download?u=https://buildhive.cloudbees.com/view/My%20Repositories/job/Dakror/job/LiturfaliarCest/ws/target/LiturfaliarCest Editor.jar)<br>
+Editor: [Liturfaliar Cest Editor.jar](http://dakror.de/download?u=https://buildhive.cloudbees.com/view/My%20Repositories/job/Dakror/job/LiturfaliarCest/ws/target/LiturfaliarCest%20Editor.jar)<br>
 Tilesets: [Tilesets.zip](http://dakror.de/download?u=https://github.com/Dakror/LiturfaliarCest/raw/master/Tilesets.zip)
 
 
