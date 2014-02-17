@@ -12,7 +12,7 @@ var game, tilesize;
  */
 function teleport(e, x, y, bumpPos)
 {
-	if((typeof e) == "number") e = Game.world.getEntityForUID(parseInt(e));
+	if ((typeof e) == "number") e = Game.world.getEntityForUID(parseInt(e));
 	e.setX(x - (bumpPos ? e.bumpX : 0));
 	e.setY(y - (bumpPos ? e.bumpY : 0));
 }
@@ -90,7 +90,7 @@ function matches(flags)
  */
 function talk(entity)
 {
-	if((typeof entity) == "number") entity = Game.world.getEntityForUID(parseInt(entity));
+	if ((typeof entity) == "number") entity = Game.world.getEntityForUID(parseInt(entity));
 	game.player.startTalk(entity);
 }
 
