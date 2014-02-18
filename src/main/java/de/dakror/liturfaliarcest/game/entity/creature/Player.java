@@ -3,17 +3,17 @@ package de.dakror.liturfaliarcest.game.entity.creature;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
+import org.json.JSONObject;
+
+import de.dakror.gamesetup.util.Vector;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
 import de.dakror.liturfaliarcest.game.entity.object.ItemDrop;
 import de.dakror.liturfaliarcest.game.world.World;
+import de.dakror.liturfaliarcest.layer.HUDLayer;
 import de.dakror.liturfaliarcest.layer.TalkLayer;
-import de.dakror.liturfaliarcest.settings.Inventory;
 import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
-
-import org.json.JSONObject;
-
-import de.dakror.gamesetup.util.Vector;
+import de.dakror.liturfaliarcest.settings.Inventory;
 
 /**
  * @author Dakror
@@ -76,7 +76,7 @@ public class Player extends Creature
 		else
 		{
 			attr.set(Attribute.SPEED, 2);
-			if (attr.get(Attribute.STAMINA) < attr.get(Attribute.STAMINA_MAX))
+			if (attr.get(Attribute.STAMINA) < attr.get(Attribute.STAMINA_MAX) && Game.currentGame.getActiveLayer() instanceof HUDLayer && Game.currentGame.alpha == 0)
 			{
 				if ((dirs[0] || dirs[1] || dirs[2] || dirs[3] || target != null) && sprint) sprint = false;
 				

@@ -123,6 +123,7 @@ public class TalkLayer extends Layer
 	
 	public void endTalk()
 	{
+		source.onNextTalk(activeTalk, new Talk(null));
 		source.setFrozen(false);
 		Game.player.setFrozen(false);
 		Game.currentGame.removeLayer(this);
@@ -134,7 +135,6 @@ public class TalkLayer extends Layer
 		if (source instanceof NPC) ((NPC) source).checkForQuestState();
 		if (index == talk.length() - 1)
 		{
-			source.onNextTalk(activeTalk, new Talk(null));
 			endTalk();
 			return;
 		}
