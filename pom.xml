@@ -163,7 +163,7 @@
 							<outputDirectory>${project.build.directory}</outputDirectory>
 							<resources>
 								<resource>
-									<directory>src/config</directory>
+									<directory>src/main/resources/config</directory>
 									<filtering>true</filtering>
 								</resource>
 							</resources>
