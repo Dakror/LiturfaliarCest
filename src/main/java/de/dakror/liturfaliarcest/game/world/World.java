@@ -212,6 +212,8 @@ public class World extends Layer
 			@Override
 			public int compare(Component o1, Component o2)
 			{
+				if (o1 instanceof AnimationSpot && !(o2 instanceof AnimationSpot)) return 1;
+				if (o2 instanceof AnimationSpot && !(o1 instanceof AnimationSpot)) return -1;
 				return Integer.compare(o1.getY() + ((Entity) o1).bumpY + ((Entity) o1).bumpHeight, o2.getY() + ((Entity) o2).bumpY + ((Entity) o2).bumpHeight);
 			}
 		});

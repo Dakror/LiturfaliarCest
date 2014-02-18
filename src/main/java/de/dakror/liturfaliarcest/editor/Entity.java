@@ -9,11 +9,11 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import org.json.JSONObject;
+
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.animation.Animation;
 import de.dakror.liturfaliarcest.game.item.Item;
-
-import org.json.JSONObject;
 
 public class Entity extends JLabel
 {
@@ -88,7 +88,7 @@ public class Entity extends JLabel
 			try
 			{
 				Animation a = Animation.getAnimationForId(m.getInt("animID"));
-				setBounds(getX(), getY(), m.has("width") ? m.getInt("width") : a.getDefaultWidth(), m.has("height") ? m.getInt("height") : a.getDefaultHeight());
+				setBounds(getX(), getY(), (m.has("width") ? m.getInt("width") : a.getDefaultWidth()) / 2, (m.has("height") ? m.getInt("height") : a.getDefaultHeight()) / 2);
 				setIcon(a.getIcon(getWidth(), getHeight()));
 			}
 			catch (Exception e)
