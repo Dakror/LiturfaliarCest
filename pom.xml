@@ -63,15 +63,15 @@
 	</dependencies>
 
 	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<resources>
-			<resource>
-				<directory>src</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-			</resource>
-		</resources>
+    <directory>${project.basedir}/target</directory>
+    <outputDirectory>${project.build.directory}/classes</outputDirectory>
+    <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+    
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -112,8 +112,6 @@
 							<archive>
 								<manifest>
 									<mainClass>de.dakror.liturfaliarcest.LiturfaliarCest</mainClass>
-									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-									<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 								</manifest>
 							</archive>
 							<descriptorRefs>
@@ -133,8 +131,6 @@
 							<archive>
 								<manifest>
 									<mainClass>de.dakror.liturfaliarcest.editor.Editor</mainClass>
-									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-									<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 								</manifest>
 							</archive>
 							<descriptorRefs>
@@ -163,7 +159,7 @@
 							<outputDirectory>${project.build.directory}</outputDirectory>
 							<resources>
 								<resource>
-									<directory>src/main/resources/config</directory>
+									<directory>src/config</directory>
 									<filtering>true</filtering>
 								</resource>
 							</resources>

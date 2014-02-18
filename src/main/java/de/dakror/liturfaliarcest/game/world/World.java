@@ -67,18 +67,18 @@ public class World extends Layer
 	{
 		if (!init)
 		{
-			groundLayer = Game.getImage("/main/resources/maps/" + name + "/" + name + "-0.png") != null;
-			aboveLayer = Game.getImage("/main/resources/maps/" + name + "/" + name + "-1.png") != null;
+			groundLayer = Game.getImage("/maps/" + name + "/" + name + "-0.png") != null;
+			aboveLayer = Game.getImage("/maps/" + name + "/" + name + "-1.png") != null;
 			
-			Image img = Game.getImage("/main/resources/maps/" + name + "/" + name + "-0.png");
+			Image img = Game.getImage("/maps/" + name + "/" + name + "-0.png");
 			width = img.getWidth(null) / 32 * TILE_SIZE;
 			height = img.getHeight(null) / 32 * TILE_SIZE;
 			
 			try
 			{
-				if (getClass().getResource("/main/resources/maps/" + name + "/" + name + ".bump") != null)
+				if (getClass().getResource("/maps/" + name + "/" + name + ".bump") != null)
 				{
-					ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(Compressor.decompress(Compressor.getURLContentAsByteArray(getClass().getResource("/main/resources/maps/" + name + "/" + name + ".bump")))));
+					ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(Compressor.decompress(Compressor.getURLContentAsByteArray(getClass().getResource("/maps/" + name + "/" + name + ".bump")))));
 					Path2D p = (Path2D) ois.readObject();
 					bump = new Area(AffineTransform.getScaleInstance(TILE_SIZE / 32, TILE_SIZE / 32).createTransformedShape(new Area(p)));
 				}
@@ -86,7 +86,7 @@ public class World extends Layer
 				{
 					int size = 4;
 					
-					BufferedImage bumpImage = Game.getImage("/main/resources/maps/" + name + "/" + name + "-2.png");
+					BufferedImage bumpImage = Game.getImage("/maps/" + name + "/" + name + "-2.png");
 					bumpImage = Helper.toBufferedImage(bumpImage.getScaledInstance(bumpImage.getWidth() / 32 * TILE_SIZE, bumpImage.getHeight() / 32 * TILE_SIZE, BufferedImage.SCALE_FAST));
 					
 					bump = new Area();
@@ -117,9 +117,9 @@ public class World extends Layer
 	{
 		components.clear();
 		
-		if (getClass().getResource("/main/resources/maps/" + name + "/" + name + ".json") != null)
+		if (getClass().getResource("/maps/" + name + "/" + name + ".json") != null)
 		{
-			JSONArray e = new JSONArray(Helper.getURLContent(getClass().getResource("/main/resources/maps/" + name + "/" + name + ".json")));
+			JSONArray e = new JSONArray(Helper.getURLContent(getClass().getResource("/maps/" + name + "/" + name + ".json")));
 			for (int i = 0; i < e.length(); i++)
 			{
 				JSONObject o = e.getJSONObject(i);
@@ -153,7 +153,7 @@ public class World extends Layer
 		{
 			Helper.setRenderingHints(g, false);
 			
-			g.drawImage(Game.getImage("/main/resources/maps/" + name + "/" + name + "-0.png"), x, y, width, height, Game.w);
+			g.drawImage(Game.getImage("/maps/" + name + "/" + name + "-0.png"), x, y, width, height, Game.w);
 			
 			Helper.setRenderingHints(g, true);
 		}
@@ -181,7 +181,7 @@ public class World extends Layer
 		{
 			Helper.setRenderingHints(g, false);
 			
-			g.drawImage(Game.getImage("/main/resources/maps/" + name + "/" + name + "-1.png"), x, y, width, height, Game.w);
+			g.drawImage(Game.getImage("/maps/" + name + "/" + name + "-1.png"), x, y, width, height, Game.w);
 			
 			Helper.setRenderingHints(g, true);
 		}

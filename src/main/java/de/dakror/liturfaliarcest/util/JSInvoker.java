@@ -18,8 +18,8 @@ public class JSInvoker
 	
 	static
 	{
-		mainjs = Helper.getURLContent(JSInvoker.class.getResource("/main/resources/main.js"));
-		jsbeautifier = Helper.getURLContent(JSInvoker.class.getResource("/main/resources/jsbeautifier.js"));
+		mainjs = Helper.getURLContent(JSInvoker.class.getResource("/main.js"));
+		jsbeautifier = Helper.getURLContent(JSInvoker.class.getResource("/jsbeautifier.js"));
 	}
 	
 	public static String beautifyJavaScript(String code)

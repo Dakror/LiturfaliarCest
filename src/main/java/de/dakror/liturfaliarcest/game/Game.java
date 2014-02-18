@@ -44,7 +44,7 @@ public class Game extends GameFrame
 		w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(getImage("system/cursor.png"), new Point(0, 0), "default_cursor"));
 		try
 		{
-			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/main/resources/MorrisRomanBlack.ttf")));
+			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/MorrisRomanBlack.ttf")));
 		}
 		catch (Exception e)
 		{
@@ -106,7 +106,7 @@ public class Game extends GameFrame
 	{
 		try
 		{
-			BufferedImage i = ImageIO.read(GameFrame.class.getResource((p.startsWith("/") ? "" : p.contains("gui") ? "/img/" : "/main/resources/img/") + p));
+			BufferedImage i = ImageIO.read(GameFrame.class.getResource((p.startsWith("/") ? "" : p.contains("gui") ? "/img/" : "/img/") + p));
 			
 			return i;
 		}

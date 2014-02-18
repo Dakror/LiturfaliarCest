@@ -113,7 +113,7 @@ public class Editor extends JFrame
 				entlist = new File(System.getProperty("user.dir"), "src/main/resources/entities.entlist");
 				entities = new JSONArray(Helper.getFileContent(entlist));
 			}
-			else entities = new JSONArray(Helper.getURLContent(getClass().getResource("/main/resources/entities.entlist")));
+			else entities = new JSONArray(Helper.getURLContent(getClass().getResource("/entities.entlist")));
 		}
 		catch (JSONException e1)
 		{
@@ -362,7 +362,7 @@ public class Editor extends JFrame
 				try
 				{
 					File f = File.createTempFile("anim", ".csv");
-					Helper.copyInputStream(getClass().getResourceAsStream("/main/resources/csv/anim.csv"), new FileOutputStream(f));
+					Helper.copyInputStream(getClass().getResourceAsStream("/csv/anim.csv"), new FileOutputStream(f));
 					Desktop.getDesktop().open(f);
 				}
 				catch (Exception e1)
@@ -381,7 +381,7 @@ public class Editor extends JFrame
 				try
 				{
 					File f = File.createTempFile("items", ".csv");
-					Helper.copyInputStream(getClass().getResourceAsStream("/main/resources/csv/items.csv"), new FileOutputStream(f));
+					Helper.copyInputStream(getClass().getResourceAsStream("/csv/items.csv"), new FileOutputStream(f));
 					Desktop.getDesktop().open(f);
 				}
 				catch (Exception e1)
@@ -400,7 +400,7 @@ public class Editor extends JFrame
 				try
 				{
 					File f = File.createTempFile("quests", ".csv");
-					Helper.copyInputStream(getClass().getResourceAsStream("/main/resources/csv/quests.csv"), new FileOutputStream(f));
+					Helper.copyInputStream(getClass().getResourceAsStream("/csv/quests.csv"), new FileOutputStream(f));
 					Desktop.getDesktop().open(f);
 				}
 				catch (Exception e1)

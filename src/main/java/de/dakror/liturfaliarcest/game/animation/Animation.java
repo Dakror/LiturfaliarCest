@@ -22,7 +22,7 @@ public class Animation
 	{
 		animations = new HashMap<>();
 		
-		CSVReader csv = new CSVReader("/main/resources/csv/anim.csv");
+		CSVReader csv = new CSVReader("/csv/anim.csv");
 		csv.readRow();
 		String cell = "";
 		Animation anim = null;
