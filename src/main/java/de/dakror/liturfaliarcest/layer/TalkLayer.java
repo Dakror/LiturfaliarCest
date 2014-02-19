@@ -13,6 +13,7 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.entity.Entity;
 import de.dakror.liturfaliarcest.game.entity.creature.NPC;
+import de.dakror.liturfaliarcest.game.quest.Quest;
 import de.dakror.liturfaliarcest.settings.FlagManager;
 import de.dakror.liturfaliarcest.settings.Talk;
 
@@ -148,7 +149,6 @@ public class TalkLayer extends Layer
 				JSONArray o = a.getJSONArray(i);
 				if (o.getString(0).length() == 0 || FlagManager.matchesFlags(o.getString(0)))
 				{
-					activeText = o.getString(2);
 					String modifiers = o.getString(1);
 					if (modifiers.contains("%skip"))
 					{
@@ -164,9 +164,19 @@ public class TalkLayer extends Layer
 						String[] quests = s.split(",");
 						questTriggers = new int[quests.length];
 						for (int j = 0; j < quests.length; j++)
+						{
 							questTriggers[j] = Integer.parseInt(quests[j]);
+							if (!FlagManager.matchesFlags(Quest.quests.get(questTriggers[j]).getFlags()))
+							{
+								questTriggers = new int[] {};
+								next();
+								return;
+							}
+						}
 					}
 					else questTriggers = new int[] {};
+					
+					activeText = o.getString(2);
 					
 					source.onNextTalk(activeTalk, new Talk(i, index, o.getString(0), o.getString(1), o.getString(2)));
 					activeTalk = new Talk(i, index, o.getString(0), o.getString(1), o.getString(2));

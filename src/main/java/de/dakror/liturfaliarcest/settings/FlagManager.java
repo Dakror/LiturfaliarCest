@@ -40,6 +40,16 @@ public class FlagManager
 		Game.world.dispatchFlagChange(name, false);
 	}
 	
+	public static void removeAllFlags(String name)
+	{
+		int amount = countFlag(name);
+		for (int i = 0; i < amount; i++)
+		{
+			flags.remove(name.toUpperCase());
+			Game.world.dispatchFlagChange(name, false);
+		}
+	}
+	
 	public static void addFlag(String name)
 	{
 		flags.add(name.toUpperCase());

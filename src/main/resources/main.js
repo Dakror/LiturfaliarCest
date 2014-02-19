@@ -55,10 +55,12 @@ function addFlag(flag)
  * Removes the given flag from the Flag System.
  * 
  * @param flag {String} - name of the flag, preferrably in captial letters
+ * @param all {boolean} - if set all occurences of this flag will be removed, not just one
  */
-function removeFlag(flag)
+function removeFlag(flag, all)
 {
-	FlagManager.removeFlag(flag);
+	if(!all)FlagManager.removeFlag(flag);
+	else FlagManager.removeAllFlags(flag);
 }
 
 /**
