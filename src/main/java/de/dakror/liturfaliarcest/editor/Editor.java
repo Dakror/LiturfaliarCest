@@ -785,7 +785,7 @@ public class Editor extends JFrame
 			a.put(o);
 		}
 		
-		Helper.setFileContent(map, a.toString());
+		Helper.setFileContent(map, a.toString(), "UTF-8");
 	}
 	
 	public boolean isValidMapFolder(File f)
