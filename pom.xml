@@ -8,6 +8,8 @@
 	<properties>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyMMddHHmm</maven.build.timestamp.format> <!-- will be ignored by jenkins tho -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
 	<dependencies>
@@ -63,15 +65,15 @@
 	</dependencies>
 
 	<build>
-    <directory>${project.basedir}/target</directory>
-    <outputDirectory>${project.build.directory}/classes</outputDirectory>
-    <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>${project.basedir}/src/main/resources</directory>
-      </resource>
-    </resources>
-    
+		<directory>${project.basedir}/target</directory>
+		<outputDirectory>${project.build.directory}/classes</outputDirectory>
+		<sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+			</resource>
+		</resources>
+
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -91,6 +93,7 @@
 							<goal>unpack-dependencies</goal>
 						</goals>
 						<configuration>
+						    <encoding>UTF-8</encoding>
 							<outputDirectory>${project.build.directory}/classes</outputDirectory>
 							<overWriteReleases>true</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
@@ -156,6 +159,7 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
+						    <encoding>UTF-8</encoding>
 							<outputDirectory>${project.build.directory}</outputDirectory>
 							<resources>
 								<resource>
