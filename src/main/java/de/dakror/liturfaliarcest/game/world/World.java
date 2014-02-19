@@ -224,6 +224,13 @@ public class World extends Layer
 	{
 		for (Component c : components)
 			((Entity) c).onFlagChange(flag, on);
+		
+		if (FlagManager.jta != null) // debug frame
+		{
+			Collections.sort(FlagManager.flags);
+			String string = FlagManager.flags.toString().replace(", ", "\n");
+			FlagManager.jta.setText(string.substring(1, string.length() - 1));
+		}
 	}
 	
 	public void addEntity(Entity e)

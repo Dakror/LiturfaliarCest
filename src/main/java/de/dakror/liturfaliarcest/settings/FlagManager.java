@@ -2,6 +2,10 @@ package de.dakror.liturfaliarcest.settings;
 
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
 import de.dakror.liturfaliarcest.game.Game;
 
 /**
@@ -10,6 +14,8 @@ import de.dakror.liturfaliarcest.game.Game;
 public class FlagManager
 {
 	public static ArrayList<String> flags = new ArrayList<>();
+	
+	public static JTextArea jta;
 	
 	public static void toggleFlag(String name)
 	{
@@ -53,6 +59,7 @@ public class FlagManager
 	public static void addFlag(String name)
 	{
 		flags.add(name.toUpperCase());
+		Game.world.dispatchFlagChange(name, true);
 	}
 	
 	public static boolean isFlag(String name)
@@ -94,5 +101,21 @@ public class FlagManager
 			if (n.toUpperCase().equals(name.toUpperCase())) i++;
 		
 		return i;
+	}
+	
+	public static void showDebugWindow()
+	{
+		JFrame frame = new JFrame("Flag Manager Debug");
+		frame.setSize(350, 700);
+		
+		frame.setLocationRelativeTo(null);
+		frame.setResizable(false);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		jta = new JTextArea("");
+		jta.setWrapStyleWord(true);
+		jta.setLineWrap(true);
+		JScrollPane jsp = new JScrollPane(jta, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		frame.setContentPane(jsp);
+		frame.setVisible(true);
 	}
 }

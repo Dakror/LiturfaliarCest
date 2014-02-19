@@ -166,7 +166,7 @@ public class TalkLayer extends Layer
 						for (int j = 0; j < quests.length; j++)
 						{
 							questTriggers[j] = Integer.parseInt(quests[j]);
-							if (!FlagManager.matchesFlags(Quest.quests.get(questTriggers[j]).getFlags()))
+							if (FlagManager.isFlag("QUEST_" + questTriggers[j] + "ACCEPTED") && !FlagManager.matchesFlags(Quest.quests.get(questTriggers[j]).getFlags()))
 							{
 								questTriggers = new int[] {};
 								next();
