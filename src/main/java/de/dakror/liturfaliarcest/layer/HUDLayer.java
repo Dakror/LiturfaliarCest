@@ -1,13 +1,15 @@
 package de.dakror.liturfaliarcest.layer;
 
+import java.awt.AlphaComposite;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 
+import de.dakror.gamesetup.layer.Layer;
+import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.settings.Attributes.Attribute;
 import de.dakror.liturfaliarcest.ui.ItemSlot;
 import de.dakror.liturfaliarcest.ui.ToolbarItemSlot;
-import de.dakror.gamesetup.layer.Layer;
-import de.dakror.gamesetup.util.Helper;
 
 /**
  * @author Dakror
@@ -29,6 +31,9 @@ public class HUDLayer extends Layer
 	@Override
 	public void draw(Graphics2D g)
 	{
+		Composite c = g.getComposite();
+		if (Game.player.getY() + Game.world.y > Game.getHeight() - 200) g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+		
 		int s = ItemSlot.SIZE;
 		int w = Game.player.getInventory().getWidth() * s;
 		int x = (Game.getWidth() - w) / 2;
@@ -41,6 +46,8 @@ public class HUDLayer extends Layer
 		Helper.drawContainer(x, Game.getHeight() - s, w, s, false, false, g);
 		
 		drawComponents(g);
+		
+		g.setComposite(c);
 	}
 	
 	@Override
