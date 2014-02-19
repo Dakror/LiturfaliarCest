@@ -1,16 +1,24 @@
 package de.dakror.liturfaliarcest.editor;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.io.File;
 
+import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import org.json.JSONObject;
 
+import sun.misc.BASE64Decoder;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.animation.Animation;
 import de.dakror.liturfaliarcest.game.item.Item;
@@ -48,6 +56,88 @@ public class Entity extends JLabel
 				Editor.currentEditor.mapPanel.getMouseListeners()[0].mousePressed(e);
 			}
 		});
+	}
+	
+	public void showPopupMenu(MouseEvent e)
+	{
+		JPopupMenu jpm = new JPopupMenu();
+		jpm.add(new JMenuItem(new AbstractAction("UID kopieren")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				try
+				{
+					Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(uid + ""), null);
+				}
+				catch (Exception e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		}));
+		jpm.add(new JMenuItem(new AbstractAction("GUID kopieren")
+		{
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				try
+				{
+					Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(Editor.currentEditor.map.getParentFile().getName() + "$" + uid + ""), null);
+				}
+				catch (Exception e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		}));
+		if (this.e.has("onEnter"))
+		{
+			try
+			{
+				String function = new String(new BASE64Decoder().decodeBuffer(this.e.getString("onEnter")));
+				if (function.contains("teleportMap"))
+				{
+					// jpm.add(new JMenuItem());
+					String[] teleports = function.split("teleportMap");
+					for (int i = 1; i < teleports.length; i++)
+					{
+						String t = teleports[i].trim();
+						if (!t.startsWith("(")) continue;
+						
+						String map = t.substring(t.indexOf("\"") + 1);
+						map = map.substring(0, map.indexOf("\"")).trim();
+						
+						final String map2 = map;
+						
+						if (new File(Editor.currentEditor.map.getParentFile().getParentFile(), map + "/" + map + ".json").exists())
+						{
+							jpm.add(new JMenuItem(new AbstractAction("Gehe zu Karte: " + map)
+							{
+								private static final long serialVersionUID = 1L;
+								
+								@Override
+								public void actionPerformed(ActionEvent e)
+								{
+									Editor.currentEditor.map = new File(Editor.currentEditor.map.getParentFile().getParentFile(), map2 + "/" + map2 + ".json");
+									Editor.currentEditor.openMap();
+								}
+							}));
+						}
+					}
+				}
+			}
+			catch (Exception e1)
+			{
+				e1.printStackTrace();
+			}
+		}
+		
+		jpm.show(this, e.getX(), e.getY());
 	}
 	
 	public void setM(JSONObject m)

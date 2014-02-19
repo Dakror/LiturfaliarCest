@@ -73,6 +73,15 @@ function isFlag(flag)
 }
 
 /**
+ * Returns the amount this flag occurs in the Flag System.
+ * @param flag {String} - name of the flag, preferrably in captial letters
+ * @returns int
+ */
+function countFlag(flag){
+	return FlagManager.countFlag(flag);
+}
+
+/**
  * Checks if the given flag expression is matching
  * 
  * @param flags {String} - flag expression to be matched against

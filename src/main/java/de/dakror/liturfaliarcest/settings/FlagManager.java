@@ -77,7 +77,7 @@ public class FlagManager
 		return true;
 	}
 	
-	public static int countFlags(String name)
+	public static int countFlag(String name)
 	{
 		int i = 0;
 		for (String n : flags)

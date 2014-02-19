@@ -1,7 +1,5 @@
 package de.dakror.liturfaliarcest.util;
 
-import java.util.ArrayList;
-
 import javax.swing.text.JTextComponent;
 
 import org.fife.rsta.ac.LanguageSupport;
@@ -12,7 +10,6 @@ import org.fife.rsta.ac.js.SourceCompletionProvider;
 import org.fife.rsta.ac.js.ast.TypeDeclarationOptions;
 import org.fife.rsta.ac.js.ast.type.ecma.v5.TypeDeclarationsECMAv5;
 import org.fife.rsta.ac.js.engine.RhinoJavaScriptEngine;
-import org.fife.ui.autocomplete.Completion;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.modes.JavaScriptTokenMaker;
 
@@ -31,7 +28,6 @@ public class RhinoJavaScriptLanguageSupport extends JavaScriptLanguageSupport
 	{
 		MySourceCompletionProvider provider = new MySourceCompletionProvider(this);
 		JavaScriptCompletionProvider s = new JavaScriptCompletionProvider(provider, getJarManager(), this);
-		// provider.createMyCompletions();
 		return s;
 	}
 	
@@ -49,9 +45,6 @@ public class RhinoJavaScriptLanguageSupport extends JavaScriptLanguageSupport
 	
 	private class MySourceCompletionProvider extends SourceCompletionProvider
 	{
-		
-		private ArrayList<Completion> myCompletions = new ArrayList<Completion>();
-		
 		JavaScriptLanguageSupport support;
 		
 		public MySourceCompletionProvider(JavaScriptLanguageSupport support)
@@ -74,7 +67,6 @@ public class RhinoJavaScriptLanguageSupport extends JavaScriptLanguageSupport
 			setPreProcessingScripts(pps);
 			
 			String text = super.getAlreadyEnteredText(comp);
-			completions.addAll(myCompletions);
 			return text;
 		}
 	}

@@ -27,19 +27,16 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
-
-import de.dakror.liturfaliarcest.game.Game;
-import de.dakror.liturfaliarcest.game.world.World;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.world.World;
 
 /**
  * @author Dakror
@@ -53,6 +50,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	Point mouse;
 	Point drag;
 	Point dragPos;
+	boolean loadingDone;
 	
 	public MapPanel()
 	{
@@ -115,6 +113,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	
 	public void openMap()
 	{
+		loadingDone = false;
 		try
 		{
 			setLayout(null);
@@ -271,42 +270,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 					}
 					else if (e.getButton() == MouseEvent.BUTTON2)
 					{
-						JPopupMenu jpm = new JPopupMenu();
-						jpm.add(new JMenuItem(new AbstractAction("UID kopieren")
-						{
-							private static final long serialVersionUID = 1L;
-							
-							@Override
-							public void actionPerformed(ActionEvent e)
-							{
-								try
-								{
-									Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(l.uid + ""), null);
-								}
-								catch (Exception e1)
-								{
-									e1.printStackTrace();
-								}
-							}
-						}));
-						jpm.add(new JMenuItem(new AbstractAction("GUID kopieren")
-						{
-							private static final long serialVersionUID = 1L;
-							
-							@Override
-							public void actionPerformed(ActionEvent e)
-							{
-								try
-								{
-									Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(Editor.currentEditor.map.getParentFile().getName() + "$" + l.uid + ""), null);
-								}
-								catch (Exception e1)
-								{
-									e1.printStackTrace();
-								}
-							}
-						}));
-						jpm.show(l, e.getX(), e.getY());
+						l.showPopupMenu(e);
 					}
 					else l.setBorder(BorderFactory.createLineBorder(Color.black));
 				}
@@ -350,7 +314,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				l.setToolTipText("X: " + (l.getX() * World.TILE_SIZE / 32) + ", Y: " + (l.getY() * World.TILE_SIZE / 32));
 			}
 		});
-		if (mouse != null) l.setBounds(mouse.x - l.getPreferredSize().width / 2, mouse.y - l.getPreferredSize().height / 2, l.getPreferredSize().width, l.getPreferredSize().height);
+		if (mouse != null && loadingDone) l.setBounds(mouse.x - l.getPreferredSize().width / 2, mouse.y - l.getPreferredSize().height / 2, l.getPreferredSize().width, l.getPreferredSize().height);
 		l.setToolTipText("X: " + (l.getX() * World.TILE_SIZE / 32) + ", Y: " + (l.getY() * World.TILE_SIZE / 32));
 		add(l);
 	}
@@ -383,7 +347,9 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	
 	@Override
 	public void mouseReleased(MouseEvent e)
-	{}
+	{
+		loadingDone = true;
+	}
 	
 	@Override
 	public void mouseEntered(MouseEvent e)
