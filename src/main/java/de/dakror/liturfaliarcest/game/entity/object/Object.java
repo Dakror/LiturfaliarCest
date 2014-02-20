@@ -5,6 +5,7 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.dakror.gamesetup.util.Helper;
@@ -30,6 +31,18 @@ public class Object extends Entity
 		bumpY = type.bumpY * (World.TILE_SIZE / 32);
 		bumpWidth = type.bumpWidth * (World.TILE_SIZE / 32);
 		bumpHeight = type.bumpHeight * (World.TILE_SIZE / 32);
+		
+		try
+		{
+			if (meta.has("bx")) bumpX = meta.getInt("bx");
+			if (meta.has("by")) bumpX = meta.getInt("by");
+			if (meta.has("bw")) bumpX = meta.getInt("bw");
+			if (meta.has("bh")) bumpX = meta.getInt("bh");
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	@Override

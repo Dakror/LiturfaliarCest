@@ -1,6 +1,7 @@
 package de.dakror.liturfaliarcest.settings;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -112,6 +113,14 @@ public class FlagManager
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		jta = new JTextArea("");
+		
+		if (jta != null) // debug frame
+		{
+			Collections.sort(flags);
+			String string = flags.toString().replace(", ", "\n");
+			jta.setText(string.substring(1, string.length() - 1));
+		}
+		
 		jta.setWrapStyleWord(true);
 		jta.setLineWrap(true);
 		JScrollPane jsp = new JScrollPane(jta, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
