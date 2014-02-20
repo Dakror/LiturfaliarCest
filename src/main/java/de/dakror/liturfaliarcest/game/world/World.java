@@ -212,9 +212,15 @@ public class World extends Layer
 			@Override
 			public int compare(Component o1, Component o2)
 			{
-				if (o1 instanceof AnimationSpot && !(o2 instanceof AnimationSpot)) return 1;
-				if (o2 instanceof AnimationSpot && !(o1 instanceof AnimationSpot)) return -1;
-				return Integer.compare(o1.getY() + ((Entity) o1).bumpY + ((Entity) o1).bumpHeight, o2.getY() + ((Entity) o2).bumpY + ((Entity) o2).bumpHeight);
+				boolean bump1 = ((Entity) o1).bumpHeight > 0;
+				boolean bump2 = ((Entity) o2).bumpHeight > 0;
+				
+				int y1 = (!bump1 ? o1.getHeight() - 1 : ((Entity) o1).bumpY);
+				int h1 = (!bump1 ? 1 : ((Entity) o1).bumpHeight);
+				int y2 = (!bump2 ? o2.getHeight() - 1 : ((Entity) o2).bumpY);
+				int h2 = (!bump2 ? 1 : ((Entity) o2).bumpHeight);
+				
+				return Integer.compare(o1.getY() + y1 + h1, o2.getY() + y2 + h2);
 			}
 		});
 		components = new CopyOnWriteArrayList<>(c);

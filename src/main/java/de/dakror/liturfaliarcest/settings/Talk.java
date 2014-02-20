@@ -27,8 +27,8 @@ public class Talk
 		this(0, 0, "", "", "");
 	}
 	
-	public Talk(String over)
+	public Talk(String over, boolean ok)
 	{
-		this(-1024, 0, "", "", "");
+		this(-1024 - (ok ? 0 : 1024), 0, "", "", "");
 	}
 }

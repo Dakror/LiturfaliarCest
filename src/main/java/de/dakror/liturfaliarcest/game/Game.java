@@ -100,7 +100,7 @@ public class Game extends GameFrame
 	
 	public void endTalk()
 	{
-		if (getActiveLayer() instanceof TalkLayer) ((TalkLayer) getActiveLayer()).endTalk();
+		if (getActiveLayer() instanceof TalkLayer) ((TalkLayer) getActiveLayer()).endTalk(true);
 	}
 	
 	@Override

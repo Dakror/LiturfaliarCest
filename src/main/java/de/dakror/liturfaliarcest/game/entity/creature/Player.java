@@ -32,7 +32,6 @@ public class Player extends Creature
 	{
 		super(x, y, 64, 96, new JSONObject());
 		tex = "char/chars/105-Civilian05.png";
-		attr.set(Attribute.SPEED, 2);
 		inv = new Inventory(8, 5);
 		
 		bumpY = 70;
@@ -75,7 +74,7 @@ public class Player extends Creature
 		}
 		else
 		{
-			attr.set(Attribute.SPEED, 2);
+			attr.set(Attribute.SPEED, 8);
 			if (attr.get(Attribute.STAMINA) < attr.get(Attribute.STAMINA_MAX) && Game.currentGame.getActiveLayer() instanceof HUDLayer && Game.currentGame.alpha == 0)
 			{
 				if ((dirs[0] || dirs[1] || dirs[2] || dirs[3] || target != null) && sprint) sprint = false;

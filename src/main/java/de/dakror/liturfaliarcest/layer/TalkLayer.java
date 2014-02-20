@@ -52,7 +52,7 @@ public class TalkLayer extends Layer
 			@Override
 			public void trigger()
 			{
-				endTalk();
+				endTalk(false);
 			}
 		});
 		components.add(cancel);
@@ -122,9 +122,9 @@ public class TalkLayer extends Layer
 		if (activeText != null) updateComponents(tick);
 	}
 	
-	public void endTalk()
+	public void endTalk(boolean ok)
 	{
-		source.onNextTalk(activeTalk, new Talk(null));
+		source.onNextTalk(activeTalk, new Talk(null, ok));
 		source.setFrozen(false);
 		Game.player.setFrozen(false);
 		Game.currentGame.removeLayer(this);
@@ -136,7 +136,7 @@ public class TalkLayer extends Layer
 		if (source instanceof NPC) ((NPC) source).checkForQuestState();
 		if (index == talk.length() - 1)
 		{
-			endTalk();
+			endTalk(true);
 			return;
 		}
 		
@@ -184,7 +184,7 @@ public class TalkLayer extends Layer
 				}
 			}
 			
-			endTalk();
+			endTalk(true);
 		}
 		catch (JSONException e)
 		{
