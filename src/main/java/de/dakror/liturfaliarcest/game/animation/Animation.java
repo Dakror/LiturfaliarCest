@@ -87,6 +87,11 @@ public class Animation
 		done = false;
 	}
 	
+	public void randomizeIndex()
+	{
+		index = (int) Math.floor(Math.random() * (rows * cols));
+	}
+	
 	public void draw(int x, int y, Graphics2D g)
 	{
 		if (done) return;

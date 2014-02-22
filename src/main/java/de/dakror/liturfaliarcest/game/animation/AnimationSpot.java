@@ -2,10 +2,10 @@ package de.dakror.liturfaliarcest.game.animation;
 
 import java.awt.Graphics2D;
 
-import de.dakror.liturfaliarcest.game.entity.Entity;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import de.dakror.liturfaliarcest.game.entity.Entity;
 
 /**
  * @author Dakror
@@ -21,6 +21,7 @@ public class AnimationSpot extends Entity
 		width = meta.has("width") ? meta.getInt("width") : anim.getDefaultWidth();
 		height = meta.has("height") ? meta.getInt("height") : anim.getDefaultHeight();
 		anim.init(width, height, meta.has("smooth") ? meta.getBoolean("smooth") : false, meta.has("endless") ? meta.getBoolean("endless") : true);
+		if (meta.has("randomIndex") && meta.getBoolean("randomIndex")) anim.randomizeIndex();
 	}
 	
 	@Override

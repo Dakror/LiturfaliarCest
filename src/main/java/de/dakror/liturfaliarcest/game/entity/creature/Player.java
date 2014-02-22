@@ -74,7 +74,7 @@ public class Player extends Creature
 		}
 		else
 		{
-			attr.set(Attribute.SPEED, 8);
+			attr.set(Attribute.SPEED, 2);
 			if (attr.get(Attribute.STAMINA) < attr.get(Attribute.STAMINA_MAX) && Game.currentGame.getActiveLayer() instanceof HUDLayer && Game.currentGame.alpha == 0)
 			{
 				if ((dirs[0] || dirs[1] || dirs[2] || dirs[3] || target != null) && sprint) sprint = false;
