@@ -19,6 +19,7 @@ import de.dakror.liturfaliarcest.game.item.Item;
 import de.dakror.liturfaliarcest.game.quest.Quest;
 import de.dakror.liturfaliarcest.game.world.World;
 import de.dakror.liturfaliarcest.layer.HUDLayer;
+import de.dakror.liturfaliarcest.layer.QuestLayer;
 import de.dakror.liturfaliarcest.layer.TalkLayer;
 import de.dakror.liturfaliarcest.settings.FlagManager;
 import de.dakror.liturfaliarcest.util.SavegameHandler;
@@ -81,6 +82,7 @@ public class Game extends GameFrame
 			world.addEntity(player);
 			
 			addLayer(new HUDLayer());
+			addLayer(new QuestLayer());
 		}
 		
 		drawLayers(g);
