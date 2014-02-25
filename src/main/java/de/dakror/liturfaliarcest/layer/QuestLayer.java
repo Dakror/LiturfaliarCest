@@ -39,6 +39,16 @@ public class QuestLayer extends Layer
 			int lines = Helper.drawStringWrapped(q.getName(), x + 30, y + 40, width / 2, g, 35);
 			
 			Helper.drawStringWrapped(q.getText(), x + 30, y + 40 + lines * 40, width / 2 - 35, g, 22);
+			
+			if (FlagManager.isFlag("QUEST_" + leftIndex + "_DONE")) g.drawImage(Game.getImage("system/checked.png"), x + width / 2 - 70, y + height - 60, 64, 52, Game.w);
+		}
+		if (FlagManager.isFlag("QUEST_" + (leftIndex + 1) + "_DONE") || FlagManager.isFlag("QUEST_" + (leftIndex + 1) + "_ACCEPTED"))
+		{
+			Quest q = Quest.quests.get(leftIndex + 1);
+			int lines = Helper.drawStringWrapped(q.getName(), x + width / 2 + 20, y + 40, width / 2 - 30, g, 35);
+			
+			Helper.drawStringWrapped(q.getText(), x + width / 2 + 20, y + 40 + lines * 40, width / 2 - 35, g, 22);
+			if (FlagManager.isFlag("QUEST_" + (leftIndex + 1) + "_DONE")) g.drawImage(Game.getImage("system/checked.png"), x + width / 2 + 10, y + height - 60, 64, 52, Game.w);
 		}
 		g.setColor(o);
 		
@@ -69,9 +79,22 @@ public class QuestLayer extends Layer
 	@Override
 	public void mouseMoved(MouseEvent e)
 	{
-		int size = 70;
 		super.mouseMoved(e);
-		if (leftIndex > 1) leftHover = new Rectangle(x, y, size, height).contains(e.getPoint());
-		if (leftIndex < questCount) rightHover = new Rectangle(x + width - size, y, size, height).contains(e.getPoint());
+		
+		int size = 70;
+		leftHover = (leftIndex > 1) && new Rectangle(x, y, size, height).contains(e.getPoint());
+		rightHover = (leftIndex + 1 < questCount) && new Rectangle(x + width - size, y, size, height).contains(e.getPoint());
+	}
+	
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+		super.mousePressed(e);
+		if (rightHover) leftIndex += 2;
+		if (leftHover) leftIndex -= 2;
+		
+		int size = 70;
+		leftHover = (leftIndex > 1) && new Rectangle(x, y, size, height).contains(e.getPoint());
+		rightHover = (leftIndex + 1 < questCount) && new Rectangle(x + width - size, y, size, height).contains(e.getPoint());
 	}
 }
