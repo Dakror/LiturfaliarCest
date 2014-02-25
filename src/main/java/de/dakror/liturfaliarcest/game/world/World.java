@@ -190,7 +190,11 @@ public class World extends Layer
 		at.translate(x, y);
 		g.setTransform(at);
 		
-		if (hovered != null) hovered.drawTooltip(GameFrame.currentFrame.mouse.x - x, GameFrame.currentFrame.mouse.y - y, g);
+		if (hovered != null)
+		{
+			hovered.drawTooltip(GameFrame.currentFrame.mouse.x - x, GameFrame.currentFrame.mouse.y - y, g);
+			if (Game.currentGame.getActiveLayer().isModal()) hovered.state = 0;
+		}
 		
 		g.setTransform(old);
 	}
@@ -198,7 +202,7 @@ public class World extends Layer
 	@Override
 	public void update(int tick)
 	{
-		if (!enabled) return;
+		if (!enabled || Game.currentGame.getActiveLayer().isModal()) return;
 		
 		for (Component c : components)
 		{

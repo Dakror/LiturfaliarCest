@@ -1,22 +1,49 @@
 package de.dakror.liturfaliarcest.layer;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 import de.dakror.gamesetup.layer.Layer;
+import de.dakror.gamesetup.util.Helper;
 import de.dakror.liturfaliarcest.game.Game;
+import de.dakror.liturfaliarcest.game.quest.Quest;
+import de.dakror.liturfaliarcest.settings.FlagManager;
 
 /**
  * @author Dakror
  */
 public class QuestLayer extends Layer
 {
+	int x, y, width, height, questCount, leftIndex;
+	boolean leftHover, rightHover;
+	
+	public QuestLayer()
+	{
+		modal = true;
+	}
+	
 	@Override
 	public void draw(Graphics2D g)
 	{
 		drawModality(g);
-		BufferedImage book = Game.getImage("system/book.png");
-		g.drawImage(book, (Game.getWidth() - book.getWidth()) / 2, (Game.getHeight() - book.getHeight()) / 2, Game.w);
+		g.drawImage(Game.getImage("system/book.png"), x, y, Game.w);
+		
+		Color o = g.getColor();
+		g.setColor(Color.decode("#421414"));
+		if (FlagManager.isFlag("QUEST_" + leftIndex + "_DONE") || FlagManager.isFlag("QUEST_" + leftIndex + "_ACCEPTED"))
+		{
+			Quest q = Quest.quests.get(leftIndex);
+			int lines = Helper.drawStringWrapped(q.getName(), x + 30, y + 40, width / 2, g, 35);
+			
+			Helper.drawStringWrapped(q.getText(), x + 30, y + 40 + lines * 40, width / 2 - 35, g, 22);
+		}
+		g.setColor(o);
+		
+		if (leftHover) g.drawImage(Game.getImage("system/book_left_turn.png"), x, y, Game.w);
+		if (rightHover) g.drawImage(Game.getImage("system/book_right_turn.png"), x, y, Game.w);
 	}
 	
 	@Override
@@ -26,6 +53,25 @@ public class QuestLayer extends Layer
 	@Override
 	public void init()
 	{
-		modal = true;
+		BufferedImage book = Game.getImage("system/book.png");
+		width = book.getWidth();
+		height = book.getHeight();
+		x = (Game.getWidth() - width) / 2;
+		y = (Game.getHeight() - height) / 2;
+		
+		leftHover = rightHover = false;
+		leftIndex = 1;
+		questCount = 0;
+		for (String f : FlagManager.flags)
+			if (f.startsWith("QUEST_") && (f.endsWith("_DONE") || f.endsWith("_ACCEPTED"))) questCount++;
+	}
+	
+	@Override
+	public void mouseMoved(MouseEvent e)
+	{
+		int size = 70;
+		super.mouseMoved(e);
+		if (leftIndex > 1) leftHover = new Rectangle(x, y, size, height).contains(e.getPoint());
+		if (leftIndex < questCount) rightHover = new Rectangle(x + width - size, y, size, height).contains(e.getPoint());
 	}
 }

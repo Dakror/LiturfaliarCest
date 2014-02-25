@@ -82,7 +82,6 @@ public class Game extends GameFrame
 			world.addEntity(player);
 			
 			addLayer(new HUDLayer());
-			addLayer(new QuestLayer());
 		}
 		
 		drawLayers(g);
@@ -96,6 +95,11 @@ public class Game extends GameFrame
 	public void keyPressed(KeyEvent e)
 	{
 		super.keyPressed(e);
+		if (e.getKeyCode() == KeyEvent.VK_J)
+		{
+			if (getActiveLayer() instanceof QuestLayer) removeLayer(getActiveLayer());
+			else addLayer(new QuestLayer());
+		}
 		if (e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) SavegameHandler.save(null);
 		if (e.getKeyCode() == KeyEvent.VK_F1 && FlagManager.jta == null) FlagManager.showDebugWindow();
 	}

@@ -1,7 +1,7 @@
-id;flag;name;text;origin;goal;main
-1;!SLEPT_INVASION;Eine wichtige Angelegenheit;Laut Vater mˆchte W‰chter Krosso mir etwas Wichtiges mitteilen. Besser, ich suche ihn rasch auf.;Kerstil_0$511977843;onTalk:Kerstil$2114996193;1
-2;;Schlieﬂt die Tore!;Die offensichtlich feindseligen Reiter kommen immer n‰her. Von W‰chter Krosso wurde mir aufgetragen, die Palisade im Westen zu versprerren.;Kerstil$2114996193;;1
-3;;Schlieﬂt die Tore!;Die offensichtlich feindseligen Reiter kommen immer n‰her. Von W‰chter Krosso wurde mir aufgetragen, die Palisade im Norden zu versprerren.;Kerstil$2114996193;;1
-4;;Zu den Waffen!;W‰chter Krosso trug mir auﬂerdem auf, die Mitbewohner ¸ber die Lage zu informieren und mich zu bewaffnen.;Kerstil$2114996193;;1
-5;QUEST_2_DONE QUEST_3_DONE QUEST_4_DONE START_SWORD_PICKED_UP;Alles erledigt;W‰chter Krosso war so g¸tig, mir erlauben nach den Aufgaben wieder heim zu gehen.;Kerstil$2114996193;onTalk:Kerstil_0$511977843;1
-6;SLEPT_INVASION;Das Dorf in Flammen;Wir m¸ssen fliehen, diese R‰uber haben das Dorf in Brand gesteckt!;Kerstil_0$511977843;;1
+Ôªøid;flag;name;text;origin;goal;main
+1;!SLEPT_INVASION;Eine wichtige Angelegenheit;Laut Vater m√∂chte W√§chter Krosso mir etwas Wichtiges mitteilen. Besser, ich suche ihn rasch auf.;Kerstil_0$511977843;onTalk:Kerstil$2114996193;1
+2;;Schlie√üt die Tore im Westen!;Die offensichtlich feindseligen Reiter kommen immer n√§her. Von W√§chter Krosso wurde mir aufgetragen, die Palisade im Westen zu versprerren.;Kerstil$2114996193;;1
+3;;Schlie√üt die Tore im Norden!;Die offensichtlich feindseligen Reiter kommen immer n√§her. Von W√§chter Krosso wurde mir aufgetragen, die Palisade im Norden zu versprerren.;Kerstil$2114996193;;1
+4;;Zu den Waffen!;W√§chter Krosso trug mir au√üerdem auf, die Mitbewohner √ºber die Lage zu informieren und mich zu bewaffnen.;Kerstil$2114996193;;1
+5;QUEST_2_DONE QUEST_3_DONE QUEST_4_DONE START_SWORD_PICKED_UP;Alles erledigt;W√§chter Krosso war so g√ºtig, mir erlauben nach den Aufgaben wieder heim zu gehen.;Kerstil$2114996193;onTalk:Kerstil_0$511977843;1
+6;SLEPT_INVASION;Das Dorf in Flammen;Wir m√ºssen fliehen, diese R√§uber haben das Dorf in Brand gesteckt!;Kerstil_0$511977843;;1
