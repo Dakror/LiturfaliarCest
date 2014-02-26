@@ -42,6 +42,8 @@ public class QuestLayer extends Layer
 			
 			Helper.drawStringWrapped(q.getText(), x + 30, y + 40 + lines * 40, width / 2 - 35, g, 22);
 			
+			Helper.drawHorizontallyCenteredString(leftIndex + "", x, width / 2, y + height - 10, g, 30);
+			
 			if (FlagManager.isFlag("QUEST_" + leftIndex + "_DONE")) g.drawImage(Game.getImage("system/checked.png"), x + width / 2 - 70, y + height - 60, 64, 52, Game.w);
 		}
 		if (FlagManager.isFlag("QUEST_" + (leftIndex + 1) + "_DONE") || FlagManager.isFlag("QUEST_" + (leftIndex + 1) + "_ACCEPTED"))
@@ -50,6 +52,9 @@ public class QuestLayer extends Layer
 			int lines = Helper.drawStringWrapped(q.getName(), x + width / 2 + 20, y + 40, width / 2 - 30, g, 35);
 			
 			Helper.drawStringWrapped(q.getText(), x + width / 2 + 20, y + 40 + lines * 40, width / 2 - 35, g, 22);
+			
+			Helper.drawHorizontallyCenteredString((leftIndex + 1) + "", x + width / 2, width / 2, y + height - 15, g, 30);
+			
 			if (FlagManager.isFlag("QUEST_" + (leftIndex + 1) + "_DONE")) g.drawImage(Game.getImage("system/checked.png"), x + width / 2 + 10, y + height - 60, 64, 52, Game.w);
 		}
 		g.setColor(o);
