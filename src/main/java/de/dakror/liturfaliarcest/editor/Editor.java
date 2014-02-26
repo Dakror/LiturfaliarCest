@@ -659,7 +659,7 @@ public class Editor extends JFrame
 			try
 			{
 				JSONObject o = entities.getJSONObject(i);
-				BufferedImage img = (!o.getString("t").equals("black")) ? Game.getImage("tiles/" + o.getString("t")).getSubimage(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h")) : new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+				BufferedImage img = Helper.toBufferedImage((!o.getString("t").equals("black")) ? Game.getImage("tiles/" + o.getString("t")).getSubimage(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h")) : new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB));
 				if (o.getString("t").equals("black"))
 				{
 					Graphics2D g = (Graphics2D) img.getGraphics();
@@ -669,7 +669,7 @@ public class Editor extends JFrame
 				else
 				{
 					Graphics2D g = (Graphics2D) img.getGraphics();
-					g.setColor(Color.green);
+					g.setColor(Color.decode("#00bb00"));
 					g.drawRect(o.getInt("bx"), o.getInt("by"), o.getInt("bw"), o.getInt("bh"));
 				}
 				final JLabel l = new JLabel(new ImageIcon(img));
