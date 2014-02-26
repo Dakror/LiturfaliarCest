@@ -30,6 +30,8 @@ public class Game extends GameFrame
 	public static World world;
 	public static Player player;
 	
+	public int questLayerIndex;
+	
 	public static HashMap<String, World> worlds;
 	
 	public String actionOnFade;
@@ -56,6 +58,8 @@ public class Game extends GameFrame
 		Item.init();
 		Quest.init();
 		Animation.init();
+		
+		questLayerIndex = 1;
 		
 		getImage("system/icons.png"); // for loading purpose
 	}
@@ -97,8 +101,12 @@ public class Game extends GameFrame
 		super.keyPressed(e);
 		if (e.getKeyCode() == KeyEvent.VK_J)
 		{
-			if (getActiveLayer() instanceof QuestLayer) removeLayer(getActiveLayer());
-			else addLayer(new QuestLayer());
+			if (getActiveLayer() instanceof QuestLayer)
+			{
+				questLayerIndex = ((QuestLayer) getActiveLayer()).leftIndex;
+				removeLayer(getActiveLayer());
+			}
+			else addLayer(new QuestLayer(questLayerIndex));
 		}
 		if (e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) SavegameHandler.save(null);
 		if (e.getKeyCode() == KeyEvent.VK_F1 && FlagManager.jta == null) FlagManager.showDebugWindow();

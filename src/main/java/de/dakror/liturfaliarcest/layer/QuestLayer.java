@@ -17,12 +17,14 @@ import de.dakror.liturfaliarcest.settings.FlagManager;
  */
 public class QuestLayer extends Layer
 {
-	int x, y, width, height, questCount, leftIndex;
+	int x, y, width, height, questCount;
 	boolean leftHover, rightHover;
+	public int leftIndex;
 	
-	public QuestLayer()
+	public QuestLayer(int index)
 	{
 		modal = true;
+		leftIndex = index;
 	}
 	
 	@Override
@@ -70,7 +72,6 @@ public class QuestLayer extends Layer
 		y = (Game.getHeight() - height) / 2;
 		
 		leftHover = rightHover = false;
-		leftIndex = 1;
 		questCount = 0;
 		for (String f : FlagManager.flags)
 			if (f.startsWith("QUEST_") && (f.endsWith("_DONE") || f.endsWith("_ACCEPTED"))) questCount++;
