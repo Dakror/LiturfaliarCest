@@ -539,8 +539,8 @@ public class Editor extends JFrame
 				
 				bumpX.setModel(new SpinnerNumberModel((int) bumpX.getValue() > bi.getWidth() - 1 ? bi.getWidth() - 1 : (int) bumpX.getValue(), 0, bi.getWidth() - 1, 1));
 				bumpY.setModel(new SpinnerNumberModel((int) bumpY.getValue() > bi.getHeight() - 1 ? bi.getHeight() - 1 : (int) bumpY.getValue(), 0, bi.getHeight() - 1, 1));
-				bumpWidth.setModel(new SpinnerNumberModel((int) bumpWidth.getValue() > bi.getWidth() || (int) bumpWidth.getValue() == 0 ? bi.getWidth() : (int) bumpWidth.getValue(), 0, bi.getWidth(), 1));
-				bumpHeight.setModel(new SpinnerNumberModel((int) bumpHeight.getValue() > bi.getHeight() || (int) bumpHeight.getValue() == 0 ? bi.getHeight() : (int) bumpHeight.getValue(), 0, bi.getHeight(), 1));
+				bumpWidth.setModel(new SpinnerNumberModel((int) bumpWidth.getValue() > bi.getWidth() ? bi.getWidth() : (int) bumpWidth.getValue(), 0, bi.getWidth(), 1));
+				bumpHeight.setModel(new SpinnerNumberModel((int) bumpHeight.getValue() > bi.getHeight() ? bi.getHeight() : (int) bumpHeight.getValue(), 0, bi.getHeight(), 1));
 				
 				int w = settings.getPreferredSize().width;
 				int h = settings.getPreferredSize().height;
