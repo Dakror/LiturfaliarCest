@@ -28,9 +28,9 @@ import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import de.dakror.gamesetup.util.swing.WrapLayout;
 import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.settings.CFG;
-import de.dakror.gamesetup.util.swing.WrapLayout;
 
 /**
  * @author Dakror
@@ -240,26 +240,36 @@ public class FloorEditor extends JFrame
 			@Override
 			public void mouseReleased(MouseEvent e)
 			{
-				if (dragStart != null && dragEnd != null)
+				new Thread()
 				{
-					int x = Math.min(dragStart.x, dragEnd.x);
-					int y = Math.min(dragStart.y, dragEnd.y);
-					int xM = Math.max(dragStart.x, dragEnd.x) + 32;
-					int yM = Math.max(dragStart.y, dragEnd.y) + 32;
-					for (Component c : map.getComponents())
+					@Override
+					public void run()
 					{
-						if (c instanceof Autotile && c.getX() >= x && c.getX() < xM && c.getY() >= y && c.getY() < yM)
+						if (dragStart != null && dragEnd != null)
 						{
-							if (dragDelete) ((Autotile) c).tileset = "";
-							else ((Autotile) c).tileset = selectedTile;
+							int x = Math.min(dragStart.x, dragEnd.x);
+							int y = Math.min(dragStart.y, dragEnd.y);
+							int xM = Math.max(dragStart.x, dragEnd.x) + 32;
+							int yM = Math.max(dragStart.y, dragEnd.y) + 32;
+							
+							dragEnd = dragStart = null;
+							dragDelete = false;
+							
+							for (Component c : map.getComponents())
+							{
+								if (c instanceof Autotile && c.getX() >= x && c.getX() < xM && c.getY() >= y && c.getY() < yM)
+								{
+									if (dragDelete) ((Autotile) c).tileset = "";
+									else ((Autotile) c).tileset = selectedTile;
+									
+									((Autotile) c).updateNeighbors();
+								}
+							}
 						}
+						
+						map.repaint();
 					}
-					Autotile.updateMap();
-				}
-				
-				dragEnd = dragStart = null;
-				dragDelete = false;
-				map.repaint();
+				}.start();
 			}
 		});
 		map.addMouseMotionListener(new MouseMotionAdapter()
@@ -276,7 +286,6 @@ public class FloorEditor extends JFrame
 			}
 		});
 		
-		
 		width = 10;
 		height = 10;
 		for (int i = 0; i < width; i++)
@@ -284,6 +293,8 @@ public class FloorEditor extends JFrame
 				map.add(new Autotile(i, j, "", true));
 		
 		JScrollPane jsp2 = new JScrollPane(map, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		jsp2.getVerticalScrollBar().setUnitIncrement(32);
+		jsp2.getHorizontalScrollBar().setUnitIncrement(32);
 		jsp2.setSize(new Dimension(1080, 720));
 		cp.add(jsp2);
 		

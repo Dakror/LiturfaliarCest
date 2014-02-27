@@ -53,16 +53,15 @@ public class Autotile extends JLabel
 					{
 						Autotile.this.tileset = "";
 						updateIcon();
-						updateMap();
+						updateNeighbors();
 					}
 					if (Autotile.this.map && e.getButton() == MouseEvent.BUTTON1 && FloorEditor.currentFloorEditor.selectedTile != null)
 					{
 						Autotile.this.tileset = FloorEditor.currentFloorEditor.selectedTile;
 						updateIcon();
-						updateMap();
+						updateNeighbors();
 					}
 				}
-				
 				e.translatePoint(getX(), getY());
 				FloorEditor.currentFloorEditor.map.getMouseListeners()[0].mouseReleased(e);
 			}
@@ -100,6 +99,15 @@ public class Autotile extends JLabel
 		updateIcon();
 	}
 	
+	public void updateNeighbors()
+	{
+		JPanel map = FloorEditor.currentFloorEditor.map;
+		for (Component c : map.getComponents())
+		{
+			if (c instanceof Autotile && Math.abs(c.getX() - getX()) <= 32 && Math.abs(c.getY() - getY()) <= 32) ((Autotile) c).updateIcon();
+		}
+	}
+	
 	@Override
 	public void paint(Graphics g)
 	{
@@ -111,19 +119,11 @@ public class Autotile extends JLabel
 		}
 	}
 	
-	public static void updateMap()
-	{
-		JPanel map = FloorEditor.currentFloorEditor.map;
-		for (Component c : map.getComponents())
-			if (c instanceof Autotile) ((Autotile) c).updateIcon();
-	}
-	
 	public void updateIcon()
 	{
 		if (tileset == "")
 		{
 			setIcon(new ImageIcon(new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB)));
-			repaint();
 			return;
 		}
 		if (map)
@@ -198,7 +198,5 @@ public class Autotile extends JLabel
 			setIcon(new ImageIcon(bi));
 		}
 		else setIcon(new ImageIcon(Game.getImage("autotiles/" + tileset).getSubimage(0, 0, 32, 32)));
-		
-		repaint();
 	}
 }
