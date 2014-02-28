@@ -252,8 +252,6 @@ public class FloorEditor extends JFrame
 							int xM = Math.max(dragStart.x, dragEnd.x) + 32;
 							int yM = Math.max(dragStart.y, dragEnd.y) + 32;
 							
-							dragEnd = dragStart = null;
-							dragDelete = false;
 							
 							for (Component c : map.getComponents())
 							{
@@ -267,6 +265,8 @@ public class FloorEditor extends JFrame
 							}
 						}
 						
+						dragEnd = dragStart = null;
+						dragDelete = false;
 						map.repaint();
 					}
 				}.start();
