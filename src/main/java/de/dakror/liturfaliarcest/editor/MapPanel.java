@@ -41,8 +41,7 @@ import de.dakror.liturfaliarcest.game.world.World;
 /**
  * @author Dakror
  */
-public class MapPanel extends JPanel implements MouseListener, MouseMotionListener
-{
+public class MapPanel extends JPanel implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 	
 	BufferedImage ground, above;
@@ -52,32 +51,25 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	Point dragPos;
 	boolean loadingDone;
 	
-	public MapPanel()
-	{
+	public MapPanel() {
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		
 		KeyStroke keyStroke = KeyStroke.getKeyStroke("F5");
-		getActionMap().put("refresh", new AbstractAction("refresh")
-		{
+		getActionMap().put("refresh", new AbstractAction("refresh") {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				if (Editor.currentEditor.map != null)
-				{
-					try
-					{
+			public void actionPerformed(ActionEvent e) {
+				if (Editor.currentEditor.map != null) {
+					try {
 						File p = Editor.currentEditor.map.getParentFile();
 						ground = ImageIO.read(new File(p, p.getName() + "-0.png"));
 						if (new File(p, p.getName() + "-1.png").exists()) above = ImageIO.read(new File(p, p.getName() + "-1.png"));
 						else above = null;
 						
 						repaint();
-					}
-					catch (IOException e1)
-					{
+					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
 				}
@@ -86,21 +78,15 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "refresh");
 		
 		KeyStroke keyStroke1 = KeyStroke.getKeyStroke("control C");
-		getActionMap().put("copy", new AbstractAction("copy")
-		{
+		getActionMap().put("copy", new AbstractAction("copy") {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				if (Editor.currentEditor.map != null)
-				{
-					try
-					{
+			public void actionPerformed(ActionEvent e) {
+				if (Editor.currentEditor.map != null) {
+					try {
 						Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection("/* " + (mouse.x * World.TILE_SIZE / 32) + " (" + (int) Math.floor(mouse.x / 32f) + ") x " + (mouse.y * World.TILE_SIZE / 32) + " (" + (int) Math.floor(mouse.y / 32f) + ") */"), null);
-					}
-					catch (Exception e1)
-					{
+					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 				}
@@ -111,11 +97,9 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		setLayout(null);
 	}
 	
-	public void openMap()
-	{
+	public void openMap() {
 		loadingDone = false;
-		try
-		{
+		try {
 			setLayout(null);
 			removeAll();
 			revalidate();
@@ -126,14 +110,12 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			else above = null;
 			
 			JSONArray e = new JSONArray(Helper.getFileContent(Editor.currentEditor.map));
-			for (int i = 0; i < e.length(); i++)
-			{
+			for (int i = 0; i < e.length(); i++) {
 				JSONObject en = e.getJSONObject(i);
 				JSONObject o = Editor.currentEditor.entities.getJSONObject(en.getInt("i"));
 				
 				BufferedImage img = (!o.getString("t").equals("black")) ? Game.getImage("tiles/" + o.getString("t")).getSubimage(o.getInt("x"), o.getInt("y"), o.getInt("w"), o.getInt("h")) : new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
-				if (o.getString("t").equals("black"))
-				{
+				if (o.getString("t").equals("black")) {
 					Graphics2D g = (Graphics2D) img.getGraphics();
 					g.setColor(Color.black);
 					Helper.drawHorizontallyCenteredString("E", 32, 32, g, 44);
@@ -151,24 +133,19 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			
 			setPreferredSize(new Dimension(ground.getWidth(), ground.getHeight()));
 			getParent().getParent().revalidate();
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	@Override
-	protected void paintChildren(Graphics g)
-	{
+	protected void paintChildren(Graphics g) {
 		g.drawImage(ground, 0, 0, null);
 		
 		Component[] c = getComponents();
-		Arrays.sort(c, new Comparator<Component>()
-		{
+		Arrays.sort(c, new Comparator<Component>() {
 			@Override
-			public int compare(Component o1, Component o2)
-			{
+			public int compare(Component o1, Component o2) {
 				return Integer.compare(o2.getY(), o1.getY());
 			}
 		});
@@ -178,8 +155,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		
 		super.paintChildren(g);
 		
-		if (mouse != null && Editor.currentEditor.selectedEntity != null && Editor.currentEditor.map != null)
-		{
+		if (mouse != null && Editor.currentEditor.selectedEntity != null && Editor.currentEditor.map != null) {
 			Image i = ((ImageIcon) Editor.currentEditor.selectedEntity.getIcon()).getImage();
 			g.drawImage(i, mouse.x - i.getWidth(null) / 2, mouse.y - i.getHeight(null) / 2, null);
 		}
@@ -190,15 +166,12 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	}
 	
 	@Override
-	public void mouseDragged(MouseEvent e)
-	{}
+	public void mouseDragged(MouseEvent e) {}
 	
 	@Override
-	public void mouseMoved(MouseEvent e)
-	{
+	public void mouseMoved(MouseEvent e) {
 		mouse = e.getPoint();
-		if (e.isControlDown() && Editor.currentEditor.selectedEntity != null)
-		{
+		if (e.isControlDown() && Editor.currentEditor.selectedEntity != null) {
 			Image i = ((ImageIcon) Editor.currentEditor.selectedEntity.getIcon()).getImage();
 			
 			mouse.x = Helper.round(mouse.x - i.getWidth(null) / 2, 32) + i.getWidth(null) / 2;
@@ -208,24 +181,19 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	}
 	
 	@Override
-	public void mouseClicked(MouseEvent e)
-	{}
+	public void mouseClicked(MouseEvent e) {}
 	
 	@Override
-	public void mousePressed(MouseEvent e)
-	{
-		if (Editor.currentEditor.selectedEntity != null && e.getButton() == MouseEvent.BUTTON3)
-		{
+	public void mousePressed(MouseEvent e) {
+		if (Editor.currentEditor.selectedEntity != null && e.getButton() == MouseEvent.BUTTON3) {
 			Editor.currentEditor.selectedEntity = null;
 			Editor.currentEditor.selectedEntityOriginal.setBorder(null);
 			mouse = null;
 			return;
 		}
 		
-		if (mouse != null && Editor.currentEditor.map != null)
-		{
-			if (e.getButton() == MouseEvent.BUTTON1 && Editor.currentEditor.selectedEntity != null)
-			{
+		if (mouse != null && Editor.currentEditor.map != null) {
+			if (e.getButton() == MouseEvent.BUTTON1 && Editor.currentEditor.selectedEntity != null) {
 				Editor.currentEditor.selectedEntity.uid = createUID();
 				addEntity(Editor.currentEditor.selectedEntity);
 				
@@ -235,75 +203,58 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		}
 	}
 	
-	public void addEntity(final Entity l)
-	{
-		l.addMouseListener(new MouseAdapter()
-		{
+	public void addEntity(final Entity l) {
+		l.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mousePressed(MouseEvent e)
-			{
+			public void mousePressed(MouseEvent e) {
 				if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) editEntityEvents(l);
 			}
 			
 			@Override
-			public void mouseReleased(MouseEvent e)
-			{
+			public void mouseReleased(MouseEvent e) {
 				boolean d = drag == null;
 				drag = null;
 				dragPos = null;
 				
 				if (!d) return;
 				
-				if ((l.getBorder() == null || !((LineBorder) l.getBorder()).getLineColor().equals(Color.red)) && e.getButton() == MouseEvent.BUTTON1)
-				{
+				if ((l.getBorder() == null || !((LineBorder) l.getBorder()).getLineColor().equals(Color.red)) && e.getButton() == MouseEvent.BUTTON1) {
 					for (Component c : MapPanel.this.getComponents())
 						((JLabel) c).setBorder(null);
 					
 					l.setBorder(BorderFactory.createLineBorder(Color.red));
-				}
-				else
-				{
-					if (e.getButton() == MouseEvent.BUTTON3)
-					{
+				} else {
+					if (e.getButton() == MouseEvent.BUTTON3) {
 						MapPanel.this.remove(l);
 						repaint();
-					}
-					else if (e.getButton() == MouseEvent.BUTTON2)
-					{
+					} else if (e.getButton() == MouseEvent.BUTTON2) {
 						l.showPopupMenu(e);
-					}
-					else l.setBorder(BorderFactory.createLineBorder(Color.black));
+					} else l.setBorder(BorderFactory.createLineBorder(Color.black));
 				}
 			}
 			
 			@Override
-			public void mouseEntered(MouseEvent e)
-			{
+			public void mouseEntered(MouseEvent e) {
 				if (l.getBorder() == null || !((LineBorder) l.getBorder()).getLineColor().equals(Color.red)) l.setBorder(BorderFactory.createLineBorder(Color.black));
 			}
 			
 			@Override
-			public void mouseExited(MouseEvent e)
-			{
+			public void mouseExited(MouseEvent e) {
 				if (l.getBorder() == null || !((LineBorder) l.getBorder()).getLineColor().equals(Color.red)) l.setBorder(null);
 			}
 		});
-		l.addMouseMotionListener(new MouseMotionAdapter()
-		{
+		l.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
-			public void mouseMoved(MouseEvent e)
-			{
+			public void mouseMoved(MouseEvent e) {
 				mouse = new Point(e.getX() + l.getX(), e.getY() + l.getY());
 				repaint();
 			}
 			
 			@Override
-			public void mouseDragged(MouseEvent e)
-			{
+			public void mouseDragged(MouseEvent e) {
 				if (e.getModifiers() != 16 && e.getModifiers() != 18) return;
 				
-				if (drag == null)
-				{
+				if (drag == null) {
 					dragPos = l.getLocation();
 					drag = e.getPoint();
 				}
@@ -319,13 +270,10 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		add(l);
 	}
 	
-	public int createUID()
-	{
+	public int createUID() {
 		int uid = (int) (Math.random() * (Integer.MAX_VALUE - 1)) + 1;
-		for (Component c : getComponents())
-		{
-			if (((Entity) c).uid == uid)
-			{
+		for (Component c : getComponents()) {
+			if (((Entity) c).uid == uid) {
 				return createUID();
 			}
 		}
@@ -333,31 +281,24 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		return uid;
 	}
 	
-	public void editEntityEvents(final Entity l)
-	{
-		try
-		{
+	public void editEntityEvents(final Entity l) {
+		try {
 			new EntityEditor(l);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	@Override
-	public void mouseReleased(MouseEvent e)
-	{
+	public void mouseReleased(MouseEvent e) {
 		loadingDone = true;
 	}
 	
 	@Override
-	public void mouseEntered(MouseEvent e)
-	{}
+	public void mouseEntered(MouseEvent e) {}
 	
 	@Override
-	public void mouseExited(MouseEvent e)
-	{
+	public void mouseExited(MouseEvent e) {
 		mouse = null;
 		repaint();
 	}

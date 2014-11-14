@@ -17,12 +17,10 @@ import de.dakror.liturfaliarcest.game.world.World;
 /**
  * @author Dakror
  */
-public class Object extends Entity
-{
+public class Object extends Entity {
 	EntityType type;
 	
-	public Object(int x, int y, EntityType type, JSONObject meta)
-	{
+	public Object(int x, int y, EntityType type, JSONObject meta) {
 		super(x, y, type.width * (World.TILE_SIZE / 32), type.height * (World.TILE_SIZE / 32), meta);
 		
 		this.type = type;
@@ -32,22 +30,18 @@ public class Object extends Entity
 		bumpWidth = type.bumpWidth * (World.TILE_SIZE / 32);
 		bumpHeight = type.bumpHeight * (World.TILE_SIZE / 32);
 		
-		try
-		{
+		try {
 			if (meta.has("bx")) bumpX = meta.getInt("bx");
 			if (meta.has("by")) bumpX = meta.getInt("by");
 			if (meta.has("bw")) bumpX = meta.getInt("bw");
 			if (meta.has("bh")) bumpX = meta.getInt("bh");
-		}
-		catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		if (type.tileset.equals("black")) return;
 		
 		Helper.setRenderingHints(g, false);
@@ -66,8 +60,7 @@ public class Object extends Entity
 	}
 	
 	@Override
-	protected void tick(int tick)
-	{
+	protected void tick(int tick) {
 		if (type.tileset.equals("black")) return;
 		
 		if (getArea().intersects(Game.player.getArea()) && Game.player.getY() + Game.player.bumpY + Game.player.bumpHeight < y + bumpY + bumpHeight && !getBump().contains(Game.player.getBump())) alpha = 0.6f;

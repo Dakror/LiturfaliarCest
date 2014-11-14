@@ -20,8 +20,7 @@ import de.dakror.liturfaliarcest.settings.Talk;
 /**
  * @author Dakror
  */
-public class TalkLayer extends Layer
-{
+public class TalkLayer extends Layer {
 	Entity source;
 	JSONArray talk;
 	String activeText, activeName;
@@ -29,8 +28,7 @@ public class TalkLayer extends Layer
 	Talk activeTalk; // for JS event
 	int[] questTriggers = {};
 	
-	public TalkLayer(JSONArray t, Entity s)
-	{
+	public TalkLayer(JSONArray t, Entity s) {
 		talk = t;
 		source = s;
 		index = -1;
@@ -38,8 +36,7 @@ public class TalkLayer extends Layer
 	}
 	
 	@Override
-	public void init()
-	{
+	public void init() {
 		components.clear();
 		
 		if (index == -1) next();
@@ -47,11 +44,9 @@ public class TalkLayer extends Layer
 		TextButton cancel = new TextButton(65, Game.getHeight() / 5 * 3 - 10, "Abbruch");
 		cancel.setWidth((Game.getWidth() / 4 - 30) / 2);
 		cancel.setHeight(Math.round(TextButton.HEIGHT * (cancel.getWidth() / (float) TextButton.WIDTH)));
-		cancel.addClickEvent(new ClickEvent()
-		{
+		cancel.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				endTalk(false);
 			}
 		});
@@ -59,21 +54,15 @@ public class TalkLayer extends Layer
 		TextButton ok = new TextButton(65 + cancel.getWidth(), Game.getHeight() / 5 * 3 - 10, "Ok");
 		ok.setWidth((Game.getWidth() / 4 - 30) / 2);
 		ok.setHeight(Math.round(TextButton.HEIGHT * (cancel.getWidth() / (float) TextButton.WIDTH)));
-		ok.addClickEvent(new ClickEvent()
-		{
+		ok.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
-				if (questTriggers.length > 0)
-				{
-					for (int q : questTriggers)
-					{
-						if (FlagManager.isFlag("QUEST_" + q + "_ACCEPTED"))
-						{
+			public void trigger() {
+				if (questTriggers.length > 0) {
+					for (int q : questTriggers) {
+						if (FlagManager.isFlag("QUEST_" + q + "_ACCEPTED")) {
 							FlagManager.removeFlag("QUEST_" + q + "_ACCEPTED");
 							FlagManager.setFlag("QUEST_" + q + "_DONE");
-						}
-						else FlagManager.setFlag("QUEST_" + q + "_ACCEPTED");
+						} else FlagManager.setFlag("QUEST_" + q + "_ACCEPTED");
 					}
 				}
 				next();
@@ -83,12 +72,9 @@ public class TalkLayer extends Layer
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
-		if (activeText != null)
-		{
-			try
-			{
+	public void draw(Graphics2D g) {
+		if (activeText != null) {
+			try {
 				Helper.drawContainer(50, 50, Game.getWidth() / 4, Game.getHeight() / 5 * 3, true, false, g);
 				
 				Helper.setRenderingHints(g, false);
@@ -106,9 +92,7 @@ public class TalkLayer extends Layer
 				Helper.drawOutline(50, 50, Game.getWidth() / 4, Game.getHeight() / 5 * 3, true, g);
 				
 				Helper.drawStringWrapped(activeText, 75, bi.getHeight() / 4 / 2 * 4 + 170, Game.getWidth() / 4 - 50, g, 30);
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
@@ -117,13 +101,11 @@ public class TalkLayer extends Layer
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		if (activeText != null) updateComponents(tick);
 	}
 	
-	public void endTalk(boolean ok)
-	{
+	public void endTalk(boolean ok) {
 		source.onNextTalk(activeTalk, new Talk(null, ok));
 		source.setFrozen(false);
 		Game.player.setFrozen(false);
@@ -131,50 +113,40 @@ public class TalkLayer extends Layer
 		Game.world.skipWorldClick = true;
 	}
 	
-	public void next()
-	{
+	public void next() {
 		if (source instanceof NPC) ((NPC) source).checkForQuestState();
-		if (index == talk.length() - 1)
-		{
+		if (index == talk.length() - 1) {
 			endTalk(true);
 			return;
 		}
 		
-		try
-		{
+		try {
 			index++;
 			JSONArray a = talk.getJSONArray(index);
-			for (int i = 0; i < a.length(); i++)
-			{
+			for (int i = 0; i < a.length(); i++) {
 				JSONArray o = a.getJSONArray(i);
-				if (o.getString(0).length() == 0 || FlagManager.matchesFlags(o.getString(0)))
-				{
+				if (o.getString(0).length() == 0 || FlagManager.matchesFlags(o.getString(0))) {
 					String modifiers = o.getString(1);
-					if (modifiers.contains("%skip"))
-					{
+					if (modifiers.contains("%skip")) {
 						next();
 						return;
 					}
 					if (modifiers.contains("%e")) activeName = source.getMeta().getString("name");
 					else activeName = "";
-					if (modifiers.contains("%q"))
-					{
+					if (modifiers.contains("%q")) {
 						String s = modifiers.substring(modifiers.indexOf("%q_") + "%q_".length());
 						s = s.substring(0, s.indexOf("%") > -1 ? s.indexOf("%") : s.length());
 						String[] quests = s.split(",");
 						questTriggers = new int[quests.length];
-						for (int j = 0; j < quests.length; j++)
-						{
+						for (int j = 0; j < quests.length; j++) {
 							questTriggers[j] = Integer.parseInt(quests[j]);
-							if (!FlagManager.matchesFlags(Quest.quests.get(questTriggers[j]).getFlags()))
-							{
+							if (!FlagManager.matchesFlags(Quest.quests.get(questTriggers[j]).getFlags())) {
 								questTriggers = new int[] {};
 								next();
 								return;
 							}
 						}
-					}
-					else questTriggers = new int[] {};
+					} else questTriggers = new int[] {};
 					
 					activeText = o.getString(2);
 					
@@ -185,9 +157,7 @@ public class TalkLayer extends Layer
 			}
 			
 			endTalk(true);
-		}
-		catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}

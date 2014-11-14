@@ -23,8 +23,7 @@ import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.animation.Animation;
 import de.dakror.liturfaliarcest.game.item.Item;
 
-public class Entity extends JLabel
-{
+public class Entity extends JLabel {
 	private static final long serialVersionUID = 1L;
 	
 	public JSONObject e; // events
@@ -34,78 +33,58 @@ public class Entity extends JLabel
 	
 	Icon defaultIcon;
 	
-	public Entity(Icon i)
-	{
+	public Entity(Icon i) {
 		super(i);
 		e = new JSONObject();
 		m = new JSONObject();
 		defaultIcon = i;
-		addMouseMotionListener(new MouseMotionAdapter()
-		{
+		addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
-			public void mouseMoved(MouseEvent e)
-			{
+			public void mouseMoved(MouseEvent e) {
 				Editor.currentEditor.mapPanel.getMouseMotionListeners()[0].mouseMoved(e);
 			}
 		});
-		addMouseListener(new MouseAdapter()
-		{
+		addMouseListener(new MouseAdapter() {
 			@Override
-			public void mousePressed(MouseEvent e)
-			{
+			public void mousePressed(MouseEvent e) {
 				Editor.currentEditor.mapPanel.getMouseListeners()[0].mousePressed(e);
 			}
 		});
 	}
 	
-	public void showPopupMenu(MouseEvent e)
-	{
+	public void showPopupMenu(MouseEvent e) {
 		JPopupMenu jpm = new JPopupMenu();
-		jpm.add(new JMenuItem(new AbstractAction("UID kopieren")
-		{
+		jpm.add(new JMenuItem(new AbstractAction("UID kopieren") {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				try
-				{
+			public void actionPerformed(ActionEvent e) {
+				try {
 					Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(uid + ""), null);
-				}
-				catch (Exception e1)
-				{
+				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 			}
 		}));
-		jpm.add(new JMenuItem(new AbstractAction("GUID kopieren")
-		{
+		jpm.add(new JMenuItem(new AbstractAction("GUID kopieren") {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				try
-				{
+			public void actionPerformed(ActionEvent e) {
+				try {
 					Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(Editor.currentEditor.map.getParentFile().getName() + "$" + uid + ""), null);
-				}
-				catch (Exception e1)
-				{
+				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 			}
 		}));
-		if (this.e.has("onEnter"))
-		{
-			try
-			{
+		if (this.e.has("onEnter")) {
+			try {
 				String function = new String(new BASE64Decoder().decodeBuffer(this.e.getString("onEnter")));
-				if (function.contains("teleportMap"))
-				{
+				if (function.contains("teleportMap")) {
 					// jpm.add(new JMenuItem());
 					String[] teleports = function.split("teleportMap");
-					for (int i = 1; i < teleports.length; i++)
-					{
+					for (int i = 1; i < teleports.length; i++) {
 						String t = teleports[i].trim();
 						if (!t.startsWith("(")) continue;
 						
@@ -114,15 +93,12 @@ public class Entity extends JLabel
 						
 						final String map2 = map;
 						
-						if (new File(Editor.currentEditor.map.getParentFile().getParentFile(), map + "/" + map + ".json").exists())
-						{
-							jpm.add(new JMenuItem(new AbstractAction("Gehe zu Karte: " + map)
-							{
+						if (new File(Editor.currentEditor.map.getParentFile().getParentFile(), map + "/" + map + ".json").exists()) {
+							jpm.add(new JMenuItem(new AbstractAction("Gehe zu Karte: " + map) {
 								private static final long serialVersionUID = 1L;
 								
 								@Override
-								public void actionPerformed(ActionEvent e)
-								{
+								public void actionPerformed(ActionEvent e) {
 									Editor.currentEditor.map = new File(Editor.currentEditor.map.getParentFile().getParentFile(), map2 + "/" + map2 + ".json");
 									Editor.currentEditor.openMap();
 								}
@@ -130,9 +106,7 @@ public class Entity extends JLabel
 						}
 					}
 				}
-			}
-			catch (Exception e1)
-			{
+			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -140,54 +114,36 @@ public class Entity extends JLabel
 		jpm.show(this, e.getX(), e.getY());
 	}
 	
-	public void setM(JSONObject m)
-	{
+	public void setM(JSONObject m) {
 		this.m = m;
 		
 		if (m.length() == 0) return;
 		
-		if (m.has("texture"))
-		{
-			try
-			{
+		if (m.has("texture")) {
+			try {
 				BufferedImage bi = Game.getImage(m.getString("texture"));
-				if (bi != null)
-				{
+				if (bi != null) {
 					setIcon(new ImageIcon(m.has("frame") || m.has("dir") ? bi.getSubimage((m.has("frame") ? m.getInt("frame") : 0) * bi.getWidth() / 4, (m.has("dir") ? m.getInt("dir") : 0) * bi.getHeight() / 4, bi.getWidth() / 4, bi.getHeight() / 4) : bi.getSubimage(0, 0, bi.getWidth() / 4, bi.getHeight() / 4)));
 					setBounds(getX(), getY(), bi.getWidth() / 4, bi.getHeight() / 4);
 				}
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-		else if (m.has("itemID"))
-		{
-			try
-			{
+		} else if (m.has("itemID")) {
+			try {
 				setIcon(Item.getItemForId(m.getInt("itemID")).getIcon(32));
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-		else if (m.has("animID"))
-		{
-			try
-			{
+		} else if (m.has("animID")) {
+			try {
 				Animation a = Animation.getAnimationForId(m.getInt("animID"));
 				setBounds(getX(), getY(), (m.has("width") ? m.getInt("width") : a.getDefaultWidth()) / 2, (m.has("height") ? m.getInt("height") : a.getDefaultHeight()) / 2);
 				setIcon(a.getIcon(getWidth(), getHeight()));
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-		else
-		{
+		} else {
 			setIcon(defaultIcon);
 			if (getName().equals("0")) setBounds(getX(), getY(), 32, 32);
 		}

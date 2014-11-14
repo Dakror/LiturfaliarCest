@@ -26,8 +26,7 @@ import de.dakror.liturfaliarcest.util.JSInvoker;
 /**
  * @author Dakror
  */
-public abstract class Entity extends ClickableComponent
-{
+public abstract class Entity extends ClickableComponent {
 	protected Attributes attr;
 	protected Inventory inv;
 	protected Vector pos, target, spawn;
@@ -44,8 +43,7 @@ public abstract class Entity extends ClickableComponent
 	
 	protected ArrayList<Entity> lastTickEntered;
 	
-	public Entity(int x, int y, int width, int height, JSONObject meta)
-	{
+	public Entity(int x, int y, int width, int height, JSONObject meta) {
 		super(x, y, width, height);
 		this.meta = meta;
 		pos = new Vector(x, y);
@@ -60,11 +58,9 @@ public abstract class Entity extends ClickableComponent
 		
 		lastTickEntered = new ArrayList<>();
 		
-		addClickEvent(new ClickEvent()
-		{
+		addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				if (Entity.this instanceof Player) return;
 				
 				Game.player.setClickTarget(Entity.this);
@@ -72,8 +68,7 @@ public abstract class Entity extends ClickableComponent
 		});
 	}
 	
-	public void move()
-	{
+	public void move() {
 		if (target == null || pos.equals(target) || attr.get(Attribute.SPEED) == 0) return;
 		
 		Vector distance = target.clone().sub(pos);
@@ -88,8 +83,7 @@ public abstract class Entity extends ClickableComponent
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		if (!frozen) move();
 		tick(tick);
 		
@@ -99,13 +93,11 @@ public abstract class Entity extends ClickableComponent
 	
 	protected abstract void tick(int tick);
 	
-	public boolean isFree(float deltaX, float deltaY)
-	{
+	public boolean isFree(float deltaX, float deltaY) {
 		boolean world = Game.world.getBump().contains(new Rectangle((int) (pos.x + bumpX + deltaX), (int) (pos.y + bumpY + deltaY), bumpWidth, bumpHeight));
 		if (!world) return false;
 		
-		for (Component e : Game.world.components)
-		{
+		for (Component e : Game.world.components) {
 			if (e.equals(this)) continue;
 			if (e instanceof Entity) if (((Entity) e).getBump().intersects(getBump(deltaX, deltaY))) return false;
 		}
@@ -113,89 +105,70 @@ public abstract class Entity extends ClickableComponent
 		return true;
 	}
 	
-	public void setEventFunctions(JSONObject o)
-	{
+	public void setEventFunctions(JSONObject o) {
 		eventFunctions = o;
-		try
-		{
-			for (String name : JSONObject.getNames(o))
-			{
+		try {
+			for (String name : JSONObject.getNames(o)) {
 				String value = o.getString(name);
 				if (!value.contains("function")) // base64-ed
 				eventFunctions.put(name, new String(new BASE64Decoder().decodeBuffer(value)));
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public Rectangle2D getBump()
-	{
+	public Rectangle2D getBump() {
 		return getBump(0, 0);
 	}
 	
-	public Rectangle2D getBump(float deltaX, float deltaY)
-	{
+	public Rectangle2D getBump(float deltaX, float deltaY) {
 		return new Rectangle2D.Float(pos.x + bumpX + deltaX, pos.y + bumpY + deltaY, bumpWidth, bumpHeight);
 	}
 	
-	public boolean hasBump()
-	{
+	public boolean hasBump() {
 		return bumpWidth > 2 && bumpHeight > 2;
 	}
 	
-	public Rectangle2D getArea()
-	{
+	public Rectangle2D getArea() {
 		return new Rectangle2D.Float(pos.x, pos.y, width, height);
 	}
 	
-	public Rectangle2D getArea2()
-	{
+	public Rectangle2D getArea2() {
 		return new Rectangle2D.Float(Game.world.x + pos.x, Game.world.y + pos.y, width, height);
 	}
 	
-	public boolean hasMoved()
-	{
+	public boolean hasMoved() {
 		return !pos.equals(spawn);
 	}
 	
-	protected void checkForOnEnterEvent()
-	{
-		for (Component e : Game.world.components)
-		{
+	protected void checkForOnEnterEvent() {
+		for (Component e : Game.world.components) {
 			if (e.equals(this)) continue;
 			Entity e1 = (Entity) e;
 			Rectangle2D is = getBump().createIntersection(e1.hasBump() ? e1.getBump() : e1.getArea());
-			if (is.getWidth() > 8 && is.getHeight() > 8 && !lastTickEntered.contains(e1))
-			{
+			if (is.getWidth() > 8 && is.getHeight() > 8 && !lastTickEntered.contains(e1)) {
 				onEnter(e1);
 				lastTickEntered.add(e1);
-			}
-			else if (is.getWidth() < 8 || is.getHeight() < 8 && lastTickEntered.contains(e1))
-			{
+			} else if (is.getWidth() < 8 || is.getHeight() < 8 && lastTickEntered.contains(e1)) {
 				lastTickEntered.remove(e1);
 			}
 		}
 	}
 	
 	@Override
-	public void setX(int x)
-	{
+	public void setX(int x) {
 		super.setX(x);
 		pos.x = x;
 	}
 	
 	@Override
-	public void setY(int y)
-	{
+	public void setY(int y) {
 		super.setY(y);
 		pos.y = y;
 	}
 	
-	public JSONObject getData() throws JSONException
-	{
+	public JSONObject getData() throws JSONException {
 		JSONObject o = new JSONObject();
 		if (!hasMoved()) return o;
 		
@@ -205,192 +178,140 @@ public abstract class Entity extends ClickableComponent
 		return o;
 	}
 	
-	public void setPos(JSONArray v) throws JSONException
-	{
+	public void setPos(JSONArray v) throws JSONException {
 		pos = new Vector((float) v.getDouble(0), (float) v.getDouble(1));
 	}
 	
-	public void setTarget(JSONArray v) throws JSONException
-	{
+	public void setTarget(JSONArray v) throws JSONException {
 		target = new Vector((float) v.getDouble(0), (float) v.getDouble(1));
 	}
 	
-	public void setTarget(Vector v)
-	{
+	public void setTarget(Vector v) {
 		target = v;
 	}
 	
 	@Override
-	public boolean contains(int x, int y)
-	{
+	public boolean contains(int x, int y) {
 		return super.contains(x - Game.world.x, y - Game.world.y);
 	}
 	
-	public Attributes getAttributes()
-	{
+	public Attributes getAttributes() {
 		return attr;
 	}
 	
-	public Inventory getInventory()
-	{
+	public Inventory getInventory() {
 		return inv;
 	}
 	
-	public float getDistance(Entity e)
-	{
+	public float getDistance(Entity e) {
 		return new Vector(pos.x + bumpX + bumpWidth / 2, pos.y + bumpY + bumpHeight / 2).getDistance(new Vector(e.pos.x + e.bumpX + e.bumpWidth / 2, e.pos.y + e.bumpY + e.bumpHeight / 2));
 	}
 	
-	public float getBumpRadius()
-	{
+	public float getBumpRadius() {
 		return (float) Math.sqrt(Math.pow(bumpWidth / 2, 2) + Math.pow(bumpHeight / 2, 2));
 	}
 	
-	public void kill()
-	{
+	public void kill() {
 		onDeath();
 		dead = true;
 	}
 	
-	public boolean isDead()
-	{
+	public boolean isDead() {
 		return dead;
 	}
 	
-	public boolean isFrozen()
-	{
+	public boolean isFrozen() {
 		return frozen;
 	}
 	
-	public void setFrozen(boolean f)
-	{
+	public void setFrozen(boolean f) {
 		frozen = f;
 	}
 	
-	public boolean equalsGUID(String guid)
-	{
+	public boolean equalsGUID(String guid) {
 		if (guid.indexOf("$") == -1 || !guid.substring(0, guid.indexOf("$")).equals(Game.world.getName())) return false;
 		
 		return Integer.parseInt(guid.substring(guid.indexOf("$") + 1)) == uid;
 	}
 	
-	public JSONObject getMeta()
-	{
+	public JSONObject getMeta() {
 		return meta;
 	}
 	
-	public JSONArray getTalk()
-	{
-		try
-		{
+	public JSONArray getTalk() {
+		try {
 			return meta.has("talk") ? meta.getJSONArray("talk") : null;
-		}
-		catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 	
 	// -- self applying events -- //
-	protected void onReachTarget()
-	{
-		if (eventFunctions.has("onReachTarget"))
-		{
-			try
-			{
+	protected void onReachTarget() {
+		if (eventFunctions.has("onReachTarget")) {
+			try {
 				JSInvoker.invoke(eventFunctions.getString("onReachTarget"), this);
-			}
-			catch (JSONException e)
-			{
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	protected void onDeath()
-	{
-		if (eventFunctions.has("onDeath"))
-		{
-			try
-			{
+	protected void onDeath() {
+		if (eventFunctions.has("onDeath")) {
+			try {
 				JSInvoker.invoke(eventFunctions.getString("onDeath"), this);
-			}
-			catch (JSONException e)
-			{
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	public void onPickup()
-	{
-		if (eventFunctions.has("onPickup"))
-		{
-			try
-			{
+	public void onPickup() {
+		if (eventFunctions.has("onPickup")) {
+			try {
 				JSInvoker.invoke(eventFunctions.getString("onPickup"), this);
-			}
-			catch (JSONException e)
-			{
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	public void onNextTalk(Talk oldTalk, Talk newTalk)
-	{
-		if (eventFunctions.has("onNextTalk"))
-		{
-			try
-			{
+	public void onNextTalk(Talk oldTalk, Talk newTalk) {
+		if (eventFunctions.has("onNextTalk")) {
+			try {
 				JSInvoker.invoke(eventFunctions.getString("onNextTalk"), this, oldTalk, newTalk);
-			}
-			catch (JSONException e)
-			{
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	public void onFlagChange(String flag, boolean on)
-	{
-		try
-		{
+	public void onFlagChange(String flag, boolean on) {
+		try {
 			if (meta.has("flags")) enabled = FlagManager.matchesFlags(meta.getString("flags"));
-		}
-		catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	// -- on other entities applying event -- //
-	protected void onClickReach(Entity entity)
-	{
-		if (entity.eventFunctions.has("onClickReach"))
-		{
-			try
-			{
+	protected void onClickReach(Entity entity) {
+		if (entity.eventFunctions.has("onClickReach")) {
+			try {
 				JSInvoker.invoke(entity.eventFunctions.getString("onClickReach"), entity, this);
-			}
-			catch (JSONException e)
-			{
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	protected void onEnter(Entity entity)
-	{
-		if (entity.eventFunctions.has("onEnter") && this instanceof Player)
-		{
-			try
-			{
+	protected void onEnter(Entity entity) {
+		if (entity.eventFunctions.has("onEnter") && this instanceof Player) {
+			try {
 				JSInvoker.invoke(entity.eventFunctions.getString("onEnter"), entity, this);
-			}
-			catch (JSONException e)
-			{
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}

@@ -5,16 +5,14 @@ package de.dakror.liturfaliarcest.settings;
  * 
  * @author Dakror
  */
-public class Talk
-{
+public class Talk {
 	public int index;
 	public int step;
 	public String flags;
 	public String modifiers;
 	public String text;
 	
-	public Talk(int index, int step, String flags, String modifiers, String text)
-	{
+	public Talk(int index, int step, String flags, String modifiers, String text) {
 		this.index = index;
 		this.step = step;
 		this.flags = flags;
@@ -22,13 +20,11 @@ public class Talk
 		this.text = text;
 	}
 	
-	public Talk()
-	{
+	public Talk() {
 		this(0, 0, "", "", "");
 	}
 	
-	public Talk(String over, boolean ok)
-	{
+	public Talk(String over, boolean ok) {
 		this(-1024 - (ok ? 0 : 1024), 0, "", "", "");
 	}
 }

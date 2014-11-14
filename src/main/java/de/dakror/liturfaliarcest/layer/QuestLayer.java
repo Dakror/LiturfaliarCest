@@ -15,28 +15,24 @@ import de.dakror.liturfaliarcest.settings.FlagManager;
 /**
  * @author Dakror
  */
-public class QuestLayer extends Layer
-{
+public class QuestLayer extends Layer {
 	int x, y, width, height, questCount;
 	boolean leftHover, rightHover;
 	public int leftIndex;
 	
-	public QuestLayer(int index)
-	{
+	public QuestLayer(int index) {
 		modal = true;
 		leftIndex = index;
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		drawModality(g);
 		g.drawImage(Game.getImage("system/book.png"), x, y, Game.w);
 		
 		Color o = g.getColor();
 		g.setColor(Color.decode("#421414"));
-		if (FlagManager.isFlag("QUEST_" + leftIndex + "_DONE") || FlagManager.isFlag("QUEST_" + leftIndex + "_ACCEPTED"))
-		{
+		if (FlagManager.isFlag("QUEST_" + leftIndex + "_DONE") || FlagManager.isFlag("QUEST_" + leftIndex + "_ACCEPTED")) {
 			Quest q = Quest.quests.get(leftIndex);
 			int lines = Helper.drawStringWrapped(q.getName(), x + 30, y + 40, width / 2, g, 35);
 			
@@ -46,8 +42,7 @@ public class QuestLayer extends Layer
 			
 			if (FlagManager.isFlag("QUEST_" + leftIndex + "_DONE")) g.drawImage(Game.getImage("system/checked.png"), x + width / 2 - 70, y + height - 60, 64, 52, Game.w);
 		}
-		if (FlagManager.isFlag("QUEST_" + (leftIndex + 1) + "_DONE") || FlagManager.isFlag("QUEST_" + (leftIndex + 1) + "_ACCEPTED"))
-		{
+		if (FlagManager.isFlag("QUEST_" + (leftIndex + 1) + "_DONE") || FlagManager.isFlag("QUEST_" + (leftIndex + 1) + "_ACCEPTED")) {
 			Quest q = Quest.quests.get(leftIndex + 1);
 			int lines = Helper.drawStringWrapped(q.getName(), x + width / 2 + 20, y + 40, width / 2 - 30, g, 35);
 			
@@ -64,12 +59,10 @@ public class QuestLayer extends Layer
 	}
 	
 	@Override
-	public void update(int tick)
-	{}
+	public void update(int tick) {}
 	
 	@Override
-	public void init()
-	{
+	public void init() {
 		BufferedImage book = Game.getImage("system/book.png");
 		width = book.getWidth();
 		height = book.getHeight();
@@ -83,8 +76,7 @@ public class QuestLayer extends Layer
 	}
 	
 	@Override
-	public void mouseMoved(MouseEvent e)
-	{
+	public void mouseMoved(MouseEvent e) {
 		super.mouseMoved(e);
 		
 		int size = 70;
@@ -93,8 +85,7 @@ public class QuestLayer extends Layer
 	}
 	
 	@Override
-	public void mousePressed(MouseEvent e)
-	{
+	public void mousePressed(MouseEvent e) {
 		super.mousePressed(e);
 		if (rightHover) leftIndex += 2;
 		if (leftHover) leftIndex -= 2;

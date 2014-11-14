@@ -13,18 +13,14 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class EntityType
-{
+public class EntityType {
 	public static ArrayList<EntityType> entityTypes;
 	
-	public static void init()
-	{
-		try
-		{
+	public static void init() {
+		try {
 			JSONArray a = new JSONArray(Helper.getURLContent(Object.class.getResource("/entities.entlist")));
 			entityTypes = new ArrayList<>();
-			for (int i = 0; i < a.length(); i++)
-			{
+			for (int i = 0; i < a.length(); i++) {
 				JSONObject o = a.getJSONObject(i);
 				EntityType ot = new EntityType();
 				ot.tileset = o.getString("t");
@@ -38,9 +34,7 @@ public class EntityType
 				ot.bumpHeight = o.getInt("bh");
 				entityTypes.add(ot);
 			}
-		}
-		catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}

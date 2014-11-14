@@ -7,17 +7,12 @@ import de.dakror.liturfaliarcest.game.Game;
 import de.dakror.liturfaliarcest.game.UpdateThread;
 
 
-public class LiturfaliarCest
-{
-	public static void main(String[] args)
-	{
-		try
-		{
+public class LiturfaliarCest {
+	public static void main(String[] args) {
+		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			ToolTipManager.sharedInstance().setInitialDelay(0);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		

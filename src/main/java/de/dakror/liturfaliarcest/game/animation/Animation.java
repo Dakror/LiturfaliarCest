@@ -14,22 +14,18 @@ import de.dakror.liturfaliarcest.game.Game;
 /**
  * @author Dakror
  */
-public class Animation
-{
+public class Animation {
 	private static HashMap<Integer, Animation> animations;
 	
-	public static void init()
-	{
+	public static void init() {
 		animations = new HashMap<>();
 		
 		CSVReader csv = new CSVReader("/csv/anim.csv");
 		csv.readRow();
 		String cell = "";
 		Animation anim = null;
-		while ((cell = csv.readNext()) != null)
-		{
-			switch (csv.getIndex())
-			{
+		while ((cell = csv.readNext()) != null) {
+			switch (csv.getIndex()) {
 				case 0:
 					if (anim != null) animations.put(anim.id, anim);
 					anim = new Animation();
@@ -50,13 +46,11 @@ public class Animation
 		animations.put(anim.id, anim);
 	}
 	
-	public static Animation getAnimationForId(int id)
-	{
+	public static Animation getAnimationForId(int id) {
 		return animations.get(id);
 	}
 	
-	public static Animation getAnimationInstance(int id)
-	{
+	public static Animation getAnimationInstance(int id) {
 		return animations.get(id).clone();
 	}
 	
@@ -67,16 +61,13 @@ public class Animation
 	public int width, height, index, speed, startTick;
 	public boolean smooth;
 	
-	public Animation()
-	{}
+	public Animation() {}
 	
-	public int getId()
-	{
+	public int getId() {
 		return id;
 	}
 	
-	public void init(int width, int height, boolean smooth, boolean endless)
-	{
+	public void init(int width, int height, boolean smooth, boolean endless) {
 		this.width = width;
 		this.height = height;
 		this.smooth = smooth;
@@ -87,13 +78,11 @@ public class Animation
 		done = false;
 	}
 	
-	public void randomizeIndex()
-	{
+	public void randomizeIndex() {
 		index = (int) Math.floor(Math.random() * (rows * cols));
 	}
 	
-	public void draw(int x, int y, Graphics2D g)
-	{
+	public void draw(int x, int y, Graphics2D g) {
 		if (done) return;
 		
 		Helper.setRenderingHints(g, smooth);
@@ -102,27 +91,23 @@ public class Animation
 		Helper.setRenderingHints(g, !smooth);
 	}
 	
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		if (startTick == 0) startTick = tick;
 		
-		if (tick > startTick && (tick - startTick) % speed == 0)
-		{
+		if (tick > startTick && (tick - startTick) % speed == 0) {
 			index = (index + 1) % (cols * rows);
 			if (!endless && index == 0) done = true;
 		}
 	}
 	
 	@Override
-	public boolean equals(Object obj)
-	{
+	public boolean equals(Object obj) {
 		if (!(obj instanceof Animation)) return false;
 		return ((Animation) obj).id == id;
 	}
 	
 	@Override
-	public Animation clone()
-	{
+	public Animation clone() {
 		Animation a = new Animation();
 		a.cols = cols;
 		a.rows = rows;
@@ -131,25 +116,21 @@ public class Animation
 		return a;
 	}
 	
-	public int getDefaultWidth()
-	{
+	public int getDefaultWidth() {
 		BufferedImage bi = Game.getImage("anim/" + file + ".png");
 		return bi.getWidth() / cols;
 	}
 	
-	public int getDefaultHeight()
-	{
+	public int getDefaultHeight() {
 		BufferedImage bi = Game.getImage("anim/" + file + ".png");
 		return bi.getHeight() / rows;
 	}
 	
-	public boolean isDone()
-	{
+	public boolean isDone() {
 		return done;
 	}
 	
-	public Icon getIcon(int width, int height)
-	{
+	public Icon getIcon(int width, int height) {
 		BufferedImage i = Game.getImage("anim/" + file + ".png");
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		bi.getGraphics().drawImage(i, 0, 0, width, height, 0, 0, i.getWidth() / cols, i.getHeight() / rows, null);
@@ -158,8 +139,7 @@ public class Animation
 	}
 	
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return id;
 	}
 }

@@ -14,14 +14,11 @@ import de.dakror.liturfaliarcest.ui.ToolbarItemSlot;
 /**
  * @author Dakror
  */
-public class HUDLayer extends Layer
-{
+public class HUDLayer extends Layer {
 	@Override
-	public void init()
-	{
+	public void init() {
 		int w = Game.player.getInventory().getWidth();
-		for (int i = 0; i < w; i++)
-		{
+		for (int i = 0; i < w; i++) {
 			ItemSlot slot = new ToolbarItemSlot((Game.getWidth() - w * ItemSlot.SIZE) / 2 + i * ItemSlot.SIZE, Game.getHeight() - ItemSlot.SIZE);
 			slot.setItemStack(Game.player.getInventory().getSlot(i, 0));
 			components.add(slot);
@@ -29,8 +26,7 @@ public class HUDLayer extends Layer
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		Composite c = g.getComposite();
 		if (Game.player.getY() + Game.world.y > Game.getHeight() - 200) g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 		
@@ -51,8 +47,7 @@ public class HUDLayer extends Layer
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		int w = Game.player.getInventory().getWidth();
 		for (int i = 0; i < w; i++)
 			((ItemSlot) components.get(i)).setItemStack(Game.player.getInventory().getSlot(i, 0));

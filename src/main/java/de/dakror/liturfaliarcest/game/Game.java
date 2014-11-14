@@ -24,8 +24,7 @@ import de.dakror.liturfaliarcest.layer.TalkLayer;
 import de.dakror.liturfaliarcest.settings.FlagManager;
 import de.dakror.liturfaliarcest.util.SavegameHandler;
 
-public class Game extends GameFrame
-{
+public class Game extends GameFrame {
 	public static Game currentGame;
 	public static World world;
 	public static Player player;
@@ -36,22 +35,17 @@ public class Game extends GameFrame
 	
 	public String actionOnFade;
 	
-	public Game()
-	{
+	public Game() {
 		currentGame = this;
 	}
 	
 	@Override
-	public void initGame()
-	{
+	public void initGame() {
 		w.setIconImage(getImage("system/logo.png"));
 		w.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(getImage("system/cursor.png"), new Point(0, 0), "default_cursor"));
-		try
-		{
+		try {
 			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/MorrisRomanBlack.ttf")));
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		EntityType.init();
@@ -64,8 +58,7 @@ public class Game extends GameFrame
 		getImage("system/icons.png"); // for loading purpose
 	}
 	
-	public void setWorld(String map)
-	{
+	public void setWorld(String map) {
 		int index = layers.indexOf(world);
 		world = worlds.containsKey(map) ? worlds.get(map) : new World(map);
 		world.init();
@@ -74,10 +67,8 @@ public class Game extends GameFrame
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
-		if (layers.size() == 0)
-		{
+	public void draw(Graphics2D g) {
+		if (layers.size() == 0) {
 			worlds = new HashMap<>();
 			world = new World("Kerstil_0");
 			player = new Player(3 * World.TILE_SIZE, 3 * World.TILE_SIZE / 2);
@@ -96,38 +87,29 @@ public class Game extends GameFrame
 	}
 	
 	@Override
-	public void keyPressed(KeyEvent e)
-	{
+	public void keyPressed(KeyEvent e) {
 		super.keyPressed(e);
-		if (e.getKeyCode() == KeyEvent.VK_J)
-		{
-			if (getActiveLayer() instanceof QuestLayer)
-			{
+		if (e.getKeyCode() == KeyEvent.VK_J) {
+			if (getActiveLayer() instanceof QuestLayer) {
 				questLayerIndex = ((QuestLayer) getActiveLayer()).leftIndex;
 				removeLayer(getActiveLayer());
-			}
-			else addLayer(new QuestLayer(questLayerIndex));
+			} else addLayer(new QuestLayer(questLayerIndex));
 		}
 		if (e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) SavegameHandler.save(null);
 		if (e.getKeyCode() == KeyEvent.VK_F1 && FlagManager.jta == null) FlagManager.showDebugWindow();
 	}
 	
-	public void endTalk()
-	{
+	public void endTalk() {
 		if (getActiveLayer() instanceof TalkLayer) ((TalkLayer) getActiveLayer()).endTalk(true);
 	}
 	
 	@Override
-	public BufferedImage loadImage(String p)
-	{
-		try
-		{
+	public BufferedImage loadImage(String p) {
+		try {
 			BufferedImage i = ImageIO.read(GameFrame.class.getResource((p.startsWith("/") ? "" : p.contains("gui") ? "/img/" : "/img/") + p));
 			
 			return i;
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			return null;
 		}
 	}

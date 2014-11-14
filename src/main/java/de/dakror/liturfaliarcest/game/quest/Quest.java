@@ -7,12 +7,10 @@ import de.dakror.gamesetup.util.CSVReader;
 /**
  * @author Dakror
  */
-public class Quest
-{
+public class Quest {
 	public static HashMap<Integer, Quest> quests;
 	
-	public static void init()
-	{
+	public static void init() {
 		quests = new HashMap<>();
 		
 		CSVReader csv = new CSVReader("/csv/quests.csv");
@@ -20,10 +18,8 @@ public class Quest
 		
 		String cell = "";
 		Quest quest = null;
-		while ((cell = csv.readNext()) != null)
-		{
-			switch (csv.getIndex())
-			{
+		while ((cell = csv.readNext()) != null) {
+			switch (csv.getIndex()) {
 				case 0:
 					if (quest != null) quests.put(quest.id, quest);
 					quest = new Quest();
@@ -59,41 +55,33 @@ public class Quest
 	private boolean main;
 	private int id;
 	
-	public Quest()
-	{}
+	public Quest() {}
 	
-	public String getName()
-	{
+	public String getName() {
 		return name;
 	}
 	
-	public String getText()
-	{
+	public String getText() {
 		return text;
 	}
 	
-	public String getFlags()
-	{
+	public String getFlags() {
 		return flags;
 	}
 	
-	public String getOriginGUID()
-	{
+	public String getOriginGUID() {
 		return originGUID;
 	}
 	
-	public String getGoal()
-	{
+	public String getGoal() {
 		return goal;
 	}
 	
-	public boolean isMain()
-	{
+	public boolean isMain() {
 		return main;
 	}
 	
-	public int getId()
-	{
+	public int getId() {
 		return id;
 	}
 }

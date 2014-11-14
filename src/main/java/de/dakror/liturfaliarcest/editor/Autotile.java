@@ -22,8 +22,7 @@ import de.dakror.liturfaliarcest.game.Game;
 /**
  * @author Dakror
  */
-public class Autotile extends JLabel
-{
+public class Autotile extends JLabel {
 	private static final long serialVersionUID = 1L;
 	
 	public String tileset;
@@ -31,32 +30,26 @@ public class Autotile extends JLabel
 	
 	boolean border, gridBorder;
 	
-	public Autotile(int x, int y, String tileset, boolean map)
-	{
+	public Autotile(int x, int y, String tileset, boolean map) {
 		if (map) setBounds(x * 32, y * 32, 32, 32);
 		setPreferredSize(new Dimension(32, 32));
 		this.tileset = tileset;
 		this.map = map;
 		gridBorder = FloorEditor.currentFloorEditor.border;
 		
-		addMouseListener(new MouseAdapter()
-		{
+		addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseReleased(MouseEvent e)
-			{
-				if (FloorEditor.currentFloorEditor.dragStart == null)
-				{
+			public void mouseReleased(MouseEvent e) {
+				if (FloorEditor.currentFloorEditor.dragStart == null) {
 					
 					if (!Autotile.this.map && e.getButton() == MouseEvent.BUTTON1) FloorEditor.currentFloorEditor.selectedTile = Autotile.this.tileset;
 					
-					if (Autotile.this.map && e.getButton() == MouseEvent.BUTTON3)
-					{
+					if (Autotile.this.map && e.getButton() == MouseEvent.BUTTON3) {
 						Autotile.this.tileset = "";
 						updateIcon();
 						updateNeighbors();
 					}
-					if (Autotile.this.map && e.getButton() == MouseEvent.BUTTON1 && FloorEditor.currentFloorEditor.selectedTile != null)
-					{
+					if (Autotile.this.map && e.getButton() == MouseEvent.BUTTON1 && FloorEditor.currentFloorEditor.selectedTile != null) {
 						Autotile.this.tileset = FloorEditor.currentFloorEditor.selectedTile;
 						updateIcon();
 						updateNeighbors();
@@ -67,31 +60,26 @@ public class Autotile extends JLabel
 			}
 			
 			@Override
-			public void mouseEntered(MouseEvent e)
-			{
+			public void mouseEntered(MouseEvent e) {
 				border = true;
 			}
 			
 			@Override
-			public void mouseExited(MouseEvent e)
-			{
+			public void mouseExited(MouseEvent e) {
 				border = false;
 				repaint();
 			}
 		});
 		
-		addMouseMotionListener(new MouseMotionAdapter()
-		{
+		addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
-			public void mouseDragged(MouseEvent e)
-			{
+			public void mouseDragged(MouseEvent e) {
 				e.translatePoint(getX(), getY());
 				FloorEditor.currentFloorEditor.map.getMouseMotionListeners()[0].mouseDragged(e);
 			}
 			
 			@Override
-			public void mouseMoved(MouseEvent e)
-			{
+			public void mouseMoved(MouseEvent e) {
 				repaint();
 			}
 		});
@@ -99,35 +87,28 @@ public class Autotile extends JLabel
 		updateIcon();
 	}
 	
-	public void updateNeighbors()
-	{
+	public void updateNeighbors() {
 		JPanel map = FloorEditor.currentFloorEditor.map;
-		for (Component c : map.getComponents())
-		{
+		for (Component c : map.getComponents()) {
 			if (c instanceof Autotile && Math.abs(c.getX() - getX()) <= 32 && Math.abs(c.getY() - getY()) <= 32) ((Autotile) c).updateIcon();
 		}
 	}
 	
 	@Override
-	public void paint(Graphics g)
-	{
+	public void paint(Graphics g) {
 		super.paint(g);
-		if (border || gridBorder)
-		{
+		if (border || gridBorder) {
 			g.setColor(gridBorder && border ? Color.white : Color.black);
 			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 		}
 	}
 	
-	public void updateIcon()
-	{
-		if (tileset == "")
-		{
+	public void updateIcon() {
+		if (tileset == "") {
 			setIcon(new ImageIcon(new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB)));
 			return;
 		}
-		if (map)
-		{
+		if (map) {
 			JPanel map = FloorEditor.currentFloorEditor.map;
 			
 			/*
@@ -139,8 +120,7 @@ public class Autotile extends JLabel
 			 */
 			boolean[] dirs = { false, false, false, false, false, false, false, false };
 			Point[] points = { new Point(-1, -1), new Point(0, -1), new Point(1, -1), new Point(-1, 0), new Point(1, 0), new Point(-1, 1), new Point(0, 1), new Point(1, 1) };
-			for (int i = 0; i < points.length; i++)
-			{
+			for (int i = 0; i < points.length; i++) {
 				Component t = map.getComponentAt(getX() + points[i].x * 32, getY() + points[i].y * 32);
 				if (t != null && t instanceof Autotile) dirs[i] = ((Autotile) t).tileset.equals(tileset);
 			}
@@ -150,8 +130,7 @@ public class Autotile extends JLabel
 			BufferedImage tex = Game.getImage("autotiles/" + tileset);
 			if (!Arrays.toString(dirs).contains("false")) Helper.drawImage2(tex, 0, 0, 32, 32, 32, 64, 32, 32, g);
 			else if (!dirs[1] && !dirs[3] && !dirs[4] && !dirs[6]) Helper.drawImage2(tex, 0, 0, 32, 32, 0, 0, 32, 32, g);
-			else
-			{
+			else {
 				int x = 1, y = 2;
 				if (!dirs[1]) y--;
 				if (!dirs[3]) x--;
@@ -163,40 +142,33 @@ public class Autotile extends JLabel
 				if (!dirs[5] && dirs[3] && dirs[6]) Helper.drawImage2(tex, 0, 16, 16, 16, 64, 16, 16, 16, g);
 				if (!dirs[7] && dirs[4] && dirs[6]) Helper.drawImage2(tex, 16, 16, 16, 16, 80, 16, 16, 16, g);
 				
-				if (dirs[3] && !dirs[1] && !dirs[6] && !dirs[4])
-				{
+				if (dirs[3] && !dirs[1] && !dirs[6] && !dirs[4]) {
 					Helper.drawImage2(tex, 0, 0, 32, 16, 64, 32, 32, 16, g);
 					Helper.drawImage2(tex, 0, 16, 32, 16, 64, 112, 32, 16, g);
 				}
-				if (dirs[4] && !dirs[1] && !dirs[6] && !dirs[3])
-				{
+				if (dirs[4] && !dirs[1] && !dirs[6] && !dirs[3]) {
 					Helper.drawImage2(tex, 0, 0, 32, 16, 0, 32, 32, 16, g);
 					Helper.drawImage2(tex, 0, 16, 32, 16, 0, 112, 32, 16, g);
 				}
-				if (dirs[1] && !dirs[3] && !dirs[4] && !dirs[6])
-				{
+				if (dirs[1] && !dirs[3] && !dirs[4] && !dirs[6]) {
 					Helper.drawImage2(tex, 0, 0, 16, 32, 0, 96, 16, 32, g);
 					Helper.drawImage2(tex, 16, 0, 16, 32, 80, 96, 16, 32, g);
 				}
-				if (dirs[6] && !dirs[3] && !dirs[4] && !dirs[1])
-				{
+				if (dirs[6] && !dirs[3] && !dirs[4] && !dirs[1]) {
 					Helper.drawImage2(tex, 0, 0, 16, 32, 0, 32, 16, 32, g);
 					Helper.drawImage2(tex, 16, 0, 16, 32, 80, 32, 16, 32, g);
 				}
-				if (dirs[6] && dirs[1] && !dirs[3] && !dirs[4])
-				{
+				if (dirs[6] && dirs[1] && !dirs[3] && !dirs[4]) {
 					Helper.drawImage2(tex, 0, 0, 16, 32, 0, 64, 16, 32, g);
 					Helper.drawImage2(tex, 16, 0, 16, 32, 80, 64, 16, 32, g);
 				}
-				if (dirs[3] && dirs[4] && !dirs[1] && !dirs[6])
-				{
+				if (dirs[3] && dirs[4] && !dirs[1] && !dirs[6]) {
 					Helper.drawImage2(tex, 0, 0, 32, 16, 32, 32, 32, 16, g);
 					Helper.drawImage2(tex, 0, 16, 32, 16, 32, 112, 32, 16, g);
 				}
 			}
 			
 			setIcon(new ImageIcon(bi));
-		}
-		else setIcon(new ImageIcon(Game.getImage("autotiles/" + tileset).getSubimage(0, 0, 32, 32)));
+		} else setIcon(new ImageIcon(Game.getImage("autotiles/" + tileset).getSubimage(0, 0, 32, 32)));
 	}
 }

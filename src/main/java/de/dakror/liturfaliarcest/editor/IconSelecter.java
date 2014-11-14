@@ -19,17 +19,12 @@ import de.dakror.gamesetup.util.swing.WrapLayout;
 /**
  * @author Dakror
  */
-public class IconSelecter
-{
-	public static void create()
-	{
-		try
-		{
+public class IconSelecter {
+	public static void create() {
+		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			ToolTipManager.sharedInstance().setInitialDelay(0);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -45,21 +40,16 @@ public class IconSelecter
 		frame.setSize(384 + i.left + i.right + 20, 1000);
 		frame.setLocationRelativeTo(null);
 		
-		new Thread()
-		{
+		new Thread() {
 			@Override
-			public void run()
-			{
+			public void run() {
 				setPriority(MAX_PRIORITY);
-				try
-				{
+				try {
 					BufferedImage bi = ImageIO.read(IconSelecter.class.getResource("/img/system/icons.png"));
 					int amount = bi.getHeight() / 24 * bi.getWidth() / 24;
 					int c = 0;
-					for (int i = 0; i < bi.getHeight() / 24; i++)
-					{
-						for (int j = 0; j < bi.getWidth() / 24; j++)
-						{
+					for (int i = 0; i < bi.getHeight() / 24; i++) {
+						for (int j = 0; j < bi.getWidth() / 24; j++) {
 							JLabel l = new JLabel(new ImageIcon(bi.getSubimage(j * 24, i * 24, 24, 24)));
 							l.setToolTipText(j + " x " + i);
 							panel.add(l);
@@ -71,9 +61,7 @@ public class IconSelecter
 					
 					frame.setTitle("Icon Selecter (" + c + " icons)");
 					frame.revalidate();
-				}
-				catch (IOException e)
-				{
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}

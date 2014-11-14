@@ -35,8 +35,7 @@ import de.dakror.liturfaliarcest.settings.CFG;
 /**
  * @author Dakror
  */
-public class FloorEditor extends JFrame
-{
+public class FloorEditor extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	public static FloorEditor currentFloorEditor;
@@ -49,8 +48,7 @@ public class FloorEditor extends JFrame
 	boolean dragDelete;
 	Point dragStart, dragEnd;
 	
-	public FloorEditor()
-	{
+	public FloorEditor() {
 		super("Liturfaliar Cest Editor: Boden");
 		
 		currentFloorEditor = this;
@@ -66,8 +64,7 @@ public class FloorEditor extends JFrame
 		setVisible(true);
 	}
 	
-	public void initComponents()
-	{
+	public void initComponents() {
 		JSplitPane cp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		cp.setEnabled(false);
 		cp.setDividerLocation(200);
@@ -81,17 +78,14 @@ public class FloorEditor extends JFrame
 		JScrollPane jsp = new JScrollPane(tilesets, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		cp.add(jsp);
 		
-		map = new JPanel(null)
-		{
+		map = new JPanel(null) {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public void paint(Graphics g)
-			{
+			public void paint(Graphics g) {
 				super.paint(g);
 				
-				if (dragEnd != null && dragStart != null)
-				{
+				if (dragEnd != null && dragStart != null) {
 					Graphics2D g2 = (Graphics2D) g;
 					Composite c = g2.getComposite();
 					Color color = g2.getColor();
@@ -108,13 +102,11 @@ public class FloorEditor extends JFrame
 			}
 		};
 		KeyStroke keyStroke = KeyStroke.getKeyStroke("A");
-		map.getActionMap().put("a-add", new AbstractAction("a-add")
-		{
+		map.getActionMap().put("a-add", new AbstractAction("a-add") {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				for (Component c : map.getComponents())
 					c.setBounds(c.getX() + 32, c.getY(), 32, 32);
 				
@@ -129,13 +121,11 @@ public class FloorEditor extends JFrame
 		});
 		map.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "a-add");
 		keyStroke = KeyStroke.getKeyStroke("W");
-		map.getActionMap().put("w-add", new AbstractAction("w-add")
-		{
+		map.getActionMap().put("w-add", new AbstractAction("w-add") {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				for (Component c : map.getComponents())
 					c.setBounds(c.getX(), c.getY() + 32, 32, 32);
 				
@@ -150,13 +140,11 @@ public class FloorEditor extends JFrame
 		});
 		map.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "w-add");
 		keyStroke = KeyStroke.getKeyStroke("S");
-		map.getActionMap().put("s-add", new AbstractAction("s-add")
-		{
+		map.getActionMap().put("s-add", new AbstractAction("s-add") {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				for (int i = 0; i < width; i++)
 					map.add(new Autotile(i, height, "", true));
 				
@@ -168,13 +156,11 @@ public class FloorEditor extends JFrame
 		});
 		map.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "s-add");
 		keyStroke = KeyStroke.getKeyStroke("D");
-		map.getActionMap().put("d-add", new AbstractAction("d-add")
-		{
+		map.getActionMap().put("d-add", new AbstractAction("d-add") {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				for (int i = 0; i < height; i++)
 					map.add(new Autotile(width, i, "", true));
 				
@@ -186,19 +172,16 @@ public class FloorEditor extends JFrame
 		});
 		map.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "d-add");
 		keyStroke = KeyStroke.getKeyStroke("control S");
-		map.getActionMap().put("save", new AbstractAction("save")
-		{
+		map.getActionMap().put("save", new AbstractAction("save") {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.dir")));
 				jfc.setMultiSelectionEnabled(false);
 				jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				jfc.setFileFilter(new FileNameExtensionFilter("PNG-Bild (*.png)", "png"));
-				if (jfc.showSaveDialog(FloorEditor.this) == JFileChooser.APPROVE_OPTION)
-				{
+				if (jfc.showSaveDialog(FloorEditor.this) == JFileChooser.APPROVE_OPTION) {
 					File f = jfc.getSelectedFile();
 					if (!f.getName().endsWith(".png")) f = new File(f.getPath() + ".png");
 					BufferedImage bi = new BufferedImage(width * 32, height * 32, BufferedImage.TYPE_INT_ARGB);
@@ -206,12 +189,9 @@ public class FloorEditor extends JFrame
 					for (Component c : map.getComponents())
 						if (c instanceof Autotile) g.drawImage(((ImageIcon) ((Autotile) c).getIcon()).getImage(), c.getX(), c.getY(), null);
 					
-					try
-					{
+					try {
 						ImageIO.write(bi, "PNG", f);
-					}
-					catch (IOException e1)
-					{
+					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
 				}
@@ -219,13 +199,11 @@ public class FloorEditor extends JFrame
 		});
 		map.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "save");
 		keyStroke = KeyStroke.getKeyStroke("B");
-		map.getActionMap().put("border", new AbstractAction("border")
-		{
+		map.getActionMap().put("border", new AbstractAction("border") {
 			private static final long serialVersionUID = 1L;
 			
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				border = !border;
 				for (Component c : map.getComponents())
 					((Autotile) c).gridBorder = border;
@@ -235,28 +213,21 @@ public class FloorEditor extends JFrame
 		});
 		map.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "border");
 		
-		map.addMouseListener(new MouseAdapter()
-		{
+		map.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseReleased(MouseEvent e)
-			{
-				new Thread()
-				{
+			public void mouseReleased(MouseEvent e) {
+				new Thread() {
 					@Override
-					public void run()
-					{
-						if (dragStart != null && dragEnd != null)
-						{
+					public void run() {
+						if (dragStart != null && dragEnd != null) {
 							int x = Math.min(dragStart.x, dragEnd.x);
 							int y = Math.min(dragStart.y, dragEnd.y);
 							int xM = Math.max(dragStart.x, dragEnd.x) + 32;
 							int yM = Math.max(dragStart.y, dragEnd.y) + 32;
 							
 							
-							for (Component c : map.getComponents())
-							{
-								if (c instanceof Autotile && c.getX() >= x && c.getX() < xM && c.getY() >= y && c.getY() < yM)
-								{
+							for (Component c : map.getComponents()) {
+								if (c instanceof Autotile && c.getX() >= x && c.getX() < xM && c.getY() >= y && c.getY() < yM) {
 									if (dragDelete) ((Autotile) c).tileset = "";
 									else ((Autotile) c).tileset = selectedTile;
 									
@@ -272,11 +243,9 @@ public class FloorEditor extends JFrame
 				}.start();
 			}
 		});
-		map.addMouseMotionListener(new MouseMotionAdapter()
-		{
+		map.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
-			public void mouseDragged(MouseEvent e)
-			{
+			public void mouseDragged(MouseEvent e) {
 				if (selectedTile == null) return;
 				dragDelete = e.getModifiers() == 4;
 				

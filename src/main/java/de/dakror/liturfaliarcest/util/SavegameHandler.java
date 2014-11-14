@@ -19,19 +19,15 @@ import de.dakror.gamesetup.util.Helper;
 /**
  * @author Dakror
  */
-public class SavegameHandler
-{
+public class SavegameHandler {
 	static File dir;
-	static
-	{
+	static {
 		dir = new File(CFG.DIR, "saves");
 		dir.mkdir();
 	}
 	
-	public static void save(String savename)
-	{
-		try
-		{
+	public static void save(String savename) {
+		try {
 			if (savename == null) savename = "Spielstand vom " + new SimpleDateFormat("dd.MM.yy HH-mm-ss").format(new Date());
 			
 			File f = new File(dir, savename + ".save");
@@ -39,17 +35,13 @@ public class SavegameHandler
 			o.put("w", Game.world.getData());
 			
 			Helper.setFileContent(f, o.toString());
-		}
-		catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void load(String savename)
-	{
-		try
-		{
+	public static void load(String savename) {
+		try {
 			File f = new File(dir, savename + ".save");
 			JSONObject o = new JSONObject(Helper.getFileContent(f));
 			JSONObject w = o.getJSONObject("w");
@@ -59,8 +51,7 @@ public class SavegameHandler
 			Game.world.init();
 			
 			JSONArray e = w.getJSONArray("e");
-			for (int i = 0; i < e.length(); i++)
-			{
+			for (int i = 0; i < e.length(); i++) {
 				JSONObject ent = e.getJSONObject(i);
 				Entity entity = Game.world.getEntityForUID(ent.getInt("uid"));
 				entity.setPos(ent.getJSONArray("pos"));
@@ -68,9 +59,7 @@ public class SavegameHandler
 			}
 			
 			Game.currentGame.layers.add(0, Game.world);
-		}
-		catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}

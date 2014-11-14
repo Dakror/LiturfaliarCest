@@ -12,53 +12,42 @@ import de.dakror.liturfaliarcest.game.world.World;
 /**
  * @author Dakror
  */
-public class JSInvoker
-{
+public class JSInvoker {
 	public static String mainjs, jsbeautifier;
 	
-	static
-	{
+	static {
 		mainjs = Helper.getURLContent(JSInvoker.class.getResource("/main.js"));
 		jsbeautifier = Helper.getURLContent(JSInvoker.class.getResource("/jsbeautifier.js"));
 	}
 	
-	public static String beautifyJavaScript(String code)
-	{
-		try
-		{
+	public static String beautifyJavaScript(String code) {
+		try {
 			ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
 			code = code.replace("\\\"", "\\\\\"");
 			code = code.replace("\"", "\\\"");
 			engine.eval(jsbeautifier + "var result = js_beautify(\"" + code + "\");");
 			return (String) engine.get("result");
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	public static void invoke(String code, Object... params)
-	{
+	public static void invoke(String code, Object... params) {
 		ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
 		engine.put("game", Game.currentGame);
 		engine.put("tilesize", World.TILE_SIZE);
 		String p = "";
-		for (int i = 0; i < params.length; i++)
-		{
+		for (int i = 0; i < params.length; i++) {
 			p += "p" + i + ",";
 			engine.put("p" + i, params[i]);
 		}
 		
 		if (p.length() > 0) p = p.substring(0, p.length() - 1);
 		
-		try
-		{
+		try {
 			engine.eval(mainjs + "(" + code + ")(" + p + ")");
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 			String[] lines = (mainjs + "(" + code + ")(" + p + ")").split("\r\n");
 			for (int i = 0; i < lines.length; i++)

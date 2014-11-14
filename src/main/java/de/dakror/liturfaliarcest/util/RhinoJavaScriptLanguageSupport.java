@@ -13,55 +13,46 @@ import org.fife.rsta.ac.js.engine.RhinoJavaScriptEngine;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.modes.JavaScriptTokenMaker;
 
-public class RhinoJavaScriptLanguageSupport extends JavaScriptLanguageSupport
-{
+public class RhinoJavaScriptLanguageSupport extends JavaScriptLanguageSupport {
 	private static final String ENGINE = RhinoJavaScriptEngine.RHINO_ENGINE;
 	
-	public RhinoJavaScriptLanguageSupport()
-	{
+	public RhinoJavaScriptLanguageSupport() {
 		JavaScriptTokenMaker.setJavaScriptVersion("1.7");
 		setECMAVersion(TypeDeclarationsECMAv5.class.getName(), getJarManager());
 	}
 	
 	@Override
-	protected JavaScriptCompletionProvider createJavaScriptCompletionProvider()
-	{
+	protected JavaScriptCompletionProvider createJavaScriptCompletionProvider() {
 		MySourceCompletionProvider provider = new MySourceCompletionProvider(this);
 		JavaScriptCompletionProvider s = new JavaScriptCompletionProvider(provider, getJarManager(), this);
 		return s;
 	}
 	
 	@Override
-	public void install(RSyntaxTextArea textArea)
-	{
+	public void install(RSyntaxTextArea textArea) {
 		// remove javascript support and replace with Rhino support
 		LanguageSupport support = (LanguageSupport) textArea.getClientProperty("org.fife.rsta.ac.LanguageSupport");
-		if (support != null)
-		{
+		if (support != null) {
 			support.uninstall(textArea);
 		}
 		super.install(textArea);
 	}
 	
-	private class MySourceCompletionProvider extends SourceCompletionProvider
-	{
+	private class MySourceCompletionProvider extends SourceCompletionProvider {
 		JavaScriptLanguageSupport support;
 		
-		public MySourceCompletionProvider(JavaScriptLanguageSupport support)
-		{
+		public MySourceCompletionProvider(JavaScriptLanguageSupport support) {
 			super(ENGINE, false);
 			this.support = support;
 		}
 		
 		@Override
-		public JavaScriptLanguageSupport getLanguageSupport()
-		{
+		public JavaScriptLanguageSupport getLanguageSupport() {
 			return support;
 		}
 		
 		@Override
-		public String getAlreadyEnteredText(JTextComponent comp)
-		{
+		public String getAlreadyEnteredText(JTextComponent comp) {
 			PreProcesssingScripts pps = new PreProcesssingScripts(this);
 			pps.parseScript(JSInvoker.mainjs, new TypeDeclarationOptions("Dakror", false, true));
 			setPreProcessingScripts(pps);
